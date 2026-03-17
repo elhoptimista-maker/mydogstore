@@ -1,13 +1,18 @@
+
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Bell, Menu, Dog, Search, User, Heart } from 'lucide-react';
+import { ShoppingCart, Menu, Dog, Search, Heart, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { useCart } from '@/context/CartContext';
+import CartDrawer from '@/components/cart/CartDrawer';
+import { Badge } from '@/components/ui/badge';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -18,7 +23,7 @@ export default function Header() {
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4",
-      scrolled ? "h-16 bg-white/90 backdrop-blur-lg shadow-sm" : "h-20 bg-transparent"
+      scrolled ? "h-16 bg-white/90 backdrop-blur-lg shadow-sm" : "h-20 bg-primary"
     )}>
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-4">
         {/* Logo */}
@@ -44,7 +49,9 @@ export default function Header() {
         )}>
           <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
           <Link href="/productos" className="hover:text-primary transition-colors">Catálogo</Link>
-          <Link href="#" className="hover:text-primary transition-colors">Suscripción</Link>
+          <Link href="/b2b" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Briefcase className="w-4 h-4" /> B2B
+          </Link>
           <Link href="#" className="hover:text-primary transition-colors">Ofertas</Link>
         </nav>
 
@@ -57,7 +64,7 @@ export default function Header() {
             <Search className={cn("w-4 h-4 mr-2", scrolled ? "text-muted" : "text-white/60")} />
             <input 
               type="text" 
-              placeholder="Buscar para tu peludo..." 
+              placeholder="Buscar..." 
               className={cn(
                 "bg-transparent border-none outline-none text-sm w-32 focus:w-48 transition-all font-medium placeholder:font-normal",
                 scrolled ? "text-foreground placeholder:text-muted" : "text-white placeholder:text-white/60"
@@ -66,21 +73,26 @@ export default function Header() {
           </div>
           
           <Button variant="ghost" size="icon" className={cn(
-            "rounded-2xl relative hover:bg-primary/10",
+            "rounded-2xl hover:bg-primary/10",
             !scrolled && "text-white hover:bg-white/10"
           )}>
             <Heart className="w-6 h-6" />
           </Button>
 
-          <Link href="#">
+          <CartDrawer>
             <Button className={cn(
-              "rounded-2xl shadow-lg flex gap-2 font-bold px-4 h-11 transition-all active:scale-95",
-              scrolled ? "bg-primary hover:bg-primary/90 text-white shadow-primary/20" : "bg-white text-primary hover:bg-secondary hover:text-white shadow-black/10"
+              "rounded-2xl shadow-lg flex gap-2 font-bold px-4 h-11 transition-all active:scale-95 relative",
+              scrolled ? "bg-primary hover:bg-primary/90 text-white" : "bg-white text-primary"
             )}>
               <ShoppingCart className="w-5 h-5" />
               <span className="hidden sm:inline">Carrito</span>
+              {cartCount > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-secondary text-foreground font-black px-1.5 min-w-[1.2rem] h-[1.2rem] flex items-center justify-center border-2 border-background">
+                  {cartCount}
+                </Badge>
+              )}
             </Button>
-          </Link>
+          </CartDrawer>
 
           <Button variant="ghost" size="icon" className={cn(
             "md:hidden rounded-2xl",
