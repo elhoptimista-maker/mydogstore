@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -9,51 +8,47 @@ export interface Product {
   rating: number;
 }
 
-const MOCK_PRODUCTS: Product[] = [
+export const MOCK_PRODUCTS: Product[] = [
   {
     id: '1',
-    name: 'Mezcla Royal Canine Adulto',
-    description: 'Comida seca formulada científicamente para perros adultos de todos los tamaños, asegura salud óptima y pelaje brillante.',
+    name: 'Alimento Premium Adulto',
+    description: 'Nutrición balanceada con ingredientes 100% naturales para tu peludo.',
     price: 45990,
-    category: 'Comida',
-    imageUrl: 'https://picsum.photos/seed/food1/600/600',
+    category: 'Nutrición',
+    imageUrl: 'https://picsum.photos/seed/dogfood1/600/600',
     rating: 4.8
   },
   {
     id: '2',
-    name: 'Juguete Kong Clásico',
-    description: 'Caucho natural ultra duradero que satisface los instintos de masticación y entrega estimulación mental.',
-    price: 15500,
+    name: 'Juguete de Caucho Natural',
+    description: 'Ultra resistente, diseñado para horas de diversión y limpieza dental.',
+    price: 12500,
     category: 'Juguetes',
-    imageUrl: 'https://picsum.photos/seed/toy1/600/600',
+    imageUrl: 'https://picsum.photos/seed/dogtoy1/600/600',
     rating: 4.9
   },
   {
     id: '3',
-    name: 'Cama Nube Nueve Memory',
-    description: 'Cama premium de espuma viscoelástica diseñada para soporte articular y máximo confort para perros senior.',
-    price: 79000,
-    category: 'Camas',
-    imageUrl: 'https://picsum.photos/seed/bed1/600/600',
+    name: 'Cama Ortopédica Viscoelástica',
+    description: 'El descanso que tu regalón merece con soporte para sus articulaciones.',
+    price: 78900,
+    category: 'Descanso',
+    imageUrl: 'https://picsum.photos/seed/dogbed1/600/600',
     rating: 4.7
   },
   {
     id: '4',
-    name: 'Correa Pro Reflectante',
-    description: 'Correa de nylon altamente reflectante con mango acolchado para mayor comodidad y mosquetón de alta resistencia.',
-    price: 19950,
-    category: 'Accesorios',
-    imageUrl: 'https://picsum.photos/seed/leash1/600/600',
+    name: 'Arnés Reflectante Ergonómico',
+    description: 'Paseos seguros y cómodos con visibilidad nocturna mejorada.',
+    price: 22900,
+    category: 'Paseo',
+    imageUrl: 'https://picsum.photos/seed/dogharness1/600/600',
     rating: 4.6
   }
 ];
 
 export async function getProducts(): Promise<Product[]> {
-  await new Promise(resolve => setTimeout(resolve, 50));
+  // Simulación de delay de red
+  await new Promise(resolve => setTimeout(resolve, 100));
   return MOCK_PRODUCTS;
-}
-
-export async function getProductById(id: string): Promise<Product | null> {
-  await new Promise(resolve => setTimeout(resolve, 30));
-  return MOCK_PRODUCTS.find(p => p.id === id) || null;
 }

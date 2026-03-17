@@ -1,11 +1,10 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 204 25% 94%; /* #ECF0F3 */
+    --background: 204 25% 94%; /* #ECF0F3 - Blanco azulado suave */
     --foreground: 215 58% 10%;
     --card: 0 0% 100%;
     --card-foreground: 215 58% 10%;
@@ -17,7 +16,7 @@
     --secondary-foreground: 161 94% 15%;
     --muted: 215 20% 90%;
     --muted-foreground: 215 20% 40%;
-    --accent: 161 70% 45%; /* Verde Acento #22C58B */
+    --accent: 191 76% 55%; /* Cyan-blue accentuation */
     --accent-foreground: 215 58% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -30,11 +29,7 @@
 
 @layer components {
   .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
-  }
-  
-  .glass-dark {
-    @apply bg-black/10 backdrop-blur-md border border-white/10 shadow-lg;
+    @apply bg-white/70 backdrop-blur-md border-b border-white/20 shadow-sm;
   }
 }
 
@@ -43,6 +38,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
