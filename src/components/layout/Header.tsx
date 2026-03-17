@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -47,7 +48,7 @@ export default function Header() {
           scrolled ? "text-foreground/80" : "text-white/90"
         )}>
           <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
-          <Link href="/productos" className="hover:text-primary transition-colors">Catálogo</Link>
+          <Link href="/catalogo" className="hover:text-primary transition-colors">Catálogo</Link>
           <Link href="/b2b" className="flex items-center gap-2 hover:text-primary transition-colors">
             <Briefcase className="w-4 h-4" /> Venta Mayorista
           </Link>

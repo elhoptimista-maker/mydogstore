@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -36,7 +37,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link href={`/productos/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#f9f9f9] m-2 rounded-[1.5rem]">
+      <Link href={`/catalogo/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#f9f9f9] m-2 rounded-[1.5rem]">
         <Image
           src={product.media.main_image}
           alt={product.metadata.name}

@@ -14,7 +14,6 @@ import {
   Users, 
   Store,
   Calendar,
-  CheckCircle2,
   Fish
 } from 'lucide-react';
 import { getProducts } from '@/lib/mock-db';
@@ -61,7 +60,7 @@ export default async function Home() {
               Más de 15 años de experiencia distribuyendo las mejores marcas para el cuidado y nutrición de tus compañeros.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Link href="/productos" className="w-full sm:w-auto">
+              <Link href="/catalogo" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full h-14 rounded-2xl bg-white text-primary font-bold hover:bg-secondary hover:text-white transition-all gap-2 px-10 text-lg shadow-xl">
                   Ver Catálogo <ArrowRight className="w-5 h-5" />
                 </Button>
@@ -117,7 +116,7 @@ export default async function Home() {
             <h3 className="font-extrabold text-2xl md:text-4xl tracking-tight text-primary">Novedades</h3>
             <p className="text-muted text-sm md:text-base font-medium">Últimas tendencias en nutrición y accesorios</p>
           </div>
-          <Link href="/productos">
+          <Link href="/catalogo">
             <Button variant="outline" className="rounded-xl border-primary text-primary hover:bg-primary/5 font-bold h-11 px-6 text-sm">Ver Todo</Button>
           </Link>
         </div>
