@@ -12,9 +12,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Star, ShoppingCart, Scale, Dog, Briefcase, Heart } from 'lucide-react';
+import { Star, ShoppingCart, Scale, Dog, Briefcase, Heart, Plus, Minus } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 interface QuickViewModalProps {
   product: Product;
@@ -24,19 +25,24 @@ interface QuickViewModalProps {
 
 export default function QuickViewModal({ product, open, onOpenChange }: QuickViewModalProps) {
   const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addToCart(product, false, quantity);
     toast({
       title: "¡Añadido al carrito!",
-      description: product.metadata.name,
+      description: `${quantity}x ${product.metadata.name}`,
       className: "bg-primary text-white rounded-2xl border-none font-bold shadow-2xl",
     });
     onOpenChange(false);
+    setQuantity(1);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(val) => {
+      onOpenChange(val);
+      if (!val) setQuantity(1);
+    }}>
       <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none">
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Image Section */}
@@ -91,20 +97,47 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
               ))}
             </div>
 
-            <div className="flex gap-3 pt-4">
-              <Button 
-                onClick={handleAddToCart}
-                className="flex-1 h-14 rounded-2xl bg-primary text-white font-black text-base gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
-              >
-                <ShoppingCart className="w-5 h-5" /> Añadir
-              </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-14 w-14 rounded-2xl border-secondary text-secondary hover:bg-secondary/5"
-              >
-                <Heart className="w-5 h-5" />
-              </Button>
+            <div className="space-y-4 pt-4">
+              {/* Selector de Cantidad */}
+              <div className="flex items-center justify-between bg-muted/30 p-3 rounded-2xl border border-black/[0.03]">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Cantidad</span>
+                <div className="flex items-center gap-4">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 rounded-lg hover:bg-white transition-all shadow-sm"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                  <span className="font-black text-lg w-6 text-center">{quantity}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 rounded-lg hover:bg-white transition-all shadow-sm"
+                    onClick={() => setQuantity(quantity + 1)}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handleAddToCart}
+                  className="flex-1 h-14 rounded-2xl bg-primary text-white font-black text-base gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+                >
+                  <ShoppingCart className="w-5 h-5" /> Añadir al Carrito
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-14 w-14 rounded-2xl border-secondary text-secondary hover:bg-secondary/5"
+                >
+                  <Heart className="w-5 h-5" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
