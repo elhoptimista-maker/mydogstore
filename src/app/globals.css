@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%; /* #fafafa - Limpieza absoluta */
-    --foreground: 167 40% 10%; /* Texto muy oscuro basado en el verde */
+    --background: 0 0% 98%;
+    --foreground: 180 100% 5%;
     --card: 0 0% 100%;
-    --card-foreground: 167 40% 10%;
+    --card-foreground: 180 100% 5%;
     --popover: 0 0% 100%;
-    --popover-foreground: 167 40% 10%;
-    --primary: 167 100% 21%; /* El verde exacto del logo: #006B54 */
+    --popover-foreground: 180 100% 5%;
+    --primary: 180 100% 25%; /* #008080 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 26 90% 70%; /* Naranja melocotón refinado para contraste */
-    --secondary-foreground: 167 40% 10%;
-    --muted: 167 10% 90%;
-    --muted-foreground: 167 10% 40%;
-    --accent: 26 90% 70%;
-    --accent-foreground: 167 40% 10%;
+    --secondary: 38 92% 50%; /* #F59E0B - Armónico Complementario */
+    --secondary-foreground: 180 100% 5%;
+    --muted: 180 20% 96%;
+    --muted-foreground: 180 10% 40%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 180 100% 5%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 167 15% 90%;
-    --input: 167 15% 90%;
-    --ring: 167 100% 21%;
+    --border: 180 10% 90%;
+    --input: 180 10% 90%;
+    --ring: 180 100% 25%;
     --radius: 1.5rem;
   }
 }

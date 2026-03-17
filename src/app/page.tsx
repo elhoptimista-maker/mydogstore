@@ -23,11 +23,13 @@ import { cn } from '@/lib/utils';
 export default async function Home() {
   const rawProducts = await getProducts();
 
-  // Lógica de Precios Segura en Servidor
+  // Lógica de Precios Segura en Servidor (Margen 30% sobre el costo neto)
   const products = rawProducts.map(product => {
     const costNet = product.financials?.cost?.net || 0;
+    // Si hay costo neto, calculamos el precio de venta (costo / 0.7 para margen 30%)
     const calculatedPrice = costNet > 0 ? Math.round(costNet / 0.7) : product.financials.pricing.base_price;
     
+    // Eliminamos financials.cost antes de enviarlo al cliente
     const { financials, ...rest } = product;
     return {
       ...rest,

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Heart, Plus } from 'lucide-react';
+import { Star, Heart, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/mock-db';
 import { useState } from 'react';
