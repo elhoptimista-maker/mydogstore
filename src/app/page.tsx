@@ -44,7 +44,6 @@ export default async function Home() {
     {
       title: "Alimento Seco",
       desc: "Nutrición completa para el día a día.",
-      emoji: "🦴",
       color: "bg-primary text-white",
       btnClass: "bg-secondary text-primary hover:bg-secondary/90",
       href: "/catalogo?cat=Alimento Seco",
@@ -53,7 +52,6 @@ export default async function Home() {
     {
       title: "Alimento Húmedo",
       desc: "Sabor y una hidratación extra.",
-      emoji: "🥩",
       color: "bg-secondary text-primary",
       btnClass: "bg-primary text-white hover:bg-primary/90",
       href: "/catalogo?cat=Alimento Húmedo",
@@ -62,7 +60,6 @@ export default async function Home() {
     {
       title: "Snacks",
       desc: "Premios saludables para consentirlos.",
-      emoji: "✨",
       color: "bg-accent text-white",
       btnClass: "bg-white text-accent hover:bg-white/90",
       href: "/catalogo?cat=Snacks",
@@ -205,10 +202,7 @@ export default async function Home() {
                   className="object-cover opacity-15 group-hover:scale-110 transition-transform duration-1000" 
                   data-ai-hint="pet food"
                 />
-                <div className="relative h-full p-12 flex flex-col justify-between z-10">
-                  <div className="w-20 h-20 rounded-3xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-inner">
-                    <span className="text-5xl">{cat.emoji}</span>
-                  </div>
+                <div className="relative h-full p-12 flex flex-col justify-end z-10">
                   <div className="space-y-8">
                     <div className="space-y-3">
                       <h4 className="text-4xl lg:text-5xl font-black tracking-tighter leading-[0.9]">{cat.title}</h4>
