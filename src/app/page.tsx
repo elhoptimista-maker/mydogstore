@@ -17,9 +17,9 @@ export default async function Home() {
   ];
 
   const benefits = [
-    { icon: <Truck className="w-6 h-6" />, title: 'Despacho Express', desc: 'En 24h a todo Chile' },
-    { icon: <ShieldCheck className="w-6 h-6" />, title: 'Pago Seguro', desc: 'Transbank & Webpay' },
-    { icon: <Heart className="w-6 h-6" />, title: 'Amor Garantizado', desc: 'Productos certificados' },
+    { icon: <Truck className="w-6 h-6" />, title: 'Envío Express', desc: 'Entrega en 24 horas' },
+    { icon: <ShieldCheck className="w-6 h-6" />, title: 'Pago Seguro', desc: 'Transacciones encriptadas' },
+    { icon: <Heart className="w-6 h-6" />, title: 'Calidad Certificada', desc: 'Productos seleccionados' },
   ];
 
   return (
@@ -30,30 +30,32 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm font-bold animate-bounce">
-              <Sparkles className="w-4 h-4 text-secondary" /> ¡Nuevo en Chile! Alimento Orgánico
+              <Sparkles className="w-4 h-4 text-secondary" /> Especialistas en Nutrición Natural
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
-              Todo lo que tu <br /> <span className="text-secondary">regalón</span> necesita
+              Bienestar integral <br /> para tu <span className="text-secondary">mascota</span>
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-medium max-w-lg mx-auto lg:mx-0">
-              Cuidamos a tu mejor amigo con nutrición premium y accesorios de clase mundial. ¡Descubre la experiencia MyDog!
+              Ofrecemos nutrición premium y accesorios diseñados para mejorar la calidad de vida de tu mejor amigo.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Button size="lg" className="w-full sm:w-auto h-14 rounded-2xl bg-white text-primary font-bold hover:bg-secondary hover:text-white transition-all gap-2 px-10 text-lg shadow-xl shadow-black/10">
-                Ver Catálogo <ArrowRight className="w-5 h-5" />
-              </Button>
-              <Link href="#" className="text-white font-bold hover:underline">Ver promociones del mes</Link>
+              <Link href="/products">
+                <Button size="lg" className="w-full sm:w-auto h-14 rounded-2xl bg-white text-primary font-bold hover:bg-secondary hover:text-white transition-all gap-2 px-10 text-lg shadow-xl shadow-black/10">
+                  Ver Catálogo <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="#" className="text-white font-bold hover:underline">Promociones vigentes</Link>
             </div>
           </div>
           <div className="relative hidden lg:block aspect-square group">
             <div className="absolute inset-0 bg-secondary rounded-full opacity-20 blur-3xl group-hover:opacity-40 transition-opacity"></div>
             <Image
-              src="https://picsum.photos/seed/happy-dog-3d/800/800"
-              alt="Mascota feliz"
+              src="https://picsum.photos/seed/dog-hero/800/800"
+              alt="Mascota saludable"
               fill
               className="object-contain animate-float drop-shadow-2xl"
               priority
-              data-ai-hint="happy dog"
+              data-ai-hint="healthy dog"
             />
           </div>
         </div>
@@ -64,7 +66,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* USP Bar */}
+      {/* Benefits Bar */}
       <section className="px-4 max-w-7xl mx-auto w-full -translate-y-12">
         <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-xl shadow-black/5 grid grid-cols-1 md:grid-cols-3 gap-8 border border-white/50">
           {benefits.map((benefit, i) => (
@@ -84,7 +86,7 @@ export default async function Home() {
       {/* Categories */}
       <section className="py-12 space-y-8 max-w-7xl mx-auto w-full">
         <div className="px-4 flex items-center justify-between">
-          <h3 className="font-extrabold text-2xl md:text-3xl tracking-tight">Categorías <span className="text-primary">Bakánes</span></h3>
+          <h3 className="font-extrabold text-2xl md:text-3xl tracking-tight">Categorías <span className="text-primary">Destacadas</span></h3>
         </div>
         <div className="flex gap-8 overflow-x-auto px-4 no-scrollbar snap-x py-2">
           {categories.map((cat, i) => (
@@ -101,18 +103,18 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Promotional Mosaic */}
+      {/* Mosaic */}
       <section className="px-4 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-6 py-12">
         <div className="relative h-64 md:h-[450px] rounded-[2.5rem] overflow-hidden bg-secondary/20 border-2 border-secondary/20 group">
           <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end gap-3 z-10">
-            <span className="px-3 py-1 rounded-full text-[10px] uppercase tracking-tighter w-fit bg-secondary text-foreground font-bold">OFERTA FLASH</span>
-            <h3 className="text-2xl md:text-4xl font-extrabold text-foreground leading-tight">Accesorios <br /> para el paseo</h3>
-            <p className="text-muted font-medium">Hasta 40% OFF en arneses</p>
+            <span className="px-3 py-1 rounded-full text-[10px] uppercase tracking-tighter w-fit bg-secondary text-foreground font-bold">OFERTA TEMPORAL</span>
+            <h3 className="text-2xl md:text-4xl font-extrabold text-foreground leading-tight">Accesorios <br /> de Paseo</h3>
+            <p className="text-muted font-medium">Hasta 40% de descuento en arneses</p>
             <Button variant="link" className="w-fit p-0 text-primary font-bold gap-2">Comprar ahora <ArrowRight className="w-4 h-4" /></Button>
           </div>
           <Image
-            src="https://picsum.photos/seed/promo1/600/600"
-            alt="Promo paseo"
+            src="https://picsum.photos/seed/promo-leash/600/600"
+            alt="Accesorios de paseo"
             fill
             className="object-contain absolute -right-20 -top-10 transition-transform duration-700 group-hover:scale-110 opacity-40 md:opacity-100"
             data-ai-hint="dog leash"
@@ -121,22 +123,22 @@ export default async function Home() {
         <div className="grid grid-rows-2 gap-6">
            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#E6F4F3] border-2 border-primary/10 p-8 flex items-center justify-between group">
               <div className="space-y-2 z-10">
-                <h4 className="text-xl font-bold text-primary">Nutrición Pro</h4>
-                <p className="text-sm text-muted-foreground">Tu regalón más fuerte</p>
-                <Link href="#" className="text-sm font-bold underline text-primary">Ver más</Link>
+                <h4 className="text-xl font-bold text-primary">Nutrición Avanzada</h4>
+                <p className="text-sm text-muted-foreground">Fórmulas especializadas</p>
+                <Link href="/products" className="text-sm font-bold underline text-primary">Explorar</Link>
               </div>
               <div className="relative w-32 h-32 group-hover:scale-110 transition-transform duration-500">
-                <Image src="https://picsum.photos/seed/promo2/200/200" alt="Promo comida" fill className="object-contain" data-ai-hint="dog food" />
+                <Image src="https://picsum.photos/seed/promo-food/200/200" alt="Comida saludable" fill className="object-contain" data-ai-hint="dog food" />
               </div>
            </div>
            <div className="relative rounded-[2.5rem] overflow-hidden bg-white border-2 border-border/50 p-8 flex items-center justify-between group">
               <div className="space-y-2 z-10 text-center flex flex-col items-center">
-                <h4 className="text-xl font-bold text-foreground">Suscríbete & Ahorra</h4>
-                <p className="text-sm text-muted-foreground mb-2">Descuento recurrente</p>
-                <Button variant="outline" className="rounded-full border-secondary text-secondary font-bold hover:bg-secondary hover:text-white">Únete ahora</Button>
+                <h4 className="text-xl font-bold text-foreground">Suscripción Programada</h4>
+                <p className="text-sm text-muted-foreground mb-2">Ahorro recurrente mensual</p>
+                <Button variant="outline" className="rounded-full border-secondary text-secondary font-bold hover:bg-secondary hover:text-white">Unirse ahora</Button>
               </div>
               <div className="relative w-32 h-32 opacity-20 md:opacity-100">
-                <Image src="https://picsum.photos/seed/promo3/200/200" alt="Subscription" fill className="object-contain" data-ai-hint="dog subscription" />
+                <Image src="https://picsum.photos/seed/promo-sub/200/200" alt="Suscripción" fill className="object-contain" data-ai-hint="subscription" />
               </div>
            </div>
         </div>
@@ -146,10 +148,10 @@ export default async function Home() {
       <section className="px-4 max-w-7xl mx-auto w-full space-y-10 py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <div className="space-y-2">
-            <h3 className="font-extrabold text-2xl md:text-4xl tracking-tight">Elegidos para ti</h3>
-            <p className="text-muted font-medium">Lo más top de esta semana en MyDog Store</p>
+            <h3 className="font-extrabold text-2xl md:text-4xl tracking-tight">Nuestra Selección</h3>
+            <p className="text-muted font-medium">Los productos más destacados de la semana</p>
           </div>
-          <Link href="/productos">
+          <Link href="/products">
             <Button variant="outline" className="rounded-2xl border-primary text-primary hover:bg-primary/5 font-bold h-12 px-8">Ver todo el catálogo</Button>
           </Link>
         </div>
@@ -160,10 +162,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Brand Carousel */}
+      {/* Brands */}
       <section className="py-20 bg-white border-y border-border/50">
         <div className="max-w-7xl mx-auto px-4 space-y-12">
-          <h4 className="text-center font-bold text-muted uppercase tracking-widest text-sm">Marcas que confían en nosotros</h4>
+          <h4 className="text-center font-bold text-muted uppercase tracking-widest text-sm">Marcas de confianza</h4>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale hover:grayscale-0 transition-all">
              <div className="text-2xl font-black italic">ROYAL-CANIN</div>
              <div className="text-2xl font-black italic">BRAVERY</div>

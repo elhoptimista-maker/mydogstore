@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -39,10 +38,10 @@ export default function ProductAssistant() {
             <Dog className="text-primary w-6 h-6" />
           </div>
           <CardTitle className="text-2xl md:text-3xl font-headline text-primary font-bold">
-            Asesor Personal de Peludos
+            Asesoría de Bienestar Animal
           </CardTitle>
           <CardDescription className="text-lg text-muted-foreground">
-            Nuestra IA encuentra los mejores productos según el perfil único de tu perro.
+            Nuestra IA identifica los mejores productos según las características de su mascota.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-8">
@@ -53,7 +52,7 @@ export default function ProductAssistant() {
                   <Label htmlFor="breed">¿Cuál es su raza?</Label>
                   <Input 
                     id="breed" 
-                    placeholder="Ej: Quilterrier, Golden, Poodle" 
+                    placeholder="Ej: Labrador, Poodle, Mestizo" 
                     className="rounded-xl border-primary/20 focus-visible:ring-primary"
                     value={form.dogBreed}
                     onChange={e => setForm({...form, dogBreed: e.target.value})}
@@ -63,7 +62,7 @@ export default function ProductAssistant() {
                   <Label htmlFor="age">¿Qué edad tiene?</Label>
                   <Input 
                     id="age" 
-                    placeholder="Ej: 2 años o Cachorro" 
+                    placeholder="Ej: 3 años o etapa cachorro" 
                     className="rounded-xl border-primary/20 focus-visible:ring-primary"
                     value={form.dogAge}
                     onChange={e => setForm({...form, dogAge: e.target.value})}
@@ -71,10 +70,10 @@ export default function ProductAssistant() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="needs">¿Alguna necesidad o sensibilidad especial?</Label>
+                <Label htmlFor="needs">¿Alguna necesidad o sensibilidad específica?</Label>
                 <Input 
                   id="needs" 
-                  placeholder="Ej: problemas articulares, mañoso para comer" 
+                  placeholder="Ej: cuidado articular, dieta especial" 
                   className="rounded-xl border-primary/20 focus-visible:ring-primary"
                   value={form.specificNeeds}
                   onChange={e => setForm({...form, specificNeeds: e.target.value})}
@@ -88,12 +87,12 @@ export default function ProductAssistant() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Analizando perfil perruno...
+                    Procesando perfil...
                   </>
                 ) : (
                   <>
                     <Sparkles className="mr-2 h-5 w-5" />
-                    Obtener Recomendaciones
+                    Generar Recomendaciones
                   </>
                 )}
               </Button>
@@ -106,7 +105,7 @@ export default function ProductAssistant() {
                     <h4 className="text-lg font-bold text-primary mb-1">{rec.productName}</h4>
                     <p className="text-sm text-foreground/80 mb-3">{rec.productDescription}</p>
                     <div className="text-xs bg-white/50 p-3 rounded-lg text-primary-foreground/80 italic">
-                      <span className="font-bold text-primary not-italic">Tip del Experto:</span> {rec.reasonForRecommendation}
+                      <span className="font-bold text-primary not-italic">Sugerencia técnica:</span> {rec.reasonForRecommendation}
                     </div>
                   </div>
                 ))}
@@ -116,7 +115,7 @@ export default function ProductAssistant() {
                 className="w-full h-12 rounded-xl border-primary text-primary hover:bg-primary/5"
                 onClick={() => setResults(null)}
               >
-                Empezar de nuevo
+                Nueva Consulta
               </Button>
             </div>
           )}

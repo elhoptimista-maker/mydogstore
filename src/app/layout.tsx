@@ -1,4 +1,3 @@
-
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Header from '@/components/layout/Header';
@@ -6,8 +5,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
 
 export const metadata: Metadata = {
-  title: 'MydogStore | La App de tu mejor amigo 🐾',
-  description: 'Todo lo que tu mascota necesita en un solo lugar. Nutrición premium, accesorios Pro y asesoría AI en Chile.',
+  title: 'MydogStore | Nutrición y Bienestar Animal 🐾',
+  description: 'Todo lo que tu mascota necesita en un solo lugar. Nutrición premium, accesorios especializados y asesoría profesional.',
 };
 
 export const viewport: Viewport = {
@@ -38,38 +37,38 @@ export default function RootLayout({
                   My<span className="text-secondary">dog</span>Store
                 </span>
                 <p className="text-muted text-sm leading-relaxed">
-                  Expertos en nutrición y bienestar canino en Chile. Calidad premium para el regalón de la casa.
+                  Expertos en nutrición y salud animal. Ofrecemos soluciones de alta calidad para el bienestar de tu mascota.
                 </p>
               </div>
               <div>
-                <h4 className="font-bold mb-4">Comprar</h4>
+                <h4 className="font-bold mb-4">Catálogo</h4>
                 <ul className="text-sm text-muted space-y-2">
                   <li className="hover:text-primary cursor-pointer">Alimentos Premium</li>
-                  <li className="hover:text-primary cursor-pointer">Juguetes Pro</li>
-                  <li className="hover:text-primary cursor-pointer">Camas & Descanso</li>
+                  <li className="hover:text-primary cursor-pointer">Juguetes de Estimulación</li>
+                  <li className="hover:text-primary cursor-pointer">Descanso y Camas</li>
                   <li className="hover:text-primary cursor-pointer">Accesorios</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold mb-4">Empresa</h4>
+                <h4 className="font-bold mb-4">Institucional</h4>
                 <ul className="text-sm text-muted space-y-2">
                   <li className="hover:text-primary cursor-pointer">Sobre Nosotros</li>
                   <li className="hover:text-primary cursor-pointer">Puntos de Venta</li>
-                  <li className="hover:text-primary cursor-pointer">Blog Perruno</li>
+                  <li className="hover:text-primary cursor-pointer">Blog de Bienestar</li>
                   <li className="hover:text-primary cursor-pointer">Contacto</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold mb-4">Ayuda</h4>
+                <h4 className="font-bold mb-4">Soporte</h4>
                 <ul className="text-sm text-muted space-y-2">
                   <li className="hover:text-primary cursor-pointer">Preguntas Frecuentes</li>
-                  <li className="hover:text-primary cursor-pointer">Envíos & Devoluciones</li>
-                  <li className="hover:text-primary cursor-pointer">Garantía de Felicidad</li>
+                  <li className="hover:text-primary cursor-pointer">Envíos y Devoluciones</li>
+                  <li className="hover:text-primary cursor-pointer">Garantía de Satisfacción</li>
                 </ul>
               </div>
             </div>
             <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-border text-center text-xs text-muted font-medium">
-              © 2024 MydogStore Chile. Hecho con amor por los peludos.
+              © 2024 MydogStore. Compromiso con el bienestar animal.
             </div>
           </footer>
           <Toaster />
