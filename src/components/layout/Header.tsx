@@ -21,10 +21,10 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300">
-      {/* Promo Bar - Solid Primary Background */}
-      <div className="bg-primary py-2 px-4 text-center shadow-md">
-        <p className="text-[10px] md:text-xs font-bold text-white uppercase tracking-widest">
-          🚚 DESPACHO GRATIS POR COMPRAS SOBRE $30.000 EN SANTIAGO
+      {/* Promo Bar - Solid Background, high visibility */}
+      <div className="bg-primary py-2 px-4 text-center relative z-20">
+        <p className="text-[10px] md:text-xs font-bold text-white uppercase tracking-widest flex items-center justify-center gap-2">
+          <span className="animate-bounce">🚚</span> DESPACHO GRATIS POR COMPRAS SOBRE $30.000 EN SANTIAGO
         </p>
       </div>
 
@@ -70,7 +70,7 @@ export default function Header() {
           {/* Search & Actions */}
           <div className="flex-1 flex items-center justify-end gap-2 md:gap-6">
             <div className="hidden md:flex flex-1 max-w-md relative group">
-              <div className="relative flex items-center bg-muted rounded-full w-full overflow-hidden focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <div className="relative flex items-center bg-muted rounded-full w-full overflow-hidden focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-transparent focus-within:border-primary/10">
                 <input 
                   type="text" 
                   placeholder="¿Qué necesita tu mascota hoy?" 
@@ -106,8 +106,11 @@ export default function Header() {
       </div>
 
       {/* Sub Header - Categorías */}
-      <div className="hidden md:block bg-white/80 backdrop-blur-md border-b border-black/[0.02]">
-        <div className="max-w-7xl mx-auto px-8 h-10 flex items-center justify-between">
+      <div className={cn(
+        "hidden md:block transition-all duration-300",
+        scrolled ? "h-0 overflow-hidden opacity-0" : "h-10 bg-white/80 backdrop-blur-md border-b border-black/[0.02]"
+      )}>
+        <div className="max-w-7xl mx-auto px-8 h-full flex items-center justify-between">
           <div className="flex items-center gap-8 h-full">
             <div className="h-full flex items-center gap-2 cursor-pointer group text-primary font-bold text-xs uppercase tracking-widest border-r border-black/[0.05] pr-8">
               <Menu className="w-4 h-4" />

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Heart, Plus } from 'lucide-react';
+import { Star, Heart, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/mock-db';
 import { useState } from 'react';
@@ -39,12 +39,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Image Container */}
-      <Link href={`/catalogo/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#fdfdfd] p-6">
+      <Link href={`/catalogo/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#fdfdfd] p-4 md:p-6">
         <Image
           src={product.media.main_image}
           alt={product.metadata.name}
           fill
-          className="object-contain transition-transform duration-700 group-hover:scale-110 p-8"
+          className="object-contain transition-transform duration-700 group-hover:scale-110 p-6 md:p-8"
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
         />
         
@@ -54,29 +54,29 @@ export default function ProductCard({ product }: ProductCardProps) {
             setIsFavorite(!isFavorite);
           }}
           className={cn(
-            "absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-10",
+            "absolute top-4 right-4 w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-10",
             isFavorite ? "bg-red-500 text-white shadow-lg" : "bg-white/80 text-primary/40 hover:text-red-500"
           )}
         >
-          <Heart className={cn("w-5 h-5", isFavorite && "fill-current")} />
+          <Heart className={cn("w-4 h-4 md:w-5 md:h-5", isFavorite && "fill-current")} />
         </button>
       </Link>
       
       {/* Content */}
-      <div className="p-6 md:p-8 flex flex-col flex-1">
-        <div className="flex items-center gap-1 mb-3">
+      <div className="p-5 md:p-8 flex flex-col flex-1">
+        <div className="flex items-center gap-1 mb-2 md:mb-3">
           <Star className="w-3 h-3 fill-secondary text-secondary" />
           <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
         </div>
         
-        <h3 className="text-sm md:text-base font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors mb-6">
+        <h3 className="text-xs md:text-base font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors mb-4 md:mb-6">
           {product.metadata.name}
         </h3>
         
-        <div className="mt-auto flex items-end justify-between gap-4">
+        <div className="mt-auto flex items-end justify-between gap-2 md:gap-4">
           <div className="flex flex-col">
-            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Precio Venta</span>
-            <span className="text-xl md:text-2xl font-black text-primary tracking-tighter">
+            <span className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-0.5 md:mb-1">Precio Venta</span>
+            <span className="text-lg md:text-2xl font-black text-primary tracking-tighter">
               ${product.financials.pricing.base_price.toLocaleString('es-CL')}
             </span>
           </div>
@@ -84,9 +84,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Button 
             onClick={handleAddToCart}
             size="icon" 
-            className="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:scale-110 active:scale-95 transition-all"
+            className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:scale-110 active:scale-95 transition-all"
           >
-            <Plus className="w-6 h-6" />
+            <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
           </Button>
         </div>
       </div>
