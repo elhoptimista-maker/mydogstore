@@ -4,17 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Dog, 
-  Cat, 
-  Bird, 
   Sparkles, 
   ArrowRight, 
-  Fish,
   Truck,
   ShieldCheck,
   Bone,
-  Rabbit,
-  Rat,
-  Turtle,
   Beef,
 } from 'lucide-react';
 import { getProducts, Product, BRANDS } from '@/lib/mock-db';
@@ -145,20 +139,20 @@ export default async function Home() {
           </div>
           <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-14 no-scrollbar pt-4 pb-8 snap-x">
             {[
-              { name: 'Perros', icon: <Dog />, color: 'bg-primary/5 text-primary' },
-              { name: 'Gatos', icon: <Cat />, color: 'bg-secondary/10 text-secondary' },
-              { name: 'Aves', icon: <Bird />, color: 'bg-blue-50 text-blue-600' },
-              { name: 'Conejo', icon: <Rabbit />, color: 'bg-rose-50 text-rose-600' },
-              { name: 'Roedor', icon: <Rat />, color: 'bg-amber-50 text-amber-600' },
-              { name: 'Peces', icon: <Fish />, color: 'bg-indigo-50 text-indigo-600' },
-              { name: 'Tortugas', icon: <Turtle />, color: 'bg-emerald-50 text-emerald-600' },
+              { name: 'Perros', emoji: '🐶', color: 'bg-primary/5' },
+              { name: 'Gatos', emoji: '🐱', color: 'bg-secondary/10' },
+              { name: 'Aves', emoji: '🦜', color: 'bg-blue-50' },
+              { name: 'Conejo', emoji: '🐰', color: 'bg-rose-50' },
+              { name: 'Roedor', emoji: '🐹', color: 'bg-amber-50' },
+              { name: 'Peces', emoji: '🐠', color: 'bg-indigo-50' },
+              { name: 'Tortugas', emoji: '🐢', color: 'bg-emerald-50' },
             ].map((cat, i) => (
               <div key={i} className="flex flex-col items-center gap-4 group cursor-pointer snap-center shrink-0">
                 <div className={cn(
                   "w-20 h-20 md:w-32 md:h-32 rounded-full flex items-center justify-center shadow-md group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500",
                   cat.color
                 )}>
-                  {cloneIcon(cat.icon, "w-8 h-8 md:w-14 md:h-14")}
+                  <span className="text-4xl md:text-6xl select-none">{cat.emoji}</span>
                 </div>
                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
                   {cat.name}
