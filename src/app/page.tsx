@@ -76,7 +76,7 @@ export default async function Home() {
     <div className="bg-background flex flex-col min-h-screen">
       
       {/* 1. Hero Section */}
-      <section className="px-4 py-4 md:py-6">
+      <section className="px-4 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-primary rounded-[2.5rem] p-8 md:p-16 relative overflow-hidden shadow-2xl shadow-primary/20">
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -118,7 +118,7 @@ export default async function Home() {
       </section>
 
       {/* 2. Trust Bar */}
-      <section className="px-4 py-2 md:py-4">
+      <section className="px-4 py-2">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-primary/5 grid grid-cols-2 lg:grid-cols-4 gap-6 items-center">
             {trustBadges.map((badge, i) => (
@@ -169,8 +169,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. Featured Products */}
-      <section className="bg-white/50 py-10 md:py-12 border-y border-black/[0.02]">
+      {/* 4. Featured Products (Novadades) */}
+      <section className="bg-white/50 py-10 border-y border-black/[0.02]">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8">
           <div className="flex items-end justify-between">
             <div className="space-y-1">
@@ -184,12 +184,12 @@ export default async function Home() {
             </Link>
           </div>
           
-          {/* Mobile Carousel */}
-          <div className="md:hidden">
+          {/* Mobile & Medium Carousel */}
+          <div className="lg:hidden">
             <Carousel opts={{ align: "start" }} className="w-full">
               <CarouselContent className="-ml-4">
                 {products.slice(0, 4).map((product) => (
-                  <CarouselItem key={product.id} className="pl-4 basis-[80%]">
+                  <CarouselItem key={product.id} className="pl-4 basis-[85%] sm:basis-[45%]">
                     <ProductCard product={product} />
                   </CarouselItem>
                 ))}
@@ -198,7 +198,7 @@ export default async function Home() {
           </div>
 
           {/* Desktop Grid */}
-          <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="hidden lg:grid grid-cols-4 gap-8">
             {products.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -207,12 +207,12 @@ export default async function Home() {
       </section>
 
       {/* 5. Modernized Category Cards */}
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
             {categoriesCards.map((cat, i) => (
               <div key={i} className={cn(
-                "group relative h-[480px] rounded-[3.5rem] overflow-hidden shadow-2xl hover:-translate-y-4 transition-all duration-700",
+                "group relative h-[400px] md:h-[480px] rounded-[3.5rem] overflow-hidden shadow-2xl hover:-translate-y-4 transition-all duration-700",
                 cat.color
               )}>
                 <Image 
@@ -222,7 +222,7 @@ export default async function Home() {
                   className="object-cover opacity-15 group-hover:scale-110 transition-transform duration-1000" 
                   data-ai-hint="pet food"
                 />
-                <div className="relative h-full p-12 flex flex-col justify-end z-10">
+                <div className="relative h-full p-10 md:p-12 flex flex-col justify-end z-10">
                   <div className="space-y-8">
                     <div className="space-y-3">
                       <h4 className="text-4xl lg:text-5xl font-black tracking-tighter leading-[0.9]">{cat.title}</h4>
@@ -230,7 +230,7 @@ export default async function Home() {
                     </div>
                     <Link href={cat.href}>
                       <Button className={cn(
-                        "h-16 px-10 rounded-2xl font-black text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all border-none w-full md:w-auto",
+                        "h-14 md:h-16 px-10 rounded-2xl font-black text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all border-none w-full md:w-auto",
                         cat.btnClass
                       )}>
                         Explorar Ahora

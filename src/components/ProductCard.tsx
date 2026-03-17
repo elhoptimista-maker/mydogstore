@@ -40,8 +40,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-2 border border-black/[0.02] flex flex-col h-full">
-        {/* Etiqueta de Marca */}
+      <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl border border-black/[0.02] flex flex-col h-full w-full max-w-full">
+        {/* Marca Flotante */}
         <div className="absolute top-4 left-4 z-20">
           <span className="bg-primary/10 backdrop-blur-md text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/10">
             {product.attributes.brand}
@@ -49,18 +49,18 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Contenedor de Imagen */}
-        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-6">
+        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-6 shrink-0">
           <Link href={`/catalogo/${product.id}`} className="block relative w-full h-full">
             <Image
               src={product.media.main_image}
               alt={product.metadata.name}
               fill
               className="object-contain transition-transform duration-700 group-hover:scale-110 p-4"
-              sizes="(max-width: 768px) 80vw, (max-width: 1200px) 33vw, 25vw"
+              sizes="(max-width: 768px) 100vw, 300px"
+              priority={false}
             />
           </Link>
           
-          {/* Botón Favorito */}
           <button 
             onClick={(e) => {
               e.preventDefault();
@@ -76,45 +76,41 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         
         {/* Contenido de la Tarjeta */}
-        <div className="p-6 flex flex-col flex-1">
-          {/* Rating y Tag */}
+        <div className="p-6 flex flex-col flex-1 min-w-0">
           <div className="flex items-center gap-1 mb-3">
             <Star className="w-3 h-3 fill-secondary text-secondary" />
             <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
           </div>
           
-          {/* Nombre del Producto */}
-          <Link href={`/catalogo/${product.id}`}>
-            <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors mb-6">
+          <Link href={`/catalogo/${product.id}`} className="block mb-6">
+            <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors">
               {product.metadata.name}
             </h3>
           </Link>
           
-          {/* Pie de Tarjeta - Precio y Acciones */}
-          <div className="mt-auto flex items-end justify-between gap-4">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Precio Distribución</span>
-              <span className="text-xl font-black text-primary tracking-tighter">
+          {/* Precio y Botones */}
+          <div className="mt-auto flex items-center justify-between gap-2 border-t border-black/[0.03] pt-4">
+            <div className="flex flex-col min-w-0">
+              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1 truncate">Precio Venta</span>
+              <span className="text-lg font-black text-primary tracking-tighter leading-none">
                 ${product.financials.pricing.base_price.toLocaleString('es-CL')}
               </span>
             </div>
             
-            <div className="flex gap-2">
-              {/* Botón de Vista Rápida */}
+            <div className="flex items-center gap-2 shrink-0">
               <Button 
                 onClick={handleQuickView}
                 size="icon" 
                 variant="outline"
-                className="h-12 w-12 rounded-2xl border-primary/20 text-primary hover:bg-primary/5 hover:scale-110 active:scale-95 transition-all"
+                className="h-10 w-10 rounded-xl border-primary/20 text-primary hover:bg-primary/5 transition-all"
               >
                 <Eye className="w-5 h-5" />
               </Button>
 
-              {/* Botón de Añadir al Carrito */}
               <Button 
                 onClick={handleAddToCart}
                 size="icon" 
-                className="h-12 w-12 rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:bg-secondary/90 hover:scale-110 active:scale-95 transition-all"
+                className="h-10 w-10 rounded-xl bg-secondary text-primary shadow-lg shadow-secondary/10 hover:bg-secondary/90 transition-all"
               >
                 <ShoppingCart className="w-5 h-5" />
               </Button>
@@ -123,7 +119,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Modal de Vista Rápida */}
       <QuickViewModal 
         product={product} 
         open={showQuickView} 
