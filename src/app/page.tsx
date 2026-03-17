@@ -15,20 +15,19 @@ import {
   Rabbit,
   Rat,
   Turtle,
+  Beef,
 } from 'lucide-react';
-import { getProducts, Product } from '@/lib/mock-db';
+import { getProducts, Product, BRANDS } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
 import { cn } from '@/lib/utils';
 
 export default async function Home() {
   const rawProducts = await getProducts();
 
-  // Lógica de Precios Segura en Servidor (Margen 30% sobre el costo neto)
   const products = rawProducts.map(product => {
     const costNet = product.financials?.cost?.net || 0;
     const calculatedPrice = costNet > 0 ? Math.round(costNet / 0.7) : product.financials.pricing.base_price;
     
-    // Eliminamos financials.cost antes de enviarlo al cliente
     const { financials, ...rest } = product;
     return {
       ...rest,
@@ -47,10 +46,37 @@ export default async function Home() {
     { icon: <Sparkles className="w-6 h-6" />, title: "Club MyDog", desc: "Descuentos exclusivos" },
   ];
 
+  const categoriesCards = [
+    {
+      title: "Alimento Seco",
+      desc: "Nutrición completa para el día a día.",
+      icon: <Bone className="w-10 h-10" />,
+      color: "bg-primary text-white",
+      href: "/catalogo?cat=Alimento Seco",
+      image: "https://picsum.photos/seed/dryfood/600/400"
+    },
+    {
+      title: "Alimento Húmedo",
+      desc: "Sabor y una hidratación extra.",
+      icon: <Beef className="w-10 h-10" />,
+      color: "bg-secondary text-primary",
+      href: "/catalogo?cat=Alimento Húmedo",
+      image: "https://picsum.photos/seed/wetfood/600/400"
+    },
+    {
+      title: "Snacks",
+      desc: "Premios saludables para consentirlos.",
+      icon: <Sparkles className="w-10 h-10" />,
+      color: "bg-accent text-white",
+      href: "/catalogo?cat=Snacks",
+      image: "https://picsum.photos/seed/snacks/600/400"
+    }
+  ];
+
   return (
     <div className="bg-background flex flex-col min-h-screen">
       
-      {/* 1. Hero Section - Compacto y Directo */}
+      {/* 1. Hero Section */}
       <section className="px-4 py-4 md:py-8">
         <div className="max-w-7xl mx-auto">
           <div className="bg-primary rounded-[2.5rem] p-8 md:p-16 relative overflow-hidden shadow-2xl shadow-primary/20">
@@ -84,7 +110,6 @@ export default async function Home() {
                 />
               </div>
             </div>
-            {/* Background Texture */}
             <div className="absolute top-0 right-0 w-1/2 h-full opacity-[0.03] pointer-events-none">
               <Dog className="w-full h-full transform scale-150 rotate-12" />
             </div>
@@ -92,7 +117,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 2. Trust Bar - Centrado y Compacto */}
+      {/* 2. Trust Bar */}
       <section className="px-4 py-2 md:py-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-[2.5rem] p-4 md:p-6 shadow-sm border border-primary/5 grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -111,7 +136,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Categories - Scroll Horizontal en móvil, Grid en Desktop */}
+      {/* 3. Categories */}
       <section className="py-10 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-6">
           <div className="flex flex-col items-center gap-1">
@@ -144,7 +169,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. Featured Products - Grilla Premium */}
+      {/* 4. Featured Products */}
       <section className="bg-white/50 py-10 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8">
           <div className="flex items-end justify-between border-b border-primary/5 pb-4">
@@ -161,6 +186,55 @@ export default async function Home() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
             {products.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Destacados por Categoría - Tricolor */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {categoriesCards.map((cat, i) => (
+              <div key={i} className={cn(
+                "group relative h-96 rounded-[3rem] overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-500",
+                cat.color
+              )}>
+                <Image 
+                  src={cat.image} 
+                  alt={cat.title} 
+                  fill 
+                  className="object-cover opacity-20 group-hover:scale-110 transition-transform duration-700" 
+                />
+                <div className="relative h-full p-10 flex flex-col justify-between">
+                  <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center">
+                    {cat.icon}
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="text-3xl font-black tracking-tighter">{cat.title}</h4>
+                    <p className="font-medium opacity-80 text-sm">{cat.desc}</p>
+                    <Link href={cat.href}>
+                      <Button variant="outline" className="mt-4 rounded-2xl border-current font-black hover:bg-white hover:text-primary transition-all">
+                        Explorar Ahora
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Marcas Carrusel */}
+      <section className="py-12 bg-white/30 border-y border-black/[0.03] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <h4 className="text-[10px] font-black text-center text-primary/40 uppercase tracking-[0.4em] mb-10">Con la confianza de las mejores marcas</h4>
+          <div className="flex gap-12 md:gap-24 animate-scroll w-max whitespace-nowrap">
+            {[...BRANDS, ...BRANDS].map((brand, i) => (
+              <span key={i} className="text-xl md:text-3xl font-black text-primary/20 hover:text-primary/100 transition-colors cursor-default uppercase tracking-tighter">
+                {brand}
+              </span>
             ))}
           </div>
         </div>
