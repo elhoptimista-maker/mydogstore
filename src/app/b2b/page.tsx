@@ -15,19 +15,19 @@ export default function B2BPage() {
       <section className="text-center space-y-6 max-w-3xl mx-auto py-10">
         <Badge className="bg-primary/10 text-primary font-bold px-4 py-1 text-xs">SOLUCIONES CORPORATIVAS</Badge>
         <h1 className="text-4xl md:text-6xl font-black tracking-tight text-primary">
-          Impulsa tu negocio con <span className="text-secondary">MyDog Store</span>
+          Socio Logístico en <span className="text-secondary">Distribución</span>
         </h1>
         <p className="text-muted-foreground text-lg font-medium">
-          Precios mayoristas, gestión logística y atención preferencial para clínicas veterinarias y tiendas especializadas.
+          Suministro mayorista, gestión de inventario y atención personalizada para establecimientos del sector animal.
         </p>
       </section>
 
       {/* Benefits */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {[
-          { icon: <Building2 className="w-8 h-8 text-primary" />, title: 'Tarifas Mayoristas', desc: 'Descuentos progresivos según volumen de compra.' },
-          { icon: <Truck className="w-8 h-8 text-primary" />, title: 'Distribución Nacional', desc: 'Despacho prioritario para el sector profesional.' },
-          { icon: <CheckCircle2 className="w-8 h-8 text-primary" />, title: 'Condiciones Flexibles', desc: 'Opciones de pago adaptadas a las necesidades de su empresa.' }
+          { icon: <Building2 className="w-8 h-8 text-primary" />, title: 'Tarifas Corporativas', desc: 'Escalas de descuento basadas en volumen de facturación.' },
+          { icon: <Truck className="w-8 h-8 text-primary" />, title: 'Logística Integrada', desc: 'Planificación de rutas de despacho con alcance nacional.' },
+          { icon: <CheckCircle2 className="w-8 h-8 text-primary" />, title: 'Garantía Técnica', desc: 'Asesoría profesional en la selección de su portafolio.' }
         ].map((benefit, i) => (
           <Card key={i} className="rounded-[2.5rem] border-none bg-white shadow-xl shadow-black/5 hover:scale-[1.02] transition-transform">
             <CardContent className="p-8 space-y-4">
@@ -44,16 +44,16 @@ export default function B2BPage() {
       {/* Contact Form */}
       <section className="bg-primary rounded-[3rem] p-8 md:p-16 text-white grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-6">
-          <h2 className="text-3xl md:text-5xl font-black">Asóciese con nosotros</h2>
-          <p className="text-white/80 text-lg">Complete el formulario y un ejecutivo comercial se pondrá en contacto en menos de 24 horas hábiles.</p>
+          <h2 className="text-3xl md:text-5xl font-black">Registro de Nuevo Cliente</h2>
+          <p className="text-white/80 text-lg">Inicie su solicitud de apertura de cuenta corriente comercial para acceder a nuestro portal mayorista.</p>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-secondary rounded-full" />
-              <span>Soporte técnico especializado</span>
+              <span>Acceso a listas de precios actualizadas</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-secondary rounded-full" />
-              <span>Acceso a catálogo exclusivo B2B</span>
+              <span>Crédito comercial sujeto a evaluación</span>
             </div>
           </div>
         </div>
@@ -62,21 +62,21 @@ export default function B2BPage() {
           <form className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-foreground">Nombre</Label>
-                <Input placeholder="Nombre completo" className="rounded-xl" />
+                <Label className="text-foreground">Razón Social</Label>
+                <Input placeholder="Nombre de la empresa" className="rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label className="text-foreground">RUT Empresa</Label>
-                <Input placeholder="Identificación fiscal" className="rounded-xl" />
+                <Label className="text-foreground">Identificación Fiscal</Label>
+                <Input placeholder="RUT o Tax ID" className="rounded-xl" />
               </div>
             </div>
             <div className="space-y-2">
               <Label className="text-foreground">Correo Corporativo</Label>
-              <Input type="email" placeholder="ejemplo@empresa.com" className="rounded-xl" />
+              <Input type="email" placeholder="compras@empresa.com" className="rounded-xl" />
             </div>
             <div className="space-y-2">
-              <Label className="text-foreground">Consulta o Requerimiento</Label>
-              <Textarea placeholder="Describa brevemente su necesidad..." className="rounded-xl" />
+              <Label className="text-foreground">Detalles del Requerimiento</Label>
+              <Textarea placeholder="Indique el volumen estimado de compra mensual..." className="rounded-xl" />
             </div>
             <Button className="w-full h-12 rounded-xl bg-secondary text-foreground font-bold hover:bg-secondary/90">
               Solicitar Apertura de Cuenta

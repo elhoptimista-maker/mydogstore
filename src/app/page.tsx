@@ -10,16 +10,16 @@ export default async function Home() {
   const products = await getProducts();
 
   const categories = [
-    { name: 'Perros', icon: <Dog className="w-8 h-8" />, color: 'bg-[#E6F4F3] text-primary', hint: 'dog' },
-    { name: 'Gatos', icon: <Cat className="w-8 h-8" />, color: 'bg-[#FFF3E9] text-[#FF9F43]', hint: 'cat' },
-    { name: 'Aves', icon: <Bird className="w-8 h-8" />, color: 'bg-[#E9F1FF] text-[#4A90E2]', hint: 'bird' },
-    { name: 'Higiene', icon: <Sparkles className="w-8 h-8" />, color: 'bg-[#F4E9FF] text-[#A259FF]', hint: 'clean' },
+    { name: 'Caninos', icon: <Dog className="w-8 h-8" />, color: 'bg-[#E6F4F3] text-primary' },
+    { name: 'Felinos', icon: <Cat className="w-8 h-8" />, color: 'bg-[#FFF3E9] text-[#FF9F43]' },
+    { name: 'Aves', icon: <Bird className="w-8 h-8" />, color: 'bg-[#E9F1FF] text-[#4A90E2]' },
+    { name: 'Cuidado e Higiene', icon: <Sparkles className="w-8 h-8" />, color: 'bg-[#F4E9FF] text-[#A259FF]' },
   ];
 
   const benefits = [
-    { icon: <Truck className="w-6 h-6" />, title: 'Envío Express', desc: 'Entrega en 24 horas' },
-    { icon: <ShieldCheck className="w-6 h-6" />, title: 'Pago Seguro', desc: 'Transacciones encriptadas' },
-    { icon: <Heart className="w-6 h-6" />, title: 'Calidad Certificada', desc: 'Productos seleccionados' },
+    { icon: <Truck className="w-6 h-6" />, title: 'Logística Eficiente', desc: 'Despacho prioritario a todo el país' },
+    { icon: <ShieldCheck className="w-6 h-6" />, title: 'Canal Profesional', desc: 'Precios competitivos por volumen' },
+    { icon: <Heart className="w-6 h-6" />, title: 'Calidad Certificada', desc: 'Garantía técnica de origen' },
   ];
 
   return (
@@ -29,33 +29,33 @@ export default async function Home() {
         <div className="absolute inset-0 opacity-10 wave-bg transform scale-150 -translate-y-1/2"></div>
         <div className="max-w-7xl mx-auto px-4 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm font-bold animate-bounce">
-              <Sparkles className="w-4 h-4 text-secondary" /> Especialistas en Nutrición Natural
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-white text-sm font-bold animate-pulse">
+              <Sparkles className="w-4 h-4 text-secondary" /> Soluciones Integrales para su Negocio
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
-              Bienestar integral <br /> para tu <span className="text-secondary">mascota</span>
+              Socio Estratégico <br /> en Distribución <span className="text-secondary">Animal</span>
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-medium max-w-lg mx-auto lg:mx-0">
-              Ofrecemos nutrición premium y accesorios diseñados para mejorar la calidad de vida de tu mejor amigo.
+              Abastecemos al sector profesional con nutrición especializada y accesorios de alto estándar internacional.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Link href="/products">
                 <Button size="lg" className="w-full sm:w-auto h-14 rounded-2xl bg-white text-primary font-bold hover:bg-secondary hover:text-white transition-all gap-2 px-10 text-lg shadow-xl shadow-black/10">
-                  Ver Catálogo <ArrowRight className="w-5 h-5" />
+                  Ver Catálogo Mayorista <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="#" className="text-white font-bold hover:underline">Promociones vigentes</Link>
+              <Link href="/b2b" className="text-white font-bold hover:underline">Solicitar apertura de cuenta</Link>
             </div>
           </div>
           <div className="relative hidden lg:block aspect-square group">
             <div className="absolute inset-0 bg-secondary rounded-full opacity-20 blur-3xl group-hover:opacity-40 transition-opacity"></div>
             <Image
-              src="https://picsum.photos/seed/dog-hero/800/800"
-              alt="Mascota saludable"
+              src="https://picsum.photos/seed/distributor-hero/800/800"
+              alt="Distribución profesional"
               fill
               className="object-contain animate-float drop-shadow-2xl"
               priority
-              data-ai-hint="healthy dog"
+              data-ai-hint="professional warehouse"
             />
           </div>
         </div>
@@ -86,7 +86,7 @@ export default async function Home() {
       {/* Categories */}
       <section className="py-12 space-y-8 max-w-7xl mx-auto w-full">
         <div className="px-4 flex items-center justify-between">
-          <h3 className="font-extrabold text-2xl md:text-3xl tracking-tight">Categorías <span className="text-primary">Destacadas</span></h3>
+          <h3 className="font-extrabold text-2xl md:text-3xl tracking-tight">Líneas de <span className="text-primary">Especialidad</span></h3>
         </div>
         <div className="flex gap-8 overflow-x-auto px-4 no-scrollbar snap-x py-2">
           {categories.map((cat, i) => (
@@ -103,56 +103,15 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Mosaic */}
-      <section className="px-4 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-6 py-12">
-        <div className="relative h-64 md:h-[450px] rounded-[2.5rem] overflow-hidden bg-secondary/20 border-2 border-secondary/20 group">
-          <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end gap-3 z-10">
-            <span className="px-3 py-1 rounded-full text-[10px] uppercase tracking-tighter w-fit bg-secondary text-foreground font-bold">OFERTA TEMPORAL</span>
-            <h3 className="text-2xl md:text-4xl font-extrabold text-foreground leading-tight">Accesorios <br /> de Paseo</h3>
-            <p className="text-muted font-medium">Hasta 40% de descuento en arneses</p>
-            <Button variant="link" className="w-fit p-0 text-primary font-bold gap-2">Comprar ahora <ArrowRight className="w-4 h-4" /></Button>
-          </div>
-          <Image
-            src="https://picsum.photos/seed/promo-leash/600/600"
-            alt="Accesorios de paseo"
-            fill
-            className="object-contain absolute -right-20 -top-10 transition-transform duration-700 group-hover:scale-110 opacity-40 md:opacity-100"
-            data-ai-hint="dog leash"
-          />
-        </div>
-        <div className="grid grid-rows-2 gap-6">
-           <div className="relative rounded-[2.5rem] overflow-hidden bg-[#E6F4F3] border-2 border-primary/10 p-8 flex items-center justify-between group">
-              <div className="space-y-2 z-10">
-                <h4 className="text-xl font-bold text-primary">Nutrición Avanzada</h4>
-                <p className="text-sm text-muted-foreground">Fórmulas especializadas</p>
-                <Link href="/products" className="text-sm font-bold underline text-primary">Explorar</Link>
-              </div>
-              <div className="relative w-32 h-32 group-hover:scale-110 transition-transform duration-500">
-                <Image src="https://picsum.photos/seed/promo-food/200/200" alt="Comida saludable" fill className="object-contain" data-ai-hint="dog food" />
-              </div>
-           </div>
-           <div className="relative rounded-[2.5rem] overflow-hidden bg-white border-2 border-border/50 p-8 flex items-center justify-between group">
-              <div className="space-y-2 z-10 text-center flex flex-col items-center">
-                <h4 className="text-xl font-bold text-foreground">Suscripción Programada</h4>
-                <p className="text-sm text-muted-foreground mb-2">Ahorro recurrente mensual</p>
-                <Button variant="outline" className="rounded-full border-secondary text-secondary font-bold hover:bg-secondary hover:text-white">Unirse ahora</Button>
-              </div>
-              <div className="relative w-32 h-32 opacity-20 md:opacity-100">
-                <Image src="https://picsum.photos/seed/promo-sub/200/200" alt="Suscripción" fill className="object-contain" data-ai-hint="subscription" />
-              </div>
-           </div>
-        </div>
-      </section>
-
       {/* Featured Products */}
       <section className="px-4 max-w-7xl mx-auto w-full space-y-10 py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <div className="space-y-2">
-            <h3 className="font-extrabold text-2xl md:text-4xl tracking-tight">Nuestra Selección</h3>
-            <p className="text-muted font-medium">Los productos más destacados de la semana</p>
+            <h3 className="font-extrabold text-2xl md:text-4xl tracking-tight">Destacados de Inventario</h3>
+            <p className="text-muted font-medium">Soluciones con alta rotación para su punto de venta</p>
           </div>
           <Link href="/products">
-            <Button variant="outline" className="rounded-2xl border-primary text-primary hover:bg-primary/5 font-bold h-12 px-8">Ver todo el catálogo</Button>
+            <Button variant="outline" className="rounded-2xl border-primary text-primary hover:bg-primary/5 font-bold h-12 px-8">Explorar Catálogo</Button>
           </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
@@ -162,10 +121,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Brands */}
+      {/* Partners */}
       <section className="py-20 bg-white border-y border-border/50">
         <div className="max-w-7xl mx-auto px-4 space-y-12">
-          <h4 className="text-center font-bold text-muted uppercase tracking-widest text-sm">Marcas de confianza</h4>
+          <h4 className="text-center font-bold text-muted uppercase tracking-widest text-sm">Marcas Representadas</h4>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale hover:grayscale-0 transition-all">
              <div className="text-2xl font-black italic">ROYAL-CANIN</div>
              <div className="text-2xl font-black italic">BRAVERY</div>

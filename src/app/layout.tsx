@@ -5,8 +5,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
 
 export const metadata: Metadata = {
-  title: 'MydogStore | Nutrición y Bienestar Animal 🐾',
-  description: 'Todo lo que tu mascota necesita en un solo lugar. Nutrición premium, accesorios especializados y asesoría profesional.',
+  title: 'MyDog Distribuidora | Soluciones Mayoristas para el Sector Veterinario 🐾',
+  description: 'Distribución líder de nutrición premium y accesorios especializados. Abastecimiento profesional para clínicas y tiendas de mascotas.',
 };
 
 export const viewport: Viewport = {
@@ -34,41 +34,41 @@ export default function RootLayout({
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="space-y-4">
                 <span className="text-2xl font-bold text-primary tracking-tight">
-                  My<span className="text-secondary">dog</span>Store
+                  My<span className="text-secondary">dog</span>Distribuidora
                 </span>
                 <p className="text-muted text-sm leading-relaxed">
-                  Expertos en nutrición y salud animal. Ofrecemos soluciones de alta calidad para el bienestar de tu mascota.
+                  Socio estratégico en nutrición y salud animal. Proveemos soluciones de alta calidad para el canal profesional y especializado.
                 </p>
               </div>
               <div>
-                <h4 className="font-bold mb-4">Catálogo</h4>
+                <h4 className="font-bold mb-4">Catálogo Mayorista</h4>
                 <ul className="text-sm text-muted space-y-2">
-                  <li className="hover:text-primary cursor-pointer">Alimentos Premium</li>
-                  <li className="hover:text-primary cursor-pointer">Juguetes de Estimulación</li>
-                  <li className="hover:text-primary cursor-pointer">Descanso y Camas</li>
-                  <li className="hover:text-primary cursor-pointer">Accesorios</li>
+                  <li className="hover:text-primary cursor-pointer">Nutrición de Especialidad</li>
+                  <li className="hover:text-primary cursor-pointer">Equipamiento Clínico</li>
+                  <li className="hover:text-primary cursor-pointer">Mobiliario de Descanso</li>
+                  <li className="hover:text-primary cursor-pointer">Accesorios Técnicos</li>
                 </ul>
               </div>
               <div>
                 <h4 className="font-bold mb-4">Institucional</h4>
                 <ul className="text-sm text-muted space-y-2">
-                  <li className="hover:text-primary cursor-pointer">Sobre Nosotros</li>
-                  <li className="hover:text-primary cursor-pointer">Puntos de Venta</li>
-                  <li className="hover:text-primary cursor-pointer">Blog de Bienestar</li>
-                  <li className="hover:text-primary cursor-pointer">Contacto</li>
+                  <li className="hover:text-primary cursor-pointer">Nuestra Empresa</li>
+                  <li className="hover:text-primary cursor-pointer">Centros de Distribución</li>
+                  <li className="hover:text-primary cursor-pointer">Portal de Proveedores</li>
+                  <li className="hover:text-primary cursor-pointer">Contacto Corporativo</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold mb-4">Soporte</h4>
+                <h4 className="font-bold mb-4">Servicios B2B</h4>
                 <ul className="text-sm text-muted space-y-2">
-                  <li className="hover:text-primary cursor-pointer">Preguntas Frecuentes</li>
-                  <li className="hover:text-primary cursor-pointer">Envíos y Devoluciones</li>
-                  <li className="hover:text-primary cursor-pointer">Garantía de Satisfacción</li>
+                  <li className="hover:text-primary cursor-pointer">Gestión de Pedidos</li>
+                  <li className="hover:text-primary cursor-pointer">Logística y Despacho</li>
+                  <li className="hover:text-primary cursor-pointer">Capacitación Técnica</li>
                 </ul>
               </div>
             </div>
             <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-border text-center text-xs text-muted font-medium">
-              © 2024 MydogStore. Compromiso con el bienestar animal.
+              © 2024 MyDog Distribuidora. Excelencia en logística para el bienestar animal.
             </div>
           </footer>
           <Toaster />

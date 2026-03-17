@@ -11,50 +11,48 @@ export interface Product {
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: '1',
-    name: 'Alimento Premium Adulto',
-    description: 'Nutrición balanceada con ingredientes 100% naturales para tu peludo.',
-    price: 45990,
-    category: 'Nutrición',
+    name: 'Nutrición Especializada Fase Adulta',
+    description: 'Fórmula de alto rendimiento energético diseñada para optimizar la salud digestiva y el pelaje.',
+    price: 38990,
+    category: 'Nutrición Clínica',
     imageUrl: 'https://picsum.photos/seed/dogfood1/600/600',
     rating: 4.8
   },
   {
     id: '2',
-    name: 'Juguete de Caucho Natural',
-    description: 'Ultra resistente, diseñado para horas de diversión y limpieza dental.',
-    price: 12500,
-    category: 'Juguetes',
+    name: 'Mordedor de Polímero Técnico',
+    description: 'Accesorio de alta resistencia para estimulación cognitiva y profilaxis dental mecánica.',
+    price: 8500,
+    category: 'Accesorios Técnicos',
     imageUrl: 'https://picsum.photos/seed/dogtoy1/600/600',
     rating: 4.9
   },
   {
     id: '3',
-    name: 'Cama Ortopédica Viscoelástica',
-    description: 'El descanso que tu regalón merece con soporte para sus articulaciones.',
-    price: 78900,
-    category: 'Descanso',
+    name: 'Soporte Ortopédico de Alta Densidad',
+    description: 'Superficie viscoelástica con certificación ergonómica para soporte articular prolongado.',
+    price: 65900,
+    category: 'Mobiliario',
     imageUrl: 'https://picsum.photos/seed/dogbed1/600/600',
     rating: 4.7
   },
   {
     id: '4',
-    name: 'Arnés Reflectante Ergonómico',
-    description: 'Paseos seguros y cómodos con visibilidad nocturna mejorada.',
-    price: 22900,
-    category: 'Paseo',
+    name: 'Sistema de Sujeción Ergonómico',
+    description: 'Equipamiento de paseo con materiales reflectantes de alta visibilidad y diseño anatómico.',
+    price: 18900,
+    category: 'Accesorios Técnicos',
     imageUrl: 'https://picsum.photos/seed/dogharness1/600/600',
     rating: 4.6
   }
 ];
 
 export async function getProducts(): Promise<Product[]> {
-  // Simulación de delay de red
   await new Promise(resolve => setTimeout(resolve, 100));
   return MOCK_PRODUCTS;
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
-  // Simulación de delay de red
   await new Promise(resolve => setTimeout(resolve, 100));
   return MOCK_PRODUCTS.find(p => p.id === id);
 }
