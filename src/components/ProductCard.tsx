@@ -40,15 +40,15 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <>
       <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-2 border border-black/[0.02] flex flex-col h-full">
-        {/* Visual Header - Brand & Badges */}
+        {/* Etiqueta de Marca - Siempre visible arriba a la izquierda */}
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
           <span className="bg-primary/10 backdrop-blur-md text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/10">
             {product.attributes.brand}
           </span>
         </div>
 
-        {/* Image Container */}
-        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-4 md:p-6 cursor-pointer">
+        {/* Contenedor de Imagen */}
+        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-4 md:p-6">
           <Link href={`/catalogo/${product.id}`} className="block relative w-full h-full">
             <Image
               src={product.media.main_image}
@@ -59,8 +59,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             />
           </Link>
           
-          {/* Quick View Button - Appears on Hover */}
-          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+          {/* Botón Vista Rápida - Overlay en Hover para Desktop */}
+          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center pointer-events-none">
             <Button 
               onClick={handleQuickView}
               className="pointer-events-auto bg-white/90 backdrop-blur-sm text-primary font-black rounded-full h-12 px-6 shadow-2xl hover:bg-white scale-90 group-hover:scale-100 transition-all duration-300 gap-2 border-none"
@@ -69,6 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </Button>
           </div>
           
+          {/* Botón Favorito */}
           <button 
             onClick={(e) => {
               e.preventDefault();
@@ -83,29 +84,32 @@ export default function ProductCard({ product }: ProductCardProps) {
           </button>
         </div>
         
-        {/* Content */}
+        {/* Contenido de la Tarjeta */}
         <div className="p-5 md:p-8 flex flex-col flex-1">
+          {/* Rating y Tag de Popularidad */}
           <div className="flex items-center gap-1 mb-2 md:mb-3">
             <Star className="w-3 h-3 fill-secondary text-secondary" />
             <span className="text-[10px] md:text-xs font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
           </div>
           
+          {/* Nombre del Producto */}
           <Link href={`/catalogo/${product.id}`}>
             <h3 className="text-sm md:text-base font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors mb-4 md:mb-6">
               {product.metadata.name}
             </h3>
           </Link>
           
+          {/* Pie de Tarjeta - Precio y Acciones */}
           <div className="mt-auto flex items-end justify-between gap-2 md:gap-4">
             <div className="flex flex-col">
-              <span className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-0.5 md:mb-1">Precio Venta</span>
+              <span className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-0.5 md:mb-1">Precio Distribución</span>
               <span className="text-lg md:text-2xl font-black text-primary tracking-tighter">
                 ${product.financials.pricing.base_price.toLocaleString('es-CL')}
               </span>
             </div>
             
             <div className="flex gap-2">
-              {/* Eye icon for mobile/tablet where hover is not consistent */}
+              {/* Icono de Vista Rápida - Visible en móviles/tablets */}
               <Button 
                 onClick={handleQuickView}
                 variant="ghost"
@@ -114,6 +118,8 @@ export default function ProductCard({ product }: ProductCardProps) {
               >
                 <Eye className="w-5 h-5" />
               </Button>
+              
+              {/* Botón de Añadir al Carrito */}
               <Button 
                 onClick={handleAddToCart}
                 size="icon" 
@@ -126,6 +132,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
+      {/* Modal de Vista Rápida */}
       <QuickViewModal 
         product={product} 
         open={showQuickView} 
