@@ -10,14 +10,14 @@
     --card-foreground: 180 100% 5%;
     --popover: 0 0% 100%;
     --popover-foreground: 180 100% 5%;
-    --primary: 180 100% 25%; /* #008080 */
+    --primary: 180 100% 25%; /* #008080 Teal */
     --primary-foreground: 0 0% 100%;
-    --secondary: 38 92% 50%; /* #F59E0B - Armónico Complementario */
+    --secondary: 45 100% 50%; /* Mango de la imagen */
     --secondary-foreground: 180 100% 5%;
     --muted: 180 20% 96%;
     --muted-foreground: 180 10% 40%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 180 100% 5%;
+    --accent: 25 100% 60%; /* Orange de la imagen */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 180 10% 90%;

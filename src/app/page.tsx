@@ -26,7 +26,6 @@ export default async function Home() {
   // Lógica de Precios Segura en Servidor (Margen 30% sobre el costo neto)
   const products = rawProducts.map(product => {
     const costNet = product.financials?.cost?.net || 0;
-    // Si hay costo neto, calculamos el precio de venta (costo / 0.7 para margen 30%)
     const calculatedPrice = costNet > 0 ? Math.round(costNet / 0.7) : product.financials.pricing.base_price;
     
     // Eliminamos financials.cost antes de enviarlo al cliente
@@ -51,20 +50,20 @@ export default async function Home() {
   return (
     <div className="bg-background flex flex-col min-h-screen">
       
-      {/* 1. Hero Section - Refined & Impactful */}
+      {/* 1. Hero Section - Refinado con Teal y Mango */}
       <section className="px-4 py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-primary rounded-[3rem] p-8 md:p-20 relative overflow-hidden shadow-2xl shadow-primary/20">
+          <div className="bg-primary rounded-[3rem] p-8 md:p-20 relative overflow-hidden shadow-2xl shadow-primary/20 border-b-8 border-secondary/20">
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="space-y-8 text-center md:text-left">
                 <Badge className="bg-secondary text-primary font-black px-5 py-1.5 rounded-full text-[10px] tracking-[0.2em] border-none shadow-xl shadow-black/10">
-                  NUEVA TEMPORADA
+                  TEMPORADA TEAL
                 </Badge>
                 <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] tracking-tighter">
                   Bienestar <span className="text-secondary italic">Premium</span> <br /> para tu mascota.
                 </h1>
                 <p className="text-white/70 text-lg md:text-xl font-medium max-w-md mx-auto md:mx-0 leading-relaxed">
-                  Expertos en nutrición y accesorios con más de 15 años cuidando a los que más quieres.
+                  Líderes en nutrición y accesorios certificados con más de 15 años cuidando a los que más quieres.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Link href="/catalogo">
@@ -77,7 +76,7 @@ export default async function Home() {
               <div className="hidden md:block relative aspect-square max-w-lg ml-auto">
                 <div className="absolute inset-0 bg-white/5 rounded-full blur-3xl scale-150 animate-pulse"></div>
                 <Image
-                  src="https://picsum.photos/seed/mydog-hero/800/800"
+                  src="https://picsum.photos/seed/mydog-teal/800/800"
                   alt="MyDog Hero"
                   fill
                   className="object-contain drop-shadow-2xl animate-float"
@@ -112,7 +111,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Categories - Scroll Horizontal */}
+      {/* 3. Categories - Scroll Horizontal Adaptativo */}
       <section className="py-10 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-10">
           <div className="flex flex-col items-center gap-2">
@@ -125,7 +124,7 @@ export default async function Home() {
               { name: 'Gato', icon: <Cat />, color: 'bg-secondary/10 text-secondary' },
               { name: 'Aves', icon: <Bird />, color: 'bg-blue-50 text-blue-600' },
               { name: 'Peces', icon: <Fish />, color: 'bg-indigo-50 text-indigo-600' },
-              { name: 'Juguetes', icon: <Gamepad2 />, color: 'bg-orange-50 text-orange-600' },
+              { name: 'Juguetes', icon: <Gamepad2 />, color: 'bg-accent/10 text-accent' },
             ].map((cat, i) => (
               <div key={i} className="flex flex-col items-center gap-4 group cursor-pointer snap-center shrink-0">
                 <div className={cn(
@@ -143,13 +142,13 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. Featured Products - LARGE CARDS */}
+      {/* 4. Featured Products */}
       <section className="bg-white/50 py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12">
           <div className="flex items-end justify-between border-b border-primary/5 pb-8">
             <div className="space-y-2">
               <h2 className="text-3xl md:text-5xl font-black text-primary tracking-tighter">Novedades</h2>
-              <p className="text-muted-foreground font-medium">Selección exclusiva de raciones y accesorios</p>
+              <p className="text-muted-foreground font-medium">Selección exclusiva de raciones y accesorios premium</p>
             </div>
             <Link href="/catalogo">
               <Button variant="ghost" className="rounded-full text-primary font-black gap-2 hover:bg-primary/5">
@@ -165,12 +164,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 5. AI Assistant - Seamless Integration */}
+      {/* 5. AI Assistant - Integración Orgánica */}
       <section id="asistente" className="py-20 md:py-32 bg-primary/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
            <ProductAssistant />
         </div>
-        {/* Visual elements to break the "island" feeling */}
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"></div>
       </section>
