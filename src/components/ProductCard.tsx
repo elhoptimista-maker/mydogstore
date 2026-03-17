@@ -35,7 +35,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleQuickView = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setShowQuickView(true);
+    // Usamos un pequeño timeout para asegurar que el evento de clic se procese completamente
+    // antes de abrir el modal, evitando cierres accidentales por propagación.
+    setTimeout(() => {
+      setShowQuickView(true);
+    }, 10);
   };
 
   return (
@@ -48,7 +52,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Contenedor de Imagen - Área maximizada sin bordes internos */}
+        {/* Contenedor de Imagen */}
         <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] shrink-0">
           <Link href={`/catalogo/${product.id}`} className="block relative w-full h-full">
             <Image
@@ -62,8 +66,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
           
           <button 
+            type="button"
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               setIsFavorite(!isFavorite);
             }}
             className={cn(
@@ -88,7 +94,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </h3>
           </Link>
           
-          {/* Precio y Botones - Identicos para todas las vistas */}
+          {/* Precio y Botones */}
           <div className="mt-auto flex items-center justify-between gap-2 border-t border-black/[0.03] pt-4">
             <div className="flex flex-col min-w-0">
               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1 truncate">Precio Venta</span>
@@ -100,6 +106,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <div className="flex items-center gap-1.5 shrink-0">
               <Button 
                 onClick={handleQuickView}
+                type="button"
                 size="icon" 
                 variant="outline"
                 className="h-10 w-10 rounded-xl border-primary/20 text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
@@ -109,6 +116,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
               <Button 
                 onClick={handleAddToCart}
+                type="button"
                 size="icon" 
                 className="h-10 w-10 rounded-xl bg-secondary text-primary shadow-lg shadow-secondary/10 hover:bg-secondary/90 transition-all"
               >

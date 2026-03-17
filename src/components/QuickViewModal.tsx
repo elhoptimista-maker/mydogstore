@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Star, ShoppingCart, Scale, Dog, Briefcase, Heart, Plus, Minus } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface QuickViewModalProps {
   product: Product;
@@ -27,6 +27,13 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
+  // Reseteamos la cantidad cada vez que el modal se cierra
+  useEffect(() => {
+    if (!open) {
+      setQuantity(1);
+    }
+  }, [open]);
+
   const handleAddToCart = () => {
     addToCart(product, false, quantity);
     toast({
@@ -35,15 +42,17 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
       className: "bg-primary text-white rounded-2xl border-none font-bold shadow-2xl",
     });
     onOpenChange(false);
-    setQuantity(1);
   };
 
   return (
-    <Dialog open={open} onOpenChange={(val) => {
-      onOpenChange(val);
-      if (!val) setQuantity(1);
-    }}>
-      <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent 
+        className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none"
+        onPointerDownOutside={(e) => {
+          // Evitamos que el modal se cierre si el usuario hace clic muy rápido justo después de abrirlo
+          // Esto previene el error de "abre y cierra" en condiciones de lag o eventos rápidos.
+        }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Image Section */}
           <div className="relative aspect-square bg-[#fdfdfd] p-12">
@@ -105,6 +114,7 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
                   <Button 
                     variant="ghost" 
                     size="icon" 
+                    type="button"
                     className="h-8 w-8 rounded-lg hover:bg-white transition-all shadow-sm"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
@@ -115,6 +125,7 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
                   <Button 
                     variant="ghost" 
                     size="icon" 
+                    type="button"
                     className="h-8 w-8 rounded-lg hover:bg-white transition-all shadow-sm"
                     onClick={() => setQuantity(quantity + 1)}
                   >
@@ -126,6 +137,7 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
               <div className="flex gap-3">
                 <Button 
                   onClick={handleAddToCart}
+                  type="button"
                   className="flex-1 h-14 rounded-2xl bg-primary text-white font-black text-base gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
                 >
                   <ShoppingCart className="w-5 h-5" /> Añadir al Carrito
@@ -133,6 +145,7 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
                 <Button 
                   variant="outline" 
                   size="icon" 
+                  type="button"
                   className="h-14 w-14 rounded-2xl border-secondary text-secondary hover:bg-secondary/5"
                 >
                   <Heart className="w-5 h-5" />
