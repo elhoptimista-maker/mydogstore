@@ -110,13 +110,13 @@ export default async function Home() {
       </section>
 
       {/* 3. Categories - Scroll Horizontal en móvil, Grid en Desktop */}
-      <section className="py-6 md:py-10">
+      <section className="py-10 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-6">
           <div className="flex flex-col items-center gap-1">
             <h2 className="text-[10px] font-black text-primary/40 uppercase tracking-[0.4em]">Navegación Visual</h2>
             <h3 className="text-2xl md:text-3xl font-black tracking-tight">Explora por mascota</h3>
           </div>
-          <div className="flex overflow-x-auto md:justify-center gap-6 md:gap-10 no-scrollbar pb-2 snap-x">
+          <div className="flex overflow-x-auto md:justify-center gap-8 md:gap-14 no-scrollbar pt-4 pb-8 snap-x">
             {[
               { name: 'Perro', icon: <Dog />, color: 'bg-primary/5 text-primary' },
               { name: 'Gato', icon: <Cat />, color: 'bg-secondary/10 text-secondary' },
@@ -124,14 +124,14 @@ export default async function Home() {
               { name: 'Peces', icon: <Fish />, color: 'bg-indigo-50 text-indigo-600' },
               { name: 'Juguetes', icon: <Gamepad2 />, color: 'bg-accent/10 text-accent' },
             ].map((cat, i) => (
-              <div key={i} className="flex flex-col items-center gap-3 group cursor-pointer snap-center shrink-0">
+              <div key={i} className="flex flex-col items-center gap-4 group cursor-pointer snap-center shrink-0">
                 <div className={cn(
-                  "w-16 h-16 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-md group-hover:shadow-2xl group-hover:-translate-y-1.5 transition-all duration-500",
+                  "w-20 h-20 md:w-32 md:h-32 rounded-full flex items-center justify-center shadow-md group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500",
                   cat.color
                 )}>
-                  {cloneIcon(cat.icon, "w-7 h-7 md:w-10 md:h-10")}
+                  {cloneIcon(cat.icon, "w-8 h-8 md:w-14 md:h-14")}
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
+                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
                   {cat.name}
                 </span>
               </div>
