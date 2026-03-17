@@ -21,9 +21,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
       </SheetTrigger>
       <SheetContent 
         side="right"
-        className="w-full sm:max-w-md flex flex-col p-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
+        className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
       >
-        {/* Cabecera Corporativa - Sin padding inferior para unión directa */}
+        {/* Cabecera Corporativa - bg-primary se extiende hasta el borde inferior */}
         <SheetHeader className="p-6 bg-primary text-white shrink-0 border-none space-y-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -42,10 +42,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Listado de Productos - Sin paddings verticales en el contenedor principal para evitar gaps */}
-        <div className="flex-1 overflow-hidden bg-muted/5">
+        {/* Listado de Productos - Sin padding vertical en el contenedor para unión directa */}
+        <div className="flex-1 overflow-hidden bg-muted/5 border-none">
           <ScrollArea className="h-full">
-            <div className="px-6 py-0 space-y-0">
+            <div className="px-6 py-0">
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center py-24 space-y-4">
                   <div className="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center border border-border/50">
@@ -64,7 +64,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     key={item.id + (item.isSubscription ? '-sub' : '')} 
                     className={cn(
                       "flex gap-4 items-start py-6 border-b border-border/50 last:border-0",
-                      index === 0 && "pt-6" // Mantiene padding solo en el primer elemento para no tocar el header
+                      index === 0 && "pt-6" // Mantiene padding solo en el primer elemento para despegar del header
                     )}
                   >
                     <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
@@ -130,9 +130,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </ScrollArea>
         </div>
 
-        {/* Footer - Sin padding superior para unión directa con el listado */}
+        {/* Resumen Final - Unión directa con el listado de productos */}
         {cart.length > 0 && (
-          <div className="p-6 md:p-8 pt-4 bg-white shrink-0 border-none shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+          <div className="p-6 md:p-8 pt-6 bg-white shrink-0 border-none shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
             <div className="space-y-4 mb-6">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground font-medium">Subtotal Neto</span>
