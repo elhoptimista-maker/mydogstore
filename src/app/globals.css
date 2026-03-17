@@ -4,32 +4,36 @@
 
 @layer base {
   :root {
-    --background: 204 25% 94%; /* #ECF0F3 - Blanco azulado suave */
-    --foreground: 215 58% 10%;
+    --background: 0 0% 96%; /* #f6f6f6 */
+    --foreground: 0 0% 14%; /* #242424 */
     --card: 0 0% 100%;
-    --card-foreground: 215 58% 10%;
+    --card-foreground: 0 0% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 58% 10%;
-    --primary: 161 94% 20%; /* Verde Corporativo #03664A */
+    --popover-foreground: 0 0% 14%;
+    --primary: 178 100% 27%; /* #008B86 - Verde Cerceta */
     --primary-foreground: 0 0% 100%;
-    --secondary: 161 50% 95%;
-    --secondary-foreground: 161 94% 15%;
-    --muted: 215 20% 90%;
-    --muted-foreground: 215 20% 40%;
-    --accent: 191 76% 55%; /* Cyan-blue accentuation */
-    --accent-foreground: 215 58% 10%;
+    --secondary: 26 98% 76%; /* #FEB987 - Naranja Durazno */
+    --secondary-foreground: 0 0% 14%;
+    --muted: 0 0% 47%; /* #797979 */
+    --muted-foreground: 0 0% 47%;
+    --accent: 26 98% 76%;
+    --accent-foreground: 0 0% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 215 20% 85%;
-    --input: 215 20% 85%;
-    --ring: 161 94% 20%;
-    --radius: 1rem;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 178 100% 27%;
+    --radius: 1.5rem;
   }
 }
 
-@layer components {
-  .glass {
-    @apply bg-white/70 backdrop-blur-md border-b border-white/20 shadow-sm;
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

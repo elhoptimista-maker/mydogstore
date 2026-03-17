@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingBag, Search, Menu, User, Dog } from 'lucide-react';
+import { ShoppingCart, Bell, Menu, Dog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -10,51 +10,36 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out px-4 py-2 md:px-8",
-      scrolled ? "glass h-14" : "bg-transparent h-16"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4",
+      scrolled ? "h-16 bg-white shadow-md" : "h-16 bg-transparent"
     )}>
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="md:hidden text-primary">
-            <Menu className="w-5 h-5" />
-          </Button>
-          <Link href="/" className="flex items-center gap-2">
-            <div className="bg-primary p-1.5 rounded-lg">
-              <Dog className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-primary tracking-tight hidden sm:block">
-              My<span className="text-accent">dog</span>Store
-            </span>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+            <Dog className="text-white w-6 h-6" />
+          </div>
+          <Link href="/" className="font-extrabold text-xl tracking-tighter text-foreground">
+            My<span className="text-primary">dog</span>
           </Link>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-primary/80">
-          <Link href="/productos" className="hover:text-primary transition-colors">Catálogo</Link>
-          <Link href="/favoritos" className="hover:text-primary transition-colors">Favoritos</Link>
-          <Link href="/nosotros" className="hover:text-primary transition-colors">Nosotros</Link>
-        </nav>
-
-        <div className="flex items-center gap-1 md:gap-3">
-          <Button variant="ghost" size="icon" className="text-primary">
-            <Search className="w-5 h-5" />
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="rounded-2xl relative">
+            <Bell className="w-6 h-6 text-foreground" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full border-2 border-white"></span>
           </Button>
-          <Button variant="ghost" size="icon" className="hidden md:flex text-primary">
-            <User className="w-5 h-5" />
+          <Button variant="ghost" size="icon" className="rounded-2xl">
+            <ShoppingCart className="w-6 h-6 text-foreground" />
           </Button>
-          <Button variant="default" size="icon" className="relative bg-primary hover:bg-primary/90 rounded-full h-9 w-9">
-            <ShoppingBag className="w-4 h-4" />
-            <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center border-2 border-background">
-              0
-            </span>
+          <Button variant="ghost" size="icon" className="rounded-2xl">
+            <Menu className="w-6 h-6 text-foreground" />
           </Button>
         </div>
       </div>
