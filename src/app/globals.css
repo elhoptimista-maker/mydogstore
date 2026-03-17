@@ -65,5 +65,6 @@
 }
 
 .animate-scroll {
-  animation: scroll 40s linear infinite;
+  /* Se aumenta el tiempo para que el desplazamiento sea más lento y elegante */
+  animation: scroll 200s linear infinite;
 }
