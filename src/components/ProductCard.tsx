@@ -48,14 +48,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Contenedor de Imagen */}
-        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-6 shrink-0">
+        {/* Contenedor de Imagen - Maximizado */}
+        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-3 shrink-0">
           <Link href={`/catalogo/${product.id}`} className="block relative w-full h-full">
             <Image
               src={product.media.main_image}
               alt={product.metadata.name}
               fill
-              className="object-contain transition-transform duration-700 group-hover:scale-110 p-4"
+              className="object-contain transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 300px"
               priority={false}
             />
@@ -67,52 +67,52 @@ export default function ProductCard({ product }: ProductCardProps) {
               setIsFavorite(!isFavorite);
             }}
             className={cn(
-              "absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-20 shadow-sm",
+              "absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-20 shadow-sm",
               isFavorite ? "bg-red-500 text-white" : "bg-white/80 text-primary/40 hover:bg-white hover:text-red-500"
             )}
           >
-            <Heart className={cn("w-5 h-5", isFavorite && "fill-current")} />
+            <Heart className={cn("w-4 h-4", isFavorite && "fill-current")} />
           </button>
         </div>
         
         {/* Contenido de la Tarjeta */}
-        <div className="p-6 flex flex-col flex-1 min-w-0">
-          <div className="flex items-center gap-1 mb-3">
+        <div className="p-5 flex flex-col flex-1 min-w-0">
+          <div className="flex items-center gap-1 mb-2">
             <Star className="w-3 h-3 fill-secondary text-secondary" />
             <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
           </div>
           
-          <Link href={`/catalogo/${product.id}`} className="block mb-6">
+          <Link href={`/catalogo/${product.id}`} className="block mb-4">
             <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors">
               {product.metadata.name}
             </h3>
           </Link>
           
-          {/* Precio y Botones */}
+          {/* Precio y Botones - Protegido contra desbordamiento */}
           <div className="mt-auto flex items-center justify-between gap-2 border-t border-black/[0.03] pt-4">
             <div className="flex flex-col min-w-0">
               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1 truncate">Precio Venta</span>
-              <span className="text-lg font-black text-primary tracking-tighter leading-none">
+              <span className="text-base md:text-lg font-black text-primary tracking-tighter leading-none">
                 ${product.financials.pricing.base_price.toLocaleString('es-CL')}
               </span>
             </div>
             
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0">
               <Button 
                 onClick={handleQuickView}
                 size="icon" 
                 variant="outline"
-                className="h-10 w-10 rounded-xl border-primary/20 text-primary hover:bg-primary/5 transition-all"
+                className="h-9 w-9 md:h-10 md:w-10 rounded-xl border-primary/20 text-primary hover:bg-primary/5 transition-all"
               >
-                <Eye className="w-5 h-5" />
+                <Eye className="w-4 h-4 md:w-5 md:h-5" />
               </Button>
 
               <Button 
                 onClick={handleAddToCart}
                 size="icon" 
-                className="h-10 w-10 rounded-xl bg-secondary text-primary shadow-lg shadow-secondary/10 hover:bg-secondary/90 transition-all"
+                className="h-9 w-9 md:h-10 md:w-10 rounded-xl bg-secondary text-primary shadow-lg shadow-secondary/10 hover:bg-secondary/90 transition-all"
               >
-                <ShoppingCart className="w-5 h-5" />
+                <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
               </Button>
             </div>
           </div>
