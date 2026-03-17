@@ -48,8 +48,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Contenedor de Imagen - Maximizado */}
-        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-3 shrink-0">
+        {/* Contenedor de Imagen - Área maximizada sin bordes internos */}
+        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] shrink-0">
           <Link href={`/catalogo/${product.id}`} className="block relative w-full h-full">
             <Image
               src={product.media.main_image}
@@ -88,11 +88,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             </h3>
           </Link>
           
-          {/* Precio y Botones - Protegido contra desbordamiento */}
+          {/* Precio y Botones - Identicos para todas las vistas */}
           <div className="mt-auto flex items-center justify-between gap-2 border-t border-black/[0.03] pt-4">
             <div className="flex flex-col min-w-0">
               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1 truncate">Precio Venta</span>
-              <span className="text-base md:text-lg font-black text-primary tracking-tighter leading-none">
+              <span className="text-lg font-black text-primary tracking-tighter leading-none">
                 ${product.financials.pricing.base_price.toLocaleString('es-CL')}
               </span>
             </div>
@@ -102,17 +102,17 @@ export default function ProductCard({ product }: ProductCardProps) {
                 onClick={handleQuickView}
                 size="icon" 
                 variant="outline"
-                className="h-9 w-9 md:h-10 md:w-10 rounded-xl border-primary/20 text-primary hover:bg-primary/5 transition-all"
+                className="h-10 w-10 rounded-xl border-primary/20 text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
               >
-                <Eye className="w-4 h-4 md:w-5 md:h-5" />
+                <Eye className="w-5 h-5" />
               </Button>
 
               <Button 
                 onClick={handleAddToCart}
                 size="icon" 
-                className="h-9 w-9 md:h-10 md:w-10 rounded-xl bg-secondary text-primary shadow-lg shadow-secondary/10 hover:bg-secondary/90 transition-all"
+                className="h-10 w-10 rounded-xl bg-secondary text-primary shadow-lg shadow-secondary/10 hover:bg-secondary/90 transition-all"
               >
-                <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
+                <ShoppingCart className="w-5 h-5" />
               </Button>
             </div>
           </div>
