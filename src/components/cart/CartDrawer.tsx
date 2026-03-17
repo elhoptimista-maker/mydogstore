@@ -4,10 +4,11 @@
 import { useCart } from '@/context/CartContext';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2, Plus, Minus, Package } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Package, X } from 'lucide-react';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount } = useCart();
@@ -17,85 +18,127 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md flex flex-col p-0 rounded-l-[2.5rem] border-none shadow-2xl overflow-hidden">
-        <SheetHeader className="p-6 bg-primary text-white">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-              <ShoppingCart className="w-5 h-5" />
+      <SheetContent className="w-full sm:max-w-md flex flex-col p-0 rounded-l-[2rem] border-none shadow-2xl overflow-hidden bg-white">
+        {/* Header con diseño premium */}
+        <SheetHeader className="p-6 bg-primary text-white shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <ShoppingCart className="w-5 h-5" />
+              </div>
+              <SheetTitle className="text-white text-xl font-black tracking-tight">Mi Carrito</SheetTitle>
             </div>
-            <SheetTitle className="text-white text-2xl font-bold">Tu Carrito</SheetTitle>
-            <Badge className="ml-auto bg-secondary text-foreground font-black rounded-full">
-              {cartCount} items
+            <Badge className="bg-secondary text-foreground font-black rounded-full px-3 py-1">
+              {cartCount} {cartCount === 1 ? 'ítem' : 'ítems'}
             </Badge>
           </div>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar">
-          {cart.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40">
-              <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center">
-                <Package className="w-10 h-10" />
-              </div>
-              <p className="font-bold">Tu carrito está vacío</p>
-              <p className="text-sm">¡Tu peludo está esperando algo bakán!</p>
-            </div>
-          ) : (
-            cart.map((item) => (
-              <div key={item.id + (item.isSubscription ? '-sub' : '')} className="flex gap-4 group">
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-muted shrink-0 shadow-sm border border-border/50">
-                  <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex justify-between items-start gap-2">
-                    <h4 className="font-bold text-sm leading-tight line-clamp-2">{item.name}</h4>
-                    <button 
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-muted hover:text-red-500 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+        {/* Área de productos con ScrollArea para mejor UX en desktop */}
+        <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full">
+            <div className="p-6 space-y-6">
+              {cart.length === 0 ? (
+                <div className="flex flex-col items-center justify-center text-center py-20 space-y-4 opacity-40">
+                  <div className="w-24 h-24 bg-muted/50 rounded-full flex items-center justify-center">
+                    <Package className="w-10 h-10 text-muted-foreground" />
                   </div>
-                  {item.isSubscription && (
-                    <Badge variant="secondary" className="bg-primary/10 text-primary text-[10px] font-bold uppercase py-0">
-                      Suscripción (-10%)
-                    </Badge>
-                  )}
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-2 bg-muted rounded-full px-2 py-1">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="hover:text-primary"><Minus className="w-3 h-3" /></button>
-                      <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="hover:text-primary"><Plus className="w-3 h-3" /></button>
+                  <div className="space-y-1">
+                    <p className="font-black text-lg text-foreground">Tu carrito está vacío</p>
+                    <p className="text-sm text-muted-foreground">¡Aún no has agregado productos!</p>
+                  </div>
+                </div>
+              ) : (
+                cart.map((item) => (
+                  <div key={item.id + (item.isSubscription ? '-sub' : '')} className="flex gap-4 group items-start">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-muted shrink-0 shadow-sm border border-border/50">
+                      <Image 
+                        src={item.imageUrl} 
+                        alt={item.name} 
+                        fill 
+                        className="object-cover"
+                        sizes="80px"
+                      />
                     </div>
-                    <span className="font-black text-primary">
-                      ${((item.isSubscription ? item.price * 0.9 : item.price) * item.quantity).toLocaleString('es-CL')}
-                    </span>
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="flex justify-between items-start gap-2">
+                        <h4 className="font-bold text-sm leading-tight text-foreground line-clamp-2">{item.name}</h4>
+                        <button 
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-muted/40 hover:text-destructive transition-colors p-1"
+                          aria-label="Eliminar ítem"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      
+                      {item.isSubscription && (
+                        <Badge variant="secondary" className="bg-primary/5 text-primary text-[9px] font-black uppercase py-0 px-2 rounded-md">
+                          Suscripción (-10%)
+                        </Badge>
+                      )}
+
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-2 py-1">
+                          <button 
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+                            className="p-1 text-muted-foreground hover:text-primary transition-colors disabled:opacity-30"
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="text-xs font-black w-6 text-center">{item.quantity}</span>
+                          <button 
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)} 
+                            className="p-1 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-black text-primary text-sm">
+                            ${((item.isSubscription ? item.price * 0.9 : item.price) * item.quantity).toLocaleString('es-CL')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))
-          )}
+                ))
+              )}
+            </div>
+          </ScrollArea>
         </div>
 
+        {/* Footer con Resumen de Compra y Botón de Acción */}
         {cart.length > 0 && (
-          <SheetFooter className="p-6 bg-muted/30 border-t border-border mt-auto flex-col">
+          <SheetFooter className="p-6 bg-muted/30 border-t border-border shrink-0 sm:flex-col gap-0">
             <div className="w-full space-y-3 mb-6">
-              <div className="flex justify-between text-muted font-medium">
+              <div className="flex justify-between items-center text-muted-foreground font-medium text-sm">
                 <span>Subtotal</span>
-                <span>${cartTotal.toLocaleString('es-CL')}</span>
+                <span className="font-bold text-foreground">${cartTotal.toLocaleString('es-CL')}</span>
               </div>
-              <div className="flex justify-between text-green-600 font-bold text-sm">
-                <span>Envío</span>
-                <span className="uppercase tracking-widest text-[10px]">¡Gratis!</span>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground font-medium text-sm">Envío</span>
+                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 text-[10px] font-black uppercase tracking-widest px-2 py-0">
+                  Gratis
+                </Badge>
               </div>
-              <Separator />
-              <div className="flex justify-between text-xl font-black text-primary">
-                <span>Total</span>
-                <span>${cartTotal.toLocaleString('es-CL')}</span>
+              <Separator className="bg-border/60" />
+              <div className="flex justify-between items-end pt-1">
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Final</span>
+                  <span className="text-2xl font-black text-primary tracking-tighter">
+                    ${cartTotal.toLocaleString('es-CL')}
+                  </span>
+                </div>
               </div>
             </div>
-            <Button className="w-full h-14 rounded-2xl bg-primary text-white font-bold text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform">
-              Finalizar Compra
+            <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
+              Continuar al Pago
             </Button>
+            <p className="text-[10px] text-center text-muted-foreground mt-4 font-medium">
+              Transacciones seguras procesadas por Webpay Plus
+            </p>
           </SheetFooter>
         )}
       </SheetContent>
