@@ -118,7 +118,7 @@ export default async function Home() {
             <h2 className="text-[10px] font-black text-primary/40 uppercase tracking-[0.4em]">Nuestros Amigos</h2>
             <h3 className="text-2xl md:text-3xl font-black tracking-tight">Explora por mascota</h3>
           </div>
-          <div className="flex overflow-x-auto md:justify-center gap-8 md:gap-14 no-scrollbar pt-4 pb-8 snap-x">
+          <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-14 no-scrollbar pt-4 pb-8 snap-x">
             {[
               { name: 'Perros', icon: <Dog />, color: 'bg-primary/5 text-primary' },
               { name: 'Gatos', icon: <Cat />, color: 'bg-secondary/10 text-secondary' },
