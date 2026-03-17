@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Menu, Dog, Search, User, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Menu, Dog, Search, Heart, Phone, ChevronDown, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -10,123 +10,114 @@ import CartDrawer from '@/components/cart/CartDrawer';
 import { Badge } from '@/components/ui/badge';
 
 export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
   const { cartCount } = useCart();
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300">
-      {/* Promo Bar - Solid Background, high visibility */}
-      <div className="bg-primary py-2 px-4 text-center relative z-20">
-        <p className="text-[10px] md:text-xs font-bold text-white uppercase tracking-widest flex items-center justify-center gap-2">
-          <span className="animate-bounce">🚚</span> DESPACHO GRATIS POR COMPRAS SOBRE $50.000 EN SANTIAGO
-        </p>
+    <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 shadow-sm">
+      {/* 1. Top Bar (Utilidad) */}
+      <div className="h-10 bg-accent text-accent-foreground flex justify-between items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-4">
+          <span>🚚 Envíos gratis sobre $50.000</span>
+          <span className="hidden md:inline text-accent-foreground/60">|</span>
+          <span className="hidden md:inline">Lunes a Viernes: 09:00 - 18:00</span>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity">
+            <span>CLP</span>
+            <ChevronDown className="w-3 h-3" />
+          </div>
+          <Link href="#" className="hover:underline">Seguimiento</Link>
+          <Link href="#" className="hover:underline flex items-center gap-1">
+            <User className="w-3.5 h-3.5" /> Mi Cuenta
+          </Link>
+        </div>
       </div>
 
-      {/* Main Header */}
-      <div className={cn(
-        "bg-white transition-all duration-500 px-4 md:px-8 border-b border-black/[0.03]",
-        scrolled ? "h-16 shadow-lg" : "h-20"
-      )}>
-        <div className="max-w-7xl mx-auto h-full flex items-center gap-4 md:gap-12">
+      {/* 2. Main Header (Búsqueda y Acciones) */}
+      <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
+        <div className="max-w-7xl mx-auto w-full flex items-center gap-8 md:gap-12">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
-              <Dog className="w-7 h-7 md:w-8 md:h-8 text-white" />
+          <Link href="/" className="flex items-center gap-3 shrink-0 group">
+            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-white/20 transition-all">
+              <Dog className="w-8 h-8 text-white" />
             </div>
-            <div className="hidden sm:flex flex-col -space-y-1">
-              <span className="font-black text-xl md:text-2xl text-primary tracking-tighter leading-none">
-                MyDog
-              </span>
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
-                Distribuidora
-              </span>
+            <div className="flex flex-col -space-y-1">
+              <span className="font-black text-2xl tracking-tighter leading-none">MyDog</span>
+              <span className="text-[10px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
             </div>
           </Link>
 
-          {/* Navigation - Center */}
-          <nav className="hidden lg:flex items-center gap-10">
-            {[
-              { label: 'Inicio', href: '/' },
-              { label: 'Catálogo', href: '/catalogo' },
-              { label: 'Mayoristas', href: '/b2b' },
-              { label: 'Nosotros', href: '#' },
-            ].map((link) => (
-              <Link 
-                key={link.label} 
-                href={link.href}
-                className="text-sm font-bold text-foreground/70 hover:text-primary transition-colors tracking-tight"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          {/* Search Pill */}
+          <div className="flex-1 hidden md:flex max-w-2xl relative group">
+            <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner group-focus-within:ring-4 group-focus-within:ring-white/20 transition-all">
+              <div className="flex items-center px-5 border-r border-black/5 cursor-pointer hover:bg-black/5 transition-colors h-full">
+                <span className="text-xs font-black text-foreground uppercase tracking-wider mr-2">Todas</span>
+                <ChevronDown className="w-3.5 h-3.5 text-foreground/40" />
+              </div>
+              <input 
+                type="text" 
+                placeholder="Busca alimento, snacks o accesorios..." 
+                className="flex-1 h-full px-5 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/60"
+              />
+              <button className="h-10 w-10 bg-primary rounded-full mr-1 flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md">
+                <Search className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
 
-          {/* Search & Actions */}
-          <div className="flex-1 flex items-center justify-end gap-2 md:gap-6">
-            <div className="hidden md:flex flex-1 max-w-md relative group">
-              <div className="relative flex items-center bg-muted rounded-full w-full overflow-hidden focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-transparent focus-within:border-primary/10">
-                <input 
-                  type="text" 
-                  placeholder="¿Qué necesita tu mascota hoy?" 
-                  className="w-full h-10 px-5 text-sm font-medium bg-transparent outline-none"
-                />
-                <button className="h-full px-4 text-muted-foreground hover:text-primary">
-                  <Search className="w-4 h-4" />
-                </button>
+          {/* Actions */}
+          <div className="flex items-center gap-2 md:gap-6 shrink-0">
+            <div className="hidden lg:flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <Phone className="w-4 h-4" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold text-white/60 uppercase">Soporte</span>
+                <span className="text-sm font-black tracking-tight">+56 9 1234 5678</span>
               </div>
             </div>
+            
+            <button className="relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+              <Heart className="w-5 h-5" />
+            </button>
 
-            <div className="flex items-center gap-1 md:gap-3">
-              <Button variant="ghost" size="icon" className="md:hidden text-primary">
-                <Search className="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="hidden sm:flex text-primary hover:bg-primary/5 rounded-full">
-                <User className="w-5 h-5" />
-              </Button>
-              
-              <CartDrawer>
-                <button className="relative p-2.5 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
-                  <ShoppingCart className="w-5 h-5" />
-                  {cartCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 bg-secondary text-primary font-black text-[9px] min-w-[1.2rem] h-[1.2rem] flex items-center justify-center border-2 border-white rounded-full">
-                      {cartCount}
-                    </Badge>
-                  )}
-                </button>
-              </CartDrawer>
-            </div>
+            <CartDrawer>
+              <button className="relative w-12 h-12 bg-white text-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all">
+                <ShoppingCart className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 bg-accent text-accent-foreground font-black text-[10px] min-w-[1.25rem] h-[1.25rem] flex items-center justify-center border-2 border-primary rounded-full">
+                    {cartCount}
+                  </Badge>
+                )}
+              </button>
+            </CartDrawer>
           </div>
         </div>
       </div>
 
-      {/* Sub Header - Categorías */}
-      <div className={cn(
-        "hidden md:block transition-all duration-300",
-        scrolled ? "h-0 overflow-hidden opacity-0" : "h-10 bg-white/80 backdrop-blur-md border-b border-black/[0.02]"
-      )}>
-        <div className="max-w-7xl mx-auto px-8 h-full flex items-center justify-between">
+      {/* 3. Menu Bar (Navegación) */}
+      <div className="h-12 bg-[#F6F6F6] border-b border-black/5 hidden md:flex items-center px-4 md:px-8">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-8 h-full">
-            <div className="h-full flex items-center gap-2 cursor-pointer group text-primary font-bold text-xs uppercase tracking-widest border-r border-black/[0.05] pr-8">
+            <div className="bg-primary text-white h-full px-6 flex items-center gap-3 cursor-pointer hover:bg-primary/95 transition-all font-black text-[11px] uppercase tracking-[0.1em] rounded-t-xl">
               <Menu className="w-4 h-4" />
-              Categorías
-              <ChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180" />
+              Todas las Categorías
             </div>
-            <div className="flex items-center gap-6">
-              {['Alimento Seco', 'Higiene', 'Snacks', 'Accesorios', 'Ofertas'].map(cat => (
-                <Link key={cat} href={`/catalogo?cat=${cat}`} className="text-[10px] font-bold text-muted-foreground hover:text-primary uppercase tracking-wider transition-colors">
-                  {cat}
+            <nav className="flex items-center gap-10">
+              {['Inicio', 'Catálogo', 'Mayoristas', 'Ofertas', 'Blog', 'Nosotros'].map((link) => (
+                <Link 
+                  key={link} 
+                  href={link === 'Inicio' ? '/' : link === 'Catálogo' ? '/catalogo' : link === 'Mayoristas' ? '/b2b' : '#'}
+                  className="text-[11px] font-black text-foreground/70 hover:text-primary uppercase tracking-widest transition-all"
+                >
+                  {link}
                 </Link>
               ))}
-            </div>
+            </nav>
           </div>
-          <div className="text-[10px] font-black text-secondary uppercase tracking-widest animate-pulse">
-            🔥 Ofertas de la semana
+          <div className="flex items-center gap-2 text-[11px] font-black text-primary/60 uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Venta Flash: 20% OFF en Champion Dog
           </div>
         </div>
       </div>

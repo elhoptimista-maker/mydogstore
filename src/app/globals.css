@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 180 20% 98%;
+    --background: 0 0% 98%;
     --foreground: 180 100% 5%;
     --card: 0 0% 100%;
     --card-foreground: 180 100% 5%;
     --popover: 0 0% 100%;
     --popover-foreground: 180 100% 5%;
-    --primary: 180 100% 25%; /* #008080 Teal */
+    --primary: 180 100% 25%; /* #008080 Teal/Green */
     --primary-foreground: 0 0% 100%;
     --secondary: 45 100% 50%; /* Mango */
     --secondary-foreground: 180 100% 25%;
-    --muted: 180 10% 94%;
-    --muted-foreground: 180 10% 40%;
-    --accent: 25 100% 60%; /* Orange */
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 100% 50%; /* Yellow/Mango */
+    --accent-foreground: 180 100% 5%;
+    --muted: 180 5% 94%;
+    --muted-foreground: 180 5% 45%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 180 10% 90%;
-    --input: 180 10% 90%;
+    --border: 180 5% 90%;
+    --input: 180 5% 90%;
     --ring: 180 100% 25%;
     --radius: 1.5rem;
   }
@@ -35,9 +35,6 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .glass {
-    @apply bg-white/90 backdrop-blur-md border-b border-black/[0.03];
-  }
 }
 
 @layer base {
@@ -47,24 +44,17 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-black tracking-tighter;
+  }
 }
 
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
+  50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
 }
 
-@keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
 .animate-float {
-  animation: float 5s ease-in-out infinite;
-}
-
-.animate-scroll {
-  /* Se aumenta el tiempo para que el desplazamiento sea más lento y elegante */
-  animation: scroll 200s linear infinite;
+  animation: float 4s ease-in-out infinite;
 }

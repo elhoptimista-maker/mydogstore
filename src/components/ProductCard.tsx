@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -32,97 +31,79 @@ export default function ProductCard({ product }: ProductCardProps) {
     });
   };
 
-  const handleQuickView = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Usamos un pequeño timeout para asegurar que el evento de clic se procese completamente
-    // antes de abrir el modal, evitando cierres accidentales por propagación.
-    setTimeout(() => {
-      setShowQuickView(true);
-    }, 10);
-  };
-
   return (
     <>
-      <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl border border-black/[0.02] flex flex-col h-full w-full max-w-full">
-        {/* Marca Flotante */}
-        <div className="absolute top-4 left-4 z-20">
-          <span className="bg-primary text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-md">
-            {product.attributes.brand}
-          </span>
+      <div className="bg-white border border-border/50 rounded-2xl p-4 flex flex-col relative group transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+        {/* Badges (Top Left) */}
+        <div className="absolute top-3 left-3 z-20 flex flex-col gap-1">
+          {product.financials.pricing.base_price < 20000 && (
+            <Badge className="bg-red-500 text-white border-none rounded-full px-2 py-0.5 text-[8px] font-black uppercase">Oferta</Badge>
+          )}
+          <Badge className="bg-primary text-white border-none rounded-full px-2 py-0.5 text-[8px] font-black uppercase">Nuevo</Badge>
         </div>
 
-        {/* Contenedor de Imagen */}
-        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] shrink-0">
-          <Link href={`/catalogo/${product.id}`} className="block relative w-full h-full">
-            <Image
-              src={product.media.main_image}
-              alt={product.metadata.name}
-              fill
-              className="object-contain transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, 300px"
-              priority={false}
-            />
-          </Link>
-          
+        {/* Actions (Top Right) */}
+        <div className="absolute top-3 right-3 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
           <button 
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setIsFavorite(!isFavorite);
-            }}
+            onClick={(e) => { e.preventDefault(); setIsFavorite(!isFavorite); }}
             className={cn(
-              "absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-20 shadow-sm",
-              isFavorite ? "bg-red-500 text-white" : "bg-white/80 text-primary/40 hover:bg-white hover:text-red-500"
+              "w-8 h-8 rounded-full flex items-center justify-center transition-all bg-white shadow-md border border-black/5 hover:scale-110",
+              isFavorite ? "text-red-500" : "text-foreground/40 hover:text-red-500"
             )}
           >
             <Heart className={cn("w-4 h-4", isFavorite && "fill-current")} />
           </button>
+          <button 
+            onClick={(e) => { e.preventDefault(); setShowQuickView(true); }}
+            className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-foreground/40 hover:text-primary transition-all shadow-md border border-black/5 hover:scale-110"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
         </div>
+
+        {/* Imagen */}
+        <Link href={`/catalogo/${product.id}`} className="block relative aspect-square overflow-hidden mb-4 rounded-xl bg-[#fdfdfd]">
+          <Image
+            src={product.media.main_image}
+            alt={product.metadata.name}
+            fill
+            className="object-contain p-4 transition-transform duration-700 group-hover:scale-110"
+            sizes="(max-width: 768px) 50vw, 250px"
+          />
+        </Link>
         
-        {/* Contenido de la Tarjeta */}
-        <div className="p-5 flex flex-col flex-1 min-w-0">
-          <div className="flex items-center gap-1 mb-2">
-            <Star className="w-3 h-3 fill-secondary text-secondary" />
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
-          </div>
-          
-          <Link href={`/catalogo/${product.id}`} className="block mb-4">
-            <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors">
+        {/* Meta */}
+        <div className="flex flex-col flex-1 space-y-2 min-w-0">
+          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{product.attributes.category}</span>
+          <Link href={`/catalogo/${product.id}`} className="block">
+            <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors min-h-[2.5rem]">
               {product.metadata.name}
             </h3>
           </Link>
           
-          {/* Precio y Botones */}
-          <div className="mt-auto flex items-center justify-between gap-2 border-t border-black/[0.03] pt-4">
-            <div className="flex flex-col min-w-0">
-              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1 truncate">Precio Venta</span>
-              <span className="text-2xl font-black text-primary tracking-tighter leading-none">
+          <div className="flex items-center gap-1">
+            {[1,2,3,4,5].map(i => (
+              <Star key={i} className={cn("w-2.5 h-2.5 fill-current", i <= 4 ? "text-accent" : "text-muted")} />
+            ))}
+            <span className="text-[9px] font-bold text-muted-foreground ml-1">(12)</span>
+          </div>
+
+          {/* Footer de Tarjeta */}
+          <div className="flex items-center justify-between pt-2 mt-auto border-t border-black/5">
+            <div className="flex flex-col">
+              <span className="text-lg font-black text-primary tracking-tighter leading-none">
                 ${product.financials.pricing.base_price.toLocaleString('es-CL')}
               </span>
+              <span className="text-[9px] text-muted-foreground line-through font-bold">
+                ${(product.financials.pricing.base_price * 1.2).toLocaleString('es-CL', { maximumFractionDigits: 0 })}
+              </span>
             </div>
-            
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Button 
-                onClick={handleQuickView}
-                type="button"
-                size="icon" 
-                variant="outline"
-                className="h-10 w-10 rounded-xl border-primary/20 text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
-              >
-                <Eye className="w-5 h-5" />
-              </Button>
-
-              <Button 
-                onClick={handleAddToCart}
-                type="button"
-                size="icon" 
-                className="h-10 w-10 rounded-xl bg-secondary text-primary shadow-lg shadow-secondary/10 hover:bg-secondary/90 transition-all"
-              >
-                <ShoppingCart className="w-5 h-5" />
-              </Button>
-            </div>
+            <button 
+              onClick={handleAddToCart}
+              className="w-10 h-10 rounded-xl bg-muted group-hover:bg-primary text-primary group-hover:text-white transition-all flex items-center justify-center shadow-sm"
+            >
+              <ShoppingCart className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -134,4 +115,8 @@ export default function ProductCard({ product }: ProductCardProps) {
       />
     </>
   );
+}
+
+function Badge({ children, className }: { children: React.ReactNode, className?: string }) {
+  return <span className={cn("px-2 py-0.5 rounded-full inline-block", className)}>{children}</span>;
 }
