@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { getProducts } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
+import ProductAssistant from '@/components/ProductAssistant';
 import { cn } from '@/lib/utils';
 
 export default async function Home() {
@@ -101,8 +102,15 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Product Assistant Section */}
+      <section id="asistente" className="bg-muted/30 py-12">
+        <div className="max-w-7xl mx-auto px-4">
+           <ProductAssistant />
+        </div>
+      </section>
+
       {/* About Us Preview */}
-      <section className="py-12 px-4 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="py-20 px-4 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl">
           <Image 
             src="https://picsum.photos/seed/mydog-history/800/600" 
@@ -163,7 +171,7 @@ export default async function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          {products.map((product) => (
+          {products.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

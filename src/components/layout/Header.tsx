@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -38,7 +37,7 @@ export default function Header() {
             "font-extrabold text-2xl tracking-tighter hidden sm:block",
             scrolled ? "text-foreground" : "text-white"
           )}>
-            My<span className="text-primary">dog</span><span className="text-secondary">Store</span>
+            My<span className="text-primary">dog</span><span className="text-secondary">Distribuidora</span>
           </Link>
         </div>
 
@@ -50,7 +49,7 @@ export default function Header() {
           <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
           <Link href="/productos" className="hover:text-primary transition-colors">Catálogo</Link>
           <Link href="/b2b" className="flex items-center gap-2 hover:text-primary transition-colors">
-            <Briefcase className="w-4 h-4" /> B2B
+            <Briefcase className="w-4 h-4" /> Venta Mayorista
           </Link>
           <Link href="#" className="hover:text-primary transition-colors">Ofertas</Link>
         </nav>
@@ -64,7 +63,7 @@ export default function Header() {
             <Search className={cn("w-4 h-4 mr-2", scrolled ? "text-muted" : "text-white/60")} />
             <input 
               type="text" 
-              placeholder="Buscar..." 
+              placeholder="Buscar marcas..." 
               className={cn(
                 "bg-transparent border-none outline-none text-sm w-32 focus:w-48 transition-all font-medium placeholder:font-normal",
                 scrolled ? "text-foreground placeholder:text-muted" : "text-white placeholder:text-white/60"
