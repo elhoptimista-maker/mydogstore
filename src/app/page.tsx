@@ -14,6 +14,11 @@ import {
 import { getProducts, Product, BRANDS } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
 import { cn } from '@/lib/utils';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 
 export default async function Home() {
   const rawProducts = await getProducts();
@@ -178,7 +183,22 @@ export default async function Home() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+          
+          {/* Mobile Carousel */}
+          <div className="md:hidden">
+            <Carousel opts={{ align: "start" }} className="w-full">
+              <CarouselContent className="-ml-4">
+                {products.slice(0, 4).map((product) => (
+                  <CarouselItem key={product.id} className="pl-4 basis-[80%]">
+                    <ProductCard product={product} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+
+          {/* Desktop Grid */}
+          <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
             {products.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
