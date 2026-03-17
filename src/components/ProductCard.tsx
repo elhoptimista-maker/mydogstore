@@ -43,7 +43,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl border border-black/[0.02] flex flex-col h-full w-full max-w-full">
         {/* Marca Flotante */}
         <div className="absolute top-4 left-4 z-20">
-          <span className="bg-primary/10 backdrop-blur-md text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/10">
+          <span className="bg-primary text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-md">
             {product.attributes.brand}
           </span>
         </div>

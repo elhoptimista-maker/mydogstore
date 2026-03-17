@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -53,7 +54,7 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
           <div className="p-8 md:p-12 flex flex-col justify-center space-y-6 bg-white">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary border-none text-[9px] font-black uppercase tracking-widest rounded-full">
+                <Badge className="px-3 py-1 bg-primary text-white border-none text-[9px] font-black uppercase tracking-widest rounded-full">
                   {product.attributes.brand}
                 </Badge>
                 <div className="flex items-center gap-1 text-secondary">

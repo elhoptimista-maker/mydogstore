@@ -1,4 +1,5 @@
 
+
 import { getProductById } from '@/lib/mock-db';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -40,7 +41,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
         <div className="flex flex-col justify-center space-y-8">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Badge variant="secondary" className="px-4 py-1.5 bg-primary/10 text-primary border-none text-[10px] font-black uppercase tracking-widest rounded-full">
+              <Badge className="px-4 py-1.5 bg-primary text-white border-none text-[10px] font-black uppercase tracking-widest rounded-full">
                 {product.attributes.brand} | {product.attributes.category}
               </Badge>
               <div className="flex gap-2">
