@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -41,25 +42,25 @@ export default function ProductCard({ product }: ProductCardProps) {
     <>
       <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-2 border border-black/[0.02] flex flex-col h-full">
         {/* Etiqueta de Marca - Siempre visible arriba a la izquierda */}
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+        <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
           <span className="bg-primary/10 backdrop-blur-md text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/10">
             {product.attributes.brand}
           </span>
         </div>
 
         {/* Contenedor de Imagen */}
-        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-4 md:p-6">
+        <div className="relative aspect-square overflow-hidden bg-[#fdfdfd] p-2 md:p-6">
           <Link href={`/catalogo/${product.id}`} className="block relative w-full h-full">
             <Image
               src={product.media.main_image}
               alt={product.metadata.name}
               fill
-              className="object-contain transition-transform duration-700 group-hover:scale-110 p-6 md:p-8"
+              className="object-contain transition-transform duration-700 group-hover:scale-110 p-2 md:p-8"
               sizes="(max-width: 768px) 80vw, (max-width: 1200px) 33vw, 25vw"
             />
           </Link>
           
-          {/* Botón Vista Rápida - Overlay en Hover para Desktop */}
+          {/* Overlay Vista Rápida - Desktop */}
           <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center pointer-events-none">
             <Button 
               onClick={handleQuickView}
@@ -68,6 +69,14 @@ export default function ProductCard({ product }: ProductCardProps) {
               <Eye className="w-5 h-5" /> Vista Rápida
             </Button>
           </div>
+
+          {/* Botón Vista Rápida - Móvil (Icono flotante) */}
+          <button 
+            onClick={handleQuickView}
+            className="md:hidden absolute bottom-3 left-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-primary shadow-sm z-10 border border-black/[0.05]"
+          >
+            <Eye className="w-5 h-5" />
+          </button>
           
           {/* Botón Favorito */}
           <button 
@@ -76,7 +85,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               setIsFavorite(!isFavorite);
             }}
             className={cn(
-              "absolute top-4 right-4 w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-10",
+              "absolute top-4 right-4 w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-20",
               isFavorite ? "bg-red-500 text-white shadow-lg" : "bg-white/80 text-primary/40 hover:bg-white hover:text-red-500 shadow-sm"
             )}
           >
@@ -109,21 +118,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
             
             <div className="flex gap-2">
-              {/* Icono de Vista Rápida - Visible en móviles/tablets */}
-              <Button 
-                onClick={handleQuickView}
-                variant="ghost"
-                size="icon" 
-                className="md:hidden h-10 w-10 rounded-xl bg-primary/5 text-primary"
-              >
-                <Eye className="w-5 h-5" />
-              </Button>
-              
               {/* Botón de Añadir al Carrito */}
               <Button 
                 onClick={handleAddToCart}
                 size="icon" 
-                className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:bg-secondary/90 hover:scale-110 active:scale-95 transition-all"
+                className="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:bg-secondary/90 hover:scale-110 active:scale-95 transition-all"
               >
                 <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
               </Button>
