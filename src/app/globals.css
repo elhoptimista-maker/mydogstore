@@ -11,19 +11,19 @@
     --card-foreground: 215 58% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 215 58% 10%;
-    --primary: 215 58% 43%; /* #2E62AC */
+    --primary: 161 94% 20%; /* Verde Corporativo #03664A */
     --primary-foreground: 0 0% 100%;
-    --secondary: 191 75% 95%;
-    --secondary-foreground: 191 75% 35%;
+    --secondary: 161 50% 95%;
+    --secondary-foreground: 161 94% 15%;
     --muted: 215 20% 90%;
     --muted-foreground: 215 20% 40%;
-    --accent: 191 75% 55%; /* #34C4E4 */
+    --accent: 161 70% 45%; /* Verde Acento #22C58B */
     --accent-foreground: 215 58% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 215 20% 85%;
     --input: 215 20% 85%;
-    --ring: 215 58% 43%;
+    --ring: 161 94% 20%;
     --radius: 1rem;
   }
 }
