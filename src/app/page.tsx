@@ -7,7 +7,11 @@ import {
   Bird, 
   Sparkles, 
   ArrowRight, 
-  Fish
+  Fish,
+  Truck,
+  ShieldCheck,
+  Heart,
+  Clock
 } from 'lucide-react';
 import { getProducts, Product } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
@@ -24,7 +28,7 @@ export default async function Home() {
     // Fórmula: Precio Venta = Costo / (1 - Margen)
     const calculatedPrice = Math.round(costNet / (1 - 0.30));
     
-    // Creamos una copia del producto sin la propiedad cost
+    // Creamos una copia del producto sin la propiedad cost para seguridad
     const { financials, ...rest } = product;
     return {
       ...rest,
@@ -37,88 +41,94 @@ export default async function Home() {
   }) as Product[];
 
   const petTypes = [
-    { name: 'Perro', icon: <Dog className="w-6 h-6 md:w-8 md:h-8" />, color: 'bg-white text-primary' },
-    { name: 'Gato', icon: <Cat className="w-6 h-6 md:w-8 md:h-8" />, color: 'bg-white text-secondary' },
-    { name: 'Aves', icon: <Bird className="w-6 h-6 md:w-8 md:h-8" />, color: 'bg-white text-blue-500' },
-    { name: 'Peces', icon: <Fish className="w-6 h-6 md:w-8 md:h-8" />, color: 'bg-white text-purple-500' },
-    { name: 'Roedores', icon: <Sparkles className="w-6 h-6 md:w-8 md:h-8" />, color: 'bg-white text-orange-500' },
+    { name: 'Perros', icon: <Dog className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
+    { name: 'Gatos', icon: <Cat className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
+    { name: 'Aves', icon: <Bird className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
+    { name: 'Peces', icon: <Fish className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
+    { name: 'Roedores', icon: <Sparkles className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
+  ];
+
+  const benefits = [
+    { icon: <Truck className="w-5 h-5" />, text: "Envío rápido" },
+    { icon: <ShieldCheck className="w-5 h-5" />, text: "Compra segura" },
+    { icon: <Clock className="w-5 h-5" />, text: "Soporte 24/7" },
+    { icon: <Heart className="w-5 h-5" />, text: "Club MyDog" },
   ];
 
   return (
     <div className="bg-[#f6f6f6] min-h-screen pb-24">
-      {/* Hero "App-Style" Responsive */}
-      <section className="px-4 pt-6 pb-4 md:py-12 lg:py-16">
+      {/* Hero Section - Estilo Card Compacto */}
+      <section className="px-4 pt-6 pb-4 md:py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-primary rounded-[2.5rem] p-8 md:p-16 lg:p-20 relative overflow-hidden shadow-2xl shadow-primary/20">
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              {/* Contenido Texto */}
+          <div className="bg-primary rounded-[2.5rem] p-8 md:p-12 lg:p-16 relative overflow-hidden shadow-xl">
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="space-y-6 text-center md:text-left max-w-xl">
-                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white text-[10px] md:text-xs font-bold uppercase tracking-widest">
-                  <Sparkles className="w-4 h-4 text-secondary" /> Premium Pet Care
-                </div>
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter">
-                  Calidad que tu <br /> mascota <span className="text-secondary">adora</span>
+                <h1 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tighter">
+                  Todo lo que <br /> ellos <span className="text-secondary">aman.</span>
                 </h1>
-                <p className="text-white/70 text-base md:text-lg lg:text-xl font-medium leading-relaxed">
-                  Distribuidora líder con más de 15 años cuidando a tus mejores amigos con las marcas más confiables del mercado.
+                <p className="text-white/80 text-base md:text-lg font-medium leading-relaxed">
+                  Las mejores marcas de nutrición y accesorios con despacho a todo Chile.
                 </p>
-                <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                <div className="pt-2">
                   <Link href="/catalogo">
-                    <Button className="h-14 md:h-16 rounded-2xl bg-secondary text-foreground font-black px-10 text-lg shadow-lg shadow-secondary/20 hover:scale-[1.02] transition-transform">
-                      Ver Catálogo <ArrowRight className="ml-2 w-6 h-6" />
+                    <Button className="h-14 rounded-2xl bg-secondary text-foreground font-black px-10 text-lg shadow-lg hover:scale-[1.02] transition-transform">
+                      Ver Catálogo <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                   </Link>
                 </div>
               </div>
-
-              {/* Imagen Desktop */}
-              <div className="hidden md:block relative aspect-square lg:aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white/5">
+              <div className="hidden md:block relative aspect-square max-w-sm ml-auto">
                 <Image
-                  src="https://picsum.photos/seed/hero-dog-dt/800/600"
+                  src="https://picsum.photos/seed/mydog-hero-v2/600/600"
                   alt="MyDog Hero"
                   fill
-                  className="object-cover"
+                  className="object-contain drop-shadow-2xl animate-float"
                   priority
                   data-ai-hint="happy dog"
                 />
               </div>
             </div>
-
-            {/* Decoración Mobile */}
-            <div className="md:hidden absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-              <div className="absolute inset-0 bg-gradient-to-l from-primary to-transparent z-10" />
-              <Image
-                src="https://picsum.photos/seed/hero-app/600/600"
-                alt="Hero Background"
-                fill
-                className="object-cover"
-                data-ai-hint="dog background"
-              />
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Categorías Responsive */}
-      <section className="py-8 md:py-16 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-black text-foreground tracking-tight">Categorías</h2>
-            <Link href="/catalogo" className="text-sm font-bold text-primary hover:underline">Ver todas</Link>
+      {/* Barra de Beneficios */}
+      <section className="px-4 py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-black/5 flex justify-around items-center gap-4 overflow-x-auto no-scrollbar">
+            {benefits.map((benefit, i) => (
+              <div key={i} className="flex items-center gap-3 shrink-0">
+                <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary">
+                  {benefit.icon}
+                </div>
+                <span className="text-xs md:text-sm font-bold text-foreground/70 uppercase tracking-tight">
+                  {benefit.text}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categorías con Scroll Horizontal */}
+      <section className="py-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tight">Categorías</h2>
+            <Link href="/catalogo" className="text-xs font-bold text-primary hover:underline">Explorar todas</Link>
           </div>
           
-          {/* Scroll en Mobile / Grid Centrado en Desktop */}
-          <div className="flex md:flex-wrap md:justify-center overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory gap-6 md:gap-10 pb-4 md:pb-0">
+          <div className="flex md:flex-wrap md:justify-center overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory gap-6 pb-4">
             {petTypes.map((pet, i) => (
               <div key={i} className="flex-shrink-0 snap-start">
-                <div className="flex flex-col items-center gap-4 group cursor-pointer">
+                <div className="flex flex-col items-center gap-3 group cursor-pointer">
                   <div className={cn(
-                    "w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center shadow-md transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:scale-105 active:scale-95",
+                    "w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-md transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:scale-105 active:scale-95",
                     pet.color
                   )}>
                     {pet.icon}
                   </div>
-                  <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors">
+                  <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
                     {pet.name}
                   </span>
                 </div>
@@ -128,45 +138,74 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Interface Mini IA */}
-      <section className="px-4 py-4 md:py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-[2.5rem] p-6 md:p-10 shadow-sm border border-black/5 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-6">
-              <div className="w-14 h-14 md:w-20 md:h-20 bg-primary/5 rounded-3xl flex items-center justify-center text-primary">
-                <Sparkles className="w-8 h-8 md:w-10 md:h-10" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-black text-lg md:text-2xl">Asistente IA MyDog</h3>
-                <p className="text-xs md:text-base text-muted-foreground font-medium">Recomendaciones de nutrición personalizadas para tu mascota.</p>
-              </div>
+      {/* Sección "Para tu Mascota" - Grandes Segmentos */}
+      <section className="px-4 py-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-primary/10 rounded-[2.5rem] p-8 space-y-4 relative overflow-hidden group h-64 flex flex-col justify-end">
+            <div className="relative z-10">
+              <h3 className="text-2xl font-black text-primary">Raciones</h3>
+              <p className="text-sm font-medium text-primary/70">Nutrición balanceada</p>
+              <Link href="/catalogo" className="inline-flex items-center mt-4 font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
+                Ver más <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
             </div>
-            <Link href="#asistente">
-              <Button size="lg" variant="secondary" className="rounded-2xl font-black text-sm px-10 h-14 w-full md:w-auto shadow-lg shadow-secondary/20">
-                PROBAR AHORA
-              </Button>
-            </Link>
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-20 -rotate-12 translate-x-4 -translate-y-4">
+              <Dog className="w-full h-full text-primary" />
+            </div>
+          </div>
+
+          <div className="bg-secondary/20 rounded-[2.5rem] p-8 space-y-4 relative overflow-hidden group h-64 flex flex-col justify-end">
+            <div className="relative z-10">
+              <h3 className="text-2xl font-black text-secondary-foreground">Snacks</h3>
+              <p className="text-sm font-medium text-secondary-foreground/70">Premios deliciosos</p>
+              <Link href="/catalogo" className="inline-flex items-center mt-4 font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
+                Ver más <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-20 rotate-12 translate-x-4 -translate-y-4">
+              <Sparkles className="w-full h-full text-secondary" />
+            </div>
+          </div>
+
+          <div className="bg-primary/5 rounded-[2.5rem] p-8 space-y-4 relative overflow-hidden group h-64 flex flex-col justify-end border border-primary/10">
+            <div className="relative z-10">
+              <h3 className="text-2xl font-black text-foreground">Accesorios</h3>
+              <p className="text-sm font-medium text-muted-foreground">Estilo y diversión</p>
+              <Link href="/catalogo" className="inline-flex items-center mt-4 font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
+                Ver más <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-10 -rotate-6 translate-x-4 -translate-y-4">
+              <Cat className="w-full h-full text-foreground" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Novedades Grid Responsive */}
-      <section className="px-4 py-12 md:py-20 space-y-8 md:space-y-12">
+      {/* Novedades / Grid de Productos */}
+      <section className="px-4 py-12 space-y-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between px-2 mb-8">
-            <h2 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">Novedades</h2>
-            <Link href="/catalogo" className="text-sm font-bold text-primary hover:underline">Explorar catálogo completo</Link>
+          <div className="flex items-center justify-between mb-8 px-2">
+            <div>
+              <h2 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">Novedades</h2>
+              <p className="text-sm text-muted-foreground font-medium">Recién llegados a nuestra bodega</p>
+            </div>
+            <Link href="/catalogo">
+              <Button variant="outline" className="rounded-xl border-primary text-primary hover:bg-primary/5 font-bold h-11 px-6">
+                Ver Todo
+              </Button>
+            </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
-            {products.slice(0, 5).map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Asistente Section */}
-      <section id="asistente" className="px-4 py-12 md:py-24 bg-white/50 border-y border-black/[0.02]">
+      {/* Asistente IA */}
+      <section id="asistente" className="px-4 py-12 md:py-20">
          <div className="max-w-7xl mx-auto">
             <ProductAssistant />
          </div>
