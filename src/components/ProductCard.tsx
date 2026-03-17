@@ -92,7 +92,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="mt-auto flex items-center justify-between gap-2 border-t border-black/[0.03] pt-4">
             <div className="flex flex-col min-w-0">
               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1 truncate">Precio Venta</span>
-              <span className="text-lg font-black text-primary tracking-tighter leading-none">
+              <span className="text-2xl font-black text-primary tracking-tighter leading-none">
                 ${product.financials.pricing.base_price.toLocaleString('es-CL')}
               </span>
             </div>
