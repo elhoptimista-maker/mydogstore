@@ -38,7 +38,7 @@ export default async function CatalogoPage() {
     <div className="space-y-10">
       {/* Rango de Precio */}
       <div className="bg-white p-6 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] shadow-sm border border-orange-50">
-        <h4 className="text-lg font-black mb-6 border-b pb-4">Rango de Precio</h4>
+        <h4 className="text-lg font-black mb-6 border-b pb-4 text-primary">Rango de Precio</h4>
         <Slider defaultValue={[0, 100000]} max={200000} step={1000} className="mb-6" />
         <div className="flex items-center justify-between text-xs font-bold text-muted-foreground">
           <div className="bg-muted px-3 py-1 rounded-lg">$0</div>
@@ -48,7 +48,7 @@ export default async function CatalogoPage() {
 
       {/* Categorías */}
       <div className="bg-white p-6 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] shadow-sm border border-orange-50">
-        <h4 className="text-lg font-black mb-6 border-b pb-4">Categoría</h4>
+        <h4 className="text-lg font-black mb-6 border-b pb-4 text-primary">Categoría</h4>
         <div className="space-y-4">
           {CATEGORIES.slice(0, 6).map((cat) => (
             <div key={cat} className="flex items-center space-x-3 group cursor-pointer">
@@ -63,7 +63,7 @@ export default async function CatalogoPage() {
 
       {/* Marcas */}
       <div className="bg-white p-6 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] shadow-sm border border-orange-50">
-        <h4 className="text-lg font-black mb-6 border-b pb-4">Marca</h4>
+        <h4 className="text-lg font-black mb-6 border-b pb-4 text-primary">Marca</h4>
         <div className="space-y-4 max-h-64 overflow-y-auto pr-2 no-scrollbar">
           {BRANDS.slice(0, 10).map((brand) => (
             <div key={brand} className="flex items-center space-x-3 group cursor-pointer">
@@ -78,7 +78,7 @@ export default async function CatalogoPage() {
 
       {/* Mascotas */}
       <div className="bg-white p-6 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] shadow-sm border border-orange-50">
-        <h4 className="text-lg font-black mb-6 border-b pb-4">Mascotas</h4>
+        <h4 className="text-lg font-black mb-6 border-b pb-4 text-primary">Mascotas</h4>
         <div className="space-y-4">
           {PET_TYPES.map((pet) => (
             <div key={pet} className="flex items-center space-x-3 group cursor-pointer">
@@ -115,7 +115,7 @@ export default async function CatalogoPage() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
           
-          {/* Sidebar de Filtros Desktop */}
+          {/* Sidebar de Filtros Desktop - FIJO IZQUIERDA */}
           <aside className="hidden lg:block lg:col-span-1">
             <FiltersContent />
           </aside>
@@ -177,7 +177,7 @@ export default async function CatalogoPage() {
               ))}
             </div>
 
-            {/* Paginación */}
+            {/* Paginación Circular */}
             <div className="flex justify-center items-center gap-2 pt-8 md:pt-12">
               <Button variant="ghost" className="w-10 h-10 md:w-12 md:h-12 rounded-full font-black bg-white shadow-sm border border-orange-100">
                 <ChevronDown className="w-4 h-4 md:w-5 md:h-5 rotate-90" />
