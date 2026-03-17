@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Dog, Cat, Bird, Search, Plus, Sparkles, ArrowRight } from 'lucide-react';
+import { Dog, Cat, Bird, Search, Sparkles, ArrowRight } from 'lucide-react';
 import { getProducts } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
 import { cn } from '@/lib/utils';
