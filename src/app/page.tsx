@@ -12,7 +12,9 @@ import {
   Truck,
   ShieldCheck,
   Bone,
-  Gamepad2,
+  Rabbit,
+  Rat,
+  Turtle,
 } from 'lucide-react';
 import { getProducts, Product } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
@@ -118,11 +120,13 @@ export default async function Home() {
           </div>
           <div className="flex overflow-x-auto md:justify-center gap-8 md:gap-14 no-scrollbar pt-4 pb-8 snap-x">
             {[
-              { name: 'Perro', icon: <Dog />, color: 'bg-primary/5 text-primary' },
-              { name: 'Gato', icon: <Cat />, color: 'bg-secondary/10 text-secondary' },
+              { name: 'Perros', icon: <Dog />, color: 'bg-primary/5 text-primary' },
+              { name: 'Gatos', icon: <Cat />, color: 'bg-secondary/10 text-secondary' },
               { name: 'Aves', icon: <Bird />, color: 'bg-blue-50 text-blue-600' },
+              { name: 'Conejo', icon: <Rabbit />, color: 'bg-rose-50 text-rose-600' },
+              { name: 'Roedor', icon: <Rat />, color: 'bg-amber-50 text-amber-600' },
               { name: 'Peces', icon: <Fish />, color: 'bg-indigo-50 text-indigo-600' },
-              { name: 'Juguetes', icon: <Gamepad2 />, color: 'bg-accent/10 text-accent' },
+              { name: 'Tortugas', icon: <Turtle />, color: 'bg-emerald-50 text-emerald-600' },
             ].map((cat, i) => (
               <div key={i} className="flex flex-col items-center gap-4 group cursor-pointer snap-center shrink-0">
                 <div className={cn(
