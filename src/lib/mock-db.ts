@@ -17,6 +17,9 @@ export interface Product {
     short_description: string;
   };
   financials: {
+    cost?: {
+      net: number;
+    };
     pricing: {
       base_price: number;
     };
@@ -86,6 +89,9 @@ export const MOCK_PRODUCTS: Product[] = [
       short_description: "Alimento seco Champion para perros adultos. Con sabor a carne, proporciona la energía y nutrientes esenciales para su bienestar diario."
     },
     financials: {
+      cost: {
+        net: 21002
+      },
       pricing: {
         base_price: 24550
       }
@@ -119,6 +125,9 @@ export const MOCK_PRODUCTS: Product[] = [
       short_description: "Exquisita receta de salmón en salsa para gatos adultos."
     },
     financials: {
+      cost: {
+        net: 1050
+      },
       pricing: {
         base_price: 1500
       }
