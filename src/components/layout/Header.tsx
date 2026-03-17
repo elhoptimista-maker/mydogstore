@@ -1,8 +1,7 @@
-
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Menu, Dog, Search, Heart, Briefcase } from 'lucide-react';
+import { ShoppingCart, Menu, Dog, Search, Heart, User, Truck, Phone, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -21,85 +20,109 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4",
-      scrolled ? "h-16 bg-white/90 backdrop-blur-lg shadow-sm" : "h-20 bg-primary"
-    )}>
-      <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-4">
-        {/* Logo */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className={cn(
-            "w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-lg",
-            scrolled ? "bg-primary shadow-primary/20" : "bg-white shadow-black/5"
-          )}>
-            <Dog className={cn("w-6 h-6", scrolled ? "text-white" : "text-primary")} />
-          </div>
-          <Link href="/" className={cn(
-            "font-extrabold text-2xl tracking-tighter hidden sm:block",
-            scrolled ? "text-foreground" : "text-white"
-          )}>
-            My<span className="text-primary">dog</span><span className="text-secondary">Distribuidora</span>
+    <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300">
+      {/* 1. Top Bar (Anuncios y Links menores) */}
+      <div className="bg-secondary py-1.5 px-4 text-center">
+        <p className="text-[10px] md:text-xs font-black text-foreground uppercase tracking-wider">
+          PAGANDO CON TRANSFERENCIA OBTIENES 5% DE DESCUENTO ADICIONAL
+        </p>
+      </div>
+
+      {/* 2. Main Header (Logo, Search, Actions) */}
+      <div className={cn(
+        "bg-primary transition-all duration-500 px-4",
+        scrolled ? "h-16" : "h-20"
+      )}>
+        <div className="max-w-7xl mx-auto h-full flex items-center gap-4 md:gap-8">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <div className="w-9 h-9 md:w-11 md:h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <Dog className="w-6 h-6 md:w-7 md:h-7 text-primary" />
+            </div>
+            <span className="hidden sm:block font-black text-xl md:text-2xl text-white tracking-tighter">
+              My<span className="text-secondary">dog</span>Distribuidora
+            </span>
           </Link>
+
+          {/* Search Bar - PRIORIDAD MÁXIMA */}
+          <div className="flex-1 max-w-2xl relative group">
+            <div className="relative flex items-center bg-white rounded-full overflow-hidden shadow-inner focus-within:ring-2 focus-within:ring-secondary transition-all">
+              <input 
+                type="text" 
+                placeholder="Busca marcas, productos o necesidades..." 
+                className="w-full h-10 md:h-11 px-5 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/60"
+              />
+              <button className="h-full px-4 text-primary hover:text-secondary transition-colors">
+                <Search className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* User Actions */}
+          <div className="flex items-center gap-1 sm:gap-4">
+            <div className="hidden lg:flex items-center gap-4 text-white">
+              <Link href="#" className="flex flex-col items-center gap-0.5 group">
+                <Truck className="w-5 h-5 group-hover:text-secondary transition-colors" />
+                <span className="text-[9px] font-bold uppercase">Rastrear</span>
+              </Link>
+              <Link href="#" className="flex flex-col items-center gap-0.5 group">
+                <User className="w-5 h-5 group-hover:text-secondary transition-colors" />
+                <span className="text-[9px] font-bold uppercase">Mi Cuenta</span>
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
+                <Heart className="w-6 h-6" />
+              </Button>
+              
+              <CartDrawer>
+                <button className="relative p-2 text-white hover:text-secondary transition-colors">
+                  <ShoppingCart className="w-7 h-7" />
+                  {cartCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 bg-secondary text-foreground font-black text-[10px] min-w-[1.2rem] h-[1.2rem] flex items-center justify-center border-2 border-primary rounded-full">
+                      {cartCount}
+                    </Badge>
+                  )}
+                </button>
+              </CartDrawer>
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Desktop Navigation */}
-        <nav className={cn(
-          "hidden lg:flex items-center gap-8 font-bold text-sm",
-          scrolled ? "text-foreground/80" : "text-white/90"
-        )}>
-          <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
-          <Link href="/catalogo" className="hover:text-primary transition-colors">Catálogo</Link>
-          <Link href="/b2b" className="flex items-center gap-2 hover:text-primary transition-colors">
-            <Briefcase className="w-4 h-4" /> Venta Mayorista
-          </Link>
-          <Link href="#" className="hover:text-primary transition-colors">Ofertas</Link>
-        </nav>
-
-        {/* Action Icons */}
-        <div className="flex items-center gap-1 sm:gap-3">
-          <div className={cn(
-            "hidden md:flex items-center rounded-full px-4 py-2 border transition-all focus-within:ring-2 focus-within:ring-primary",
-            scrolled ? "bg-white/50 border-border/50" : "bg-white/10 border-white/20"
-          )}>
-            <Search className={cn("w-4 h-4 mr-2", scrolled ? "text-muted" : "text-white/60")} />
-            <input 
-              type="text" 
-              placeholder="Buscar marcas..." 
-              className={cn(
-                "bg-transparent border-none outline-none text-sm w-32 focus:w-48 transition-all font-medium placeholder:font-normal",
-                scrolled ? "text-foreground placeholder:text-muted" : "text-white placeholder:text-white/60"
-              )}
-            />
+      {/* 3. Navigation Bar (Categorías y Menú) */}
+      <div className="hidden md:block bg-white border-b border-black/[0.05] shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 h-11 flex items-center">
+          {/* Categorías Dropdown */}
+          <div className="h-full border-r border-black/[0.05] pr-6 mr-6 flex items-center gap-2 cursor-pointer group">
+            <Menu className="w-5 h-5 text-primary" />
+            <span className="font-black text-xs uppercase tracking-widest text-primary">Categorías</span>
+            <ChevronDown className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform" />
           </div>
-          
-          <Button variant="ghost" size="icon" className={cn(
-            "rounded-2xl hover:bg-primary/10",
-            !scrolled && "text-white hover:bg-white/10"
-          )}>
-            <Heart className="w-6 h-6" />
-          </Button>
 
-          <CartDrawer>
-            <Button className={cn(
-              "rounded-2xl shadow-lg flex gap-2 font-bold px-4 h-11 transition-all active:scale-95 relative",
-              scrolled ? "bg-primary hover:bg-primary/90 text-white" : "bg-white text-primary"
-            )}>
-              <ShoppingCart className="w-5 h-5" />
-              <span className="hidden sm:inline">Carrito</span>
-              {cartCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 bg-secondary text-foreground font-black px-1.5 min-w-[1.2rem] h-[1.2rem] flex items-center justify-center border-2 border-background">
-                  {cartCount}
-                </Badge>
-              )}
-            </Button>
-          </CartDrawer>
-
-          <Button variant="ghost" size="icon" className={cn(
-            "md:hidden rounded-2xl",
-            !scrolled && "text-white hover:bg-white/10"
-          )}>
-            <Menu className="w-6 h-6" />
-          </Button>
+          {/* Menú Principal */}
+          <nav className="flex items-center gap-8 h-full">
+            {[
+              { label: 'Productos', href: '/catalogo' },
+              { label: 'Alimentación', href: '/catalogo?cat=Alimento' },
+              { label: 'Higiene', href: '/catalogo?cat=Higiene' },
+              { label: 'Accesorios', href: '/catalogo?cat=Accesorios' },
+              { label: 'Marcas', href: '#' },
+              { label: 'Ofertas', href: '#', highlight: true },
+            ].map((link) => (
+              <Link 
+                key={link.label} 
+                href={link.href}
+                className={cn(
+                  "text-[11px] font-black uppercase tracking-widest transition-colors h-full flex items-center border-b-2 border-transparent hover:border-primary",
+                  link.highlight ? "text-secondary hover:text-secondary/80" : "text-foreground/70 hover:text-primary"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
     </header>

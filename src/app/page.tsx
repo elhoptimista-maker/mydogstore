@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Dog, 
   Cat, 
@@ -11,7 +12,11 @@ import {
   Truck,
   ShieldCheck,
   Heart,
-  Clock
+  Bone,
+  Gamepad2,
+  Stethoscope,
+  Store,
+  Users
 } from 'lucide-react';
 import { getProducts, Product } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
@@ -22,56 +27,61 @@ export default async function Home() {
   const rawProducts = await getProducts();
 
   // Lógica de Precios Segura en Servidor: Margen 30% sobre el costo neto
-  // Sanitizamos el objeto para NUNCA enviar 'cost' al cliente
+  // Fórmula: Precio Venta = Costo / 0.7
   const products = rawProducts.map(product => {
     const costNet = product.financials?.cost?.net || 0;
-    // Fórmula: Precio Venta = Costo / (1 - Margen)
-    const calculatedPrice = Math.round(costNet / (1 - 0.30));
+    const calculatedPrice = costNet > 0 ? Math.round(costNet / 0.7) : product.financials.pricing.base_price;
     
-    // Creamos una copia del producto sin la propiedad cost para seguridad
+    // Omitimos el objeto cost para seguridad
     const { financials, ...rest } = product;
     return {
       ...rest,
       financials: {
         pricing: {
-          base_price: calculatedPrice || financials.pricing.base_price
+          base_price: calculatedPrice
         }
       }
     };
   }) as Product[];
 
-  const petTypes = [
-    { name: 'Perros', icon: <Dog className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
-    { name: 'Gatos', icon: <Cat className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
-    { name: 'Aves', icon: <Bird className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
-    { name: 'Peces', icon: <Fish className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
-    { name: 'Roedores', icon: <Sparkles className="w-7 h-7 md:w-8 md:h-8" />, color: 'bg-primary text-white' },
+  const trustBadges = [
+    { icon: <Truck className="w-6 h-6" />, title: "Entrega a Domicilio", desc: "Despacho a todo Chile" },
+    { icon: <ShieldCheck className="w-6 h-6" />, title: "Compra 100% Segura", desc: "Tus datos protegidos" },
+    { icon: <Bone className="w-6 h-6" />, title: "Marcas Certificadas", desc: "Nutrición garantizada" },
+    { icon: <Sparkles className="w-6 h-6" />, title: "Club MyDog", desc: "Descuentos exclusivos" },
   ];
 
-  const benefits = [
-    { icon: <Truck className="w-5 h-5" />, text: "Envío rápido" },
-    { icon: <ShieldCheck className="w-5 h-5" />, text: "Compra segura" },
-    { icon: <Clock className="w-5 h-5" />, text: "Soporte 24/7" },
-    { icon: <Heart className="w-5 h-5" />, text: "Club MyDog" },
+  const mainCategories = [
+    { name: 'Alimentación', icon: <Bone className="w-8 h-8" />, color: 'bg-primary text-white' },
+    { name: 'Juguetes', icon: <Gamepad2 className="w-8 h-8" />, color: 'bg-primary text-white' },
+    { name: 'Perros', icon: <Dog className="w-8 h-8" />, color: 'bg-primary text-white' },
+    { name: 'Gatos', icon: <Cat className="w-8 h-8" />, color: 'bg-primary text-white' },
+    { name: 'Aves', icon: <Bird className="w-8 h-8" />, color: 'bg-primary text-white' },
+    { name: 'Peces', icon: <Fish className="w-8 h-8" />, color: 'bg-primary text-white' },
+    { name: 'Farmacia', icon: <Stethoscope className="w-8 h-8" />, color: 'bg-primary text-white' },
   ];
 
   return (
-    <div className="bg-[#f6f6f6] min-h-screen pb-24">
-      {/* Hero Section - Estilo Card Compacto */}
-      <section className="px-4 pt-6 pb-4 md:py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-primary rounded-[2.5rem] p-8 md:p-12 lg:p-16 relative overflow-hidden shadow-xl">
+    <div className="bg-[#f6f6f6] min-h-screen pt-4 pb-24 md:pt-12">
+      <div className="max-w-7xl mx-auto space-y-12">
+        
+        {/* 1. Hero Banner Section - Compacto y Curvo */}
+        <section className="px-4">
+          <div className="bg-primary rounded-[2.5rem] p-8 md:p-16 relative overflow-hidden shadow-2xl">
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="space-y-6 text-center md:text-left max-w-xl">
+              <div className="space-y-6 text-center md:text-left">
+                <Badge className="bg-secondary text-foreground font-black px-4 py-1 text-[10px] tracking-[0.2em] border-none">
+                  OFERTA IMPERDIBLE
+                </Badge>
                 <h1 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tighter">
-                  Todo lo que <br /> ellos <span className="text-secondary">aman.</span>
+                  Nutrición <span className="text-secondary underline decoration-4 underline-offset-8">Premium</span> para tu mejor amigo.
                 </h1>
-                <p className="text-white/80 text-base md:text-lg font-medium leading-relaxed">
-                  Las mejores marcas de nutrición y accesorios con despacho a todo Chile.
+                <p className="text-white/80 text-lg font-medium max-w-md mx-auto md:mx-0 leading-relaxed">
+                  Las mejores marcas de raciones y accesorios con despacho directo a tu hogar.
                 </p>
-                <div className="pt-2">
+                <div className="pt-4">
                   <Link href="/catalogo">
-                    <Button className="h-14 rounded-2xl bg-secondary text-foreground font-black px-10 text-lg shadow-lg hover:scale-[1.02] transition-transform">
+                    <Button size="lg" className="h-14 rounded-full bg-secondary text-foreground font-black px-10 text-lg shadow-xl hover:scale-[1.02] transition-transform">
                       Ver Catálogo <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                   </Link>
@@ -79,137 +89,146 @@ export default async function Home() {
               </div>
               <div className="hidden md:block relative aspect-square max-w-sm ml-auto">
                 <Image
-                  src="https://picsum.photos/seed/mydog-hero-v2/600/600"
-                  alt="MyDog Hero"
+                  src="https://www.fullerton.cl/wp-content/uploads/CHC-adulto-carne-pollo-2023.jpg"
+                  alt="Destacado"
                   fill
                   className="object-contain drop-shadow-2xl animate-float"
                   priority
-                  data-ai-hint="happy dog"
                 />
               </div>
             </div>
+            {/* Wave Effect Layer */}
+            <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+                <path fill="#ffffff" d="M40,-62.1C53.3,-55.1,66.5,-45.5,72.8,-32.8C79.1,-20.1,78.5,-4.3,74.1,10.1C69.7,24.5,61.5,37.5,50.8,47.8C40.1,58.1,26.9,65.7,12.5,69.1C-1.9,72.5,-17.5,71.7,-31.4,66.1C-45.3,60.5,-57.5,50.1,-65.4,37.3C-73.3,24.5,-76.9,9.3,-75.1,-5.1C-73.3,-19.5,-66,-33.1,-55.6,-41.8C-45.2,-50.5,-31.7,-54.3,-19.1,-61.8C-6.5,-69.3,5.2,-80.5,19.1,-80.5C33,-80.5,40.1,-62.1,40,-62.1Z" transform="translate(100 100)" />
+              </svg>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Barra de Beneficios */}
-      <section className="px-4 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-black/5 flex justify-around items-center gap-4 overflow-x-auto no-scrollbar">
-            {benefits.map((benefit, i) => (
-              <div key={i} className="flex items-center gap-3 shrink-0">
-                <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary">
-                  {benefit.icon}
+        {/* 2. Trust Badges Bar - Según la estructura de la imagen */}
+        <section className="px-4">
+          <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-black/[0.03] grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {trustBadges.map((badge, i) => (
+              <div key={i} className="flex items-center gap-4 group cursor-default">
+                <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  {badge.icon}
                 </div>
-                <span className="text-xs md:text-sm font-bold text-foreground/70 uppercase tracking-tight">
-                  {benefit.text}
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-black text-foreground uppercase tracking-tighter">{badge.title}</span>
+                  <span className="text-[10px] text-muted-foreground font-medium">{badge.desc}</span>
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Categorías con Scroll Horizontal */}
-      <section className="py-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tight">Categorías</h2>
-            <Link href="/catalogo" className="text-xs font-bold text-primary hover:underline">Explorar todas</Link>
+        {/* 3. Segmented Cards ("PARA TU MASCOTA") - Tricolor como la imagen */}
+        <section className="px-4 space-y-8">
+          <div className="text-center">
+            <h2 className="text-2xl md:text-3xl font-black text-foreground uppercase tracking-tight">Para tu mascota</h2>
+            <div className="w-20 h-1 bg-secondary mx-auto mt-2 rounded-full"></div>
           </div>
           
-          <div className="flex md:flex-wrap md:justify-center overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory gap-6 pb-4">
-            {petTypes.map((pet, i) => (
-              <div key={i} className="flex-shrink-0 snap-start">
-                <div className="flex flex-col items-center gap-3 group cursor-pointer">
-                  <div className={cn(
-                    "w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-md transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:scale-105 active:scale-95",
-                    pet.color
-                  )}>
-                    {pet.icon}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-[#A259FF] rounded-[2.5rem] p-8 h-80 flex flex-col justify-between items-center text-center text-white relative overflow-hidden group">
+              <div className="relative z-10">
+                <h3 className="text-3xl font-black mb-2">Raciones</h3>
+                <p className="text-white/80 text-sm font-medium">Nutrición balanceada</p>
+              </div>
+              <div className="relative z-10 w-full">
+                <Link href="/catalogo">
+                  <Button className="w-full h-12 rounded-full bg-secondary text-foreground font-black shadow-lg hover:scale-105 transition-transform border-none">
+                    Ver productos
+                  </Button>
+                </Link>
+              </div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 opacity-20 group-hover:scale-110 transition-transform">
+                <Bone className="w-full h-full" />
+              </div>
+            </div>
+
+            <div className="bg-[#FF9F43] rounded-[2.5rem] p-8 h-80 flex flex-col justify-between items-center text-center text-white relative overflow-hidden group">
+              <div className="relative z-10">
+                <h3 className="text-3xl font-black mb-2">Snacks</h3>
+                <p className="text-white/80 text-sm font-medium">Premios deliciosos</p>
+              </div>
+              <div className="relative z-10 w-full">
+                <Link href="/catalogo">
+                  <Button className="w-full h-12 rounded-full bg-white text-foreground font-black shadow-lg hover:scale-105 transition-transform border-none">
+                    Ver productos
+                  </Button>
+                </Link>
+              </div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 opacity-20 group-hover:scale-110 transition-transform">
+                <Bone className="w-full h-full" />
+              </div>
+            </div>
+
+            <div className="bg-[#00D285] rounded-[2.5rem] p-8 h-80 flex flex-col justify-between items-center text-center text-white relative overflow-hidden group">
+              <div className="relative z-10">
+                <h3 className="text-3xl font-black mb-2">Accesorios</h3>
+                <p className="text-white/80 text-sm font-medium">Estilo y confort</p>
+              </div>
+              <div className="relative z-10 w-full">
+                <Link href="/catalogo">
+                  <Button className="w-full h-12 rounded-full bg-secondary text-foreground font-black shadow-lg hover:scale-105 transition-transform border-none">
+                    Ver productos
+                  </Button>
+                </Link>
+              </div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 opacity-20 group-hover:scale-110 transition-transform">
+                <Bone className="w-full h-full" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Circular Categories Icons - Scroll Móvil / Grid Desktop */}
+        <section className="px-4 py-8">
+          <div className="flex flex-col items-center gap-8">
+            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em]">Explora por Categoría</h3>
+            <div className="flex overflow-x-auto md:overflow-visible no-scrollbar snap-x gap-6 md:gap-12 w-full justify-start md:justify-center pb-4">
+              {mainCategories.map((cat, i) => (
+                <div key={i} className="flex flex-col items-center gap-4 group cursor-pointer snap-start shrink-0">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-primary flex items-center justify-center text-white shadow-xl group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
+                    {cat.icon}
                   </div>
-                  <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
-                    {pet.name}
+                  <span className="text-[10px] md:text-xs font-black uppercase tracking-wider text-foreground/60 group-hover:text-primary transition-colors">
+                    {cat.name}
                   </span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Sección "Para tu Mascota" - Grandes Segmentos */}
-      <section className="px-4 py-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-primary/10 rounded-[2.5rem] p-8 space-y-4 relative overflow-hidden group h-64 flex flex-col justify-end">
-            <div className="relative z-10">
-              <h3 className="text-2xl font-black text-primary">Raciones</h3>
-              <p className="text-sm font-medium text-primary/70">Nutrición balanceada</p>
-              <Link href="/catalogo" className="inline-flex items-center mt-4 font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
-                Ver más <ArrowRight className="w-4 h-4 ml-1" />
-              </Link>
-            </div>
-            <div className="absolute top-0 right-0 w-32 h-32 opacity-20 -rotate-12 translate-x-4 -translate-y-4">
-              <Dog className="w-full h-full text-primary" />
+              ))}
             </div>
           </div>
+        </section>
 
-          <div className="bg-secondary/20 rounded-[2.5rem] p-8 space-y-4 relative overflow-hidden group h-64 flex flex-col justify-end">
-            <div className="relative z-10">
-              <h3 className="text-2xl font-black text-secondary-foreground">Snacks</h3>
-              <p className="text-sm font-medium text-secondary-foreground/70">Premios deliciosos</p>
-              <Link href="/catalogo" className="inline-flex items-center mt-4 font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
-                Ver más <ArrowRight className="w-4 h-4 ml-1" />
-              </Link>
-            </div>
-            <div className="absolute top-0 right-0 w-32 h-32 opacity-20 rotate-12 translate-x-4 -translate-y-4">
-              <Sparkles className="w-full h-full text-secondary" />
-            </div>
-          </div>
-
-          <div className="bg-primary/5 rounded-[2.5rem] p-8 space-y-4 relative overflow-hidden group h-64 flex flex-col justify-end border border-primary/10">
-            <div className="relative z-10">
-              <h3 className="text-2xl font-black text-foreground">Accesorios</h3>
-              <p className="text-sm font-medium text-muted-foreground">Estilo y diversión</p>
-              <Link href="/catalogo" className="inline-flex items-center mt-4 font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
-                Ver más <ArrowRight className="w-4 h-4 ml-1" />
-              </Link>
-            </div>
-            <div className="absolute top-0 right-0 w-32 h-32 opacity-10 -rotate-6 translate-x-4 -translate-y-4">
-              <Cat className="w-full h-full text-foreground" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Novedades / Grid de Productos */}
-      <section className="px-4 py-12 space-y-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8 px-2">
-            <div>
-              <h2 className="text-2xl md:text-4xl font-black text-foreground tracking-tight">Novedades</h2>
-              <p className="text-sm text-muted-foreground font-medium">Recién llegados a nuestra bodega</p>
+        {/* 5. Featured Products - Novedades */}
+        <section className="px-4 space-y-10 py-12">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-4xl font-black text-foreground tracking-tight uppercase">Novedades</h2>
+              <p className="text-muted-foreground text-xs md:text-sm font-medium">Últimas tendencias para tu mascota</p>
             </div>
             <Link href="/catalogo">
-              <Button variant="outline" className="rounded-xl border-primary text-primary hover:bg-primary/5 font-bold h-11 px-6">
+              <Button variant="outline" className="rounded-full border-primary text-primary hover:bg-primary hover:text-white font-black px-8">
                 Ver Todo
               </Button>
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
-            {products.map((product) => (
+            {products.slice(0, 5).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Asistente IA */}
-      <section id="asistente" className="px-4 py-12 md:py-20">
-         <div className="max-w-7xl mx-auto">
-            <ProductAssistant />
-         </div>
-      </section>
+        {/* 6. Product Assistant */}
+        <section id="asistente" className="px-4 py-12">
+           <ProductAssistant />
+        </section>
+
+      </div>
     </div>
   );
 }
