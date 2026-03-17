@@ -33,7 +33,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-2 border border-black/[0.02] flex flex-col h-full">
       {/* Visual Header - Brand & Badges */}
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-        <span className="bg-primary/10 backdrop-blur-md text-primary text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/10">
+        <span className="bg-primary/10 backdrop-blur-md text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/10">
           {product.attributes.brand}
         </span>
       </div>
@@ -66,16 +66,16 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="p-5 md:p-8 flex flex-col flex-1">
         <div className="flex items-center gap-1 mb-2 md:mb-3">
           <Star className="w-3 h-3 fill-secondary text-secondary" />
-          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
+          <span className="text-[10px] md:text-xs font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
         </div>
         
-        <h3 className="text-xs md:text-base font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors mb-4 md:mb-6">
+        <h3 className="text-sm md:text-base font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors mb-4 md:mb-6">
           {product.metadata.name}
         </h3>
         
         <div className="mt-auto flex items-end justify-between gap-2 md:gap-4">
           <div className="flex flex-col">
-            <span className="text-[8px] md:text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-0.5 md:mb-1">Precio Venta</span>
+            <span className="text-[9px] md:text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-0.5 md:mb-1">Precio Venta</span>
             <span className="text-lg md:text-2xl font-black text-primary tracking-tighter">
               ${product.financials.pricing.base_price.toLocaleString('es-CL')}
             </span>
