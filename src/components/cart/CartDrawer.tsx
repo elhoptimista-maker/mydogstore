@@ -4,7 +4,7 @@
 import { useCart } from '@/context/CartContext';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2, Plus, Minus, Package } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Package, X } from 'lucide-react';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -18,84 +18,102 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>
-      <SheetContent className="w-[90%] sm:max-w-md flex flex-col p-0 rounded-l-[2rem] border-none shadow-2xl overflow-hidden bg-white">
-        {/* Header con diseño premium */}
-        <SheetHeader className="p-5 md:p-6 bg-primary text-white shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 md:w-10 md:h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
-              </div>
-              <SheetTitle className="text-white text-lg md:text-xl font-black tracking-tight">Mi Carrito</SheetTitle>
+      <SheetContent 
+        side="right"
+        className="w-full sm:max-w-md flex flex-col p-0 border-none shadow-2xl bg-[#f9f9f9] overflow-hidden rounded-l-[1.5rem] md:rounded-l-[2.5rem]"
+      >
+        {/* Cabecera optimizada */}
+        <SheetHeader className="p-5 md:p-8 bg-primary text-white shrink-0 relative">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shadow-inner">
+              <ShoppingCart className="w-6 h-6 text-secondary" />
             </div>
-            <Badge className="bg-secondary text-foreground font-black rounded-full px-2 py-0.5 text-[10px] md:text-xs">
-              {cartCount} {cartCount === 1 ? 'ítem' : 'ítems'}
-            </Badge>
+            <div className="flex flex-col items-start">
+              <SheetTitle className="text-white text-xl md:text-2xl font-black tracking-tighter leading-none">
+                Mi Carrito
+              </SheetTitle>
+              <span className="text-white/60 text-[10px] md:text-xs font-bold uppercase tracking-widest mt-1">
+                {cartCount} {cartCount === 1 ? 'Producto' : 'Productos'} seleccionados
+              </span>
+            </div>
           </div>
         </SheetHeader>
 
-        {/* Área de productos */}
-        <div className="flex-1 min-h-0 bg-[#f9f9f9]">
-          <ScrollArea className="h-full">
-            <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+        {/* Listado de Productos con ScrollArea */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full px-4 py-6 md:px-8">
+            <div className="space-y-4 pb-10">
               {cart.length === 0 ? (
-                <div className="flex flex-col items-center justify-center text-center py-20 space-y-4 opacity-40">
-                  <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center">
-                    <Package className="w-8 h-8 text-muted-foreground" />
+                <div className="flex flex-col items-center justify-center text-center py-24 space-y-6 opacity-60">
+                  <div className="w-24 h-24 bg-white rounded-[2rem] shadow-xl shadow-black/5 flex items-center justify-center">
+                    <Package className="w-10 h-10 text-muted-foreground" />
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-black text-base text-foreground">Carrito vacío</p>
-                    <p className="text-xs text-muted-foreground">¡Agrega productos para comenzar!</p>
+                  <div className="space-y-2">
+                    <h3 className="font-black text-lg text-foreground tracking-tight">Tu carrito está vacío</h3>
+                    <p className="text-sm text-muted-foreground max-w-[200px] mx-auto leading-relaxed">
+                      Parece que aún no has agregado productos a tu orden.
+                    </p>
                   </div>
                 </div>
               ) : (
                 cart.map((item) => (
-                  <div key={item.id + (item.isSubscription ? '-sub' : '')} className="flex gap-3 md:gap-4 group items-start bg-white p-3 rounded-2xl shadow-sm border border-border/20">
-                    <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-muted shrink-0 shadow-sm">
+                  <div 
+                    key={item.id + (item.isSubscription ? '-sub' : '')} 
+                    className="group bg-white p-3 md:p-4 rounded-[1.5rem] shadow-sm border border-border/40 transition-all hover:shadow-md flex gap-4 items-center"
+                  >
+                    {/* Imagen con Aspect Ratio Fijo */}
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden bg-muted shrink-0 shadow-sm border border-border/20">
                       <Image 
                         src={item.imageUrl} 
                         alt={item.name} 
                         fill 
                         className="object-cover"
-                        sizes="80px"
+                        sizes="(max-width: 768px) 80px, 96px"
                       />
                     </div>
-                    <div className="flex-1 min-w-0 space-y-1.5 md:space-y-2">
-                      <div className="flex justify-between items-start gap-2">
-                        <h4 className="font-bold text-xs md:text-sm leading-tight text-foreground line-clamp-2">{item.name}</h4>
-                        <button 
-                          onClick={() => removeFromCart(item.id)}
-                          className="text-muted/40 hover:text-destructive transition-colors p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                      
-                      {item.isSubscription && (
-                        <Badge variant="secondary" className="bg-primary/5 text-primary text-[8px] md:text-[9px] font-black uppercase py-0 px-1.5 rounded-md">
-                          Suscripción (-10%)
-                        </Badge>
-                      )}
 
-                      <div className="flex items-center justify-between pt-1">
-                        <div className="flex items-center gap-1.5 bg-muted/50 rounded-lg px-1.5 py-0.5">
+                    {/* Contenido del Producto */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between h-full py-1">
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className="font-bold text-sm md:text-base leading-tight text-foreground line-clamp-2 pr-2">
+                            {item.name}
+                          </h4>
+                          <button 
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-muted-foreground/30 hover:text-destructive transition-colors p-1 -mt-1 -mr-1"
+                            aria-label="Eliminar producto"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        {item.isSubscription && (
+                          <Badge variant="secondary" className="bg-primary/5 text-primary text-[9px] font-black uppercase py-0 px-2 rounded-md border-none">
+                            Suscripción Activa (-10%)
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Controles y Precio */}
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center gap-1 bg-muted/30 rounded-xl p-1 border border-border/10">
                           <button 
                             onClick={() => updateQuantity(item.id, item.quantity - 1)} 
-                            className="p-1 text-muted-foreground hover:text-primary transition-colors disabled:opacity-30"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-white hover:text-primary transition-all disabled:opacity-20"
                             disabled={item.quantity <= 1}
                           >
-                            <Minus className="w-3 h-3" />
+                            <Minus className="w-3.5 h-3.5" />
                           </button>
-                          <span className="text-[10px] font-black w-4 text-center">{item.quantity}</span>
+                          <span className="text-xs font-black w-7 text-center">{item.quantity}</span>
                           <button 
                             onClick={() => updateQuantity(item.id, item.quantity + 1)} 
-                            className="p-1 text-muted-foreground hover:text-primary transition-colors"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-white hover:text-primary transition-all"
                           >
-                            <Plus className="w-3 h-3" />
+                            <Plus className="w-3.5 h-3.5" />
                           </button>
                         </div>
                         <div className="text-right">
-                          <span className="font-black text-primary text-xs md:text-sm">
+                          <span className="font-black text-primary text-sm md:text-lg tracking-tighter">
                             ${((item.isSubscription ? item.price * 0.9 : item.price) * item.quantity).toLocaleString('es-CL')}
                           </span>
                         </div>
@@ -108,35 +126,48 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </ScrollArea>
         </div>
 
-        {/* Footer con Resumen */}
+        {/* Footer Persistente y Organizado */}
         {cart.length > 0 && (
-          <SheetFooter className="p-5 md:p-6 bg-white border-t border-border shrink-0 sm:flex-col gap-0 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
-            <div className="w-full space-y-3 mb-4 md:mb-6">
+          <SheetFooter className="p-6 md:p-8 bg-white border-t border-border/50 shrink-0 sm:flex-col gap-0 shadow-[0_-20px_40px_rgba(0,0,0,0.04)]">
+            <div className="w-full space-y-4 mb-6">
               <div className="flex justify-between items-center text-muted-foreground font-medium text-xs md:text-sm">
-                <span>Subtotal</span>
-                <span className="font-bold text-foreground">${cartTotal.toLocaleString('es-CL')}</span>
+                <span>Subtotal Estimado</span>
+                <span className="font-bold text-foreground tracking-tight">
+                  ${cartTotal.toLocaleString('es-CL')}
+                </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground font-medium text-xs md:text-sm">Envío</span>
-                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 text-[9px] font-black uppercase tracking-widest px-1.5 py-0">
-                  Gratis
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground font-medium text-xs md:text-sm">Despacho</span>
+                  <Badge variant="outline" className="text-[9px] font-black bg-green-50 text-green-600 border-green-100 uppercase tracking-tighter px-1.5 py-0">
+                    Sujeto a Zona
+                  </Badge>
+                </div>
+                <span className="font-black text-green-600 text-xs md:text-sm">GRATIS*</span>
               </div>
-              <Separator className="bg-border/60" />
+              
+              <Separator className="bg-border/40" />
+              
               <div className="flex justify-between items-end pt-1">
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total</span>
-                  <span className="text-xl md:text-2xl font-black text-primary tracking-tighter">
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Total a Pagar</span>
+                  <span className="text-3xl md:text-4xl font-black text-primary tracking-tighter leading-none mt-1">
                     ${cartTotal.toLocaleString('es-CL')}
                   </span>
                 </div>
+                <div className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-1 rounded-lg">
+                  IVA Incluido
+                </div>
               </div>
             </div>
-            <Button className="w-full h-12 md:h-14 rounded-2xl bg-primary text-white font-black text-base md:text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+
+            <Button className="w-full h-14 md:h-16 rounded-[1.5rem] bg-primary text-white font-black text-base md:text-xl shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
               Continuar al Pago
             </Button>
-            <p className="text-[9px] text-center text-muted-foreground mt-3 font-medium">
-              Transacciones seguras vía Webpay Plus
+            
+            <p className="text-[10px] text-center text-muted-foreground mt-4 font-bold flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              Pago 100% Seguro vía Webpay Plus
             </p>
           </SheetFooter>
         )}
