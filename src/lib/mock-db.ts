@@ -52,3 +52,9 @@ export async function getProducts(): Promise<Product[]> {
   await new Promise(resolve => setTimeout(resolve, 100));
   return MOCK_PRODUCTS;
 }
+
+export async function getProductById(id: string): Promise<Product | undefined> {
+  // Simulación de delay de red
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return MOCK_PRODUCTS.find(p => p.id === id);
+}
