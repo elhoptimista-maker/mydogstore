@@ -11,13 +11,11 @@ import {
   Fish,
   Truck,
   ShieldCheck,
-  Heart,
   Bone,
   Gamepad2,
 } from 'lucide-react';
 import { getProducts, Product } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
-import ProductAssistant from '@/components/ProductAssistant';
 import { cn } from '@/lib/utils';
 
 export default async function Home() {
@@ -50,20 +48,20 @@ export default async function Home() {
   return (
     <div className="bg-background flex flex-col min-h-screen">
       
-      {/* 1. Hero Section - Refinado con Teal y Mango */}
-      <section className="px-4 py-8 md:py-12">
+      {/* 1. Hero Section */}
+      <section className="px-4 py-6 md:py-10">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-primary rounded-[3rem] p-8 md:p-20 relative overflow-hidden shadow-2xl shadow-primary/20 border-b-8 border-secondary/20">
+          <div className="bg-primary rounded-[3rem] p-8 md:p-16 relative overflow-hidden shadow-2xl shadow-primary/20">
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="space-y-8 text-center md:text-left">
                 <Badge className="bg-secondary text-primary font-black px-5 py-1.5 rounded-full text-[10px] tracking-[0.2em] border-none shadow-xl shadow-black/10">
-                  TEMPORADA TEAL
+                  BIENESTAR ANIMAL
                 </Badge>
                 <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] tracking-tighter">
-                  Bienestar <span className="text-secondary italic">Premium</span> <br /> para tu mascota.
+                  Nutrición <span className="text-secondary italic">Premium</span> <br /> para tu mascota.
                 </h1>
                 <p className="text-white/70 text-lg md:text-xl font-medium max-w-md mx-auto md:mx-0 leading-relaxed">
-                  Líderes en nutrición y accesorios certificados con más de 15 años cuidando a los que más quieres.
+                  Líderes en distribución de las mejores marcas con más de 15 años de trayectoria en Chile.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Link href="/catalogo">
@@ -76,7 +74,7 @@ export default async function Home() {
               <div className="hidden md:block relative aspect-square max-w-lg ml-auto">
                 <div className="absolute inset-0 bg-white/5 rounded-full blur-3xl scale-150 animate-pulse"></div>
                 <Image
-                  src="https://picsum.photos/seed/mydog-teal/800/800"
+                  src="https://picsum.photos/seed/mydog-hero-teal/800/800"
                   alt="MyDog Hero"
                   fill
                   className="object-contain drop-shadow-2xl animate-float"
@@ -93,9 +91,9 @@ export default async function Home() {
       </section>
 
       {/* 2. Trust Bar */}
-      <section className="px-4 py-10 md:py-16">
+      <section className="px-4 py-6 md:py-10">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-primary/5 grid grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-primary/5 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
             {trustBadges.map((badge, i) => (
               <div key={i} className="flex flex-col items-center md:items-start text-center md:text-left gap-4 group">
                 <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
@@ -111,9 +109,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Categories - Scroll Horizontal Adaptativo */}
-      <section className="py-10 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-10">
+      {/* 3. Categories */}
+      <section className="py-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8">
           <div className="flex flex-col items-center gap-2">
             <h2 className="text-xs font-black text-primary/40 uppercase tracking-[0.4em]">Navegación Visual</h2>
             <h3 className="text-2xl md:text-4xl font-black tracking-tight">Explora por mascota</h3>
@@ -143,16 +141,16 @@ export default async function Home() {
       </section>
 
       {/* 4. Featured Products */}
-      <section className="bg-white/50 py-20 md:py-32">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12">
-          <div className="flex items-end justify-between border-b border-primary/5 pb-8">
+      <section className="bg-white/50 py-12 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-10">
+          <div className="flex items-end justify-between border-b border-primary/5 pb-6">
             <div className="space-y-2">
               <h2 className="text-3xl md:text-5xl font-black text-primary tracking-tighter">Novedades</h2>
-              <p className="text-muted-foreground font-medium">Selección exclusiva de raciones y accesorios premium</p>
+              <p className="text-muted-foreground font-medium">Las mejores marcas de nutrición certificada</p>
             </div>
             <Link href="/catalogo">
               <Button variant="ghost" className="rounded-full text-primary font-black gap-2 hover:bg-primary/5">
-                Ver todo el catálogo <ArrowRight className="w-4 h-4" />
+                Ver todo <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
@@ -162,15 +160,6 @@ export default async function Home() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* 5. AI Assistant - Integración Orgánica */}
-      <section id="asistente" className="py-20 md:py-32 bg-primary/5 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-           <ProductAssistant />
-        </div>
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"></div>
       </section>
 
     </div>

@@ -21,9 +21,9 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300">
-      {/* Promo Bar */}
-      <div className="bg-secondary/10 border-b border-secondary/20 py-2 px-4 text-center">
-        <p className="text-[10px] md:text-xs font-bold text-primary uppercase tracking-widest">
+      {/* Promo Bar - Solid Primary Background */}
+      <div className="bg-primary py-2 px-4 text-center shadow-md">
+        <p className="text-[10px] md:text-xs font-bold text-white uppercase tracking-widest">
           🚚 DESPACHO GRATIS POR COMPRAS SOBRE $30.000 EN SANTIAGO
         </p>
       </div>
@@ -31,7 +31,7 @@ export default function Header() {
       {/* Main Header */}
       <div className={cn(
         "bg-white transition-all duration-500 px-4 md:px-8 border-b border-black/[0.03]",
-        scrolled ? "h-16" : "h-20"
+        scrolled ? "h-16 shadow-lg" : "h-20"
       )}>
         <div className="max-w-7xl mx-auto h-full flex items-center gap-4 md:gap-12">
           {/* Logo */}
