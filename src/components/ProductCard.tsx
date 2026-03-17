@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Heart } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/mock-db';
 import { useState } from 'react';
@@ -23,22 +23,29 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.stopPropagation();
     addToCart(product);
     toast({
-      title: "¡Añadido!",
-      description: `${product.metadata.name} está en tu carrito.`,
+      title: "¡Añadido al carrito!",
+      description: product.metadata.name,
       className: "bg-primary text-white rounded-2xl border-none font-bold shadow-2xl",
     });
   };
 
   return (
-    <div className="group relative bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-1 border border-black/[0.03] flex flex-col h-full p-2 md:p-3">
-      {/* Imagen del Producto - Siempre Cuadrada */}
-      <Link href={`/catalogo/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#f9f9f9] rounded-[1.5rem] md:rounded-[2rem]">
+    <div className="group relative bg-white rounded-[2rem] overflow-hidden transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-2 border border-black/[0.02] flex flex-col h-full">
+      {/* Visual Header - Brand & Badges */}
+      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+        <span className="bg-primary/10 backdrop-blur-md text-primary text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/10">
+          {product.attributes.brand}
+        </span>
+      </div>
+
+      {/* Image Container */}
+      <Link href={`/catalogo/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#fdfdfd] p-6">
         <Image
           src={product.media.main_image}
           alt={product.metadata.name}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+          className="object-contain transition-transform duration-700 group-hover:scale-110 p-8"
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
         />
         
         <button 
@@ -47,31 +54,29 @@ export default function ProductCard({ product }: ProductCardProps) {
             setIsFavorite(!isFavorite);
           }}
           className={cn(
-            "absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-10",
-            isFavorite ? "bg-red-500 text-white shadow-lg" : "bg-white/70 text-foreground/40 hover:text-red-500"
+            "absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-10",
+            isFavorite ? "bg-red-500 text-white shadow-lg" : "bg-white/80 text-primary/40 hover:text-red-500"
           )}
         >
           <Heart className={cn("w-5 h-5", isFavorite && "fill-current")} />
         </button>
       </Link>
       
-      {/* Contenido */}
-      <div className="p-3 md:p-4 flex flex-col flex-1 gap-2">
-        <div className="flex items-center gap-1">
+      {/* Content */}
+      <div className="p-6 md:p-8 flex flex-col flex-1">
+        <div className="flex items-center gap-1 mb-3">
           <Star className="w-3 h-3 fill-secondary text-secondary" />
-          <span className="text-[10px] font-black text-muted-foreground">4.8</span>
-          <span className="mx-1 text-muted-foreground/20">|</span>
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest truncate">{product.attributes.brand}</span>
+          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">4.8 • Popular</span>
         </div>
         
-        <h3 className="text-xs md:text-sm font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors">
+        <h3 className="text-sm md:text-base font-bold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors mb-6">
           {product.metadata.name}
         </h3>
         
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-black/[0.02]">
+        <div className="mt-auto flex items-end justify-between gap-4">
           <div className="flex flex-col">
-            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">P. Venta</span>
-            <span className="text-base md:text-xl font-black text-primary tracking-tighter">
+            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Precio Venta</span>
+            <span className="text-xl md:text-2xl font-black text-primary tracking-tighter">
               ${product.financials.pricing.base_price.toLocaleString('es-CL')}
             </span>
           </div>
@@ -79,9 +84,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Button 
             onClick={handleAddToCart}
             size="icon" 
-            className="h-11 w-11 md:h-12 md:w-12 rounded-[1.2rem] md:rounded-[1.5rem] bg-secondary text-foreground shadow-lg shadow-secondary/20 hover:scale-110 active:scale-95 transition-all"
+            className="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:scale-110 active:scale-95 transition-all"
           >
-            <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
+            <Plus className="w-6 h-6" />
           </Button>
         </div>
       </div>

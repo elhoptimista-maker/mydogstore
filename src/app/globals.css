@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96%; /* #f6f6f6 */
-    --foreground: 0 0% 14%; /* #242424 */
+    --background: 0 0% 98%; /* #fafafa - Limpieza absoluta */
+    --foreground: 167 40% 10%; /* Texto muy oscuro basado en el verde */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 14%;
+    --card-foreground: 167 40% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 14%;
-    --primary: 178 100% 27%; /* #008B86 - Verde Cerceta */
+    --popover-foreground: 167 40% 10%;
+    --primary: 167 100% 21%; /* El verde exacto del logo: #006B54 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 26 98% 76%; /* #FEB987 - Naranja Durazno */
-    --secondary-foreground: 0 0% 14%;
-    --muted: 0 0% 47%; /* #797979 */
-    --muted-foreground: 0 0% 47%;
-    --accent: 26 98% 76%;
-    --accent-foreground: 0 0% 14%;
+    --secondary: 26 90% 70%; /* Naranja melocotón refinado para contraste */
+    --secondary-foreground: 167 40% 10%;
+    --muted: 167 10% 90%;
+    --muted-foreground: 167 10% 40%;
+    --accent: 26 90% 70%;
+    --accent-foreground: 167 40% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 178 100% 27%;
+    --border: 167 15% 90%;
+    --input: 167 15% 90%;
+    --ring: 167 100% 21%;
     --radius: 1.5rem;
   }
 }
@@ -38,11 +38,6 @@
   .glass {
     @apply bg-white/80 backdrop-blur-md border-b border-white/20;
   }
-  .wave-bg {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23008B86' fill-opacity='1' d='0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,149.3C672,149,768,203,864,218.7C960,235,1056,213,1152,186.7C1248,160,1344,128,1392,112L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
 }
 
 @layer base {
@@ -56,10 +51,10 @@
 
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  50% { transform: translateY(-15px); }
   100% { transform: translateY(0px); }
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 5s ease-in-out infinite;
 }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCart } from '@/context/CartContext';
@@ -23,29 +22,27 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
       >
-        {/* Cabecera Corporativa - Sin bordes y unida al contenido */}
-        <SheetHeader className="p-6 bg-primary text-white shrink-0 border-none space-y-0 pb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <ShoppingCart className="w-6 h-6 text-secondary" />
-              </div>
-              <div className="flex flex-col items-start">
-                <SheetTitle className="text-white text-xl font-black tracking-tight leading-none">
-                  Mi Orden
-                </SheetTitle>
-                <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest mt-1">
-                  {cartCount} Ítems seleccionados
-                </span>
-              </div>
+        {/* Cabecera Corporativa - Sin padding inferior para unir con la lista */}
+        <SheetHeader className="px-6 pt-8 pb-4 bg-primary text-white shrink-0 border-none space-y-0">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+              <ShoppingCart className="w-6 h-6 text-secondary" />
+            </div>
+            <div className="flex flex-col items-start text-left">
+              <SheetTitle className="text-white text-xl font-black tracking-tight leading-none">
+                Mi Orden
+              </SheetTitle>
+              <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest mt-1">
+                {cartCount} Ítems seleccionados
+              </span>
             </div>
           </div>
         </SheetHeader>
 
-        {/* Listado de Productos - Sin gaps ni paddings intermedios */}
+        {/* Listado de Productos - Sin márgenes superiores o inferiores que creen gaps */}
         <div className="flex-1 overflow-hidden bg-muted/5 flex flex-col m-0 p-0 border-none">
-          <ScrollArea className="flex-1 p-0 m-0">
-            <div className="px-6 py-0">
+          <ScrollArea className="flex-1">
+            <div className="px-6">
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center py-24 space-y-4">
                   <div className="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center border border-border/50">
@@ -59,13 +56,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                   </div>
                 </div>
               ) : (
-                cart.map((item, index) => (
+                cart.map((item) => (
                   <div 
                     key={item.id + (item.isSubscription ? '-sub' : '')} 
-                    className={cn(
-                      "flex gap-4 items-start py-6 border-b border-border/50 last:border-0",
-                      index === 0 && "pt-6"
-                    )}
+                    className="flex gap-4 items-start py-6 border-b border-border/50 last:border-0"
                   >
                     <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
                       <Image 
@@ -124,11 +118,11 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </ScrollArea>
         </div>
 
-        {/* Resumen Final - Unión física sin gaps */}
+        {/* Resumen Final - Eliminado el pt-6 para que toque el área de scroll */}
         {cart.length > 0 && (
-          <div className="p-6 md:p-8 bg-white shrink-0 border-none shadow-[0_-15px_40px_rgba(0,0,0,0.08)] relative z-10 mt-0">
+          <div className="px-6 py-8 md:px-8 md:py-10 pt-0 bg-white shrink-0 border-none shadow-[0_-15px_40px_rgba(0,0,0,0.08)] relative z-10 mt-0">
             <div className="space-y-4 mb-6">
-              <div className="flex justify-between items-center text-sm">
+              <div className="flex justify-between items-center text-sm pt-6">
                 <span className="text-muted-foreground font-medium">Subtotal Neto</span>
                 <span className="font-bold text-foreground">
                   ${(cartTotal / 1.19).toLocaleString('es-CL', { maximumFractionDigits: 0 })}
