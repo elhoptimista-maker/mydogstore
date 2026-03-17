@@ -23,15 +23,15 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
       >
-        {/* Cabecera Corporativa - Sin borde inferior */}
-        <SheetHeader className="p-6 bg-primary text-white shrink-0 border-none">
+        {/* Cabecera Corporativa - Sin borde inferior y sin padding inferior para unir con el contenido */}
+        <SheetHeader className="p-6 pb-4 bg-primary text-white shrink-0 border-none space-y-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                 <ShoppingCart className="w-6 h-6 text-secondary" />
               </div>
               <div className="flex flex-col items-start">
-                <SheetTitle className="text-white text-xl font-black tracking-tight leading-none border-none">
+                <SheetTitle className="text-white text-xl font-black tracking-tight leading-none">
                   Mi Orden
                 </SheetTitle>
                 <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest mt-1">
@@ -42,10 +42,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Listado de Productos */}
+        {/* Listado de Productos - Sin gaps horizontales con las otras secciones */}
         <div className="flex-1 overflow-hidden bg-muted/5">
           <ScrollArea className="h-full">
-            <div className="p-6 space-y-6">
+            <div className="px-6 py-4 space-y-6">
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center py-24 space-y-4">
                   <div className="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center border border-border/50">
@@ -127,9 +127,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </ScrollArea>
         </div>
 
-        {/* Footer - Sin borde superior, usando sombra para separar */}
+        {/* Footer - Sin borde superior y sin gap horizontal con el listado */}
         {cart.length > 0 && (
-          <div className="p-6 md:p-8 bg-white shrink-0 shadow-[0_-15px_30px_rgba(0,0,0,0.03)] border-none">
+          <div className="p-6 md:p-8 pt-6 bg-white shrink-0 border-none shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
             <div className="space-y-4 mb-6">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground font-medium">Subtotal Neto</span>
@@ -156,7 +156,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     ${cartTotal.toLocaleString('es-CL')}
                   </span>
                 </div>
-                <Badge className="bg-muted text-foreground/80 hover:bg-muted/80 border-none font-bold text-[10px] px-3 py-1 rounded-full">
+                <Badge className="bg-muted text-foreground/80 border-none font-bold text-[10px] px-3 py-1 rounded-full">
                   IVA INCLUIDO
                 </Badge>
               </div>
@@ -166,7 +166,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/15 hover:scale-[1.01] active:scale-[0.98] transition-all">
                 Finalizar Compra
               </Button>
-              <div className="flex items-center justify-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all">
+              <div className="flex items-center justify-center gap-2 opacity-50">
                 <ShieldCheck className="w-4 h-4 text-primary" />
                 <span className="text-[9px] font-bold uppercase tracking-widest">Transacción Segura Webpay Plus</span>
               </div>
