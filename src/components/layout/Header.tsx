@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Bell, Menu, Dog, Search, User } from 'lucide-react';
+import { ShoppingCart, Bell, Menu, Dog, Search, User, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -17,22 +17,31 @@ export default function Header() {
 
   return (
     <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4",
-      scrolled ? "h-16 bg-white/80 backdrop-blur-md shadow-sm" : "h-20 bg-transparent"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4",
+      scrolled ? "h-16 bg-white/90 backdrop-blur-lg shadow-sm" : "h-20 bg-transparent"
     )}>
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
-            <Dog className="text-white w-6 h-6" />
+          <div className={cn(
+            "w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-lg",
+            scrolled ? "bg-primary shadow-primary/20" : "bg-white shadow-black/5"
+          )}>
+            <Dog className={cn("w-6 h-6", scrolled ? "text-white" : "text-primary")} />
           </div>
-          <Link href="/" className="font-extrabold text-2xl tracking-tighter text-foreground hidden sm:block">
+          <Link href="/" className={cn(
+            "font-extrabold text-2xl tracking-tighter hidden sm:block",
+            scrolled ? "text-foreground" : "text-white"
+          )}>
             My<span className="text-primary">dog</span><span className="text-secondary">Store</span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 font-bold text-sm text-foreground/80">
+        <nav className={cn(
+          "hidden lg:flex items-center gap-8 font-bold text-sm",
+          scrolled ? "text-foreground/80" : "text-white/90"
+        )}>
           <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
           <Link href="/productos" className="hover:text-primary transition-colors">Catálogo</Link>
           <Link href="#" className="hover:text-primary transition-colors">Suscripción</Link>
@@ -41,33 +50,43 @@ export default function Header() {
 
         {/* Action Icons */}
         <div className="flex items-center gap-1 sm:gap-3">
-          <div className="hidden lg:flex items-center bg-white/50 rounded-full px-4 py-2 border border-border/50 focus-within:ring-2 focus-within:ring-primary transition-all">
-            <Search className="w-4 h-4 text-muted mr-2" />
+          <div className={cn(
+            "hidden md:flex items-center rounded-full px-4 py-2 border transition-all focus-within:ring-2 focus-within:ring-primary",
+            scrolled ? "bg-white/50 border-border/50" : "bg-white/10 border-white/20"
+          )}>
+            <Search className={cn("w-4 h-4 mr-2", scrolled ? "text-muted" : "text-white/60")} />
             <input 
               type="text" 
-              placeholder="Buscar..." 
-              className="bg-transparent border-none outline-none text-sm w-32 focus:w-48 transition-all font-medium"
+              placeholder="Buscar para tu peludo..." 
+              className={cn(
+                "bg-transparent border-none outline-none text-sm w-32 focus:w-48 transition-all font-medium placeholder:font-normal",
+                scrolled ? "text-foreground placeholder:text-muted" : "text-white placeholder:text-white/60"
+              )}
             />
           </div>
           
-          <Button variant="ghost" size="icon" className="rounded-2xl relative hover:bg-primary/10">
-            <Bell className="w-6 h-6 text-foreground" />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-secondary rounded-full border-2 border-white"></span>
-          </Button>
-          
-          <Button variant="ghost" size="icon" className="rounded-2xl hover:bg-primary/10">
-            <User className="w-6 h-6 text-foreground hidden sm:flex" />
+          <Button variant="ghost" size="icon" className={cn(
+            "rounded-2xl relative hover:bg-primary/10",
+            !scrolled && "text-white hover:bg-white/10"
+          )}>
+            <Heart className="w-6 h-6" />
           </Button>
 
           <Link href="#">
-            <Button className="rounded-2xl bg-primary hover:bg-primary/90 shadow-md shadow-primary/10 flex gap-2 font-bold px-4 h-11 transition-transform active:scale-95">
+            <Button className={cn(
+              "rounded-2xl shadow-lg flex gap-2 font-bold px-4 h-11 transition-all active:scale-95",
+              scrolled ? "bg-primary hover:bg-primary/90 text-white shadow-primary/20" : "bg-white text-primary hover:bg-secondary hover:text-white shadow-black/10"
+            )}>
               <ShoppingCart className="w-5 h-5" />
               <span className="hidden sm:inline">Carrito</span>
             </Button>
           </Link>
 
-          <Button variant="ghost" size="icon" className="md:hidden rounded-2xl">
-            <Menu className="w-6 h-6 text-foreground" />
+          <Button variant="ghost" size="icon" className={cn(
+            "md:hidden rounded-2xl",
+            !scrolled && "text-white hover:bg-white/10"
+          )}>
+            <Menu className="w-6 h-6" />
           </Button>
         </div>
       </div>
