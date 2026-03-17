@@ -36,9 +36,9 @@ export default function Header() {
         </div>
 
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm">
-          <Link href="/products" className="hover:text-primary transition-colors">Catalog</Link>
-          <Link href="#" className="hover:text-primary transition-colors">Best Sellers</Link>
-          <Link href="#" className="hover:text-primary transition-colors">About</Link>
+          <Link href="/products" className="hover:text-primary transition-colors">Catálogo</Link>
+          <Link href="#" className="hover:text-primary transition-colors">Favoritos</Link>
+          <Link href="#" className="hover:text-primary transition-colors">Nosotros</Link>
         </nav>
 
         <div className="flex items-center gap-1 md:gap-4">

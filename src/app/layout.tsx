@@ -5,8 +5,8 @@ import Header from '@/components/Header';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'MydogStore | Premium Dog Care & Nutrition',
-  description: 'Shop world-class products for your furry friends. Orthopedic beds, organic food, and premium toys with AI-powered recommendations.',
+  title: 'MydogStore | Lo mejor para tu regalón',
+  description: 'Compra productos premium para tus perros. Camas ortopédicas, comida orgánica y juguetes bakanes con recomendaciones de IA.',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
 };
 
@@ -16,12 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-        {/* Google Tag Manager - Placeholder */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -33,7 +32,6 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* JSON-LD Schema.org for Organization */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -41,8 +39,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "MydogStore",
-              "url": "https://mydogstore.com",
-              "logo": "https://mydogstore.com/logo.png"
+              "url": "https://mydogstore.cl",
+              "logo": "https://mydogstore.cl/logo.png"
             })
           }}
         />
@@ -61,7 +59,7 @@ export default function RootLayout({
              <div className="text-xl font-headline font-bold text-primary">
               My<span className="text-accent">dog</span>Store
             </div>
-            <p className="text-sm text-muted-foreground">© 2024 MydogStore. Premium essentials for your best friend.</p>
+            <p className="text-sm text-muted-foreground">© 2024 MydogStore. Todo lo que tu mejor amigo necesita.</p>
           </div>
         </footer>
       </body>

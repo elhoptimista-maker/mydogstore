@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Loader2, Dog, ArrowRight } from 'lucide-react';
+import { Sparkles, Loader2, Dog } from 'lucide-react';
 import { intelligentProductAssistant, type IntelligentProductAssistantOutput } from '@/ai/flows/intelligent-product-assistant';
 
 export default function ProductAssistant() {
@@ -39,10 +39,10 @@ export default function ProductAssistant() {
             <Dog className="text-primary w-6 h-6" />
           </div>
           <CardTitle className="text-2xl md:text-3xl font-headline text-primary font-bold">
-            Personalized Dog Advisor
+            Asesor Personal de Peludos
           </CardTitle>
           <CardDescription className="text-lg text-muted-foreground">
-            Our AI finds the perfect matches based on your dog's unique profile.
+            Nuestra IA encuentra los mejores productos según el perfil único de tu perro.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-8">
@@ -50,20 +50,20 @@ export default function ProductAssistant() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="breed">What's their breed?</Label>
+                  <Label htmlFor="breed">¿Cuál es su raza?</Label>
                   <Input 
                     id="breed" 
-                    placeholder="e.g. Golden Retriever" 
+                    placeholder="Ej: Quilterrier, Golden, Poodle" 
                     className="rounded-xl border-primary/20 focus-visible:ring-primary"
                     value={form.dogBreed}
                     onChange={e => setForm({...form, dogBreed: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="age">How old are they?</Label>
+                  <Label htmlFor="age">¿Qué edad tiene?</Label>
                   <Input 
                     id="age" 
-                    placeholder="e.g. 2 years or Puppy" 
+                    placeholder="Ej: 2 años o Cachorro" 
                     className="rounded-xl border-primary/20 focus-visible:ring-primary"
                     value={form.dogAge}
                     onChange={e => setForm({...form, dogAge: e.target.value})}
@@ -71,10 +71,10 @@ export default function ProductAssistant() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="needs">Any specific needs or sensitivities?</Label>
+                <Label htmlFor="needs">¿Alguna necesidad o sensibilidad especial?</Label>
                 <Input 
                   id="needs" 
-                  placeholder="e.g. joint support, picky eater" 
+                  placeholder="Ej: problemas articulares, mañoso para comer" 
                   className="rounded-xl border-primary/20 focus-visible:ring-primary"
                   value={form.specificNeeds}
                   onChange={e => setForm({...form, specificNeeds: e.target.value})}
@@ -88,12 +88,12 @@ export default function ProductAssistant() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Analyzing Dog Profile...
+                    Analizando perfil perruno...
                   </>
                 ) : (
                   <>
                     <Sparkles className="mr-2 h-5 w-5" />
-                    Get Recommendations
+                    Obtener Recomendaciones
                   </>
                 )}
               </Button>
@@ -106,7 +106,7 @@ export default function ProductAssistant() {
                     <h4 className="text-lg font-bold text-primary mb-1">{rec.productName}</h4>
                     <p className="text-sm text-foreground/80 mb-3">{rec.productDescription}</p>
                     <div className="text-xs bg-white/50 p-3 rounded-lg text-primary-foreground/80 italic">
-                      <span className="font-bold text-primary not-italic">Expert Tip:</span> {rec.reasonForRecommendation}
+                      <span className="font-bold text-primary not-italic">Tip del Experto:</span> {rec.reasonForRecommendation}
                     </div>
                   </div>
                 ))}
@@ -116,7 +116,7 @@ export default function ProductAssistant() {
                 className="w-full h-12 rounded-xl border-primary text-primary hover:bg-primary/5"
                 onClick={() => setResults(null)}
               >
-                Start Over
+                Empezar de nuevo
               </Button>
             </div>
           )}

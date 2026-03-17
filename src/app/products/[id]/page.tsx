@@ -14,7 +14,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   const product = await getProductById(id);
-  if (!product) return { title: 'Product Not Found' };
+  if (!product) return { title: 'Producto no encontrado' };
   return {
     title: `${product.name} | MydogStore`,
     description: product.description,
@@ -31,7 +31,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-16">
-      {/* Product JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -48,7 +47,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             },
             "offers": {
               "@type": "Offer",
-              "priceCurrency": "USD",
+              "priceCurrency": "CLP",
               "price": product.price,
               "availability": "https://schema.org/InStock"
             },
@@ -62,7 +61,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Product Image Gallery Placeholder */}
+        {/* Gallery */}
         <div className="space-y-4">
           <div className="aspect-square relative rounded-3xl overflow-hidden bg-white shadow-sm group">
             <Image
@@ -79,7 +78,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <div key={i} className="aspect-square relative rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/50 cursor-pointer">
                 <Image 
                   src={`https://picsum.photos/seed/product-${i}/200/200`} 
-                  alt="detail" 
+                  alt="detalle" 
                   fill 
                   className="object-cover"
                   data-ai-hint="dog detail"
@@ -89,7 +88,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Product Info */}
+        {/* Info */}
         <div className="space-y-8 flex flex-col justify-center">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -116,12 +115,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   <Star key={i} className={`w-4 h-4 fill-current ${i > Math.floor(product.rating) ? 'text-gray-200' : ''}`} />
                 ))}
               </div>
-              <span className="text-sm font-medium text-muted-foreground">(124 Customer Reviews)</span>
+              <span className="text-sm font-medium text-muted-foreground">(124 Reseñas de Clientes)</span>
             </div>
           </div>
 
           <div className="text-3xl font-bold text-primary">
-            ${product.price.toFixed(2)}
+            ${product.price.toLocaleString('es-CL')}
           </div>
 
           <p className="text-lg text-muted-foreground leading-relaxed">
@@ -131,10 +130,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <Button className="flex-1 h-14 rounded-2xl bg-primary text-lg font-bold gap-3 shadow-xl shadow-primary/20">
-                <ShoppingCart className="w-5 h-5" /> Add to Cart
+                <ShoppingCart className="w-5 h-5" /> Añadir al Carrito
               </Button>
               <Button variant="outline" className="flex-1 h-14 rounded-2xl border-primary text-primary hover:bg-primary/5 text-lg font-bold">
-                Subscribe & Save 10%
+                Suscríbete y Ahorra 10%
               </Button>
             </div>
           </div>
@@ -146,19 +145,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
                 <Truck className="w-5 h-5 text-accent" />
               </div>
-              Free Worldwide Delivery
+              Despacho Gratis a Todo Chile
             </div>
             <div className="flex items-center gap-3 text-sm font-medium text-foreground/80">
               <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
                 <RefreshCw className="w-5 h-5 text-accent" />
               </div>
-              30-Day Happiness Guarantee
+              30 Días de Garantía de Felicidad
             </div>
             <div className="flex items-center gap-3 text-sm font-medium text-foreground/80">
               <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5 text-accent" />
               </div>
-              Vet Certified Ingredients
+              Ingredientes Certificados
             </div>
           </div>
         </div>

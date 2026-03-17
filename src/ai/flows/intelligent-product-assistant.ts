@@ -1,29 +1,28 @@
+
 'use server';
 /**
- * @fileOverview An AI-powered assistant that recommends products for dogs based on their breed, age, and specific needs.
+ * @fileOverview Un asistente impulsado por IA que recomienda productos para perros basados en su raza, edad y necesidades específicas.
  *
- * - intelligentProductAssistant - A function that handles the product recommendation process.
- * - IntelligentProductAssistantInput - The input type for the intelligentProductAssistant function.
- * - IntelligentProductAssistantOutput - The return type for the intelligentProductAssistant function.
+ * - intelligentProductAssistant - Función que maneja el proceso de recomendación de productos.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const IntelligentProductAssistantInputSchema = z.object({
-  dogBreed: z.string().optional().describe('The breed of the dog (e.g., "Golden Retriever", "Poodle").'),
-  dogAge: z.string().optional().describe('The age or age group of the dog (e.g., "Puppy", "Adult", "Senior", "2 years old").'),
-  specificNeeds: z.string().optional().describe('Any specific needs or conditions the dog has (e.g., "sensitive stomach", "high energy", "joint support").'),
-  additionalInfo: z.string().optional().describe('Any other relevant information about the dog.'),
+  dogBreed: z.string().optional().describe('La raza del perro (ej: "Golden Retriever", "Poodle", "Quilterrier").'),
+  dogAge: z.string().optional().describe('La edad o grupo de edad del perro (ej: "Cachorro", "Adulto", "Senior", "2 años").'),
+  specificNeeds: z.string().optional().describe('Cualquier necesidad específica o condición (ej: "estómago sensible", "mucha energía", "soporte articular").'),
+  additionalInfo: z.string().optional().describe('Cualquier otra información relevante.'),
 });
 export type IntelligentProductAssistantInput = z.infer<typeof IntelligentProductAssistantInputSchema>;
 
 const IntelligentProductAssistantOutputSchema = z.object({
   recommendations: z.array(z.object({
-    productName: z.string().describe('The name of the recommended product.'),
-    productDescription: z.string().describe('A brief description of the recommended product.'),
-    reasonForRecommendation: z.string().describe('The reason why this product is recommended for the dog, based on the provided details.'),
-  })).describe('A list of recommended products for the dog.'),
+    productName: z.string().describe('El nombre del producto recomendado.'),
+    productDescription: z.string().describe('Una breve descripción del producto recomendado.'),
+    reasonForRecommendation: z.string().describe('La razón de por qué se recomienda este producto, basado en los detalles entregados.'),
+  })).describe('Una lista de productos recomendados.'),
 });
 export type IntelligentProductAssistantOutput = z.infer<typeof IntelligentProductAssistantOutputSchema>;
 
@@ -31,23 +30,25 @@ const intelligentProductAssistantPrompt = ai.definePrompt({
   name: 'intelligentProductAssistantPrompt',
   input: {schema: IntelligentProductAssistantInputSchema},
   output: {schema: IntelligentProductAssistantOutputSchema},
-  prompt: `You are an expert in dog products and nutrition. Your goal is to recommend suitable products for a dog based on the provided details.
+  prompt: `Eres un experto en productos para perros y nutrición canina en Chile. Tu objetivo es recomendar productos adecuados para un perro basándote en los detalles proporcionados.
 
-  Consider the following information about the dog:
+  HABLA SIEMPRE EN ESPAÑOL LATINO (CHILE). Usa términos como "peludo", "regalón", "bakán" cuando sea apropiado, pero mantén un tono profesional y experto.
+
+  Considera la siguiente información:
   {{#if dogBreed}}
-  Breed: {{{dogBreed}}}
+  Raza: {{{dogBreed}}}
   {{/if}}
   {{#if dogAge}}
-  Age: {{{dogAge}}}
+  Edad: {{{dogAge}}}
   {{/if}}
   {{#if specificNeeds}}
-  Specific Needs: {{{specificNeeds}}}
+  Necesidades Específicas: {{{specificNeeds}}}
   {{/if}}
   {{#if additionalInfo}}
-  Additional Information: {{{additionalInfo}}}
+  Información Adicional: {{{additionalInfo}}}
   {{/if}}
 
-  Based on this information, recommend 3 to 5 products. For each product, provide its name, a brief description, and a clear reason for the recommendation. The recommendations should be relevant to the dog's breed, age, or specific needs. If not enough information is provided, make general but helpful recommendations.
+  Basado en esto, recomienda entre 3 y 5 productos. Para cada uno, entrega su nombre, descripción y una razón clara de la recomendación. Si no hay suficiente info, da recomendaciones generales pero útiles.
   `
 });
 
@@ -60,7 +61,7 @@ const intelligentProductAssistantFlow = ai.defineFlow(
   async (input) => {
     const {output} = await intelligentProductAssistantPrompt(input);
     if (!output) {
-      throw new Error('Failed to get product recommendations.');
+      throw new Error('No se pudieron obtener recomendaciones.');
     }
     return output;
   }

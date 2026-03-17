@@ -12,44 +12,43 @@ export interface Product {
 const MOCK_PRODUCTS: Product[] = [
   {
     id: '1',
-    name: 'Royal Canine Adult Blend',
-    description: 'Scientifically formulated dry food for adult dogs of all sizes, ensuring optimal health and shiny coat.',
-    price: 54.99,
-    category: 'Food',
+    name: 'Mezcla Royal Canine Adulto',
+    description: 'Comida seca formulada científicamente para perros adultos de todos los tamaños, asegura salud óptima y pelaje brillante.',
+    price: 45990,
+    category: 'Comida',
     imageUrl: 'https://picsum.photos/seed/food1/600/600',
     rating: 4.8
   },
   {
     id: '2',
-    name: 'Kong Classic Rubber Toy',
-    description: 'Ultra-durable natural rubber toy that satisfies natural chewing instincts and provides mental stimulation.',
-    price: 18.50,
-    category: 'Toys',
+    name: 'Juguete Kong Clásico',
+    description: 'Caucho natural ultra duradero que satisface los instintos de masticación y entrega estimulación mental.',
+    price: 15500,
+    category: 'Juguetes',
     imageUrl: 'https://picsum.photos/seed/toy1/600/600',
     rating: 4.9
   },
   {
     id: '3',
-    name: 'Cloud Nine Memory Bed',
-    description: 'Premium orthopedic memory foam bed designed for joint support and maximum comfort for senior dogs.',
-    price: 89.00,
-    category: 'Beds',
+    name: 'Cama Nube Nueve Memory',
+    description: 'Cama premium de espuma viscoelástica diseñada para soporte articular y máximo confort para perros senior.',
+    price: 79000,
+    category: 'Camas',
     imageUrl: 'https://picsum.photos/seed/bed1/600/600',
     rating: 4.7
   },
   {
     id: '4',
-    name: 'Reflective Pro Leash',
-    description: 'Highly reflective nylon leash with a padded handle for comfort and a heavy-duty carabiner for safety.',
-    price: 24.95,
-    category: 'Accessories',
+    name: 'Correa Pro Reflectante',
+    description: 'Correa de nylon altamente reflectante con mango acolchado para mayor comodidad y mosquetón de alta resistencia.',
+    price: 19950,
+    category: 'Accesorios',
     imageUrl: 'https://picsum.photos/seed/leash1/600/600',
     rating: 4.6
   }
 ];
 
 export async function getProducts(): Promise<Product[]> {
-  // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 50));
   return MOCK_PRODUCTS;
 }
