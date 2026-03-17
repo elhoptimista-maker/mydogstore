@@ -24,7 +24,7 @@ export default function Header() {
       {/* Promo Bar - Solid Background, high visibility */}
       <div className="bg-primary py-2 px-4 text-center relative z-20">
         <p className="text-[10px] md:text-xs font-bold text-white uppercase tracking-widest flex items-center justify-center gap-2">
-          <span className="animate-bounce">🚚</span> DESPACHO GRATIS POR COMPRAS SOBRE $30.000 EN SANTIAGO
+          <span className="animate-bounce">🚚</span> DESPACHO GRATIS POR COMPRAS SOBRE $50.000 EN SANTIAGO
         </p>
       </div>
 
