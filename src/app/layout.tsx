@@ -27,7 +27,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-        {/* Google Tag Manager Placeholder */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -39,7 +38,6 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* Organization JSON-LD */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -63,7 +61,6 @@ export default function RootLayout({
           {children}
         </main>
         
-        {/* Modern Footer */}
         <footer className="bg-white border-t border-border/50 py-20 px-4 mt-0">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div className="space-y-6">
