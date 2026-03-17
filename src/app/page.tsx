@@ -90,18 +90,18 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 2. Trust Bar - Compacto */}
+      {/* 2. Trust Bar - Centrado y Ordenado */}
       <section className="px-4 py-2 md:py-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-primary/5 grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-primary/5 grid grid-cols-2 lg:grid-cols-4 gap-10">
             {trustBadges.map((badge, i) => (
-              <div key={i} className="flex flex-col items-center md:items-start text-center md:text-left gap-3 group">
-                <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
+              <div key={i} className="flex flex-col items-center text-center gap-4 group">
+                <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
                   {badge.icon}
                 </div>
-                <div>
-                  <h4 className="text-xs font-black text-foreground uppercase tracking-tight mb-0.5">{badge.title}</h4>
-                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{badge.desc}</p>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-black text-foreground uppercase tracking-tight">{badge.title}</h4>
+                  <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-wider">{badge.desc}</p>
                 </div>
               </div>
             ))}
