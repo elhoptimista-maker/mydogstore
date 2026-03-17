@@ -24,8 +24,8 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         className="w-full sm:max-w-md flex flex-col p-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
       >
         {/* Cabecera Corporativa - Sin padding inferior para unión directa */}
-        <SheetHeader className="p-6 pb-0 bg-primary text-white shrink-0 border-none space-y-0">
-          <div className="flex items-center justify-between pb-6">
+        <SheetHeader className="p-6 bg-primary text-white shrink-0 border-none space-y-0">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                 <ShoppingCart className="w-6 h-6 text-secondary" />
