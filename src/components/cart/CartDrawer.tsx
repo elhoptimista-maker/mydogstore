@@ -23,15 +23,15 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
       >
-        {/* Cabecera Corporativa */}
-        <SheetHeader className="p-6 bg-primary text-white shrink-0">
+        {/* Cabecera Corporativa - Sin borde inferior */}
+        <SheetHeader className="p-6 bg-primary text-white shrink-0 border-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                 <ShoppingCart className="w-6 h-6 text-secondary" />
               </div>
               <div className="flex flex-col items-start">
-                <SheetTitle className="text-white text-xl font-black tracking-tight leading-none">
+                <SheetTitle className="text-white text-xl font-black tracking-tight leading-none border-none">
                   Mi Orden
                 </SheetTitle>
                 <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest mt-1">
@@ -42,7 +42,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Listado de Productos Optimizado */}
+        {/* Listado de Productos */}
         <div className="flex-1 overflow-hidden bg-muted/5">
           <ScrollArea className="h-full">
             <div className="p-6 space-y-6">
@@ -64,7 +64,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     key={item.id + (item.isSubscription ? '-sub' : '')} 
                     className="flex gap-4 items-start pb-6 border-b border-border/50 last:border-0"
                   >
-                    {/* Imagen con Aspect Ratio Fijo */}
                     <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
                       <Image 
                         src={item.imageUrl} 
@@ -75,7 +74,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                       />
                     </div>
 
-                    {/* Información y Controles */}
                     <div className="flex-1 min-w-0 space-y-3">
                       <div className="flex justify-between items-start gap-2">
                         <div className="space-y-1">
@@ -101,7 +99,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                       )}
 
                       <div className="flex items-center justify-between">
-                        {/* Selector de Cantidad Estilizado */}
                         <div className="flex items-center gap-1 bg-white rounded-lg p-0.5 border border-border/60 shadow-sm">
                           <button 
                             onClick={() => updateQuantity(item.id, item.quantity - 1)} 
@@ -130,9 +127,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </ScrollArea>
         </div>
 
-        {/* Footer con Jerarquía y Legibilidad Corregida */}
+        {/* Footer - Sin borde superior, usando sombra para separar */}
         {cart.length > 0 && (
-          <div className="p-6 md:p-8 bg-white border-t border-border/50 shrink-0 shadow-[0_-15px_30px_rgba(0,0,0,0.03)]">
+          <div className="p-6 md:p-8 bg-white shrink-0 shadow-[0_-15px_30px_rgba(0,0,0,0.03)] border-none">
             <div className="space-y-4 mb-6">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground font-medium">Subtotal Neto</span>
@@ -159,7 +156,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     ${cartTotal.toLocaleString('es-CL')}
                   </span>
                 </div>
-                {/* Badge con legibilidad mejorada: texto oscuro sobre fondo muy claro */}
                 <Badge className="bg-muted text-foreground/80 hover:bg-muted/80 border-none font-bold text-[10px] px-3 py-1 rounded-full">
                   IVA INCLUIDO
                 </Badge>
