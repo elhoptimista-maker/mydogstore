@@ -1,13 +1,35 @@
 export interface Product {
   id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  petType: string;
-  brand: string;
-  imageUrl: string;
-  rating: number;
+  active: boolean;
+  attributes: {
+    brand: string;
+    breed_size: string;
+    category: string;
+    flavor?: string;
+    format: string;
+    is_prescription: boolean;
+    life_stage: string;
+    species: string;
+    weight_kg: number;
+  };
+  content: {
+    full_description: string;
+    short_description: string;
+  };
+  financials: {
+    pricing: {
+      base_price: number;
+    };
+  };
+  media: {
+    main_image: string;
+    imageHint: string;
+  };
+  metadata: {
+    name: string;
+    sku: string;
+    slug: string;
+  };
 }
 
 export const CATEGORIES = [
@@ -46,48 +68,70 @@ export const BRANDS = [
 
 export const MOCK_PRODUCTS: Product[] = [
   {
-    id: '1',
-    name: 'Alimento Seco Premium Adulto',
-    description: 'Nutrición balanceada con ingredientes seleccionados para una salud óptima de perros adultos.',
-    price: 38990,
-    category: 'Alimento Seco',
-    petType: 'Perro',
-    brand: 'Master Dog',
-    imageUrl: 'https://picsum.photos/seed/dogfood/600/600',
-    rating: 4.8
+    id: "2ByY6esYoWz0C1dp66lw",
+    active: true,
+    attributes: {
+      brand: "Champion Dog",
+      breed_size: "Todas las Razas",
+      category: "Alimento Seco",
+      flavor: "Carne",
+      format: "Saco",
+      is_prescription: false,
+      life_stage: "Adulto",
+      species: "Perro",
+      weight_kg: 18
+    },
+    content: {
+      full_description: "",
+      short_description: "Alimento seco Champion para perros adultos. Con sabor a carne, proporciona la energía y nutrientes esenciales para su bienestar diario."
+    },
+    financials: {
+      pricing: {
+        base_price: 24550
+      }
+    },
+    media: {
+      main_image: "https://www.fullerton.cl/wp-content/uploads/CHC-adulto-carne-pollo-2023.jpg",
+      imageHint: "dog food bag meat"
+    },
+    metadata: {
+      name: "Champion Perro Adulto Carne - 18kg",
+      sku: "ALI-PER-5918",
+      slug: "champion-perro-adulto-carne---18kg"
+    }
   },
   {
-    id: '2',
-    name: 'Snack Dental para Caninos',
-    description: 'Ayuda a reducir la formación de sarro y mantiene el aliento fresco de forma natural.',
-    price: 8500,
-    category: 'Snacks',
-    petType: 'Perro',
-    brand: 'Dentastix',
-    imageUrl: 'https://picsum.photos/seed/snack/600/600',
-    rating: 4.9
-  },
-  {
-    id: '3',
-    name: 'Arena Sanitaria Ultra Absorbente',
-    description: 'Control de olores superior y fácil limpieza para el hogar con gatos.',
-    price: 12900,
-    category: 'Arena Sanitaria',
-    petType: 'Gato',
-    brand: 'Easy Clean',
-    imageUrl: 'https://picsum.photos/seed/catlitter/600/600',
-    rating: 4.7
-  },
-  {
-    id: '4',
-    name: 'Alimento Húmedo Filetes en Salsa',
-    description: 'Exquisita receta con proteínas de alta calidad para los paladares más exigentes.',
-    price: 1500,
-    category: 'Alimento Húmedo',
-    petType: 'Gato',
-    brand: 'Whiskas',
-    imageUrl: 'https://picsum.photos/seed/catfood/600/600',
-    rating: 4.6
+    id: "prod_2",
+    active: true,
+    attributes: {
+      brand: "Whiskas",
+      breed_size: "Todas las Razas",
+      category: "Alimento Húmedo",
+      flavor: "Salmón",
+      format: "Sobre",
+      is_prescription: false,
+      life_stage: "Adulto",
+      species: "Gato",
+      weight_kg: 0.085
+    },
+    content: {
+      full_description: "",
+      short_description: "Exquisita receta de salmón en salsa para gatos adultos."
+    },
+    financials: {
+      pricing: {
+        base_price: 1500
+      }
+    },
+    media: {
+      main_image: "https://picsum.photos/seed/catfood/600/600",
+      imageHint: "cat food pouch"
+    },
+    metadata: {
+      name: "Whiskas Gato Adulto Salmón - 85g",
+      sku: "ALI-GAT-1234",
+      slug: "whiskas-gato-adulto-salmon"
+    }
   }
 ];
 

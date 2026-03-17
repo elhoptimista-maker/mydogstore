@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCart } from '@/context/CartContext';
@@ -23,7 +22,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
       >
-        {/* Cabecera Corporativa - bg-primary se extiende hasta el borde inferior */}
+        {/* Cabecera Corporativa - Sin bordes y con unión directa al contenido */}
         <SheetHeader className="p-6 bg-primary text-white shrink-0 border-none space-y-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -42,9 +41,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Listado de Productos - Sin padding vertical en el contenedor para unión directa */}
-        <div className="flex-1 overflow-hidden bg-muted/5 border-none">
-          <ScrollArea className="h-full">
+        {/* Listado de Productos - Ocupa todo el alto disponible sin gaps */}
+        <div className="flex-1 overflow-hidden bg-muted/5 flex flex-col border-none">
+          <ScrollArea className="flex-1">
             <div className="px-6 py-0">
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center py-24 space-y-4">
@@ -64,13 +63,13 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     key={item.id + (item.isSubscription ? '-sub' : '')} 
                     className={cn(
                       "flex gap-4 items-start py-6 border-b border-border/50 last:border-0",
-                      index === 0 && "pt-6" // Mantiene padding solo en el primer elemento para despegar del header
+                      index === 0 && "pt-6"
                     )}
                   >
                     <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
                       <Image 
-                        src={item.imageUrl} 
-                        alt={item.name} 
+                        src={item.media.main_image} 
+                        alt={item.metadata.name} 
                         fill 
                         className="object-cover"
                         sizes="80px"
@@ -81,10 +80,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                       <div className="flex justify-between items-start gap-2">
                         <div className="space-y-1">
                           <h4 className="font-bold text-sm leading-tight text-foreground line-clamp-2">
-                            {item.name}
+                            {item.metadata.name}
                           </h4>
                           <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                            {item.brand}
+                            {item.attributes.brand}
                           </span>
                         </div>
                         <button 
@@ -119,7 +118,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                           </button>
                         </div>
                         <span className="font-black text-primary text-base tracking-tighter">
-                          ${((item.isSubscription ? item.price * 0.9 : item.price) * item.quantity).toLocaleString('es-CL')}
+                          ${((item.isSubscription ? item.financials.pricing.base_price * 0.9 : item.financials.pricing.base_price) * item.quantity).toLocaleString('es-CL')}
                         </span>
                       </div>
                     </div>
@@ -130,9 +129,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </ScrollArea>
         </div>
 
-        {/* Resumen Final - Unión directa con el listado de productos */}
+        {/* Resumen Final - Unión directa sin bordes grises y legibilidad mejorada */}
         {cart.length > 0 && (
-          <div className="p-6 md:p-8 pt-6 bg-white shrink-0 border-none shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+          <div className="p-6 md:p-8 bg-white shrink-0 border-none shadow-[0_-15px_40px_rgba(0,0,0,0.08)] relative z-10">
             <div className="space-y-4 mb-6">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground font-medium">Subtotal Neto</span>
@@ -159,9 +158,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     ${cartTotal.toLocaleString('es-CL')}
                   </span>
                 </div>
-                <Badge className="bg-muted text-foreground/80 border-none font-bold text-[10px] px-3 py-1 rounded-full">
+                <div className="text-[10px] font-bold text-foreground/70 bg-muted px-3 py-1.5 rounded-lg border border-black/5">
                   IVA INCLUIDO
-                </Badge>
+                </div>
               </div>
             </div>
 

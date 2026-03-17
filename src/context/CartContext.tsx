@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -52,7 +51,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   
   const cartTotal = cart.reduce((acc, item) => {
-    const price = item.isSubscription ? item.price * 0.9 : item.price;
+    const basePrice = item.financials.pricing.base_price;
+    const price = item.isSubscription ? basePrice * 0.9 : basePrice;
     return acc + (price * item.quantity);
   }, 0);
 

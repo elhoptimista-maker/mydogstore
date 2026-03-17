@@ -25,7 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     addToCart(product);
     toast({
       title: "¡Añadido!",
-      description: `${product.name} está en tu carrito.`,
+      description: `${product.metadata.name} está en tu carrito.`,
       className: "bg-primary text-white rounded-2xl border-none font-bold",
     });
   };
@@ -38,8 +38,8 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       <Link href={`/productos/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#f9f9f9] m-2 rounded-[1.5rem]">
         <Image
-          src={product.imageUrl}
-          alt={product.name}
+          src={product.media.main_image}
+          alt={product.metadata.name}
           fill
           className={cn(
             "object-cover transition-transform duration-700",
@@ -49,7 +49,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         <div className="absolute top-2 left-2 flex flex-col gap-2">
            <span className="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider text-primary shadow-sm border border-primary/10">
-             {product.category}
+             {product.attributes.category}
            </span>
         </div>
 
@@ -71,21 +71,21 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex items-center gap-1.5">
           <div className="flex text-secondary">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className={cn("w-3 h-3 fill-current", i < Math.floor(product.rating) ? "text-secondary" : "text-muted/20")} />
+              <Star key={i} className={cn("w-3 h-3 fill-current", i < 4 ? "text-secondary" : "text-muted/20")} />
             ))}
           </div>
-          <span className="text-[10px] font-black text-muted tracking-widest">{product.rating}</span>
+          <span className="text-[10px] font-black text-muted tracking-widest">4.8</span>
         </div>
         
         <h3 className="text-sm md:text-lg font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors min-h-[2.6rem]">
-          {product.name}
+          {product.metadata.name}
         </h3>
         
         <div className="flex items-end justify-between mt-auto pt-3 border-t border-border/30 gap-2">
           <div className="flex flex-col min-w-0">
-            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Precio Chile</span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Precio Distribución</span>
             <span className="text-xl md:text-2xl font-black text-primary tracking-tighter leading-none">
-              ${product.price.toLocaleString('es-CL')}
+              ${product.financials.pricing.base_price.toLocaleString('es-CL')}
             </span>
           </div>
           <Button 

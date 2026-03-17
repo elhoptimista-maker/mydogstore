@@ -1,7 +1,7 @@
 import { getProductById } from '@/lib/mock-db';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { Star, ShoppingCart, ShieldCheck, Heart, Share2, Truck, RefreshCw, Calendar } from 'lucide-react';
+import { Star, ShoppingCart, ShieldCheck, Heart, Share2, Truck, RefreshCw, Calendar, Scale, Dog, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -25,26 +25,13 @@ export default async function ProductoDetallePage({ params }: PageProps) {
         <div className="space-y-6">
           <div className="aspect-square relative rounded-[3rem] overflow-hidden bg-white shadow-xl shadow-black/5 border border-border/50 group">
             <Image
-              src={product.imageUrl}
-              alt={product.name}
+              src={product.media.main_image}
+              alt={product.metadata.name}
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
               priority
-              data-ai-hint="dog food product"
+              data-ai-hint={product.media.imageHint}
             />
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="aspect-square relative rounded-2xl overflow-hidden border-2 border-transparent hover:border-primary/50 cursor-pointer shadow-sm transition-all hover:-translate-y-1">
-                <Image 
-                  src={`https://picsum.photos/seed/product-${product.id}-${i}/200/200`} 
-                  alt="detalle producto" 
-                  fill 
-                  className="object-cover"
-                  data-ai-hint="pet product detail"
-                />
-              </div>
-            ))}
           </div>
         </div>
 
@@ -53,7 +40,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Badge variant="secondary" className="px-4 py-1.5 bg-primary/10 text-primary border-none text-[10px] font-black uppercase tracking-widest rounded-full">
-                {product.brand} | {product.category}
+                {product.attributes.brand} | {product.attributes.category}
               </Badge>
               <div className="flex gap-2">
                 <Button variant="ghost" size="icon" className="rounded-full bg-white shadow-sm border border-border/50 hover:text-red-500">
@@ -66,30 +53,47 @@ export default async function ProductoDetallePage({ params }: PageProps) {
             </div>
             
             <h1 className="text-4xl md:text-5xl font-black text-foreground leading-tight tracking-tighter">
-              {product.name}
+              {product.metadata.name}
             </h1>
             
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-1 text-secondary">
                 {[1,2,3,4,5].map(i => (
-                  <Star key={i} className={`w-4 h-4 fill-current ${i > Math.floor(product.rating) ? 'text-gray-200' : ''}`} />
+                  <Star key={i} className={`w-4 h-4 fill-current ${i > 4 ? 'text-gray-200' : ''}`} />
                 ))}
-                <span className="ml-2 font-black text-foreground">{product.rating}</span>
+                <span className="ml-2 font-black text-foreground">4.8</span>
               </div>
               <Separator orientation="vertical" className="h-4" />
-              <span className="text-sm font-medium text-muted-foreground tracking-tight">Vendido por MyDog Distribuidora</span>
+              <span className="text-sm font-medium text-muted-foreground tracking-tight">SKU: {product.metadata.sku}</span>
             </div>
           </div>
 
           <div className="space-y-2">
             <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Precio Distribución</span>
             <div className="text-5xl font-black text-primary tracking-tighter">
-              ${product.price.toLocaleString('es-CL')}
+              ${product.financials.pricing.base_price.toLocaleString('es-CL')}
             </div>
           </div>
 
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+             {[
+               { icon: <Scale className="w-4 h-4" />, label: "Peso", val: `${product.attributes.weight_kg}kg` },
+               { icon: <Dog className="w-4 h-4" />, label: "Etapa", val: product.attributes.life_stage },
+               { icon: <Briefcase className="w-4 h-4" />, label: "Formato", val: product.attributes.format },
+               { icon: <Dog className="w-4 h-4" />, label: "Especie", val: product.attributes.species }
+             ].map((attr, i) => (
+               <div key={i} className="bg-muted/30 p-3 rounded-2xl space-y-1">
+                 <div className="flex items-center gap-2 text-primary">
+                    {attr.icon}
+                    <span className="text-[10px] font-black uppercase tracking-widest">{attr.label}</span>
+                 </div>
+                 <p className="font-bold text-sm">{attr.val}</p>
+               </div>
+             ))}
+          </div>
+
           <p className="text-lg text-muted-foreground leading-relaxed">
-            {product.description} Este producto cumple con los más altos estándares de calidad certificados para el bienestar animal.
+            {product.content.short_description}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
