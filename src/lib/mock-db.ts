@@ -48,7 +48,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: '1',
     name: 'Alimento Seco Premium Adulto',
-    description: 'Nutrición balanceada con ingredientes seleccionados para una salud óptima.',
+    description: 'Nutrición balanceada con ingredientes seleccionados para una salud óptima de perros adultos.',
     price: 38990,
     category: 'Alimento Seco',
     petType: 'Perro',
@@ -59,7 +59,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: '2',
     name: 'Snack Dental para Caninos',
-    description: 'Ayuda a reducir la formación de sarro y mantiene el aliento fresco.',
+    description: 'Ayuda a reducir la formación de sarro y mantiene el aliento fresco de forma natural.',
     price: 8500,
     category: 'Snacks',
     petType: 'Perro',
@@ -70,7 +70,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: '3',
     name: 'Arena Sanitaria Ultra Absorbente',
-    description: 'Control de olores superior y fácil limpieza para el hogar.',
+    description: 'Control de olores superior y fácil limpieza para el hogar con gatos.',
     price: 12900,
     category: 'Arena Sanitaria',
     petType: 'Gato',
@@ -81,7 +81,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: '4',
     name: 'Alimento Húmedo Filetes en Salsa',
-    description: 'Exquisita receta con proteínas de alta calidad para paladares exigentes.',
+    description: 'Exquisita receta con proteínas de alta calidad para los paladares más exigentes.',
     price: 1500,
     category: 'Alimento Húmedo',
     petType: 'Gato',
