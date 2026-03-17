@@ -77,7 +77,7 @@ export default async function Home() {
     <div className="bg-background flex flex-col min-h-screen">
       
       {/* 1. Hero Section */}
-      <section className="px-4 py-4 md:py-8">
+      <section className="px-4 py-4 md:py-6">
         <div className="max-w-7xl mx-auto">
           <div className="bg-primary rounded-[2.5rem] p-8 md:p-16 relative overflow-hidden shadow-2xl shadow-primary/20">
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -93,7 +93,7 @@ export default async function Home() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 pt-2">
                   <Link href="/catalogo">
-                    <Button size="lg" className="h-16 rounded-3xl bg-secondary text-primary font-black px-10 text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                    <Button size="lg" className="h-16 rounded-3xl bg-secondary text-primary font-black px-10 text-lg shadow-xl hover:bg-secondary/90 hover:scale-[1.02] active:scale-95 transition-all">
                       Ir al Catálogo <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                   </Link>
@@ -137,7 +137,7 @@ export default async function Home() {
       </section>
 
       {/* 3. Categories */}
-      <section className="py-10 md:py-16">
+      <section className="py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-6">
           <div className="flex flex-col items-center gap-1">
             <h2 className="text-[10px] font-black text-primary/40 uppercase tracking-[0.4em]">Nuestros Amigos</h2>
@@ -170,7 +170,7 @@ export default async function Home() {
       </section>
 
       {/* 4. Featured Products */}
-      <section className="bg-white/50 py-10 md:py-16">
+      <section className="bg-white/50 py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8">
           <div className="flex items-end justify-between border-b border-primary/5 pb-4">
             <div className="space-y-1">
@@ -192,7 +192,7 @@ export default async function Home() {
       </section>
 
       {/* 5. Destacados por Categoría - Tricolor */}
-      <section className="py-16 md:py-24">
+      <section className="py-12 md:py-20">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {categoriesCards.map((cat, i) => (
@@ -214,7 +214,7 @@ export default async function Home() {
                     <h4 className="text-3xl font-black tracking-tighter">{cat.title}</h4>
                     <p className="font-medium opacity-80 text-sm">{cat.desc}</p>
                     <Link href={cat.href}>
-                      <Button variant="outline" className="mt-4 rounded-2xl border-current font-black hover:bg-white hover:text-primary transition-all">
+                      <Button variant="outline" className="mt-4 rounded-2xl border-current font-black hover:bg-white/10 hover:border-white transition-all">
                         Explorar Ahora
                       </Button>
                     </Link>
@@ -227,7 +227,7 @@ export default async function Home() {
       </section>
 
       {/* 6. Marcas Carrusel */}
-      <section className="py-12 bg-white/30 border-y border-black/[0.03] overflow-hidden">
+      <section className="py-10 bg-white/30 border-y border-black/[0.03] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <h4 className="text-[10px] font-black text-center text-primary/40 uppercase tracking-[0.4em] mb-10">Con la confianza de las mejores marcas</h4>
           <div className="flex gap-12 md:gap-24 animate-scroll w-max whitespace-nowrap">

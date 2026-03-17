@@ -55,7 +55,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           }}
           className={cn(
             "absolute top-4 right-4 w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md z-10",
-            isFavorite ? "bg-red-500 text-white shadow-lg" : "bg-white/80 text-primary/40 hover:text-red-500"
+            isFavorite ? "bg-red-500 text-white shadow-lg" : "bg-white/80 text-primary/40 hover:bg-white hover:text-red-500 shadow-sm"
           )}
         >
           <Heart className={cn("w-4 h-4 md:w-5 md:h-5", isFavorite && "fill-current")} />
@@ -84,7 +84,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Button 
             onClick={handleAddToCart}
             size="icon" 
-            className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:scale-110 active:scale-95 transition-all"
+            className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-secondary text-primary shadow-xl shadow-secondary/20 hover:bg-secondary/90 hover:scale-110 active:scale-95 transition-all"
           >
             <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
           </Button>

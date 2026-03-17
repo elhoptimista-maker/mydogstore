@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 180 20% 98%;
     --foreground: 180 100% 5%;
     --card: 0 0% 100%;
     --card-foreground: 180 100% 5%;
@@ -13,8 +13,8 @@
     --primary: 180 100% 25%; /* #008080 Teal */
     --primary-foreground: 0 0% 100%;
     --secondary: 45 100% 50%; /* Mango */
-    --secondary-foreground: 180 100% 5%;
-    --muted: 180 20% 96%;
+    --secondary-foreground: 180 100% 25%;
+    --muted: 180 10% 94%;
     --muted-foreground: 180 10% 40%;
     --accent: 25 100% 60%; /* Orange */
     --accent-foreground: 0 0% 100%;
@@ -36,7 +36,7 @@
     scrollbar-width: none;
   }
   .glass {
-    @apply bg-white/80 backdrop-blur-md border-b border-white/20;
+    @apply bg-white/90 backdrop-blur-md border-b border-black/[0.03];
   }
 }
 
