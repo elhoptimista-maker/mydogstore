@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,11 +11,11 @@
     --card-foreground: 180 100% 5%;
     --popover: 0 0% 100%;
     --popover-foreground: 180 100% 5%;
-    --primary: 180 100% 25%; /* #008080 Teal/Green */
+    --primary: 180 100% 25%; /* #008080 Verde Esmeralda Profundo */
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 100% 50%; /* Mango */
+    --secondary: 45 100% 50%; /* Mango / Amarillo Accent */
     --secondary-foreground: 180 100% 25%;
-    --accent: 45 100% 50%; /* Yellow/Mango */
+    --accent: 45 100% 50%; /* Amarillo / Mango */
     --accent-foreground: 180 100% 5%;
     --muted: 180 5% 94%;
     --muted-foreground: 180 5% 45%;

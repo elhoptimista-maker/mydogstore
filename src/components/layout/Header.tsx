@@ -1,9 +1,9 @@
+
 "use client";
 
 import Link from 'next/link';
 import { ShoppingCart, Menu, Dog, Search, Heart, Phone, ChevronDown, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import CartDrawer from '@/components/cart/CartDrawer';
@@ -41,7 +41,7 @@ export default function Header() {
             </div>
             <div className="flex flex-col -space-y-1">
               <span className="font-black text-2xl tracking-tighter leading-none uppercase">MyDog</span>
-              <span className="text-[9px] font-bold text-white/60 uppercase tracking-[0.2em]">E-commerce</span>
+              <span className="text-[9px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
             </div>
           </Link>
 
@@ -102,13 +102,18 @@ export default function Header() {
               Todas las Categorías
             </div>
             <nav className="flex items-center gap-10">
-              {['Home', 'Tienda', 'Ofertas', 'Blog'].map((link) => (
+              {[
+                { label: 'Home', href: '/' },
+                { label: 'Tienda', href: '/catalogo' },
+                { label: 'Ofertas', href: '#' },
+                { label: 'Blog', href: '#' }
+              ].map((link) => (
                 <Link 
-                  key={link} 
-                  href={link === 'Home' ? '/' : link === 'Tienda' ? '/catalogo' : '#'}
+                  key={link.label} 
+                  href={link.href}
                   className="text-[11px] font-black text-foreground/70 hover:text-primary uppercase tracking-widest transition-all"
                 >
-                  {link}
+                  {link.label}
                 </Link>
               ))}
             </nav>
