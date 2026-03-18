@@ -1,36 +1,38 @@
-# To learn more about how to use Nix to configure your environment
-# see: https://firebase.google.com/docs/studio/customize-workspace
+# .idx/dev.nix actualizado para Arquitectura Senior
 {pkgs}: {
-  # Which nixpkgs channel to use.
-  channel = "stable-24.11"; # or "unstable"
-  # Use https://search.nixos.org/packages to find packages
+  channel = "stable-24.11"; 
+  
   packages = [
     pkgs.nodejs_22
     pkgs.zulu
+    pkgs.firebase-tools
+    pkgs.nodePackages.typescript-language-server
   ];
-  # Sets environment variables in the workspace
-  env = {};
-  # This adds a file watcher to startup the firebase emulators. The emulators will only start if
-  # a firebase.json file is written into the user's directory
+
+  env = {
+    # Forzamos a Genkit a usar un modelo estable si el preview falla
+    GOOGLE_GENAI_MODEL = "gemini-2.0-flash"; 
+  };
+
   services.firebase.emulators = {
-    # Disabling because we are using prod backends right now
     detect = false;
     projectId = "demo-app";
     services = ["auth" "firestore"];
   };
+
   idx = {
-    # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
-      # "vscodevim.vim"
+      "google.gemini-vscode" # Extensión oficial para asistencia de código
+      "esbenp.prettier-vscode"
+      "ms-vscode.vscode-typescript-next"
     ];
     workspace = {
       onCreate = {
-        default.openFiles = [
-          "src/app/page.tsx"
-        ];
+        # Instalación automática de dependencias críticas
+        install-deps = "npm install zod @genkit-ai/ai @genkit-ai/googleai framer-motion lucide-react";
+        default.openFiles = [ "src/app/page.tsx" ];
       };
     };
-    # Enable previews and customize configuration
     previews = {
       enable = true;
       previews = {

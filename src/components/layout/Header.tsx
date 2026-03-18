@@ -13,43 +13,41 @@ export default function Header() {
   const { cartCount } = useCart();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 shadow-sm">
-      {/* 1. Top Bar (Utilidad) */}
+    <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm transition-all duration-300">
+      {/* 1. Top Bar (Utilidad) - Fondo Accent/Amarillo */}
       <div className="h-10 bg-accent text-accent-foreground flex justify-between items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
         <div className="flex items-center gap-4">
-          <span>🚚 Envíos gratis sobre $50.000</span>
-          <span className="hidden md:inline text-accent-foreground/60">|</span>
-          <span className="hidden md:inline">Lunes a Viernes: 09:00 - 18:00</span>
+          <span>🚚 Envíos gratis sobre $30.000</span>
+          <span className="hidden md:inline opacity-40">|</span>
+          <span className="hidden md:inline">Servicio técnico garantizado</span>
         </div>
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity">
+          <div className="flex items-center gap-1 cursor-pointer">
             <span>CLP</span>
             <ChevronDown className="w-3 h-3" />
           </div>
           <Link href="#" className="hover:underline">Seguimiento</Link>
-          <Link href="#" className="hover:underline flex items-center gap-1">
-            <User className="w-3.5 h-3.5" /> Mi Cuenta
-          </Link>
+          <Link href="#" className="hover:underline">Login</Link>
         </div>
       </div>
 
-      {/* 2. Main Header (Búsqueda y Acciones) */}
+      {/* 2. Main Header (Búsqueda y Acciones) - Fondo Primary/Verde */}
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
-        <div className="max-w-7xl mx-auto w-full flex items-center gap-8 md:gap-12">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-8 md:gap-12">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-white/20 transition-all">
               <Dog className="w-8 h-8 text-white" />
             </div>
             <div className="flex flex-col -space-y-1">
-              <span className="font-black text-2xl tracking-tighter leading-none">MyDog</span>
-              <span className="text-[10px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
+              <span className="font-black text-2xl tracking-tighter leading-none uppercase">MyDog</span>
+              <span className="text-[9px] font-bold text-white/60 uppercase tracking-[0.2em]">E-commerce</span>
             </div>
           </Link>
 
-          {/* Search Pill */}
-          <div className="flex-1 hidden md:flex max-w-2xl relative group">
-            <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner group-focus-within:ring-4 group-focus-within:ring-white/20 transition-all">
+          {/* Search Pill (Expansivo) */}
+          <div className="flex-1 hidden md:flex max-w-2xl relative">
+            <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner">
               <div className="flex items-center px-5 border-r border-black/5 cursor-pointer hover:bg-black/5 transition-colors h-full">
                 <span className="text-xs font-black text-foreground uppercase tracking-wider mr-2">Todas</span>
                 <ChevronDown className="w-3.5 h-3.5 text-foreground/40" />
@@ -95,7 +93,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Menu Bar (Navegación) */}
+      {/* 3. Menu Bar (Navegación) - Fondo Gris Claro */}
       <div className="h-12 bg-[#F6F6F6] border-b border-black/5 hidden md:flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-8 h-full">
@@ -104,10 +102,10 @@ export default function Header() {
               Todas las Categorías
             </div>
             <nav className="flex items-center gap-10">
-              {['Inicio', 'Catálogo', 'Mayoristas', 'Ofertas', 'Blog', 'Nosotros'].map((link) => (
+              {['Home', 'Tienda', 'Ofertas', 'Blog'].map((link) => (
                 <Link 
                   key={link} 
-                  href={link === 'Inicio' ? '/' : link === 'Catálogo' ? '/catalogo' : link === 'Mayoristas' ? '/b2b' : '#'}
+                  href={link === 'Home' ? '/' : link === 'Tienda' ? '/catalogo' : '#'}
                   className="text-[11px] font-black text-foreground/70 hover:text-primary uppercase tracking-widest transition-all"
                 >
                   {link}
@@ -115,9 +113,8 @@ export default function Header() {
               ))}
             </nav>
           </div>
-          <div className="flex items-center gap-2 text-[11px] font-black text-primary/60 uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Venta Flash: 20% OFF en Champion Dog
+          <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+            Soporte Técnico: <span className="text-primary">+56 2 2345 6789</span>
           </div>
         </div>
       </div>

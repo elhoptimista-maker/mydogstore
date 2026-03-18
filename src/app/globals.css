@@ -23,7 +23,7 @@
     --border: 180 5% 90%;
     --input: 180 5% 90%;
     --ring: 180 100% 25%;
-    --radius: 1.5rem;
+    --radius: 1rem;
   }
 }
 
@@ -47,14 +47,4 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-black tracking-tighter;
   }
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
 }
