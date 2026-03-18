@@ -359,18 +359,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 13. Galería de Instagram */}
-      <section className="w-full flex overflow-hidden">
-        {[1,2,3,4,5,6].map(i => (
-          <div key={i} className="flex-1 aspect-square relative group cursor-pointer overflow-hidden border-r border-white last:border-0">
-            <Image src={`https://picsum.photos/seed/ig-${i}/500/500`} alt="ig" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-            <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <Instagram className="text-white w-12 h-12" />
-            </div>
-          </div>
-        ))}
-      </section>
-
       {/* 14. Footer Masivo */}
       <footer className="w-full">
         {/* Top Row (Suscripción) */}
