@@ -26,8 +26,11 @@ export default async function Home() {
   // Consumo del servicio de catálogo sanitizado
   const products = await getSanitizedProducts();
   
-  // Seleccionamos los destacados para la home
-  const featuredProducts = products.slice(0, 10);
+  // Seleccionamos los destacados para la home: con stock y mayor cantidad disponible
+  const featuredProducts = products
+    .filter(p => p.currentStock > 0)
+    .sort((a, b) => b.currentStock - a.currentStock)
+    .slice(0, 10);
 
   // Lista de especies con lógica de conteo dinámico
   const speciesList = [
@@ -143,7 +146,7 @@ export default async function Home() {
           </div>
         ) : (
           <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-primary/10">
-            <p className="text-muted-foreground font-medium">No se encontraron productos disponibles en este momento.</p>
+            <p className="text-muted-foreground font-medium">No se encontraron productos con stock disponibles en este momento.</p>
           </div>
         )}
       </section>
