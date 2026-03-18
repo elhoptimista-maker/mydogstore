@@ -10,8 +10,6 @@
 - Global Error Emitter: A centralized mechanism for handling and capturing specific errors like Firestore permission failures, replacing standard console error logging.
 - SEO & Analytics Integration: Configures core layout for Server-Side Rendering (SSR) and includes placeholders for Google Tag Manager (GTM) and product JSON-LD structured data for enhanced search visibility.
 
-## Style Guidelines:
-
 - A light color scheme to achieve a clean and sophisticated feel. The primary color is a refined deep blue (#2E62AC), suggesting trust and quality. The background is a subtly cool, nearly white (#ECF0F3), offering ample negative space. The accent color is a vibrant yet tasteful cyan-blue (#34C4E4), used for calls to action and highlights, providing clear visual emphasis without overpowering the minimalist design.
 - Body and headline font: 'Inter' (sans-serif) for its modern, clean, and objective aesthetic, aligning with the premium minimalist design and ensuring readability across all devices.
 - Minimalist, line-based icons that complement the clean interface. Icons should have soft, rounded edges to harmonize with the overall design language and provide a friendly yet premium feel.

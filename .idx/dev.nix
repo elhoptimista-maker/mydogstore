@@ -16,7 +16,7 @@
 
   services.firebase.emulators = {
     detect = false;
-    projectId = "demo-app";
+    projectId = "studio-6415964212-b057a";
     services = ["auth" "firestore"];
   };
 

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -15,7 +16,7 @@ export default function Header() {
       <div className="h-10 bg-accent text-accent-foreground flex justify-between items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
         <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <span>🚚 Envíos gratis sobre $30.000</span>
+            <span>🚚 Envíos gratis sobre $50.000</span>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-1 cursor-pointer">

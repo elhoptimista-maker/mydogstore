@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -8,16 +9,13 @@ import {
   Truck,
   ShieldCheck,
   Headphones,
-  CheckCircle2,
   Star,
   Clock,
   Instagram,
-  Facebook,
-  Twitter,
+  ChevronRight,
   Plus,
   Minus,
-  ShoppingCart,
-  ChevronRight
+  ShoppingCart
 } from 'lucide-react';
 import { getProducts } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
@@ -88,7 +86,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Navegación por Píldoras (Categorías) */}
+      {/* 3. Navegación por Píldoras (Categorías Destacadas) */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <div className="text-center space-y-3">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Explora nuestra tienda</span>
@@ -117,7 +115,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. Super-Cards Promocionales */}
+      {/* 4. Super-Cards Promocionales (Banners Bicolores) */}
       <section className="py-12 max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white rounded-[2.5rem] relative overflow-hidden p-12 flex items-center shadow-sm hover:shadow-lg transition-all border border-black/5 group">
           <div className="space-y-6 flex-1 z-10">
@@ -141,7 +139,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 5. Grilla de Productos */}
+      {/* 5. Grilla de Productos Estándar */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-12">
         <div className="flex flex-row justify-between items-end border-b border-black/5 pb-8">
           <div className="space-y-2">
@@ -157,7 +155,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 6. Sección de Oferta Relámpago */}
+      {/* 6. Sección de Oferta Relámpago (Flash Deal + Cuenta Regresiva) */}
       <section className="bg-white/50 border-y border-black/5 py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-16 items-center">
           <div className="hidden lg:block relative h-96">
@@ -192,7 +190,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 7. Deals of the Day (Horizontal) */}
+      {/* 7. Tarjetas de Producto Horizontales (Deals of the Day) */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground text-center">Ofertas del <span className="text-primary">Día</span></h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -227,7 +225,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 8. Full-Bleed CTA */}
+      {/* 8. Banner de Ancho Completo (Full-Bleed CTA) */}
       <section className="w-full bg-primary py-24 text-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="space-y-10 text-center md:text-left relative z-10">
@@ -282,7 +280,37 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 11. FAQ Section */}
+      {/* 10. Noticias y Blog (Tarjetas Fotográficas Orgánicas) */}
+      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
+        <div className="flex flex-col items-center text-center space-y-3">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Actualidad y Nutrición</span>
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Nuestro <span className="text-primary">Blog</span></h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {[
+            { t: 'Cómo optimizar el stock en tu Pet Shop', c: 'Negocios', img: 'https://picsum.photos/seed/blog1/800/600' },
+            { t: 'Tendencias en nutrición animal 2024', c: 'Salud', img: 'https://picsum.photos/seed/blog2/800/600' },
+            { t: 'El impacto de los snacks naturales', c: 'Bienestar', img: 'https://picsum.photos/seed/blog3/800/600' }
+          ].map((post, i) => (
+            <div key={i} className="flex flex-col gap-6 group cursor-pointer">
+              <div className="aspect-[4/3] rounded-3xl overflow-hidden relative shadow-lg">
+                <Image src={post.img} alt={post.t} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Badge className="absolute bottom-6 left-6 bg-accent text-accent-foreground font-black border-none rounded-full px-6 py-2.5 text-[10px] uppercase tracking-widest shadow-xl">
+                  {post.c}
+                </Badge>
+              </div>
+              <div className="space-y-4 px-2">
+                <h3 className="text-2xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors leading-tight">{post.t}</h3>
+                <Link href="#" className="flex items-center gap-2 text-primary font-black text-xs uppercase tracking-[0.2em] hover:translate-x-2 transition-transform">
+                  Leer más <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 11. Sección de Acordeón (FAQ) */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-20">
         <div className="space-y-8 text-left">
           <span className="text-xs font-black text-primary uppercase tracking-[0.3em]">Centro de Soporte</span>
@@ -325,36 +353,6 @@ export default async function Home() {
               <div className="flex flex-col">
                 <h4 className="font-black text-foreground text-lg">{item.t}</h4>
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{item.s}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 10. Noticias y Blog (Orgánico) */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
-        <div className="flex flex-col items-center text-center space-y-3">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Actualidad y Nutrición</span>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Nuestro <span className="text-primary">Blog</span></h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {[
-            { t: 'Cómo optimizar el stock en tu Pet Shop', c: 'Negocios', img: 'https://picsum.photos/seed/blog1/800/600' },
-            { t: 'Tendencias en nutrición animal 2024', c: 'Salud', img: 'https://picsum.photos/seed/blog2/800/600' },
-            { t: 'El impacto de los snacks naturales', c: 'Bienestar', img: 'https://picsum.photos/seed/blog3/800/600' }
-          ].map((post, i) => (
-            <div key={i} className="flex flex-col gap-6 group cursor-pointer">
-              <div className="aspect-[4/3] rounded-3xl overflow-hidden relative shadow-lg">
-                <Image src={post.img} alt={post.t} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                <Badge className="absolute bottom-6 left-6 bg-accent text-accent-foreground font-black border-none rounded-full px-6 py-2.5 text-[10px] uppercase tracking-widest shadow-xl">
-                  {post.c}
-                </Badge>
-              </div>
-              <div className="space-y-4 px-2">
-                <h3 className="text-2xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors leading-tight">{post.t}</h3>
-                <Link href="#" className="flex items-center gap-2 text-primary font-black text-xs uppercase tracking-[0.2em] hover:translate-x-2 transition-transform">
-                  Leer más <ChevronRight className="w-4 h-4" />
-                </Link>
               </div>
             </div>
           ))}
@@ -410,7 +408,7 @@ export default async function Home() {
                 Liderando la nutrición y el bienestar animal en Chile desde 2008. Pasión, compromiso y calidad en cada despacho.
               </p>
               <div className="flex gap-4">
-                {[Facebook, Instagram, Twitter].map((Icon, i) => (
+                {[Instagram].map((Icon, i) => (
                   <Link key={i} href="#" className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center hover:bg-white text-white hover:text-primary transition-all">
                     <Icon className="w-6 h-6" />
                   </Link>
