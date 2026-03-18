@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Header from '@/components/layout/Header';
@@ -34,7 +35,7 @@ export default function RootLayout({
           </main>
           
           <footer className="w-full">
-            {/* Newsletter Orgánico - Se integra sin margen superior para flujo continuo con Trust Bar */}
+            {/* Newsletter */}
             <div className="bg-[#FEF9F3] py-12 md:py-16 text-center border-t border-black/[0.03]">
               <div className="max-w-4xl mx-auto px-4 space-y-6">
                 <div className="space-y-2">
@@ -85,7 +86,7 @@ export default function RootLayout({
                     <li><Link href="/catalogo" className="hover:text-white transition-all">Alimentos</Link></li>
                     <li><Link href="/catalogo" className="hover:text-white transition-all">Snacks</Link></li>
                     <li><Link href="/catalogo" className="hover:text-white transition-all">Accesorios</Link></li>
-                    <li><Link href="/ofertas" className="hover:text-white transition-all">Ofertas</Link></li>
+                    <li><Link href="/catalogo" className="hover:text-white transition-all">Ofertas</Link></li>
                   </ul>
                 </div>
 

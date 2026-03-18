@@ -19,9 +19,17 @@ export default function Header() {
   const { cartCount } = useCart();
   const [searchCategory, setSearchCategory] = useState("Todas");
 
+  const mainNav = [
+    { label: 'Home', href: '/' },
+    { label: 'Tienda', href: '/catalogo' },
+    { label: 'Ofertas', href: '/catalogo' },
+    { label: 'Blog', href: '#' },
+    { label: 'B2B Mayoristas', href: '/b2b' },
+  ];
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
-      {/* 1. Top Bar (Promociones y Descuentos) */}
+      {/* 1. Top Bar (Promociones) */}
       <div className="h-10 bg-accent text-accent-foreground flex items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
         <div className="max-w-7xl mx-auto w-full flex justify-center items-center">
           <span className="flex items-center gap-2">
@@ -45,7 +53,7 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Search Pill (Expansivo) */}
+          {/* Search Pill */}
           <div className="flex-1 hidden md:flex max-w-2xl">
             <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner">
               <DropdownMenu>
@@ -117,7 +125,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Menu Bar (Navegación) */}
+      {/* 3. Menu Bar */}
       <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
@@ -144,20 +152,20 @@ export default function Header() {
             </DropdownMenu>
 
             <nav className="hidden md:flex items-center gap-8">
-              {['Home', 'Tienda', 'Ofertas', 'Blog', 'Nosotros'].map((label) => (
+              {mainNav.map((item) => (
                 <Link 
-                  key={label} 
-                  href={label === 'Home' ? '/' : `/${label.toLowerCase()}`}
+                  key={item.label} 
+                  href={item.href}
                   className="text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all relative group"
                 >
-                  {label}
+                  {item.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary transition-all group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* Utility Links (Seguimiento y Mi Cuenta) */}
+          {/* Utility Links */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="#" className="flex items-center gap-2 text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all">
               <Package className="w-4 h-4 text-secondary" />
