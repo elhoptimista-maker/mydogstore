@@ -8,6 +8,31 @@ import { getErpAdminDb } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
 
 /**
+ * Calcula un precio de venta atractivo basado en el costo neto.
+ * Aplica el margen del 30% y un redondeo comercial inteligente.
+ */
+function calculateCommercialPrice(netCost: number): number {
+  if (!netCost || netCost <= 0) return 0;
+
+  // 1. Aplicar margen de utilidad (30%)
+  // Fórmula: Precio Venta = Costo / (1 - Margen)
+  const basePrice = netCost / (1 - 0.30);
+
+  // 2. Lógica de redondeo comercial inteligente
+  if (basePrice < 2000) {
+    // Precios bajos: Redondear a la decena más cercana (ej: 1234 -> 1230)
+    return Math.round(basePrice / 10) * 10;
+  } else if (basePrice < 10000) {
+    // Precios medios: Ajustar para que termine en 90 (ej: 5432 -> 5490)
+    // Esto genera el efecto psicológico de "oferta" o precio justo de retail.
+    return Math.floor(basePrice / 100) * 100 + 90;
+  } else {
+    // Precios altos: Ajustar para que termine en 990 (ej: 25678 -> 25990)
+    return Math.floor(basePrice / 1000) * 1000 + 990;
+  }
+}
+
+/**
  * Obtiene la lista de productos activos, calcula precios y sanitiza la salida.
  */
 export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
@@ -30,13 +55,7 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
         const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
         const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.stock || 0) : 0;
 
-        // Cálculo Financiero: Margen del 30% sobre el costo neto
-        // Fórmula: Precio Venta = Costo / (1 - Margen)
-        const costNeto = data.financials?.cost?.net || 0;
-        const sellingPrice = costNeto > 0 ? Math.round(costNeto / (1 - 0.30)) : 0;
-
         // Mapeo y Sanitización Estricta
-        // Se ignora: financials.cost, integrations, sync_dates, legacy_ids
         return {
           id: doc.id,
           name: data.metadata?.name || "Producto sin nombre",
@@ -51,7 +70,7 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
           short_description: data.content?.short_description || "",
           main_image: data.media?.main_image || "https://picsum.photos/seed/placeholder/600/600",
           currentStock,
-          sellingPrice
+          sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
         } as SanitizedProduct;
       })
     );
@@ -77,9 +96,6 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
     const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
     const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.stock || 0) : 0;
 
-    const costNeto = data.financials?.cost?.net || 0;
-    const sellingPrice = costNeto > 0 ? Math.round(costNeto / (1 - 0.30)) : 0;
-
     return {
       id: doc.id,
       name: data.metadata?.name || "",
@@ -94,7 +110,7 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
       short_description: data.content?.short_description || "",
       main_image: data.media?.main_image || "",
       currentStock,
-      sellingPrice
+      sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
     } as SanitizedProduct;
   } catch (error) {
     return null;
