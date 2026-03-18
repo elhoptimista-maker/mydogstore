@@ -100,7 +100,7 @@ export default function Header() {
 
       {/* 3. Menu Bar (Navegación) */}
       <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-start h-full">
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -136,9 +136,6 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
-          </div>
-          <div className="text-[11px] font-bold text-white/60 uppercase tracking-widest hidden md:block">
-            Soporte Técnico: <span className="text-secondary font-black">+56 2 2345 6789</span>
           </div>
         </div>
       </div>
