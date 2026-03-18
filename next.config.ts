@@ -77,6 +77,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdnx.jumpseller.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
