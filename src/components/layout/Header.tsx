@@ -21,19 +21,11 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
       {/* 1. Top Bar (Promociones y Descuentos) */}
       <div className="h-10 bg-accent text-accent-foreground flex items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
-        <div className="max-w-7xl mx-auto w-full flex justify-center md:justify-between items-center">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-2">
-              <span className="bg-primary/10 px-2 py-0.5 rounded text-[9px]">INFO</span>
-              <span>🚚 Envíos gratis sobre $50.000 en Santiago</span>
-            </span>
-          </div>
-          <div className="hidden md:flex items-center gap-6">
-            <span className="flex items-center gap-2">
-              <span className="bg-primary/10 px-2 py-0.5 rounded text-[9px]">HOT</span>
-              <span>🔥 Descuentos hasta 50% en marcas seleccionadas</span>
-            </span>
-          </div>
+        <div className="max-w-7xl mx-auto w-full flex justify-center items-center">
+          <span className="flex items-center gap-2">
+            <span className="bg-primary/10 px-2 py-0.5 rounded text-[9px]">INFO</span>
+            <span>🚚 Envíos gratis sobre $50.000 en Santiago</span>
+          </span>
         </div>
       </div>
 
@@ -139,7 +131,7 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* Utility Links Moved here */}
+          {/* Utility Links */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="#" className="flex items-center gap-2 text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all">
               <Package className="w-4 h-4" />
