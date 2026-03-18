@@ -13,9 +13,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CATEGORIES } from '@/lib/mock-db';
+import { useState } from 'react';
 
 export default function Header() {
   const { cartCount } = useCart();
+  const [searchCategory, setSearchCategory] = useState("Todas las Categorías");
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
@@ -46,10 +48,34 @@ export default function Header() {
           {/* Search Pill (Expansivo) */}
           <div className="flex-1 hidden md:flex max-w-2xl">
             <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner">
-              <div className="flex items-center px-5 border-r border-black/5 cursor-pointer hover:bg-black/5 transition-colors h-full text-foreground">
-                <span className="text-xs font-bold uppercase tracking-wider mr-2">Categorías</span>
-                <ChevronDown className="w-3.5 h-3.5 opacity-40" />
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center px-5 border-r border-black/5 cursor-pointer hover:bg-black/5 transition-colors h-full text-foreground shrink-0 outline-none">
+                    <span className="text-[10px] font-bold uppercase tracking-wider mr-2 whitespace-nowrap">
+                      {searchCategory}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 opacity-40" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56 rounded-xl border-none shadow-2xl p-2 bg-white z-[60]">
+                  <DropdownMenuItem 
+                    onClick={() => setSearchCategory("Todas las Categorías")}
+                    className="cursor-pointer font-bold text-[10px] uppercase tracking-widest p-3 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"
+                  >
+                    Todas las Categorías
+                  </DropdownMenuItem>
+                  {CATEGORIES.map((category) => (
+                    <DropdownMenuItem 
+                      key={category} 
+                      onClick={() => setSearchCategory(category)}
+                      className="cursor-pointer font-bold text-[10px] uppercase tracking-widest p-3 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"
+                    >
+                      {category}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <input 
                 type="text" 
                 placeholder="Busca alimento, snacks o accesorios..." 
@@ -131,14 +157,14 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* Utility Links */}
+          {/* Utility Links (Seguimiento y Mi Cuenta) */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="#" className="flex items-center gap-2 text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all">
-              <Package className="w-4 h-4" />
+              <Package className="w-4 h-4 text-secondary" />
               Seguimiento
             </Link>
             <Link href="#" className="flex items-center gap-2 text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all">
-              <User className="w-4 h-4" />
+              <User className="w-4 h-4 text-secondary" />
               Mi Cuenta
             </Link>
           </div>
