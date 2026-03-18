@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,7 +23,7 @@
     --border: 180 5% 90%;
     --input: 180 5% 90%;
     --ring: 180 100% 25%;
-    --radius: 1rem;
+    --radius: 1.5rem;
   }
 }
 
