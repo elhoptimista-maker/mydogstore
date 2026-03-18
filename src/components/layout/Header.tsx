@@ -104,7 +104,7 @@ export default function Header() {
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="bg-secondary text-primary h-10 px-5 flex items-center gap-3 cursor-pointer hover:bg-secondary/90 hover:scale-[1.02] active:scale-95 transition-all font-black text-[10px] uppercase tracking-[0.15em] rounded-full shadow-lg shadow-secondary/10 shrink-0 outline-none self-center">
+                <div className="bg-white/10 text-white border border-white/20 h-10 px-5 flex items-center gap-3 cursor-pointer hover:bg-secondary hover:text-primary hover:border-secondary hover:scale-[1.02] active:scale-95 transition-all font-black text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-sm">
                   <Menu className="w-4 h-4" />
                   Todas las Categorías
                 </div>
