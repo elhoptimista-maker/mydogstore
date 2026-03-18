@@ -8,28 +8,28 @@ import { getErpAdminDb } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
 
 /**
- * Calcula un precio de venta atractivo basado en el costo neto.
- * Aplica el margen del 30% y un redondeo comercial inteligente.
+ * Calcula un precio de venta comercial basado en el costo neto.
+ * Aplica el margen del 30% y redondea al "90" más cercano para minimizar la desviación del margen.
  */
 function calculateCommercialPrice(netCost: number): number {
   if (!netCost || netCost <= 0) return 0;
 
-  // 1. Aplicar margen de utilidad (30%)
+  // 1. Aplicar margen de utilidad del 30%
   // Fórmula: Precio Venta = Costo / (1 - Margen)
   const basePrice = netCost / (1 - 0.30);
 
-  // 2. Lógica de redondeo comercial inteligente
-  if (basePrice < 2000) {
-    // Precios bajos: Redondear a la decena más cercana (ej: 1234 -> 1230)
-    return Math.round(basePrice / 10) * 10;
-  } else if (basePrice < 10000) {
-    // Precios medios: Ajustar para que termine en 90 (ej: 5432 -> 5490)
-    // Esto genera el efecto psicológico de "oferta" o precio justo de retail.
-    return Math.floor(basePrice / 100) * 100 + 90;
-  } else {
-    // Precios altos: Ajustar para que termine en 990 (ej: 25678 -> 25990)
-    return Math.floor(basePrice / 1000) * 1000 + 990;
+  // 2. Lógica de Redondeo al 90 más cercano
+  // Esto asegura que el precio termine en 90 (estética retail) 
+  // pero sin alejarse más de $60 del cálculo original.
+  if (basePrice < 1000) {
+    // Para precios muy bajos, simplemente redondeamos a la unidad
+    return Math.round(basePrice);
   }
+
+  // Redondeamos a la centena más cercana y restamos 10
+  // Ej: 46.049 -> (460) * 100 - 10 = 45.990
+  // Ej: 46.060 -> (461) * 100 - 10 = 46.090
+  return Math.round(basePrice / 100) * 100 - 10;
 }
 
 /**
@@ -53,7 +53,7 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
         
         // Consultar stock en colección inventory (ID documento == ID producto)
         const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
-        const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.stock || 0) : 0;
+        const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
 
         // Mapeo y Sanitización Estricta
         return {
@@ -94,7 +94,7 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
 
     const data = doc.data()!;
     const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
-    const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.stock || 0) : 0;
+    const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
 
     return {
       id: doc.id,
