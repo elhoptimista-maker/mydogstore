@@ -62,7 +62,7 @@ export default async function Home() {
                 ))}
               </div>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                <span className="text-primary font-black">100K+</span> Clientes Felices
+                <span className="text-primary font-black">1K+</span> Clientes Felices
               </p>
             </div>
           </div>
