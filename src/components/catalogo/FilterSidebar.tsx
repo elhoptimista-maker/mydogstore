@@ -6,6 +6,14 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from '@/components/ui/button';
+import { X, Filter, Sparkles } from 'lucide-react';
 
 interface FilterSidebarProps {
   categories: string[];
@@ -40,7 +48,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', '1'); // Resetear a pag 1 al filtrar
 
-    if (Array.isArray(values) && typeof values[0] === 'number') {
+    if (key === 'price' && Array.isArray(values) && typeof values[0] === 'number') {
       params.set('minPrice', values[0].toString());
       params.set('maxPrice', values[1].toString());
     } else if (values.length > 0) {
@@ -60,83 +68,153 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
     updateUrl(key, newList);
   };
 
+  const clearAll = () => {
+    router.push('/catalogo');
+  };
+
+  const hasActiveFilters = selectedCats.length > 0 || selectedBrands.length > 0 || selectedPets.length > 0 || priceRange[0] > 0 || priceRange[1] < 200000;
+
   return (
-    <div className="space-y-8">
-      {/* Rango de Precio */}
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Presupuesto</h4>
-        <Slider 
-          value={priceRange} 
-          min={0} 
-          max={200000} 
-          step={5000} 
-          onValueChange={setPriceRange}
-          onValueCommit={(val) => updateUrl('price', val)}
-          className="mb-6" 
-        />
-        <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-          <div className="bg-muted/50 px-3 py-1.5 rounded-lg">${priceRange[0].toLocaleString()}</div>
-          <div className="bg-muted/50 px-3 py-1.5 rounded-lg">${priceRange[1].toLocaleString()}+</div>
+    <div className="bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-black/[0.03] overflow-hidden sticky top-44">
+      {/* Header del Sidebar */}
+      <div className="p-6 border-b border-black/[0.03] flex items-center justify-between bg-primary/5">
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-primary" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-primary">Filtros Avanzados</span>
         </div>
+        {hasActiveFilters && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={clearAll}
+            className="h-7 px-2 rounded-full text-[9px] font-black uppercase tracking-tighter text-primary/60 hover:text-red-500 hover:bg-red-50"
+          >
+            Limpiar <X className="ml-1 w-3 h-3" />
+          </Button>
+        )}
       </div>
 
-      {/* Categorías */}
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Categoría</h4>
-        <div className="space-y-4">
-          {categories.map((cat) => (
-            <div key={cat} className="flex items-center space-x-3 group cursor-pointer">
-              <Checkbox 
-                id={`cat-${cat}`} 
-                checked={selectedCats.includes(cat)}
-                onCheckedChange={() => handleToggle(selectedCats, setSelectedCats, 'categoria', cat)}
-                className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
-              />
-              <Label htmlFor={`cat-${cat}`} className="text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
-                {cat}
-              </Label>
+      <div className="p-6 space-y-8">
+        {/* Rango de Precio - Siempre visible */}
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rango de Precio</h4>
+            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+              CLP
+            </span>
+          </div>
+          <Slider 
+            value={priceRange} 
+            min={0} 
+            max={200000} 
+            step={5000} 
+            onValueChange={setPriceRange}
+            onValueCommit={(val) => updateUrl('price', val)}
+          />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1 bg-muted/30 p-2.5 rounded-xl border border-black/[0.02]">
+              <span className="text-[8px] block font-black text-muted-foreground uppercase mb-0.5">Desde</span>
+              <span className="text-xs font-bold text-foreground">${priceRange[0].toLocaleString()}</span>
             </div>
-          ))}
+            <div className="flex-1 bg-muted/30 p-2.5 rounded-xl border border-black/[0.02] text-right">
+              <span className="text-[8px] block font-black text-muted-foreground uppercase mb-0.5">Hasta</span>
+              <span className="text-xs font-bold text-foreground">${priceRange[1].toLocaleString()}+</span>
+            </div>
+          </div>
         </div>
+
+        {/* Acordeón Unificado Hierárquico */}
+        <Accordion type="multiple" defaultValue={["especies", "categoria"]} className="w-full">
+          {/* 1. Especies */}
+          <AccordionItem value="especies" className="border-none mb-2">
+            <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-2xl hover:bg-muted/30 transition-all group">
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-secondary group-data-[state=open]:scale-150 transition-transform" />
+                <span className="text-[11px] font-black uppercase tracking-[0.1em]">1. Especies</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 px-4 pb-6">
+              <div className="grid grid-cols-1 gap-3">
+                {petTypes.map((pet) => (
+                  <div key={pet} className="flex items-center space-x-3 group cursor-pointer">
+                    <Checkbox 
+                      id={`pet-${pet}`} 
+                      checked={selectedPets.includes(pet)}
+                      onCheckedChange={() => handleToggle(selectedPets, setSelectedPets, 'especie', pet)}
+                      className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
+                    />
+                    <Label htmlFor={`pet-${pet}`} className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
+                      {pet}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* 2. Categorías */}
+          <AccordionItem value="categoria" className="border-none mb-2">
+            <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-2xl hover:bg-muted/30 transition-all group">
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-secondary group-data-[state=open]:scale-150 transition-transform" />
+                <span className="text-[11px] font-black uppercase tracking-[0.1em]">2. Categorías</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 px-4 pb-6">
+              <div className="grid grid-cols-1 gap-3">
+                {categories.map((cat) => (
+                  <div key={cat} className="flex items-center space-x-3 group cursor-pointer">
+                    <Checkbox 
+                      id={`cat-${cat}`} 
+                      checked={selectedCats.includes(cat)}
+                      onCheckedChange={() => handleToggle(selectedCats, setSelectedCats, 'categoria', cat)}
+                      className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
+                    />
+                    <Label htmlFor={`cat-${cat}`} className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
+                      {cat}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* 3. Marcas */}
+          <AccordionItem value="marca" className="border-none">
+            <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-2xl hover:bg-muted/30 transition-all group">
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-secondary group-data-[state=open]:scale-150 transition-transform" />
+                <span className="text-[11px] font-black uppercase tracking-[0.1em]">3. Marcas</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 px-4 pb-2">
+              <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto pr-2 no-scrollbar">
+                {brands.map((brand) => (
+                  <div key={brand} className="flex items-center space-x-3 group cursor-pointer">
+                    <Checkbox 
+                      id={`brand-${brand}`} 
+                      checked={selectedBrands.includes(brand)}
+                      onCheckedChange={() => handleToggle(selectedBrands, setSelectedBrands, 'marca', brand)}
+                      className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
+                    />
+                    <Label htmlFor={`brand-${brand}`} className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
+                      {brand}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
 
-      {/* Marcas */}
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Marcas</h4>
-        <div className="space-y-4 max-h-64 overflow-y-auto pr-2 no-scrollbar">
-          {brands.map((brand) => (
-            <div key={brand} className="flex items-center space-x-3 group cursor-pointer">
-              <Checkbox 
-                id={`brand-${brand}`} 
-                checked={selectedBrands.includes(brand)}
-                onCheckedChange={() => handleToggle(selectedBrands, setSelectedBrands, 'marca', brand)}
-                className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
-              />
-              <Label htmlFor={`brand-${brand}`} className="text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
-                {brand}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Especies */}
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Especies</h4>
-        <div className="space-y-4">
-          {petTypes.map((pet) => (
-            <div key={pet} className="flex items-center space-x-3 group cursor-pointer">
-              <Checkbox 
-                id={`pet-${pet}`} 
-                checked={selectedPets.includes(pet)}
-                onCheckedChange={() => handleToggle(selectedPets, setSelectedPets, 'especie', pet)}
-                className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
-              />
-              <Label htmlFor={`pet-${pet}`} className="text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
-                {pet}
-              </Label>
-            </div>
-          ))}
+      {/* Footer del Sidebar */}
+      <div className="p-6 bg-muted/30 border-t border-black/[0.03] space-y-4">
+        <div className="flex items-center gap-2 text-primary/40">
+          <Sparkles className="w-3 h-3" />
+          <p className="text-[8px] font-black uppercase tracking-widest leading-tight">
+            Los resultados se actualizan <br /> automáticamente
+          </p>
         </div>
       </div>
     </div>
