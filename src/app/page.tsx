@@ -23,11 +23,23 @@ import {
 } from "@/components/ui/carousel";
 
 export default async function Home() {
-  // Consumo del servicio de catálogo sanitizado (Server Component con acceso a Firebase Admin)
+  // Consumo del servicio de catálogo sanitizado
   const products = await getSanitizedProducts();
   
   // Seleccionamos los destacados para la home
   const featuredProducts = products.slice(0, 10);
+
+  // Lista de especies con lógica de conteo dinámico
+  const speciesList = [
+    { name: 'Perros', emoji: '🐶', filter: 'Perro' },
+    { name: 'Gatos', emoji: '🐱', filter: 'Gato' },
+    { name: 'Aves', emoji: '🦜', filter: 'Aves' },
+    { name: 'Conejos y Roedores', emoji: '🐰', filter: 'Conejo y Roedor' },
+    { name: 'Peces y Tortugas', emoji: '🐠', filter: 'Peces y Tortugas' },
+  ].map(s => ({
+    ...s,
+    count: products.filter(p => p.species === s.filter).length
+  }));
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen">
@@ -80,22 +92,16 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Navegación por Especies */}
+      {/* 3. Navegación por Especies (Mascotas) */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <div className="text-center space-y-3">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Explora nuestra tienda</span>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Encuentra lo mejor para tu</span>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
-            Compra por <span className="text-primary">Especie</span>
+            Busca por <span className="text-primary">Mascota</span>
           </h2>
         </div>
         <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x">
-          {[
-            { name: 'Perros', emoji: '🐶', filter: 'Perro' },
-            { name: 'Gatos', emoji: '🐱', filter: 'Gato' },
-            { name: 'Aves', emoji: '🦜', filter: 'Aves' },
-            { name: 'Roedores', emoji: '🐰', filter: 'Conejo y Roedor' },
-            { name: 'Peces', emoji: '🐠', filter: 'Peces y Tortugas' },
-          ].map((species, i) => (
+          {speciesList.map((species, i) => (
             <Link 
               key={i} 
               href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
@@ -104,9 +110,14 @@ export default async function Home() {
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:border-primary/20">
                 <span className="text-5xl md:text-6xl">{species.emoji}</span>
               </div>
-              <span className="text-sm font-bold text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
-                {species.name}
-              </span>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-sm font-bold text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
+                  {species.name}
+                </span>
+                <span className="text-[10px] font-bold text-muted-foreground opacity-60 uppercase tracking-tighter">
+                  ({species.count} productos)
+                </span>
+              </div>
             </Link>
           ))}
         </div>
