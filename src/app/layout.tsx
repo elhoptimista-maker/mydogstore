@@ -33,9 +33,9 @@ export default function RootLayout({
             {children}
           </main>
           
-          <footer className="w-full mt-20">
-            {/* Newsletter Orgánico */}
-            <div className="bg-[#FEF9F3] py-12 md:py-16 text-center">
+          <footer className="w-full">
+            {/* Newsletter Orgánico - Se integra sin margen superior para flujo continuo con Trust Bar */}
+            <div className="bg-[#FEF9F3] py-12 md:py-16 text-center border-t border-black/[0.03]">
               <div className="max-w-4xl mx-auto px-4 space-y-6">
                 <div className="space-y-2">
                   <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Únete a la manada <span className="text-primary">MyDog</span></h2>
