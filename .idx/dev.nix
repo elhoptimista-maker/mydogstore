@@ -11,7 +11,7 @@
 
   env = {
     # Forzamos a Genkit a usar un modelo estable si el preview falla
-    GOOGLE_GENAI_MODEL = "gemini-2.0-flash"; 
+    GOOGLE_GENAI_MODEL = "gemini-2.5-pro"; 
   };
 
   services.firebase.emulators = {
