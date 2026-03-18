@@ -36,9 +36,9 @@ export default async function Home() {
     <div className="bg-[#F6F6F6] min-h-screen">
       
       {/* 2. Bloque Hero */}
-      <section className="bg-[#FEF9F3] w-full pt-10 pb-20 overflow-hidden relative border-b border-black/5">
+      <section className="bg-[#FEF9F3] w-full pt-0 pb-20 overflow-hidden relative border-b border-black/5">
         <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-[500px]">
-          <div className="space-y-8">
+          <div className="space-y-8 py-10">
             <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">
               🐾 Bienestar animal garantizado
             </div>

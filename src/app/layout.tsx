@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className="font-sans antialiased selection:bg-primary/20 bg-background text-foreground">
         <CartProvider>
           <Header />
-          <main className="min-h-screen pt-40 md:pt-48 pb-0">
+          <main className="min-h-screen pt-44 pb-0">
             {children}
           </main>
           
