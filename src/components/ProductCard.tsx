@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -68,7 +67,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
       
       {/* Meta */}
-      <div className="flex flex-col flex-1 space-y-2 min-w-0">
+      <div className="flex flex-col flex-1 space-y-2 min-w-0 text-left">
         <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{product.attributes.category}</span>
         <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem]">
           {product.metadata.name}

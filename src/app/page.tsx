@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -117,18 +116,18 @@ export default async function Home() {
 
       {/* 4. Super-Cards Promocionales */}
       <section className="py-10 max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-[2.5rem] relative overflow-hidden p-10 flex items-center shadow-sm hover:shadow-md transition-all group">
-          <div className="space-y-6 flex-1 z-10">
+        <div className="bg-white rounded-[2.5rem] relative overflow-hidden p-10 flex items-center shadow-sm hover:shadow-md transition-all group border border-border/50">
+          <div className="space-y-6 flex-1 z-10 text-left">
             <Badge className="bg-yellow-400/20 text-yellow-800 border-none rounded-full px-3 py-1 text-[10px] font-black uppercase">Nueva Temporada</Badge>
             <h3 className="text-4xl font-black tracking-tighter leading-none text-foreground">Accesorios <br /><span className="text-primary">Premium</span></h3>
-            <Button className="rounded-full bg-primary font-black px-8 h-12">Ver Colección</Button>
+            <Button className="rounded-full bg-primary font-black px-8 h-12 text-white">Ver Colección</Button>
           </div>
           <div className="relative w-48 h-48 group-hover:scale-110 transition-transform duration-500">
             <Image src="https://picsum.photos/seed/acc-promo/400/400" alt="Promo 1" fill className="object-contain" />
           </div>
         </div>
         <div className="bg-accent rounded-[2.5rem] relative overflow-hidden p-10 flex items-center shadow-sm hover:shadow-md transition-all group text-accent-foreground">
-          <div className="space-y-6 flex-1 z-10">
+          <div className="space-y-6 flex-1 z-10 text-left">
             <Badge className="bg-primary/20 text-primary border-none rounded-full px-3 py-1 text-[10px] font-black uppercase">Oferta Imperdible</Badge>
             <h3 className="text-4xl font-black tracking-tighter leading-none">Nutrición <br /><span className="text-primary">Especializada</span></h3>
             <Button className="rounded-full bg-white text-primary font-black px-8 h-12 hover:bg-primary hover:text-white transition-colors">Ver Ofertas</Button>
@@ -156,14 +155,14 @@ export default async function Home() {
       </section>
 
       {/* 6. Sección de Oferta Relámpago */}
-      <section className="bg-[#FDF8F3] py-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center text-center lg:text-left">
+      <section className="bg-muted/30 py-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center text-center">
           <div className="hidden lg:block relative h-80">
             <Image src="https://picsum.photos/seed/cat-flash/600/600" alt="Cat Flash" fill className="object-contain" />
           </div>
           <div className="space-y-10 flex flex-col items-center">
             <div className="space-y-2">
-              <h4 className="text-lg font-bold text-muted-foreground uppercase tracking-widest">Oferta de Verano</h4>
+              <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Oferta de Verano</h4>
               <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground leading-none">Hasta <span className="text-primary">50% de Descuento</span></h2>
             </div>
             <div className="flex gap-4">
@@ -198,7 +197,7 @@ export default async function Home() {
               <div className="relative w-24 h-24 shrink-0 overflow-hidden rounded-xl bg-muted/30">
                 <Image src={product.media.main_image} alt={product.metadata.name} fill className="object-contain p-2" />
               </div>
-              <div className="flex-1 space-y-2">
+              <div className="flex-1 space-y-2 text-left">
                 <div className="flex items-center gap-1 text-yellow-400">
                   <Star className="w-3 h-3 fill-current" />
                   <span className="text-[10px] font-black text-foreground">4.9</span>
@@ -237,6 +236,57 @@ export default async function Home() {
           <div className="relative h-[400px] hidden md:block">
             <Image src="https://picsum.photos/seed/club-dist/800/600" alt="Club" fill className="object-contain drop-shadow-2xl" />
           </div>
+        </div>
+      </section>
+
+      {/* 11. Sección de FAQ */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <div className="space-y-6 lg:sticky lg:top-40 text-left">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Centro de Soporte</span>
+            <h2 className="text-5xl font-black tracking-tighter text-foreground leading-none">Preguntas <br /><span className="text-primary">Frecuentes</span></h2>
+            <p className="text-muted-foreground text-lg font-medium">Resolvemos tus dudas sobre distribución mayorista, tiempos de entrega y métodos de pago.</p>
+            <Button variant="outline" className="rounded-full border-2 border-primary/10 text-primary font-black px-10 h-14 mt-4">Ver Centro de Ayuda</Button>
+          </div>
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {[
+              { q: '¿Cuál es el monto mínimo de compra mayorista?', a: 'El pedido mínimo para precios de distribución comienza desde los $150.000 netos.' },
+              { q: '¿Despachan a regiones fuera de la RM?', a: 'Sí, contamos con alianzas logísticas para llegar a todo el territorio nacional chileno.' },
+              { q: '¿Tienen soporte veterinario para tiendas?', a: 'Contamos con un equipo técnico especializado para asesorar tu catálogo de productos.' },
+              { q: '¿Cuáles son los plazos de entrega?', a: 'En Santiago entregamos en 24-48 horas hábiles tras la confirmación del pedido.' }
+            ].map((item, i) => (
+              <AccordionItem key={i} value={`item-${i}`} className="border-none">
+                <AccordionTrigger className="flex gap-4 p-6 bg-white border border-black/5 rounded-xl hover:no-underline data-[state=open]:bg-primary data-[state=open]:text-white transition-all shadow-sm font-bold text-left">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="p-6 text-muted-foreground font-medium bg-white rounded-b-xl border border-t-0 border-black/5">
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+      {/* 12. Barra de Confianza (Trust Bar) */}
+      <section className="py-20 max-w-7xl mx-auto px-4 md:px-8 bg-white border-t border-black/5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          {[
+            { i: <Clock />, t: 'Entrega Flash', s: 'Compra antes de las 14:00' },
+            { i: <Truck />, t: 'Envío Gratis', s: 'Sobre $50.000 netos' },
+            { i: <ShieldCheck />, t: 'Garantía MyDog', s: 'Productos certificados' },
+            { i: <Headphones />, t: 'Soporte 24/7', s: 'Asistencia garantizada' }
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-4 text-left">
+              <div className="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center text-primary shrink-0">
+                {item.i}
+              </div>
+              <div className="flex flex-col">
+                <h4 className="font-bold text-foreground text-sm">{item.t}</h4>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{item.s}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -289,7 +339,7 @@ export default async function Home() {
             { t: 'Tendencias en nutrición animal 2024', c: 'Salud' },
             { t: 'El impacto de los snacks naturales', c: 'Bienestar' }
           ].map((post, i) => (
-            <div key={i} className="flex flex-col gap-6 group cursor-pointer">
+            <div key={i} className="flex flex-col gap-6 group cursor-pointer text-left">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden relative">
                 <Image src={`https://picsum.photos/seed/blog-pet-${i}/800/600`} alt={post.t} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                 <Badge className="absolute bottom-6 left-6 bg-yellow-400 text-yellow-900 font-black border-none rounded-full px-5 py-2 text-[10px] uppercase shadow-lg">
@@ -301,57 +351,6 @@ export default async function Home() {
                 <Link href="#" className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest hover:gap-4 transition-all">
                   Leer más <ArrowRight className="w-4 h-4" />
                 </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 11. Sección de FAQ */}
-      <section className="py-24 bg-[#FDFDFD]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          <div className="space-y-6 lg:sticky lg:top-40">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Centro de Soporte</span>
-            <h2 className="text-5xl font-black tracking-tighter text-foreground leading-none">Preguntas <br /><span className="text-primary">Frecuentes</span></h2>
-            <p className="text-muted-foreground text-lg font-medium">Resolvemos tus dudas sobre distribución mayorista, tiempos de entrega y métodos de pago.</p>
-            <Button variant="outline" className="rounded-full border-2 border-primary/10 text-primary font-black px-10 h-14 mt-4">Ver Centro de Ayuda</Button>
-          </div>
-          <Accordion type="single" collapsible className="w-full space-y-4">
-            {[
-              { q: '¿Cuál es el monto mínimo de compra mayorista?', a: 'El pedido mínimo para precios de distribución comienza desde los $150.000 netos.' },
-              { q: '¿Despachan a regiones fuera de la RM?', a: 'Sí, contamos con alianzas logísticas para llegar a todo el territorio nacional chileno.' },
-              { q: '¿Tienen soporte veterinario para tiendas?', a: 'Contamos con un equipo técnico especializado para asesorar tu catálogo de productos.' },
-              { q: '¿Cuáles son los plazos de entrega?', a: 'En Santiago entregamos en 24-48 horas hábiles tras la confirmación del pedido.' }
-            ].map((item, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border-none">
-                <AccordionTrigger className="flex gap-4 p-6 bg-white border border-black/5 rounded-xl hover:no-underline data-[state=open]:bg-primary data-[state=open]:text-white transition-all shadow-sm font-bold">
-                  {item.q}
-                </AccordionTrigger>
-                <AccordionContent className="p-6 text-muted-foreground font-medium bg-white rounded-b-xl border border-t-0 border-black/5">
-                  {item.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
-
-      {/* 12. Barra de Confianza */}
-      <section className="py-20 max-w-7xl mx-auto px-4 md:px-8 bg-white mb-10 border-t border-black/5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          {[
-            { i: <Truck />, t: 'Soporte 24/7', s: 'Asistencia garantizada' },
-            { i: <ShieldCheck />, t: 'Garantía Mayorista', s: 'Productos certificados' },
-            { i: <Headphones />, t: 'Soporte 24/7', s: 'Asistencia garantizada' },
-            { i: <CheckCircle2 />, t: 'Envío Gratis', s: 'En compras sobre $50.000 netos' }
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center text-primary shrink-0">
-                {item.i}
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-bold text-foreground text-sm">{item.t}</h4>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{item.s}</p>
               </div>
             </div>
           ))}
@@ -372,7 +371,7 @@ export default async function Home() {
 
       {/* 14. Footer Masivo */}
       <footer className="w-full">
-        {/* Top Row (Suscripción) - Orgánico */}
+        {/* Top Row (Suscripción) */}
         <div className="bg-[#FEF9F3] py-24 text-center">
           <div className="max-w-3xl mx-auto px-4 space-y-10">
             <div className="space-y-4">
@@ -390,8 +389,8 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Main Footer */}
-        <div className="bg-primary text-white py-20 px-4 md:px-8">
+        {/* Main Footer (Super-Card) */}
+        <div className="bg-primary text-white py-20 px-4 md:px-8 rounded-t-[3rem] mx-4">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-16 md:gap-20">
             <div className="md:col-span-2 space-y-8">
               <Link href="/" className="flex items-center gap-4">
@@ -403,7 +402,7 @@ export default async function Home() {
                   <span className="text-[10px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
                 </div>
               </Link>
-              <p className="text-white/60 text-base font-medium leading-relaxed max-w-sm">
+              <p className="text-white/60 text-base font-medium leading-relaxed max-w-sm text-left">
                 Liderando la nutrición y el bienestar animal en Chile desde 2008. Pasión, compromiso y calidad en cada despacho.
               </p>
               <div className="flex gap-4">
@@ -414,7 +413,7 @@ export default async function Home() {
                 ))}
               </div>
             </div>
-            <div>
+            <div className="text-left">
               <h4 className="font-black text-xs uppercase tracking-widest mb-10 text-accent">Navegación</h4>
               <ul className="space-y-5 text-sm font-bold text-white/70">
                 {['Home', 'Tienda', 'Ofertas', 'Blog'].map(l => (
@@ -422,7 +421,7 @@ export default async function Home() {
                 ))}
               </ul>
             </div>
-            <div>
+            <div className="text-left">
               <h4 className="font-black text-xs uppercase tracking-widest mb-10 text-accent">Información</h4>
               <ul className="space-y-5 text-sm font-bold text-white/70">
                 {['¿Quiénes somos?', 'Términos', 'Envíos', 'FAQ'].map(l => (
@@ -430,7 +429,7 @@ export default async function Home() {
                 ))}
               </ul>
             </div>
-            <div>
+            <div className="text-left">
               <h4 className="font-black text-xs uppercase tracking-widest mb-10 text-accent">Contacto</h4>
               <ul className="space-y-6 text-sm font-bold text-white/70">
                 <li className="flex items-start gap-3">

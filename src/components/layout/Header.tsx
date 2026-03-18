@@ -1,20 +1,17 @@
-
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Menu, Dog, Search, Heart, Phone, ChevronDown, User, SearchIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ShoppingCart, Menu, Dog, Search, Heart, Phone, ChevronDown, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import CartDrawer from '@/components/cart/CartDrawer';
-import { Badge } from '@/components/ui/badge';
 
 export default function Header() {
   const { cartCount } = useCart();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
-      {/* 1. Top Bar (Utilidad) - Amarillo Accent */}
+      {/* 1. Top Bar (Utilidad) */}
       <div className="h-10 bg-accent text-accent-foreground flex justify-between items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
         <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -31,7 +28,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2. Main Header (Búsqueda y Acciones) - Verde Primary */}
+      {/* 2. Main Header (Búsqueda y Acciones) */}
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-8 md:gap-12">
           {/* Logo */}
@@ -46,7 +43,7 @@ export default function Header() {
           </Link>
 
           {/* Search Pill (Expansivo) */}
-          <div className="flex-1 hidden md:flex max-w-2xl relative">
+          <div className="flex-1 hidden md:flex max-w-2xl">
             <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden">
               <div className="flex items-center px-5 border-r border-black/5 cursor-pointer hover:bg-black/5 transition-colors h-full text-foreground">
                 <span className="text-xs font-black uppercase tracking-wider mr-2">Todas</span>
@@ -69,11 +66,11 @@ export default function Header() {
               <Phone className="w-5 h-5 text-white" />
               <div className="flex flex-col">
                 <span className="text-[9px] font-bold text-white/60 uppercase">Soporte</span>
-                <span className="text-sm font-black tracking-tight">+56 9 1234 5678</span>
+                <span className="text-sm font-black tracking-tight text-white">+56 9 1234 5678</span>
               </div>
             </div>
             
-            <button className="relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+            <button className="relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all text-white">
               <Heart className="w-5 h-5" />
             </button>
 
@@ -91,7 +88,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Menu Bar (Navegación) - Gris Claro */}
+      {/* 3. Menu Bar (Navegación) */}
       <div className="h-12 bg-[#F6F6F6] border-b border-black/5 hidden md:flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-8 h-full">
