@@ -54,7 +54,7 @@ export default function Header() {
           <div className="flex-1 hidden md:flex max-w-2xl">
             <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner">
               <div className="flex items-center px-5 border-r border-black/5 cursor-pointer hover:bg-black/5 transition-colors h-full text-foreground">
-                <span className="text-xs font-black uppercase tracking-wider mr-2">Categorías</span>
+                <span className="text-xs font-bold uppercase tracking-wider mr-2">Categorías</span>
                 <ChevronDown className="w-3.5 h-3.5 opacity-40" />
               </div>
               <input 
@@ -104,7 +104,7 @@ export default function Header() {
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="bg-white/10 text-white border border-white/20 h-10 px-5 flex items-center gap-3 cursor-pointer hover:bg-secondary hover:text-primary hover:border-secondary hover:scale-[1.02] active:scale-95 transition-all font-black text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-sm">
+                <div className="bg-white/10 text-white border border-white/20 h-10 px-5 flex items-center gap-3 cursor-pointer hover:bg-secondary hover:text-primary hover:border-secondary hover:scale-[1.02] active:scale-95 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-sm">
                   <Menu className="w-4 h-4" />
                   Todas las Categorías
                 </div>
@@ -129,7 +129,7 @@ export default function Header() {
                 <Link 
                   key={label} 
                   href={label === 'Home' ? '/' : `/${label.toLowerCase()}`}
-                  className="text-[11px] font-black text-white/70 hover:text-white uppercase tracking-widest transition-all relative group"
+                  className="text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all relative group"
                 >
                   {label}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary transition-all group-hover:w-full"></span>
