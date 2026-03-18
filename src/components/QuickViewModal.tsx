@@ -1,8 +1,7 @@
-
 "use client";
 
 import Image from 'next/image';
-import { Product } from '@/lib/mock-db';
+import { SanitizedProduct } from '@/types/product';
 import { 
   Dialog, 
   DialogContent, 
@@ -11,14 +10,13 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Star, ShoppingCart, Scale, Dog, Briefcase, Heart, Plus, Minus } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
 
 interface QuickViewModalProps {
-  product: Product;
+  product: SanitizedProduct;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -27,7 +25,6 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
-  // Reseteamos la cantidad cada vez que el modal se cierra
   useEffect(() => {
     if (!open) {
       setQuantity(1);
@@ -38,7 +35,7 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
     addToCart(product, false, quantity);
     toast({
       title: "¡Añadido al carrito!",
-      description: `${quantity}x ${product.metadata.name}`,
+      description: `${quantity}x ${product.name}`,
       className: "bg-primary text-white rounded-2xl border-none font-bold shadow-2xl",
     });
     onOpenChange(false);
@@ -48,20 +45,15 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
         className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none"
-        onPointerDownOutside={(e) => {
-          // Evitamos que el modal se cierre si el usuario hace clic muy rápido justo después de abrirlo
-          // Esto previene el error de "abre y cierra" en condiciones de lag o eventos rápidos.
-        }}
       >
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Image Section */}
           <div className="relative aspect-square bg-[#fdfdfd] p-12">
             <Image
-              src={product.media.main_image}
-              alt={product.metadata.name}
+              src={product.main_image}
+              alt={product.name}
               fill
               className="object-contain p-8"
-              data-ai-hint={product.media.imageHint}
             />
           </div>
 
@@ -70,7 +62,7 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Badge className="px-3 py-1 bg-primary text-white border-none text-[9px] font-black uppercase tracking-widest rounded-full">
-                  {product.attributes.brand}
+                  {product.brand}
                 </Badge>
                 <div className="flex items-center gap-1 text-secondary">
                   <Star className="w-3 h-3 fill-current" />
@@ -79,23 +71,23 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
               </div>
 
               <DialogTitle className="text-2xl md:text-3xl font-black text-foreground tracking-tighter leading-tight">
-                {product.metadata.name}
+                {product.name}
               </DialogTitle>
 
               <div className="text-3xl font-black text-primary tracking-tighter">
-                ${product.financials.pricing.base_price.toLocaleString('es-CL')}
+                ${product.sellingPrice.toLocaleString('es-CL')}
               </div>
             </div>
 
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-              {product.content.short_description}
+              {product.short_description}
             </p>
 
             <div className="grid grid-cols-3 gap-3">
               {[
-                { icon: <Scale className="w-3 h-3" />, label: "Peso", val: `${product.attributes.weight_kg}kg` },
-                { icon: <Dog className="w-3 h-3" />, label: "Etapa", val: product.attributes.life_stage },
-                { icon: <Briefcase className="w-3 h-3" />, label: "Formato", val: product.attributes.format }
+                { icon: <Scale className="w-3 h-3" />, label: "Peso", val: `${product.weight_kg}kg` },
+                { icon: <Dog className="w-3 h-3" />, label: "Etapa", val: product.life_stage },
+                { icon: <Briefcase className="w-3 h-3" />, label: "Formato", val: "Unidad" }
               ].map((attr, i) => (
                 <div key={i} className="bg-muted/30 p-2 rounded-xl text-center space-y-1">
                   <div className="flex items-center justify-center gap-1 text-primary">
@@ -107,7 +99,6 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
             </div>
 
             <div className="space-y-4 pt-4">
-              {/* Selector de Cantidad */}
               <div className="flex items-center justify-between bg-muted/30 p-3 rounded-2xl border border-black/[0.03]">
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Cantidad</span>
                 <div className="flex items-center gap-4">
