@@ -1,5 +1,6 @@
 
-import { getProducts, CATEGORIES, PET_TYPES, BRANDS } from '@/lib/mock-db';
+import { getSanitizedProducts } from '@/lib/services/catalog.service';
+import { CATEGORIES, PET_TYPES, BRANDS } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
 import { 
   ChevronDown, 
@@ -32,13 +33,13 @@ export const metadata = {
 };
 
 export default async function CatalogoPage() {
-  const products = await getProducts();
+  const products = await getSanitizedProducts();
 
   const FiltersContent = () => (
     <div className="space-y-8">
       {/* Rango de Precio */}
       <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-primary/60">Presupuesto</h4>
+        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Presupuesto</h4>
         <Slider defaultValue={[0, 100000]} max={200000} step={1000} className="mb-6" />
         <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
           <div className="bg-muted/50 px-3 py-1.5 rounded-lg">$0</div>
@@ -48,7 +49,7 @@ export default async function CatalogoPage() {
 
       {/* Categorías */}
       <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-primary/60">Categoría</h4>
+        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Categoría</h4>
         <div className="space-y-4">
           {CATEGORIES.slice(0, 6).map((cat) => (
             <div key={cat} className="flex items-center space-x-3 group cursor-pointer">
@@ -63,7 +64,7 @@ export default async function CatalogoPage() {
 
       {/* Marcas */}
       <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-primary/60">Marcas</h4>
+        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Marcas</h4>
         <div className="space-y-4 max-h-64 overflow-y-auto pr-2 no-scrollbar">
           {BRANDS.slice(0, 10).map((brand) => (
             <div key={brand} className="flex items-center space-x-3 group cursor-pointer">
@@ -78,7 +79,7 @@ export default async function CatalogoPage() {
 
       {/* Mascotas */}
       <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-black/[0.03]">
-        <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-primary/60">Especies</h4>
+        <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-primary/60">Especies</h4>
         <div className="space-y-4">
           {PET_TYPES.map((pet) => (
             <div key={pet} className="flex items-center space-x-3 group cursor-pointer">
@@ -102,7 +103,7 @@ export default async function CatalogoPage() {
         </div>
         <div className="max-w-7xl mx-auto px-4 lg:px-8 w-full relative z-10">
           <div className="space-y-2">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Explora nuestra tienda</span>
+            <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Explora nuestra tienda</span>
             <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-none">Nuestro <span className="text-primary">Catálogo</span></h1>
           </div>
         </div>
