@@ -3,6 +3,7 @@
 /**
  * @fileOverview Inicialización de la aplicación secundaria de Firebase para el ERP (Lado Cliente).
  * Proporciona acceso a la base de datos del ERP para lecturas directas del catálogo.
+ * Utiliza variables de entorno con prefijo NEXT_PUBLIC_ para seguridad en el cliente.
  */
 
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
@@ -25,6 +26,10 @@ let erpDb: Firestore;
  */
 export function getErpClient() {
   if (!getApps().find(app => app.name === "erp-app")) {
+    // Verificación básica de configuración
+    if (!erpFirebaseConfig.apiKey) {
+      console.warn("ERP Client: Missing NEXT_PUBLIC_ERP_FIREBASE_API_KEY environment variable.");
+    }
     erpApp = initializeApp(erpFirebaseConfig, "erp-app");
   } else {
     erpApp = getApp("erp-app");

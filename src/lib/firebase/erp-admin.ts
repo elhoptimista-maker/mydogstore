@@ -1,6 +1,7 @@
 /**
  * @fileOverview Inicialización de Firebase Admin para el ERP (Lado Servidor).
  * Utiliza privilegios elevados para transacciones seguras y verificación de tokens.
+ * Lee las credenciales del Service Account desde variables de entorno individuales.
  */
 
 import * as admin from "firebase-admin";
@@ -10,12 +11,20 @@ import * as admin from "firebase-admin";
  */
 export function getErpAdmin() {
   if (!admin.apps.find(app => app?.name === "erp-admin")) {
-    const serviceAccount = JSON.parse(
-      process.env.ERP_FIREBASE_SERVICE_ACCOUNT || "{}"
-    );
+    const projectId = process.env.ERP_FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.ERP_FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.ERP_FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+    if (!projectId || !clientEmail || !privateKey) {
+      console.error("ERP Admin: Missing required environment variables (PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY).");
+    }
 
     return admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert({
+        projectId,
+        clientEmail,
+        privateKey,
+      }),
     }, "erp-admin");
   }
   
