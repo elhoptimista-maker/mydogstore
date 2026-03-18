@@ -1,17 +1,16 @@
-
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Product } from '@/lib/mock-db';
+import React, { createContext, useContext, useState } from 'react';
+import { SanitizedProduct } from '@/types/product';
 
-interface CartItem extends Product {
+interface CartItem extends SanitizedProduct {
   quantity: number;
   isSubscription?: boolean;
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product, isSubscription?: boolean, quantity?: number) => void;
+  addToCart: (product: SanitizedProduct, isSubscription?: boolean, quantity?: number) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -24,7 +23,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addToCart = (product: Product, isSubscription = false, quantity = 1) => {
+  const addToCart = (product: SanitizedProduct, isSubscription = false, quantity = 1) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id && item.isSubscription === isSubscription);
       if (existing) {
@@ -52,7 +51,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   
   const cartTotal = cart.reduce((acc, item) => {
-    const basePrice = item.financials.pricing.base_price;
+    const basePrice = item.sellingPrice;
     const price = item.isSubscription ? basePrice * 0.9 : basePrice;
     return acc + (price * item.quantity);
   }, 0);
