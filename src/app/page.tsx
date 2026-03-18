@@ -95,11 +95,10 @@ export default async function Home() {
             { name: 'Aves', emoji: '🦜', filter: 'Aves' },
             { name: 'Roedores', emoji: '🐰', filter: 'Conejo y Roedor' },
             { name: 'Peces', emoji: '🐠', filter: 'Peces y Tortugas' },
-            { name: 'Snacks', emoji: '🦴', filter: '' }, // Podría apuntar a categoría Snacks si se desea
           ].map((species, i) => (
             <Link 
               key={i} 
-              href={species.filter ? `/catalogo?especie=${encodeURIComponent(species.filter)}` : '/catalogo'}
+              href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
               className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0"
             >
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:border-primary/20">
