@@ -17,7 +17,7 @@ import { useState } from 'react';
 
 export default function Header() {
   const { cartCount } = useCart();
-  const [searchCategory, setSearchCategory] = useState("Todas las Categorías");
+  const [searchCategory, setSearchCategory] = useState("Todas");
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
@@ -59,10 +59,10 @@ export default function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56 rounded-xl border-none shadow-2xl p-2 bg-white z-[60]">
                   <DropdownMenuItem 
-                    onClick={() => setSearchCategory("Todas las Categorías")}
+                    onClick={() => setSearchCategory("Todas")}
                     className="cursor-pointer font-bold text-[10px] uppercase tracking-widest p-3 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"
                   >
-                    Todas las Categorías
+                    Todas
                   </DropdownMenuItem>
                   {CATEGORIES.map((category) => (
                     <DropdownMenuItem 
