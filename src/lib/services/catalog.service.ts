@@ -19,16 +19,7 @@ function calculateCommercialPrice(netCost: number): number {
   const basePrice = netCost / (1 - 0.30);
 
   // 2. Lógica de Redondeo al 90 más cercano
-  // Esto asegura que el precio termine en 90 (estética retail) 
-  // pero sin alejarse más de $60 del cálculo original.
-  if (basePrice < 1000) {
-    // Para precios muy bajos, simplemente redondeamos a la unidad
-    return Math.round(basePrice);
-  }
-
   // Redondeamos a la centena más cercana y restamos 10
-  // Ej: 46.049 -> (460) * 100 - 10 = 45.990
-  // Ej: 46.060 -> (461) * 100 - 10 = 46.090
   return Math.round(basePrice / 100) * 100 - 10;
 }
 
@@ -56,10 +47,13 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
         const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
 
         // Mapeo y Sanitización Estricta
+        // Intentamos extraer el nombre de múltiples fuentes posibles para mayor robustez
+        const productName = data.name || data.metadata?.name || data.metadata?.title || "Producto sin nombre";
+
         return {
           id: doc.id,
-          name: data.metadata?.name || "Producto sin nombre",
-          sku: data.metadata?.sku || "N/A",
+          name: productName,
+          sku: data.metadata?.sku || data.sku || "N/A",
           slug: data.metadata?.slug || doc.id,
           brand: data.attributes?.brand || "Genérico",
           category: data.attributes?.category || "Varios",
@@ -67,8 +61,8 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
           life_stage: data.attributes?.life_stage || "Adulto",
           flavor: data.attributes?.flavor,
           weight_kg: data.attributes?.weight_kg || 0,
-          short_description: data.content?.short_description || "",
-          main_image: data.media?.main_image || "https://picsum.photos/seed/placeholder/600/600",
+          short_description: data.content?.short_description || data.description || "",
+          main_image: data.media?.main_image || data.image || "https://picsum.photos/seed/placeholder/600/600",
           currentStock,
           sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
         } as SanitizedProduct;
@@ -96,10 +90,12 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
     const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
     const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
 
+    const productName = data.name || data.metadata?.name || data.metadata?.title || "Producto sin nombre";
+
     return {
       id: doc.id,
-      name: data.metadata?.name || "",
-      sku: data.metadata?.sku || "",
+      name: productName,
+      sku: data.metadata?.sku || data.sku || "",
       slug: data.metadata?.slug || doc.id,
       brand: data.attributes?.brand || "",
       category: data.attributes?.category || "",
@@ -107,8 +103,8 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
       life_stage: data.attributes?.life_stage || "",
       flavor: data.attributes?.flavor,
       weight_kg: data.attributes?.weight_kg || 0,
-      short_description: data.content?.short_description || "",
-      main_image: data.media?.main_image || "",
+      short_description: data.content?.short_description || data.description || "",
+      main_image: data.media?.main_image || data.image || "",
       currentStock,
       sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
     } as SanitizedProduct;
