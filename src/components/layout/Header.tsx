@@ -6,6 +6,13 @@ import { ShoppingCart, Menu, Dog, Search, Heart, Phone, ChevronDown } from 'luci
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import CartDrawer from '@/components/cart/CartDrawer';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CATEGORIES } from '@/lib/mock-db';
 
 export default function Header() {
   const { cartCount } = useCart();
@@ -93,12 +100,29 @@ export default function Header() {
 
       {/* 3. Menu Bar (Navegación) */}
       <div className="h-12 bg-[#F6F6F6] border-b border-black/5 flex items-center px-4 md:px-8">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
-            <div className="bg-primary text-white h-full px-6 flex items-center gap-3 cursor-pointer hover:bg-primary/95 transition-all font-black text-[11px] uppercase tracking-[0.1em] rounded-t-xl shrink-0">
-              <Menu className="w-4 h-4" />
-              Todas las Categorías
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="bg-primary text-white h-full px-6 flex items-center gap-3 cursor-pointer hover:bg-primary/95 transition-all font-black text-[11px] uppercase tracking-[0.1em] rounded-t-xl shrink-0 outline-none">
+                  <Menu className="w-4 h-4" />
+                  Todas las Categorías
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64 rounded-xl border-none shadow-2xl p-2 mt-0">
+                {CATEGORIES.map((category) => (
+                  <DropdownMenuItem key={category} asChild>
+                    <Link 
+                      href={`/catalogo?categoria=${encodeURIComponent(category)}`}
+                      className="cursor-pointer font-bold text-xs uppercase tracking-widest p-3 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"
+                    >
+                      {category}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <nav className="hidden md:flex items-center gap-10">
               {['Home', 'Tienda', 'Ofertas', 'Blog', 'Nosotros'].map((label) => (
                 <Link 
