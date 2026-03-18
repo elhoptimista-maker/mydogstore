@@ -22,8 +22,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     
-    // Adaptar SanitizedProduct al formato esperado por el carrito si es necesario
-    // Por simplicidad en este prototipo, pasamos el objeto sanitizado directamente
+    // Adaptar SanitizedProduct al formato esperado por el carrito
     addToCart(product as any); 
     
     toast({
@@ -89,11 +88,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Footer */}
         <div className="flex items-center justify-between pt-2 mt-auto">
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-primary tracking-tighter leading-none">
+            <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest leading-none mb-1">Precio</span>
+            <span className="text-lg font-black text-primary tracking-tighter leading-none">
               ${product.sellingPrice.toLocaleString('es-CL')}
-            </span>
-            <span className="text-[9px] text-muted-foreground line-through font-bold">
-              ${(product.sellingPrice * 1.2).toLocaleString('es-CL', { maximumFractionDigits: 0 })}
             </span>
           </div>
           <button 
