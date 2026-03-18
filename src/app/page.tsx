@@ -81,12 +81,12 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Navegación por Píldoras (Categorías Destacadas) */}
+      {/* 3. Navegación por Especies (Exploración Rápida) */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <div className="text-center space-y-3">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Explora nuestra tienda</span>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Explora por mascota</span>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
-            Compra por <span className="text-primary">Categoría</span>
+            Compra por <span className="text-primary">Especie</span>
           </h2>
         </div>
         <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x">
@@ -94,16 +94,16 @@ export default async function Home() {
             { name: 'Perros', emoji: '🐶' },
             { name: 'Gatos', emoji: '🐱' },
             { name: 'Aves', emoji: '🦜' },
-            { name: 'Conejos', emoji: '🐰' },
-            { name: 'Higiene', emoji: '🧼' },
-            { name: 'Snacks', emoji: '🦴' },
-          ].map((cat, i) => (
+            { name: 'Roedores', emoji: '🐹' },
+            { name: 'Peces', emoji: '🐠' },
+            { name: 'Exóticos', emoji: '🐢' },
+          ].map((species, i) => (
             <div key={i} className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0">
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:border-primary/20">
-                <span className="text-5xl md:text-6xl">{cat.emoji}</span>
+                <span className="text-5xl md:text-6xl">{species.emoji}</span>
               </div>
-              <span className="text-sm font-black text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
-                {cat.name}
+              <span className="text-sm font-bold text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
+                {species.name}
               </span>
             </div>
           ))}
