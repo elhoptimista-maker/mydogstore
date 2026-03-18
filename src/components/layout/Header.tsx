@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Menu, Dog, Search, Heart, Phone, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Menu, Dog, Search, Heart, Phone, ChevronDown, User, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import CartDrawer from '@/components/cart/CartDrawer';
@@ -19,19 +19,20 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
-      {/* 1. Top Bar (Utilidad) */}
-      <div className="h-10 bg-accent text-accent-foreground flex justify-between items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
-        <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
+      {/* 1. Top Bar (Promociones y Descuentos) */}
+      <div className="h-10 bg-accent text-accent-foreground flex items-center px-4 md:px-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
+        <div className="max-w-7xl mx-auto w-full flex justify-center md:justify-between items-center">
           <div className="flex items-center gap-4">
-            <span>🚚 Envíos gratis sobre $50.000</span>
+            <span className="flex items-center gap-2">
+              <span className="bg-primary/10 px-2 py-0.5 rounded text-[9px]">INFO</span>
+              <span>🚚 Envíos gratis sobre $50.000 en Santiago</span>
+            </span>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-1 cursor-pointer">
-              <span>Español</span>
-              <ChevronDown className="w-3 h-3" />
-            </div>
-            <Link href="#" className="hover:underline">Seguimiento</Link>
-            <Link href="#" className="hover:underline">Mi Cuenta</Link>
+          <div className="hidden md:flex items-center gap-6">
+            <span className="flex items-center gap-2">
+              <span className="bg-primary/10 px-2 py-0.5 rounded text-[9px]">HOT</span>
+              <span>🔥 Descuentos hasta 50% en marcas seleccionadas</span>
+            </span>
           </div>
         </div>
       </div>
@@ -100,11 +101,11 @@ export default function Header() {
 
       {/* 3. Menu Bar (Navegación) */}
       <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-start h-full">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="bg-white/10 text-white border border-white/20 h-10 px-5 flex items-center gap-3 cursor-pointer hover:bg-secondary hover:text-primary hover:border-secondary hover:scale-[1.02] active:scale-95 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-sm">
+                <div className="text-white border border-white/20 h-10 px-5 flex items-center gap-3 cursor-pointer hover:bg-secondary hover:text-primary hover:border-secondary transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-sm">
                   <Menu className="w-4 h-4" />
                   Todas las Categorías
                 </div>
@@ -124,7 +125,7 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <nav className="hidden md:flex items-center gap-10">
+            <nav className="hidden md:flex items-center gap-8">
               {['Home', 'Tienda', 'Ofertas', 'Blog', 'Nosotros'].map((label) => (
                 <Link 
                   key={label} 
@@ -136,6 +137,18 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
+          </div>
+
+          {/* Utility Links Moved here */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link href="#" className="flex items-center gap-2 text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all">
+              <Package className="w-4 h-4" />
+              Seguimiento
+            </Link>
+            <Link href="#" className="flex items-center gap-2 text-[11px] font-bold text-white/70 hover:text-white uppercase tracking-widest transition-all">
+              <User className="w-4 h-4" />
+              Mi Cuenta
+            </Link>
           </div>
         </div>
       </div>
