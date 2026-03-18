@@ -1,14 +1,28 @@
-
 "use client";
 
-type ErrorListener = (error: AppError) => void;
+/**
+ * @fileOverview Emisor de errores global para capturar y notificar fallos de permisos en Firestore.
+ */
 
-export interface AppError {
-  code: string;
-  message: string;
-  type: 'FIRESTORE_PERMISSION' | 'GENERIC' | 'AUTH';
-  originalError?: any;
+export type FirestoreOperation = 'get' | 'list' | 'create' | 'update' | 'delete' | 'write';
+
+export interface SecurityRuleContext {
+  path: string;
+  operation: FirestoreOperation;
+  requestResourceData?: any;
 }
+
+export class FirestorePermissionError extends Error {
+  context: SecurityRuleContext;
+  
+  constructor(context: SecurityRuleContext) {
+    super(`FirestoreError: Missing or insufficient permissions at ${context.path}`);
+    this.name = 'FirestorePermissionError';
+    this.context = context;
+  }
+}
+
+type ErrorListener = (error: FirestorePermissionError) => void;
 
 class GlobalErrorEmitter {
   private listeners: ErrorListener[] = [];
@@ -20,18 +34,11 @@ class GlobalErrorEmitter {
     };
   }
 
-  emit(error: AppError) {
-    this.listeners.forEach(listener => listener(error));
+  emit(channel: 'permission-error', error: FirestorePermissionError) {
+    if (channel === 'permission-error') {
+      this.listeners.forEach(listener => listener(error));
+    }
   }
 }
 
 export const errorEmitter = new GlobalErrorEmitter();
-
-export function emitFirestoreError(originalError: any) {
-  errorEmitter.emit({
-    code: originalError.code || 'unknown',
-    message: originalError.message || 'Access denied to Firestore resources.',
-    type: 'FIRESTORE_PERMISSION',
-    originalError
-  });
-}
