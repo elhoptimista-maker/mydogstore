@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
