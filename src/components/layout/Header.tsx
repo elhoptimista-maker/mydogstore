@@ -99,7 +99,7 @@ export default function Header() {
       </div>
 
       {/* 3. Menu Bar (Navegación) */}
-      <div className="h-14 bg-white border-b border-black/5 flex items-center px-4 md:px-8">
+      <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
@@ -129,16 +129,16 @@ export default function Header() {
                 <Link 
                   key={label} 
                   href={label === 'Home' ? '/' : `/${label.toLowerCase()}`}
-                  className="text-[11px] font-black text-foreground/70 hover:text-primary uppercase tracking-widest transition-all relative group"
+                  className="text-[11px] font-black text-white/70 hover:text-white uppercase tracking-widest transition-all relative group"
                 >
                   {label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary transition-all group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
           </div>
-          <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest hidden md:block">
-            Soporte Técnico: <span className="text-primary font-black">+56 2 2345 6789</span>
+          <div className="text-[11px] font-bold text-white/60 uppercase tracking-widest hidden md:block">
+            Soporte Técnico: <span className="text-secondary font-black">+56 2 2345 6789</span>
           </div>
         </div>
       </div>
