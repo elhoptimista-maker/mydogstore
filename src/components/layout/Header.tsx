@@ -99,24 +99,25 @@ export default function Header() {
       </div>
 
       {/* 3. Menu Bar (Navegación) */}
-      <div className="h-12 bg-[#F6F6F6] border-b border-black/5 flex items-center px-4 md:px-8">
+      <div className="h-14 bg-white border-b border-black/5 flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="bg-primary text-white h-full px-6 flex items-center gap-3 cursor-pointer hover:bg-primary/95 transition-all font-black text-[11px] uppercase tracking-[0.1em] rounded-t-xl shrink-0 outline-none">
+                <div className="bg-secondary text-primary h-10 px-5 flex items-center gap-3 cursor-pointer hover:bg-secondary/90 hover:scale-[1.02] active:scale-95 transition-all font-black text-[10px] uppercase tracking-[0.15em] rounded-full shadow-lg shadow-secondary/10 shrink-0 outline-none self-center">
                   <Menu className="w-4 h-4" />
                   Todas las Categorías
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-64 rounded-xl border-none shadow-2xl p-2 mt-0">
+              <DropdownMenuContent align="start" className="w-64 rounded-2xl border-none shadow-2xl p-2 mt-2 bg-white animate-in slide-in-from-top-2 duration-300">
                 {CATEGORIES.map((category) => (
                   <DropdownMenuItem key={category} asChild>
                     <Link 
                       href={`/catalogo?categoria=${encodeURIComponent(category)}`}
-                      className="cursor-pointer font-bold text-xs uppercase tracking-widest p-3 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"
+                      className="cursor-pointer font-bold text-xs uppercase tracking-widest p-3 rounded-xl hover:bg-primary/5 hover:text-primary transition-colors flex items-center justify-between group"
                     >
                       {category}
+                      <ChevronDown className="w-3 h-3 -rotate-90 opacity-0 group-hover:opacity-40 transition-all" />
                     </Link>
                   </DropdownMenuItem>
                 ))}
@@ -128,15 +129,16 @@ export default function Header() {
                 <Link 
                   key={label} 
                   href={label === 'Home' ? '/' : `/${label.toLowerCase()}`}
-                  className="text-[11px] font-black text-foreground/70 hover:text-primary uppercase tracking-widest transition-all"
+                  className="text-[11px] font-black text-foreground/70 hover:text-primary uppercase tracking-widest transition-all relative group"
                 >
                   {label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
           </div>
           <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest hidden md:block">
-            Soporte Técnico: <span className="text-primary">+56 2 2345 6789</span>
+            Soporte Técnico: <span className="text-primary font-black">+56 2 2345 6789</span>
           </div>
         </div>
       </div>
