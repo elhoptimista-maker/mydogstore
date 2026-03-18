@@ -1,21 +1,16 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Dog, 
   ArrowRight, 
   Truck,
   ShieldCheck,
   Headphones,
   Star,
   Clock,
-  Instagram,
   ChevronRight,
-  Plus,
-  Minus,
-  ShoppingCart
+  Dog
 } from 'lucide-react';
 import { getProducts } from '@/lib/mock-db';
 import ProductCard from '@/components/ProductCard';
@@ -146,7 +141,9 @@ export default async function Home() {
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Selección experta</span>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Productos <span className="text-primary">Destacados</span></h2>
           </div>
-          <Button variant="outline" className="rounded-full font-black border-2 px-8 h-12 border-primary/10 hover:border-primary transition-all">Ver Todos</Button>
+          <Link href="/catalogo">
+            <Button variant="outline" className="rounded-full font-black border-2 px-8 h-12 border-primary/10 hover:border-primary transition-all">Ver Todos</Button>
+          </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {products.map((product) => (
@@ -155,7 +152,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 6. Sección de Oferta Relámpago (Flash Deal + Cuenta Regresiva) */}
+      {/* 6. Sección de Oferta Relámpago */}
       <section className="bg-white/50 border-y border-black/5 py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-16 items-center">
           <div className="hidden lg:block relative h-96">
@@ -166,7 +163,6 @@ export default async function Home() {
               <h4 className="text-xs font-black text-primary uppercase tracking-[0.3em]">Oferta Limitada</h4>
               <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground leading-none">Hasta <span className="text-primary">50% OFF</span></h2>
             </div>
-            {/* Cuenta Regresiva */}
             <div className="flex gap-4">
               {[
                 { val: '02', label: 'Días' },
@@ -186,61 +182,6 @@ export default async function Home() {
           </div>
           <div className="hidden lg:block relative h-96">
             <Image src="https://picsum.photos/seed/dog-flash/600/600" alt="Flash" fill className="object-contain drop-shadow-xl" />
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Tarjetas de Producto Horizontales (Deals of the Day) */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
-        <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground text-center">Ofertas del <span className="text-primary">Día</span></h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {products.slice(0, 2).map((product, i) => (
-            <div key={i} className="flex flex-row bg-white rounded-[2rem] p-6 border border-black/5 gap-8 shadow-sm hover:shadow-md transition-all">
-              <div className="relative w-40 h-40 shrink-0 overflow-hidden rounded-2xl bg-muted/30">
-                <Image src={product.media.main_image} alt={product.metadata.name} fill className="object-contain p-4" />
-              </div>
-              <div className="flex-1 space-y-4">
-                <div className="flex items-center gap-1 text-yellow-400">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span className="text-xs font-black text-foreground">4.9 (42 reseñas)</span>
-                </div>
-                <h4 className="font-black text-xl text-foreground line-clamp-1">{product.metadata.name}</h4>
-                <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-black text-primary">${product.financials.pricing.base_price.toLocaleString('es-CL')}</span>
-                  <span className="text-sm text-muted-foreground line-through font-bold">${(product.financials.pricing.base_price * 1.3).toLocaleString('es-CL', { maximumFractionDigits: 0 })}</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-primary rounded-full" style={{ width: '75%' }} />
-                  </div>
-                  <div className="flex justify-between text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                    <span>Vendido: 75/100</span>
-                    <span className="text-primary">¡Casi agotado!</span>
-                  </div>
-                </div>
-                <Button className="w-full rounded-full bg-primary text-white font-black h-12 shadow-lg shadow-primary/10">Añadir al Carrito</Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 8. Banner de Ancho Completo (Full-Bleed CTA) */}
-      <section className="w-full bg-primary py-24 text-white overflow-hidden relative">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-10 text-center md:text-left relative z-10">
-            <h2 className="text-5xl md:text-8xl font-black tracking-tighter leading-none">
-              Únete al Club <br /><span className="text-accent">Distribución</span>
-            </h2>
-            <p className="text-white/80 text-xl font-medium max-w-md">
-              Accede a precios mayoristas, despacho express y asesoría veterinaria técnica para tu negocio.
-            </p>
-            <Button className="rounded-full bg-accent text-accent-foreground font-black px-16 h-18 text-2xl shadow-2xl hover:scale-105 transition-all">
-              Registrar Negocio
-            </Button>
-          </div>
-          <div className="relative h-[500px] hidden md:block">
-            <Image src="https://picsum.photos/seed/distrib/800/600" alt="Club" fill className="object-contain drop-shadow-2xl translate-x-10" />
           </div>
         </div>
       </section>
@@ -280,7 +221,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 10. Noticias y Blog (Tarjetas Fotográficas Orgánicas) */}
+      {/* 10. Noticias y Blog */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <div className="flex flex-col items-center text-center space-y-3">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Actualidad y Nutrición</span>
@@ -359,91 +300,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 14. Footer Masivo */}
-      <footer className="w-full">
-        {/* Top Row (Suscripción) */}
-        <div className="bg-[#FEF9F3] py-24 text-center border-t border-black/5">
-          <div className="max-w-4xl mx-auto px-4 space-y-12">
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Mantente al día con <span className="text-primary">MyDog</span></h2>
-              <p className="text-muted-foreground font-medium text-xl">Recibe listas de precios actualizadas y novedades exclusivas para tu negocio.</p>
-            </div>
-            <div className="relative max-w-xl mx-auto">
-              <div className="relative flex items-center bg-white rounded-full h-20 px-3 shadow-xl border border-black/5">
-                <input type="email" placeholder="Tu correo electrónico empresarial" className="flex-1 h-full bg-transparent outline-none px-10 font-bold text-sm text-foreground" />
-                <Button className="rounded-full bg-primary text-white font-black px-12 h-14 text-lg shadow-lg">
-                  Suscribirse
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Footer (Super-Card) */}
-        <div className="bg-primary text-white py-24 px-4 md:px-8 rounded-t-[4rem] mx-4 -mt-10 relative z-20 shadow-2xl">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-20">
-            <div className="md:col-span-2 space-y-10">
-              <Link href="/" className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm">
-                  <Dog className="w-10 h-10 text-white" />
-                </div>
-                <div className="flex flex-col -space-y-1">
-                  <span className="font-black text-4xl tracking-tighter leading-none uppercase">MyDog</span>
-                  <span className="text-[10px] font-bold text-white/60 uppercase tracking-[0.3em]">Distribuidora</span>
-                </div>
-              </Link>
-              <p className="text-white/60 text-lg font-medium leading-relaxed max-w-sm">
-                Liderando la nutrición y el bienestar animal en Chile desde 2008. Pasión, compromiso y calidad en cada despacho.
-              </p>
-              <div className="flex gap-4">
-                {[Instagram].map((Icon, i) => (
-                  <Link key={i} href="#" className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center hover:bg-white text-white hover:text-primary transition-all">
-                    <Icon className="w-6 h-6" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-10">
-              <h4 className="font-black text-xs uppercase tracking-[0.3em] text-accent">Navegación</h4>
-              <ul className="space-y-6 text-sm font-black text-white/70">
-                {['Home', 'Tienda', 'Ofertas', 'Blog'].map(l => (
-                  <li key={l}><Link href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">{l}</Link></li>
-                ))}
-              </ul>
-            </div>
-            <div className="space-y-10">
-              <h4 className="font-black text-xs uppercase tracking-[0.3em] text-accent">Información</h4>
-              <ul className="space-y-6 text-sm font-black text-white/70">
-                {['¿Quiénes somos?', 'Términos', 'Envíos', 'FAQ'].map(l => (
-                  <li key={l}><Link href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">{l}</Link></li>
-                ))}
-              </ul>
-            </div>
-            <div className="space-y-10">
-              <h4 className="font-black text-xs uppercase tracking-[0.3em] text-accent">Contacto</h4>
-              <ul className="space-y-8 text-sm font-black text-white/70">
-                <li className="flex items-start gap-4">
-                  <span className="text-2xl">📍</span> 
-                  <span>La Cisterna, Región Metropolitana, Chile</span>
-                </li>
-                <li className="flex items-center gap-4">
-                  <span className="text-2xl">📞</span>
-                  <span>+56 9 1234 5678</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="max-w-7xl mx-auto mt-32 pt-16 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-10 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">
-            <p>© 2024 MYDOG DISTRIBUIDORA SPA. TODOS LOS DERECHOS RESERVADOS.</p>
-            <div className="flex gap-12 opacity-30 grayscale hover:opacity-100 transition-opacity">
-              <div className="bg-white px-5 py-2 rounded-lg text-black font-black">VISA</div>
-              <div className="bg-white px-5 py-2 rounded-lg text-black font-black">MASTERCARD</div>
-              <div className="bg-white px-5 py-2 rounded-lg text-black font-black">WEBPAY</div>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
