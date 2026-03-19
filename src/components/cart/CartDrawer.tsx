@@ -57,14 +57,14 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               <span className="text-[8px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
             
-            <div className="relative h-6 flex items-center">
+            <div className="relative h-5 flex items-center">
               <Progress value={progress} className="h-1 bg-white/50 border border-white" />
               
               {/* Perrito 🐶 - Superposición Superior */}
               <div 
                 className="absolute transition-all duration-700 ease-out z-20 flex items-center justify-center"
                 style={{ 
-                  left: `calc(${progress}% - 14px)`,
+                  left: `calc(${progress}% - 12px)`,
                   top: '50%',
                   transform: 'translateY(-50%)'
                 }}
@@ -107,8 +107,18 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 cart.map((item) => (
                   <div 
                     key={item.id} 
-                    className="flex gap-4 items-start py-4 border-b border-black/[0.03] last:border-0"
+                    className="flex gap-3 items-center py-4 border-b border-black/[0.03] last:border-0"
                   >
+                    {/* Botón borrar a la izquierda */}
+                    <button 
+                      onClick={() => removeFromCart(item.id)}
+                      className="text-muted-foreground/30 hover:text-destructive transition-colors p-1 shrink-0"
+                      title="Quitar producto"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+
+                    {/* Imagen */}
                     <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
                       <Image 
                         src={item.main_image} 
@@ -119,22 +129,15 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                       />
                     </div>
 
+                    {/* Detalles */}
                     <div className="flex-1 min-w-0 space-y-2">
-                      <div className="flex justify-between items-start gap-2">
-                        <div className="space-y-0.5">
-                          <h4 className="font-bold text-xs leading-tight text-foreground line-clamp-2">
-                            {item.name}
-                          </h4>
-                          <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
-                            {item.brand}
-                          </span>
-                        </div>
-                        <button 
-                          onClick={() => removeFromCart(item.id)}
-                          className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                      <div className="flex flex-col gap-0.5">
+                        <h4 className="font-bold text-xs leading-tight text-foreground line-clamp-2">
+                          {item.name}
+                        </h4>
+                        <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
+                          {item.brand}
+                        </span>
                       </div>
 
                       <div className="flex items-center justify-between">
