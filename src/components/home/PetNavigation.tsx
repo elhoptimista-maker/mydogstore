@@ -1,13 +1,14 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { SanitizedProduct } from '@/types/product';
+import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Componente de navegación por mascota con burbujas de pensamiento interactivas.
- * Encapsula la lógica de mensajes aleatorios y estilos de hover.
+ * Implementa el estilo de "Notas de Instagram" con posicionamiento aleatorio de punteros.
  */
 
 interface PetNavigationProps {
@@ -20,11 +21,11 @@ const SPECIES_DATA = [
     emoji: '🐶', 
     filter: 'Perro', 
     messages: [
-      'Escuchando el perro chocoloco 🐶',
-      '¿Alguien dijo galleta? 🍪',
-      '¡Quiero paseooo! 🦴',
-      'Entrenando para ser el mejor amigo 🎾',
-      'Buscando mi cola... otra vez 🔄'
+      'Escuchando el\nperro chocoloco 🐶',
+      '¿Alguien dijo\ngalleta? 🍪',
+      '¡Quiero\npaseooo! 🦴',
+      'Entrenando para\nser el mejor 🎾',
+      'Buscando mi cola...\notra vez 🔄'
     ]
   },
   { 
@@ -32,11 +33,11 @@ const SPECIES_DATA = [
     emoji: '🐱', 
     filter: 'Gato', 
     messages: [
-      'Mirando por la ventana... 🪟',
-      'Planeando la dominación mundial 🌍',
-      'Necesito 5 min más de siesta 😴',
-      'Ignorando a todos con estilo ✨',
-      'Si cabe, me siento 📦'
+      'Mirando por la\nventana... 🪟',
+      'Planeando la\ndominación mundial 🌍',
+      'Necesito 5 min más\nde siesta 😴',
+      'Ignorando a todos\ncon estilo ✨',
+      'Si cabe,\nme siento 📦'
     ]
   },
   { 
@@ -44,11 +45,11 @@ const SPECIES_DATA = [
     emoji: '🦜', 
     filter: 'Aves', 
     messages: [
-      'Practicando mi hit de verano 🎶',
-      '¡Pío pío! ¡Qué rico! 🌽',
-      '¿Viste ese gusanito? 👀',
-      'Sintiéndome libre como el viento 🦅',
-      '¡Hola! ¿Cómo estás? 🦜'
+      'Practicando mi\nhit de verano 🎶',
+      '¡Pío pío!\n¡Qué rico! 🌽',
+      '¿Viste ese\ngusanito? 👀',
+      'Libre como\nel viento 🦅',
+      '¡Hola! ¿Cómo\nestás? 🦜'
     ]
   },
   { 
@@ -56,11 +57,11 @@ const SPECIES_DATA = [
     emoji: '🐰', 
     filter: 'Conejo y Roedor', 
     messages: [
-      '¡Ñam! ¡Croc croc! 🥕',
-      'Saltando de alegría 🐇',
-      'Buscando el escondite perfecto 🛖',
-      'Mis dientes nunca descansan 🦷',
-      'Sintiéndome muy fluffy hoy ☁️'
+      '¡Ñam!\n¡Croc croc! 🥕',
+      'Saltando de\nalegría 🐇',
+      'Buscando el\nescondite 🛖',
+      'Mis dientes no\ndescansan 🦷',
+      'Sintiéndome\nfluffy ☁️'
     ]
   },
   { 
@@ -68,11 +69,11 @@ const SPECIES_DATA = [
     emoji: '🐠', 
     filter: 'Peces y Tortugas', 
     messages: [
-      'Juan Luis Guerra - Burbujas de Amor 🫧',
-      'Glup glup! ¡Burbujas! 🐠',
-      'Nadaremos, nadaremos... 🌊',
-      'Lento pero seguro 🐢',
-      'Buscando a Nemo 🔍'
+      'Escuchando:\nBurbujas de Amor 🫧',
+      'Glup glup!\n¡Burbujas! 🐠',
+      'Nadaremos,\nnadaremos... 🌊',
+      'Lento pero\nseguro 🐢',
+      'Buscando\na Nemo 🔍'
     ]
   },
 ];
@@ -80,11 +81,12 @@ const SPECIES_DATA = [
 export default function PetNavigation({ products }: PetNavigationProps) {
   const [mounted, setMounted] = useState(false);
   const [randomIndices, setRandomIndices] = useState<number[]>([]);
+  const [randomSides, setRandomSides] = useState<boolean[]>([]);
 
-  // Efecto para manejar la aleatoriedad post-hidratación y evitar errores de servidor
   useEffect(() => {
     setMounted(true);
     setRandomIndices(SPECIES_DATA.map(s => Math.floor(Math.random() * s.messages.length)));
+    setRandomSides(SPECIES_DATA.map(() => Math.random() > 0.5));
   }, []);
 
   return (
@@ -99,8 +101,8 @@ export default function PetNavigation({ products }: PetNavigationProps) {
       <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x pt-12">
         {SPECIES_DATA.map((species, i) => {
           const count = products.filter(p => p.species === species.filter).length;
-          // Si no ha montado, usamos el primer mensaje para consistencia, luego el aleatorio
           const message = mounted ? species.messages[randomIndices[i]] : species.messages[0];
+          const isLeft = mounted ? randomSides[i] : true;
 
           return (
             <Link 
@@ -108,22 +110,33 @@ export default function PetNavigation({ products }: PetNavigationProps) {
               href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
               className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
             >
-              {/* Burbuja de Pensamiento (Instagram Notes Style) - Solapando el círculo */}
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
-                <div className="bg-white px-5 py-3 rounded-[1.5rem] border border-black/[0.08] relative min-w-[140px] max-w-[180px] text-center">
-                  <span className="text-[11px] font-medium text-zinc-800 uppercase tracking-tight leading-snug block">
+              {/* Burbuja de Pensamiento */}
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
+                <div className="bg-white px-5 py-3 rounded-[1.8rem] border border-black/[0.06] relative min-w-[140px] max-w-[180px] text-center shadow-none">
+                  <span className="text-[11px] font-medium text-zinc-800 uppercase tracking-tight leading-snug block whitespace-pre-line">
                     {message}
                   </span>
-                  {/* Cola de la burbuja refinada */}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b border-r border-black/[0.08] rotate-45 rounded-sm" />
+                  
+                  {/* Cola de la burbuja (Triángulo) */}
+                  <div className={cn(
+                    "absolute -bottom-1.5 w-4 h-4 bg-white border-b border-r border-black/[0.06] rotate-45 rounded-sm",
+                    isLeft ? "left-6" : "right-6"
+                  )} />
                 </div>
               </div>
 
-              {/* Icono Mascota */}
-              <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
-                <span className="text-5xl md:text-6xl">{species.emoji}</span>
-                {/* Overlay sutil al hover */}
-                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
+              {/* Icono Mascota y Círculo Decorativo */}
+              <div className="relative">
+                {/* Pequeño círculo de "pensamiento" */}
+                <div className={cn(
+                  "absolute w-2.5 h-2.5 bg-white rounded-full border border-black/[0.06] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+                  isLeft ? "top-1 left-4" : "top-1 right-4"
+                )} />
+
+                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
+                  <span className="text-5xl md:text-6xl">{species.emoji}</span>
+                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
+                </div>
               </div>
 
               {/* Información Inferior */}
