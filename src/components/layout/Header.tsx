@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -299,12 +298,12 @@ export default function Header() {
       </div>
 
       {/* 3. Menu Bar */}
-      <div className="h-14 bg-[#F8F9FA] border-t border-black/[0.03] hidden md:flex items-center px-4 md:px-8">
+      <div className="h-14 bg-primary border-t border-white/10 hidden md:flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="bg-primary text-white h-10 px-6 items-center gap-3 cursor-pointer hover:bg-primary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
+                <div className="bg-secondary text-primary h-10 px-6 items-center gap-3 cursor-pointer hover:bg-secondary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
                   <Menu className="w-4 h-4" />
                   Todas las Categorías
                 </div>
@@ -323,7 +322,7 @@ export default function Header() {
 
             <nav className="flex items-center gap-8">
               {mainNav.map((item) => (
-                <Link key={item.label} href={item.href} className="text-[11px] font-bold text-muted-foreground hover:text-primary uppercase tracking-widest transition-all relative group">
+                <Link key={item.label} href={item.href} className="text-[11px] font-bold text-white/80 hover:text-white uppercase tracking-widest transition-all relative group">
                   {item.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary transition-all group-hover:w-full"></span>
                 </Link>
@@ -332,7 +331,7 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-6">
-            <Link href="/b2b" className="flex items-center gap-2 text-[11px] font-bold text-primary hover:text-primary/70 uppercase tracking-widest transition-all">
+            <Link href="/b2b" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
               <Package className="w-4 h-4" /> Portal B2B
             </Link>
           </div>
