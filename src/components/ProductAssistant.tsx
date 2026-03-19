@@ -14,11 +14,11 @@ import { useChat } from '@/context/ChatContext';
 import { cn } from '@/lib/utils';
 
 const EXPERTS = [
-  { name: 'Perro', emoji: '🐶', color: 'bg-primary', description: 'Esencia Canina' },
-  { name: 'Gato', emoji: '🐱', color: 'bg-orange-500', description: 'Alma Felina' },
-  { name: 'Aves', emoji: '🦜', color: 'bg-green-500', description: 'Espíritu Alado' },
-  { name: 'Conejo y Roedor', emoji: '🐰', color: 'bg-blue-500', description: 'Corazón Silvestre' },
-  { name: 'Peces y Tortugas', emoji: '🐠', color: 'bg-cyan-500', description: 'Ser Acuático' },
+  { name: 'Perro', emoji: '🐶', color: 'bg-primary', description: 'Experto en Perros' },
+  { name: 'Gato', emoji: '🐱', color: 'bg-orange-500', description: 'Especialista Felino' },
+  { name: 'Aves', emoji: '🦜', color: 'bg-green-500', description: 'Guía de Aves' },
+  { name: 'Conejo y Roedor', emoji: '🐰', color: 'bg-blue-500', description: 'Amigo de los Roedores' },
+  { name: 'Peces y Tortugas', emoji: '🐠', color: 'bg-cyan-500', description: 'Consultor Acuático' },
 ];
 
 const QUICK_ACTIONS = ["Cachorro", "Adulto", "Senior", "Sensibilidad", "Ofertas"];
@@ -40,10 +40,9 @@ export default function ProductAssistant() {
 
   useEffect(() => {
     if (activeSpecies && (!messages[activeSpecies] || messages[activeSpecies].length === 0)) {
-      const expert = EXPERTS.find(e => e.name === activeSpecies);
       addMessage(activeSpecies, {
         role: 'assistant',
-        content: `¡Hola! 🐾 Siento una conexión muy especial contigo. Mi esencia es de ${activeSpecies} y entiendo profundamente lo que tu compañero necesita. Para guiarte desde el corazón, ¿me podrías contar si es cachorro, adulto o senior?`
+        content: `¡Hola! 🐾 Soy tu guía experto en ${activeSpecies} de MyDog. Me apasiona el bienestar de estos compañeros y entiendo lo que necesitan para estar felices. Para asesorarte mejor, ¿me podrías contar si tu amigo es cachorro, adulto o senior?`
       });
     }
   }, [activeSpecies]);
@@ -75,7 +74,7 @@ export default function ProductAssistant() {
     } catch (error) {
       addMessage(activeSpecies, { 
         role: 'assistant', 
-        content: "Lo siento, mi conexión se nubló un poco. ¿Podrías repetirme eso?" 
+        content: "Lo siento, tuve un pequeño problema técnico. ¿Podrías repetirme eso?" 
       });
     } finally {
       setLoading(false);
@@ -127,7 +126,7 @@ export default function ProductAssistant() {
         <div className="flex-1 flex flex-col p-8 space-y-8 bg-[#F9FAFB]">
           <div className="text-center space-y-2">
             <h4 className="text-lg font-black text-foreground tracking-tight">¿Quién necesita mi ayuda hoy?</h4>
-            <p className="text-xs font-medium text-muted-foreground">Habla con uno de nuestros guías espirituales.</p>
+            <p className="text-xs font-medium text-muted-foreground">Habla con uno de nuestros guías especializados.</p>
           </div>
           <div className="grid grid-cols-1 gap-3">
             {EXPERTS.map((expert) => (
@@ -214,7 +213,7 @@ export default function ProductAssistant() {
                     <Loader2 className="w-4 h-4 text-primary animate-spin" />
                   </div>
                   <div className="bg-white p-3 rounded-2xl border border-black/5 text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                    Conectando con el alma animal...
+                    Buscando las mejores opciones...
                   </div>
                 </div>
               )}
@@ -232,13 +231,13 @@ export default function ProductAssistant() {
                </button>
                <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Sintonizado</span>
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">En línea</span>
                </div>
             </div>
             <form onSubmit={(e) => handleSend(input, e)} className="flex gap-2">
-              <Input 
-                placeholder="Cuéntame de tu compañero..." 
-                className="flex-1 h-12 rounded-2xl border-none bg-muted/30 focus-visible:ring-primary/20 font-bold text-sm"
+              <input 
+                placeholder="Cuéntame de tu mascota..." 
+                className="flex-1 h-12 rounded-2xl border-none bg-muted/30 focus-visible:ring-primary/20 font-bold text-sm px-4 outline-none"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={loading}
