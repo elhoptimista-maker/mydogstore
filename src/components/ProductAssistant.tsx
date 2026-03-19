@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Sparkles, Loader2, ArrowRight, MessageSquare } from 'lucide-react';
 import { intelligentProductAssistant, type IntelligentProductAssistantOutput } from '@/ai/flows/intelligent-product-assistant';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ProductAssistantProps {
   defaultBreed?: string;
@@ -36,129 +37,132 @@ export default function ProductAssistant({ defaultBreed = '' }: ProductAssistant
   };
 
   return (
-    <div className="w-full">
-      <Card className="rounded-[3rem] border-none shadow-none overflow-hidden bg-white">
-        <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[600px]">
-          {/* Sidebar - Contextual Information */}
-          <div className="lg:col-span-2 bg-primary p-10 md:p-16 text-white flex flex-col justify-between">
-            <div className="space-y-8">
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                <Sparkles className="text-secondary w-8 h-8" />
+    <div className="w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <Card className="rounded-[3rem] border-none shadow-none overflow-hidden bg-white flex-1 flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row w-full h-full">
+          {/* Sidebar - Información de Contexto */}
+          <div className="w-full md:w-2/5 bg-primary p-8 md:p-12 text-white flex flex-col justify-between shrink-0">
+            <div className="space-y-6">
+              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md">
+                <Sparkles className="text-secondary w-7 h-7" />
               </div>
-              <div className="space-y-4">
-                <h3 className="text-3xl md:text-4xl font-black leading-none tracking-tighter">Venta <br /> Consultiva IA</h3>
-                <p className="text-white/60 leading-relaxed font-medium text-sm md:text-base">
+              <div className="space-y-3">
+                <h3 className="text-2xl md:text-3xl font-black leading-tight tracking-tighter">Venta <br /> Consultiva IA</h3>
+                <p className="text-white/60 leading-relaxed font-medium text-xs md:text-sm">
                   Nuestro consultor experto analiza el perfil de tu mascota para sugerir la dieta y accesorios ideales.
                 </p>
               </div>
             </div>
             
-            <div className="space-y-4 pt-10">
+            <div className="hidden md:flex flex-col gap-3 pt-8">
               {['Análisis de Nutrición', 'Optimización de Dieta', 'Recomendación Técnica'].map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-secondary shadow-lg shadow-secondary/50" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{item}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-white/80">{item}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Form & Results Area */}
-          <div className="lg:col-span-3 p-10 md:p-16 flex flex-col justify-center bg-white relative">
+          {/* Área de Formulario y Resultados */}
+          <div className="flex-1 p-8 md:p-12 bg-white relative overflow-hidden flex flex-col min-h-0">
             {!results ? (
-              <form onSubmit={handleSubmit} className="space-y-10">
-                <div className="space-y-2">
-                  <h4 className="text-xl font-black text-primary tracking-tight">Inicia la consulta técnica</h4>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Cuéntanos sobre tu peludo</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-3">
-                    <Label htmlFor="breed" className="font-black text-primary/40 uppercase tracking-widest text-[9px]">Raza o Especie</Label>
-                    <Input 
-                      id="breed" 
-                      placeholder="Ej: Pastor Alemán" 
-                      className="h-14 rounded-2xl border-primary/5 bg-muted/30 focus-visible:ring-primary/20 transition-all font-bold text-sm"
-                      value={form.dogBreed}
-                      onChange={e => setForm({...form, dogBreed: e.target.value})}
-                      required
-                    />
+              <ScrollArea className="h-full">
+                <form onSubmit={handleSubmit} className="space-y-8 pr-4">
+                  <div className="space-y-1">
+                    <h4 className="text-xl font-black text-primary tracking-tight">Inicia la consulta técnica</h4>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Cuéntanos sobre tu peludo</p>
                   </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="age" className="font-black text-primary/40 uppercase tracking-widest text-[9px]">Etapa de Vida / Edad</Label>
-                    <Input 
-                      id="age" 
-                      placeholder="Ej: 3 años / Adulto" 
-                      className="h-14 rounded-2xl border-primary/5 bg-muted/30 focus-visible:ring-primary/20 transition-all font-bold text-sm"
-                      value={form.dogAge}
-                      onChange={e => setForm({...form, dogAge: e.target.value})}
-                      required
-                    />
+
+                  <div className="grid grid-cols-1 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="breed" className="font-black text-primary/40 uppercase tracking-widest text-[8px]">Raza o Especie</Label>
+                      <Input 
+                        id="breed" 
+                        placeholder="Ej: Pastor Alemán" 
+                        className="h-12 rounded-xl border-primary/5 bg-muted/30 focus-visible:ring-primary/20 transition-all font-bold text-sm"
+                        value={form.dogBreed}
+                        onChange={e => setForm({...form, dogBreed: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="age" className="font-black text-primary/40 uppercase tracking-widest text-[8px]">Etapa de Vida / Edad</Label>
+                      <Input 
+                        id="age" 
+                        placeholder="Ej: 3 años / Adulto" 
+                        className="h-12 rounded-xl border-primary/5 bg-muted/30 focus-visible:ring-primary/20 transition-all font-bold text-sm"
+                        value={form.dogAge}
+                        onChange={e => setForm({...form, dogAge: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="needs" className="font-black text-primary/40 uppercase tracking-widest text-[8px]">Necesidades o Patologías</Label>
+                      <Input 
+                        id="needs" 
+                        placeholder="Ej: Sensibilidad digestiva, piel delicada..." 
+                        className="h-12 rounded-xl border-primary/5 bg-muted/30 focus-visible:ring-primary/20 transition-all font-bold text-sm"
+                        value={form.specificNeeds}
+                        onChange={e => setForm({...form, specificNeeds: e.target.value})}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="needs" className="font-black text-primary/40 uppercase tracking-widest text-[9px]">Necesidades o Patologías</Label>
-                  <Input 
-                    id="needs" 
-                    placeholder="Ej: Sensibilidad digestiva, piel delicada..." 
-                    className="h-14 rounded-2xl border-primary/5 bg-muted/30 focus-visible:ring-primary/20 transition-all font-bold text-sm"
-                    value={form.specificNeeds}
-                    onChange={e => setForm({...form, specificNeeds: e.target.value})}
-                  />
-                </div>
-
-                <Button 
-                  type="submit" 
-                  disabled={loading}
-                  className="w-full h-16 rounded-3xl bg-secondary text-primary text-lg font-black shadow-2xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-3 h-6 w-6 animate-spin" />
-                      Consultando experto...
-                    </>
-                  ) : (
-                    <>
-                      Obtener Recomendación <ArrowRight className="ml-3 w-5 h-5" />
-                    </>
-                  )}
-                </Button>
-              </form>
+                  <Button 
+                    type="submit" 
+                    disabled={loading}
+                    className="w-full h-14 rounded-2xl bg-secondary text-primary text-base font-black shadow-xl shadow-secondary/20 hover:scale-[1.01] active:scale-95 transition-all mt-4"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Consultando experto...
+                      </>
+                    ) : (
+                      <>
+                        Obtener Recomendación <ArrowRight className="ml-2 w-4 h-4" />
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </ScrollArea>
             ) : (
-              <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700 h-full flex flex-col">
-                <div className="flex items-center justify-between">
+              <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center justify-between mb-6 shrink-0">
                   <div>
-                    <h4 className="font-black text-primary text-2xl tracking-tighter">Resultados MyDog IA</h4>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Basado en el perfil ingresado</p>
+                    <h4 className="font-black text-primary text-xl tracking-tighter">Resultados MyDog IA</h4>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Perfil: {form.dogBreed}</p>
                   </div>
-                  <Button variant="ghost" size="sm" className="font-black text-primary hover:bg-primary/5" onClick={() => setResults(null)}>
+                  <Button variant="ghost" size="sm" className="font-black text-primary text-[10px] uppercase hover:bg-primary/5" onClick={() => setResults(null)}>
                     Nueva consulta
                   </Button>
                 </div>
 
-                <div className="space-y-6 flex-1 overflow-y-auto pr-4 no-scrollbar">
-                  {results.recommendations.map((rec, i) => (
-                    <div key={i} className="p-8 bg-muted/20 rounded-[2.5rem] border border-primary/5 group hover:bg-white hover:shadow-2xl transition-all duration-500">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center">
-                            <MessageSquare className="w-4 h-4 text-white" />
+                <ScrollArea className="flex-1 -mr-4 pr-4">
+                  <div className="space-y-4">
+                    {results.recommendations.map((rec, i) => (
+                      <div key={i} className="p-6 bg-muted/20 rounded-[2rem] border border-primary/5 group hover:bg-white hover:shadow-xl transition-all duration-300">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+                              <MessageSquare className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            <h5 className="font-black text-primary text-base leading-none">{rec.productName}</h5>
                           </div>
-                          <h5 className="font-black text-primary text-lg leading-none">{rec.productName}</h5>
+                          <Badge className="bg-secondary/20 text-primary border-none text-[8px] font-black uppercase">Sugerido</Badge>
                         </div>
-                        <Badge className="bg-secondary/20 text-primary border-none text-[9px] font-black uppercase">Sugerido</Badge>
+                        <p className="text-xs text-muted-foreground mb-4 font-medium leading-relaxed">{rec.productDescription}</p>
+                        <div className="p-4 bg-primary rounded-xl text-white shadow-lg shadow-primary/5">
+                          <p className="text-[10px] font-bold leading-relaxed italic opacity-90">
+                            <span className="font-black uppercase not-italic mr-2 text-secondary">Opinión Experta:</span>
+                            {rec.reasonForRecommendation}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-6 font-medium leading-relaxed">{rec.productDescription}</p>
-                      <div className="p-5 bg-primary rounded-2xl text-white shadow-xl shadow-primary/10">
-                        <p className="text-[11px] font-bold leading-relaxed italic opacity-90">
-                          <span className="font-black uppercase not-italic mr-2 text-secondary">Opinión Experta:</span>
-                          {rec.reasonForRecommendation}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
             )}
           </div>
