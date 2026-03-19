@@ -50,6 +50,7 @@ const productChatPrompt = ai.definePrompt({
 
   REGLAS DE VENTA Y CURADURÍA:
   - Si el usuario pide algo "más económico", busca en el catálogo los 3 productos con el precio (sellingPrice) más bajo que cumplan la necesidad.
+  - Si el usuario pide una categoría específica (ej: snacks, alimento húmedo, accesorios), filtra el catálogo por esa categoría antes de recomendar.
   - Si pide "otras marcas", evita las marcas ya mencionadas en el historial.
   - Usa SOLO productos del catálogo proporcionado.
   - CRÍTICO: Selecciona únicamente los 3 productos que mejor resuelvan la necesidad planteada.
@@ -60,7 +61,7 @@ const productChatPrompt = ai.definePrompt({
 
   CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
-  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Imagen: {{main_image}} | Desc: {{short_description}}
+  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Imagen: {{main_image}} | Desc: {{short_description}}
   {{/each}}
 
   HISTORIAL:

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight } from 'lucide-react';
+import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight, ShoppingBag } from 'lucide-react';
 import { productChat } from '@/ai/flows/intelligent-product-assistant';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -17,41 +17,46 @@ const EXPERTS = [
     name: 'Perro', 
     emoji: '🐶', 
     color: 'bg-primary', 
-    description: 'Especialista en Perros',
-    greeting: "¡Hola! 🐾 Soy tu guía experto en Perros. Me encanta ayudar a encontrar la nutrición perfecta. ¿Tu peludo es cachorro, adulto o senior?",
-    actions: ["Cachorro", "Adulto", "Senior", "Piel Sensible", "Sobrepeso"]
+    description: 'Guía de Perros',
+    greeting: "¡Hola! 🐾 Soy tu guía apasionado en Perros. Me encanta ayudar a encontrar el equilibrio perfecto para su salud. ¿Tu compañero es cachorro, adulto o senior?",
+    initialActions: ["Cachorro", "Adulto", "Senior"],
+    categories: ["Alimento Húmedo", "Snacks", "Accesorios", "Salud Dental"]
   },
   { 
     name: 'Gato', 
     emoji: '🐱', 
     color: 'bg-orange-500', 
-    description: 'Consultor Felino',
-    greeting: "¡Hola! 🐱 Soy tu guía especialista en Gatos. Entiendo lo especiales que son. ¿Tu compañero es gatito, adulto, o quizás está esterilizado?",
-    actions: ["Gatito", "Adulto", "Esterilizado", "Senior", "Urinario"]
+    description: 'Guía de Gatos',
+    greeting: "¡Hola! 🐱 Soy tu guía especialista en Gatos. Entiendo lo exigentes que pueden ser. ¿Tu amigo es gatito, adulto, o quizás está esterilizado?",
+    initialActions: ["Gatito", "Adulto", "Esterilizado"],
+    categories: ["Alimento Húmedo", "Arena Sanitaria", "Snacks", "Juguetes"]
   },
   { 
     name: 'Aves', 
     emoji: '🦜', 
     color: 'bg-green-500', 
     description: 'Guía de Aves',
-    greeting: "¡Hola! 🦜 Soy tu consultor en nutrición aviar. Un plumaje brillante depende de una buena base. ¿Buscas algo para canarios, loros o etapa de cría?",
-    actions: ["Canarios", "Loros/Cacatúas", "Cría", "Mantenimiento"]
+    greeting: "¡Hola! 🦜 Soy tu experto en aves. Un plumaje sano empieza por dentro. ¿Buscas algo para canarios, loros o quizás para etapa de cría?",
+    initialActions: ["Canarios", "Loros/Cacatúas", "Etapa Cría"],
+    categories: ["Mixturas", "Vitaminas", "Accesorios", "Higiene"]
   },
   { 
     name: 'Conejo y Roedor', 
     emoji: '🐰', 
     color: 'bg-blue-500', 
-    description: 'Especialista en Pequeños',
-    greeting: "¡Hola! 🐰 Soy tu guía para pequeños amigos. El heno es clave, ¿sabías? ¿Tienes un conejo, cobaya o hámster?",
-    actions: ["Conejos", "Hámster/Cobaya", "Heno Premium", "Snacks"]
+    description: 'Guía de Pequeños',
+    greeting: "¡Hola! 🐰 Soy tu guía para pequeños amigos. La fibra es el corazón de su dieta. ¿Tienes un conejo, cobaya o hámster?",
+    initialActions: ["Conejos", "Cobayas", "Hámster"],
+    categories: ["Heno Premium", "Snacks Naturales", "Sustratos", "Juguetes madera"]
   },
   { 
     name: 'Peces y Tortugas', 
     emoji: '🐠', 
     color: 'bg-cyan-500', 
-    description: 'Consultor Acuático',
-    greeting: "¡Hola! 🐠 Soy tu guía acuático. El equilibrio es vital. ¿Tu acuario es de agua fría, tropical, o buscas para tortugas?",
-    actions: ["Agua Fría", "Tropicales", "Tortugas", "Alevines"]
+    description: 'Guía Acuático',
+    greeting: "¡Hola! 🐠 Soy tu guía del mundo acuático. El balance es clave. ¿Tu acuario es de agua fría, tropical, o buscas para tortugas?",
+    initialActions: ["Agua Fría", "Tropicales", "Tortugas"],
+    categories: ["Hojuelas", "Granulados", "Acondicionadores", "Filtración"]
   },
 ];
 
@@ -60,10 +65,8 @@ const LOADING_MESSAGES = [
   "Revolviendo el gallinero para encontrar lo mejor...",
   "Limpiando las algas del acuario para ver mejor...",
   "Olfateando las croquetas más frescas...",
-  "Persiguiendo el puntero láser por los pasillos...",
   "Revisando el rincón secreto de las golosinas...",
   "Sincronizando ronroneos con nuestra base de datos...",
-  "Cavando un hoyo para encontrar el tesoro nutricional..."
 ];
 
 export default function ProductAssistant() {
@@ -104,22 +107,23 @@ export default function ProductAssistant() {
     }
   }, [loading]);
 
-  // Lógica de proactividad (esperar 10s si no hay clic en recomendación)
+  // Lógica de proactividad inteligente
   useEffect(() => {
-    if (lastRecommendedAt && !hasInteractedWithRecs && !loading) {
+    if (lastRecommendedAt && !loading) {
+      // Si pasan 12 segundos sin mensajes nuevos, reforzamos la ayuda
       followUpTimerRef.current = setTimeout(() => {
-        if (!hasInteractedWithRecs) {
+        if (!loading) {
           addMessage(activeSpecies!, {
             role: 'assistant',
-            content: "¿Te gustaría explorar alguna de estas opciones o prefieres que busquemos algo de otras marcas o quizás algo más económico?"
+            content: "¿Te gustaría explorar alguna de estas opciones o prefieres que busquemos algo más específico como snacks o accesorios?"
           });
         }
-      }, 10000);
+      }, 12000);
     }
     return () => {
       if (followUpTimerRef.current) clearTimeout(followUpTimerRef.current);
     };
-  }, [lastRecommendedAt, hasInteractedWithRecs, loading]);
+  }, [lastRecommendedAt, loading]);
 
   const handleSend = async (text: string, e?: React.FormEvent) => {
     e?.preventDefault();
@@ -127,7 +131,7 @@ export default function ProductAssistant() {
 
     const userMessage = text.trim();
     setInput('');
-    setHasInteractedWithRecs(true); // Cualquier mensaje cuenta como interacción
+    setHasInteractedWithRecs(true);
     
     addMessage(activeSpecies, { role: 'user', content: userMessage });
     setLoading(true);
@@ -154,7 +158,7 @@ export default function ProductAssistant() {
     } catch (error) {
       addMessage(activeSpecies, { 
         role: 'assistant', 
-        content: "Lo siento, tuve un pequeño problema técnico. ¿Podrías repetirme eso?" 
+        content: "Lo siento, tuve un pequeño problema técnico al revisar la bodega. ¿Podrías repetirme eso?" 
       });
     } finally {
       setLoading(false);
@@ -163,7 +167,7 @@ export default function ProductAssistant() {
 
   const handleRecClick = () => {
     setHasInteractedWithRecs(true);
-    if (followUpTimerRef.current) clearTimeout(followUpTimerRef.current);
+    // No borramos el timer, solo marcamos la interacción para saber que hubo interés
   };
 
   if (!isOpen) {
@@ -193,22 +197,22 @@ export default function ProductAssistant() {
           </div>
           <div>
             <h3 className="text-xl font-black leading-none tracking-tight">
-              {activeExpert ? `${activeExpert.description}` : 'Guía MyDog'}
+              {activeExpert ? `${activeExpert.description}` : 'Asesor MyDog'}
             </h3>
-            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Venta Consultiva</p>
+            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">En línea para ayudarte</p>
           </div>
         </div>
-        <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
+        <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-all">
           <ChevronDown className="w-6 h-6" />
         </button>
       </div>
 
-      {/* Main Content */}
+      {/* Content */}
       {!activeSpecies ? (
         <div className="flex-1 flex flex-col p-8 space-y-8 bg-[#F9FAFB]">
           <div className="text-center space-y-2">
-            <h4 className="text-lg font-black text-foreground tracking-tight">¿Quién necesita mi ayuda?</h4>
-            <p className="text-xs font-medium text-muted-foreground">Habla con un guía especializado.</p>
+            <h4 className="text-lg font-black text-foreground tracking-tight">¿Con quién deseas hablar?</h4>
+            <p className="text-xs font-medium text-muted-foreground">Selecciona un experto especializado.</p>
           </div>
           <div className="grid grid-cols-1 gap-3">
             {EXPERTS.map((expert) => (
@@ -262,6 +266,7 @@ export default function ProductAssistant() {
                                 alt={rec.name} 
                                 fill 
                                 className="object-contain p-2"
+                                sizes="64px"
                               />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -279,41 +284,51 @@ export default function ProductAssistant() {
                 </div>
               ))}
               
-              {/* Botones de Acción Sugeridos (Contextuales) */}
-              {!loading && (
+              {/* Botones de Acción Sugeridos Dinámicos */}
+              {!loading && activeExpert && (
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {/* Botones iniciales */}
-                  {activeMessages.length === 1 && activeExpert && activeExpert.actions.map(action => (
-                    <button
-                      key={action}
-                      onClick={() => handleSend(action)}
-                      className="px-4 py-2 bg-white border border-primary/10 rounded-full text-[10px] font-black text-primary uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm"
-                    >
-                      {action}
-                    </button>
-                  ))}
-
-                  {/* Botones de seguimiento inteligente */}
-                  {lastRecommendedAt && !hasInteractedWithRecs && activeMessages.length > 2 && (
+                  {/* Si es el inicio o hubo recomendaciones, mostramos opciones de navegación */}
+                  {(activeMessages.length === 1 || (lastRecommendedAt && !loading)) && (
                     <>
-                      <button
-                        onClick={() => handleSend("Muéstrame otras marcas")}
-                        className="px-4 py-2 bg-white border border-secondary text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-secondary/10 transition-all flex items-center gap-2"
-                      >
-                        <Sparkles className="w-3 h-3" /> Ver otras marcas
-                      </button>
-                      <button
-                        onClick={() => handleSend("Busca opciones más económicas")}
-                        className="px-4 py-2 bg-white border border-primary text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-primary/5 transition-all flex items-center gap-2"
-                      >
-                        <ArrowRight className="w-3 h-3" /> Más económicos
-                      </button>
-                      <button
-                        onClick={() => { setHasInteractedWithRecs(true); setLastRecommendedAt(null); }}
-                        className="px-4 py-2 bg-muted border border-black/10 text-[10px] font-black text-muted-foreground uppercase tracking-widest rounded-full hover:bg-muted/80 transition-all"
-                      >
-                        Estoy satisfecho
-                      </button>
+                      {/* Acciones de etapa (solo al inicio o si no se han definido) */}
+                      {activeMessages.length === 1 && activeExpert.initialActions.map(action => (
+                        <button
+                          key={action}
+                          onClick={() => handleSend(action)}
+                          className="px-4 py-2 bg-white border border-primary/10 rounded-full text-[10px] font-black text-primary uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm"
+                        >
+                          {action}
+                        </button>
+                      ))}
+
+                      {/* Acciones de Categoría (Dinámicas por especie) */}
+                      {activeExpert.categories.map(cat => (
+                        <button
+                          key={cat}
+                          onClick={() => handleSend(`Muéstrame ${cat}`)}
+                          className="px-4 py-2 bg-white border border-secondary/40 text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-secondary hover:text-white transition-all flex items-center gap-2 shadow-sm"
+                        >
+                          <ShoppingBag className="w-3 h-3" /> {cat}
+                        </button>
+                      ))}
+
+                      {/* Comparadores (Solo después de recomendaciones) */}
+                      {lastRecommendedAt && (
+                        <>
+                          <button
+                            onClick={() => handleSend("Busca opciones más económicas")}
+                            className="px-4 py-2 bg-primary/5 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-primary hover:text-white transition-all flex items-center gap-2"
+                          >
+                            <ArrowRight className="w-3 h-3" /> Ver más económicos
+                          </button>
+                          <button
+                            onClick={() => handleSend("Muéstrame otras marcas")}
+                            className="px-4 py-2 bg-primary/5 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-primary hover:text-white transition-all"
+                          >
+                            Otras Marcas
+                          </button>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
