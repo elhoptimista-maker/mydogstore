@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Instagram, Dog, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,11 +12,19 @@ import { usePathname } from 'next/navigation';
 
 export default function Footer() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  
   const whatsappNumber = "56912345678";
   const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
+  // Aseguramos que el componente esté montado para evitar errores de hidratación
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Determinamos si estamos en la página de cuenta para ocultar el Newsletter
-  const isAccountPage = pathname === '/cuenta';
+  // Durante la hidratación (mounted === false), mostramos el newsletter por defecto para coincidir con el servidor
+  const isAccountPage = mounted && pathname === '/cuenta';
 
   return (
     <footer className="w-full min-h-[calc(100vh-176px)] flex flex-col">
