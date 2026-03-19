@@ -4,7 +4,7 @@
 import { useCart } from '@/context/CartContext';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2, Plus, Minus, Package, ShieldCheck, Truck, Dog } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Package, ShieldCheck, Truck } from 'lucide-react';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -63,12 +63,12 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 className="absolute top-0 transition-all duration-500 ease-out"
                 style={{ left: `calc(${progress}% - 20px)` }}
               >
-                <div className="bg-white p-1 rounded-full shadow-md border border-primary/20">
-                  <Dog className="w-4 h-4 text-primary animate-bounce" />
+                <div className="bg-white w-8 h-8 rounded-full shadow-md border border-primary/20 flex items-center justify-center">
+                  <span className="text-lg animate-bounce leading-none">🐶</span>
                 </div>
               </div>
               <div className="absolute top-2 right-0">
-                <span className="text-lg">🥣</span>
+                <span className="text-lg leading-none">🦴</span>
               </div>
             </div>
           </div>
