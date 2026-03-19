@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Mail, Phone, MapPin, Instagram, Dog, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Footer Masivo optimizado para eliminar espacios innecesarios.
@@ -21,33 +22,35 @@ export default function Footer() {
     setMounted(true);
   }, []);
 
+  // Hydration-safe logic: solo ocultar en el cliente después del montaje
   const isAccountPage = mounted && pathname === '/cuenta';
 
   return (
     <footer className="w-full flex flex-col">
-      {/* 1. Newsletter Row - Solo visible fuera de la página de cuenta */}
-      {!isAccountPage && (
-        <div className="bg-[#F6F6F6] pt-8 pb-12 text-center border-t border-black/[0.03]">
-          <div className="max-w-4xl mx-auto px-4 space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Únete a la manada <span className="text-primary">MyDog</span></h2>
-              <p className="text-muted-foreground font-medium text-lg">Recibe ofertas exclusivas y consejos de nutrición para tus mascotas.</p>
-            </div>
-            <div className="relative max-w-xl mx-auto">
-              <div className="relative flex items-center bg-white rounded-full h-14 md:h-16 px-1.5 shadow-lg border border-black/5">
-                <input 
-                  type="email" 
-                  placeholder="Tu correo electrónico" 
-                  className="flex-1 h-full bg-transparent outline-none px-6 font-bold text-sm text-foreground" 
-                />
-                <Button className="rounded-full bg-primary text-white font-black px-8 h-11 md:h-13 text-sm">
-                  Suscribirse
-                </Button>
-              </div>
+      {/* 1. Newsletter Row - Siempre presente en el DOM para evitar errores de hidratación */}
+      <div className={cn(
+        "bg-[#F6F6F6] pt-8 pb-12 text-center border-t border-black/[0.03]",
+        isAccountPage && "hidden"
+      )}>
+        <div className="max-w-4xl mx-auto px-4 space-y-6">
+          <div className="space-y-2">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Únete a la manada <span className="text-primary">MyDog</span></h2>
+            <p className="text-muted-foreground font-medium text-lg">Recibe ofertas exclusivas y consejos de nutrición para tus mascotas.</p>
+          </div>
+          <div className="relative max-w-xl mx-auto">
+            <div className="relative flex items-center bg-white rounded-full h-14 md:h-16 px-1.5 shadow-lg border border-black/5">
+              <input 
+                type="email" 
+                placeholder="Tu correo electrónico" 
+                className="flex-1 h-full bg-transparent outline-none px-6 font-bold text-sm text-foreground" 
+              />
+              <Button className="rounded-full bg-primary text-white font-black px-8 h-11 md:h-13 text-sm">
+                Suscribirse
+              </Button>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* 2. Main Footer Row */}
       <div className="bg-primary text-white pt-10 pb-6 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-10 relative z-20 shadow-2xl">
