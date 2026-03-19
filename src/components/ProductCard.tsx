@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -8,6 +7,7 @@ import { SanitizedProduct } from '@/types/product';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { toast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import QuickViewModal from '@/components/QuickViewModal';
@@ -17,10 +17,12 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const { addToCart } = useCart();
+
+  const isFavorite = isInWishlist(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -36,6 +38,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       description: `Agregaste ${product.name} al carrito`,
       className: "bg-primary text-white rounded-2xl border-none font-bold shadow-2xl",
     });
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product);
   };
 
   const handleQuickView = (e: React.MouseEvent) => {
@@ -60,10 +68,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Actions */}
         <div className="absolute top-3 right-3 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
           <button 
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsFavorite(!isFavorite); }}
+            onClick={handleToggleWishlist}
             className={cn(
               "w-8 h-8 rounded-full flex items-center justify-center transition-all bg-white shadow-md",
-              isFavorite ? "text-red-500" : "text-foreground/40 hover:text-red-500"
+              isFavorite ? "text-secondary" : "text-foreground/40 hover:text-secondary"
             )}
           >
             <Heart className={cn("w-4 h-4", isFavorite && "fill-current")} />

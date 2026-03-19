@@ -1,4 +1,3 @@
-
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Header from '@/components/layout/Header';
@@ -6,6 +5,7 @@ import Footer from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
 import { ChatProvider } from '@/context/ChatContext';
+import { WishlistProvider } from '@/context/WishlistContext';
 import ProductAssistant from '@/components/ProductAssistant';
 
 export const metadata: Metadata = {
@@ -29,15 +29,17 @@ export default function RootLayout({
     <html lang="es">
       <body className="font-sans antialiased selection:bg-primary/20 bg-background text-foreground">
         <CartProvider>
-          <ChatProvider>
-            <Header />
-            <main className="min-h-screen pt-44 pb-0">
-              {children}
-            </main>
-            <Footer />
-            <ProductAssistant />
-            <Toaster />
-          </ChatProvider>
+          <WishlistProvider>
+            <ChatProvider>
+              <Header />
+              <main className="min-h-screen pt-44 pb-0">
+                {children}
+              </main>
+              <Footer />
+              <ProductAssistant />
+              <Toaster />
+            </ChatProvider>
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import CartDrawer from '@/components/cart/CartDrawer';
 import {
   DropdownMenu,
@@ -47,6 +48,7 @@ const SEARCH_PLACEHOLDERS = [
 
 export default function Header() {
   const { cartCount } = useCart();
+  const { wishlist } = useWishlist();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -59,7 +61,6 @@ export default function Header() {
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Cargar productos al inicio
   useEffect(() => {
     fetchAllProducts().then(products => {
       setAllProducts(products.filter(p => p.currentStock > 0));
@@ -92,7 +93,6 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [currentPlaceholder, isDeleting, placeholderIndex, typingSpeed]);
 
-  // Lógica de búsqueda inteligente en cliente
   useEffect(() => {
     if (searchTerm.trim().length > 1) {
       const query = searchTerm.toLowerCase();
@@ -110,7 +110,6 @@ export default function Header() {
     }
   }, [searchTerm, allProducts]);
 
-  // Cerrar resultados al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -139,7 +138,6 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
-      {/* 1. Top Bar */}
       <div className="h-10 bg-accent text-accent-foreground flex items-center px-4 md:px-8 text-[10px] font-bold uppercase tracking-widest border-b border-black/5">
         <div className="max-w-7xl mx-auto w-full flex justify-center items-center relative">
           <div className="flex items-center gap-2">
@@ -159,10 +157,8 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2. Main Header */}
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-6 md:gap-12">
-          {/* Menu Hamburguesa Móvil */}
           <Sheet>
             <SheetTrigger asChild>
               <button className="md:hidden text-white hover:bg-white/10 p-2 rounded-xl transition-colors">
@@ -217,7 +213,6 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Buscador Inteligente */}
           <div className="flex-1 hidden md:flex max-w-2xl relative" ref={searchRef}>
             <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
               <input 
@@ -242,7 +237,6 @@ export default function Header() {
               </button>
             </form>
 
-            {/* Dropdown de Resultados Inteligentes */}
             {showResults && (
               <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
                 <div className="p-4 bg-primary/5 border-b border-black/[0.03]">
@@ -290,20 +284,14 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-4 md:gap-6 shrink-0">
-            <a 
-              href="https://wa.me/56957889012" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hidden lg:flex items-center gap-3 pr-2 border-r border-white/10 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
-                <Phone className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-bold text-white/60 uppercase leading-none mb-1">WhatsApp</span>
-                <span className="text-sm font-black tracking-tight text-white">+56 9 5788 9012</span>
-              </div>
-            </a>
+            <Link href="/wishlist" className="hidden sm:flex relative w-12 h-12 bg-white/10 text-white rounded-full items-center justify-center hover:bg-white/20 transition-all group">
+              <Heart className={cn("w-5 h-5", wishlist.length > 0 && "fill-current text-secondary")} />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-secondary text-primary font-black text-[8px] w-4 h-4 flex items-center justify-center border-2 border-primary rounded-full">
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
 
             <CartDrawer>
               <button className="relative w-12 h-12 bg-white text-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all">
@@ -316,14 +304,15 @@ export default function Header() {
               </button>
             </CartDrawer>
 
-            <button className="hidden sm:flex relative w-10 h-10 rounded-full bg-white/10 items-center justify-center hover:bg-white/20 transition-all text-white">
-              <User className="w-5 h-5" />
-            </button>
+            <Link href="/cuenta">
+              <button className="hidden sm:flex relative w-10 h-10 rounded-full bg-white/10 items-center justify-center hover:bg-white/20 transition-all text-white">
+                <User className="w-5 h-5" />
+              </button>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* 3. Menu Bar */}
       <div className="h-14 bg-primary border-t border-white/10 hidden md:flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
