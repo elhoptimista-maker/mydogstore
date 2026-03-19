@@ -136,7 +136,7 @@ export default async function Home() {
       </section>
 
       {/* 5. Grilla de Productos Destacados */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-12">
+      <section className="pb-24 pt-12 max-w-7xl mx-auto px-4 md:px-8 space-y-12">
         <div className="flex flex-row justify-between items-end border-b border-black/5 pb-8">
           <div className="space-y-2">
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Selección experta</span>
