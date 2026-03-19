@@ -14,7 +14,8 @@ import {
   Package,
   Globe,
   Truck,
-  Instagram
+  Instagram,
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
@@ -25,6 +26,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { CATEGORIES } from '@/lib/mock-db';
 import { useState, useEffect } from 'react';
 
@@ -133,7 +141,7 @@ export default function Header() {
               </div>
             </div>
             
-            <button className="relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all text-white">
+            <button className="hidden sm:flex relative w-10 h-10 rounded-full bg-white/10 items-center justify-center hover:bg-white/20 transition-all text-white">
               <Heart className="w-5 h-5" />
             </button>
 
@@ -148,9 +156,55 @@ export default function Header() {
               </button>
             </CartDrawer>
             
-            <button className="md:hidden text-white">
-              <Menu className="w-6 h-6" />
-            </button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="md:hidden text-white hover:bg-white/10 p-2 rounded-xl transition-colors">
+                  <Menu className="w-7 h-7" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[85%] sm:max-w-md p-0 border-none bg-background overflow-hidden flex flex-col">
+                <SheetHeader className="p-8 bg-primary text-white shrink-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Dog className="w-8 h-8 text-secondary" />
+                    <SheetTitle className="text-white font-black text-2xl tracking-tighter">Categorías</SheetTitle>
+                  </div>
+                  <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest text-left">MyDog Distribuidora</p>
+                </SheetHeader>
+                <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[#F6F6F6]">
+                  {CATEGORIES.map((category) => (
+                    <Link 
+                      key={category} 
+                      href={`/catalogo?categoria=${encodeURIComponent(category)}`}
+                      className="flex items-center justify-between p-5 bg-white rounded-2xl border border-black/5 shadow-sm hover:border-primary/20 transition-all group"
+                    >
+                      <span className="font-black text-xs uppercase tracking-widest text-foreground group-hover:text-primary">{category}</span>
+                      <ChevronDown className="w-4 h-4 text-muted-foreground -rotate-90 group-hover:text-primary transition-colors" />
+                    </Link>
+                  ))}
+                  
+                  <div className="pt-6 space-y-3">
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-2">Navegación</p>
+                    {mainNav.map((item) => (
+                      <Link 
+                        key={item.label} 
+                        href={item.href}
+                        className="flex items-center gap-3 p-4 text-sm font-bold text-foreground hover:text-primary transition-colors"
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+                <div className="p-8 bg-white border-t border-black/5">
+                  <Link href="/b2b">
+                    <button className="w-full h-14 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                      <Package className="w-4 h-4" /> Portal Mayorista
+                    </button>
+                  </Link>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
@@ -161,7 +215,7 @@ export default function Header() {
           <div className="flex items-center gap-8 h-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="bg-primary text-white h-10 px-6 flex items-center gap-3 cursor-pointer hover:bg-primary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md">
+                <div className="hidden md:flex bg-primary text-white h-10 px-6 items-center gap-3 cursor-pointer hover:bg-primary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md">
                   <Menu className="w-4 h-4" />
                   Todas las Categorías
                 </div>
