@@ -80,7 +80,8 @@ export default async function Home() {
               </p>
             </div>
           </div>
-          <div className="relative aspect-square md:aspect-auto md:h-full flex items-end">
+          {/* Imagen oculta en móvil para priorizar el contenido */}
+          <div className="hidden md:flex relative md:aspect-auto md:h-full items-end">
             <div className="relative w-full h-[120%] -mb-20">
               <Image
                 src="https://picsum.photos/seed/happy-dog/800/1000"
