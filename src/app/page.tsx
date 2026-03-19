@@ -48,9 +48,9 @@ export default async function Home() {
     <div className="bg-[#F6F6F6] min-h-screen">
       
       {/* 2. Bloque Hero */}
-      <section className="bg-[#FEF9F3] w-full pt-0 pb-20 overflow-hidden relative border-b border-black/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-[500px]">
-          <div className="space-y-8 py-10">
+      <section className="bg-[#FEF9F3] w-full overflow-hidden relative border-b border-black/5">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-[calc(100vh-176px)]">
+          <div className="space-y-8 py-12 md:py-0">
             <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">
               🐾 Bienestar animal garantizado
             </div>
@@ -82,9 +82,10 @@ export default async function Home() {
               </p>
             </div>
           </div>
+          
           {/* Imagen oculta en móvil para priorizar el contenido */}
-          <div className="hidden md:flex relative md:aspect-auto md:h-full items-end">
-            <div className="relative w-full h-[120%] -mb-20">
+          <div className="hidden md:flex relative h-full items-end justify-center">
+            <div className="relative w-full h-[120%] -mb-24 lg:-mb-32">
               <Image
                 src="https://picsum.photos/seed/happy-dog/800/1000"
                 alt="Mascota Feliz"
