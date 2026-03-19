@@ -8,7 +8,8 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Footer Masivo optimizado para eliminar espacios innecesarios.
+ * @fileOverview Footer Masivo ultra-compacto. 
+ * Eliminado el espacio inutilizado y las restricciones de altura.
  */
 
 export default function Footer() {
@@ -22,77 +23,65 @@ export default function Footer() {
     setMounted(true);
   }, []);
 
-  // Hydration-safe logic: solo ocultar en el cliente después del montaje
   const isAccountPage = mounted && pathname === '/cuenta';
 
   return (
-    <footer className="w-full flex flex-col">
-      {/* 1. Newsletter Row - Siempre presente en el DOM para evitar errores de hidratación */}
-      <div className={cn(
-        "bg-[#F6F6F6] pt-8 pb-12 text-center border-t border-black/[0.03]",
-        isAccountPage && "hidden"
-      )}>
-        <div className="max-w-4xl mx-auto px-4 space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Únete a la manada <span className="text-primary">MyDog</span></h2>
-            <p className="text-muted-foreground font-medium text-lg">Recibe ofertas exclusivas y consejos de nutrición para tus mascotas.</p>
-          </div>
-          <div className="relative max-w-xl mx-auto">
-            <div className="relative flex items-center bg-white rounded-full h-14 md:h-16 px-1.5 shadow-lg border border-black/5">
-              <input 
-                type="email" 
-                placeholder="Tu correo electrónico" 
-                className="flex-1 h-full bg-transparent outline-none px-6 font-bold text-sm text-foreground" 
-              />
-              <Button className="rounded-full bg-primary text-white font-black px-8 h-11 md:h-13 text-sm">
-                Suscribirse
-              </Button>
+    <footer className="w-full">
+      {/* 1. Newsletter Row - Compacto */}
+      {!isAccountPage && (
+        <div className="bg-[#F6F6F6] py-8 text-center border-t border-black/[0.03]">
+          <div className="max-w-4xl mx-auto px-4 space-y-4">
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-primary">Únete a la manada</h2>
+              <p className="text-muted-foreground font-bold text-sm">Ofertas exclusivas y consejos de nutrición en tu correo.</p>
+            </div>
+            <div className="relative max-w-md mx-auto">
+              <div className="relative flex items-center bg-white rounded-full h-12 px-1.5 shadow-sm border border-black/5">
+                <input 
+                  type="email" 
+                  placeholder="Tu correo electrónico" 
+                  className="flex-1 h-full bg-transparent outline-none px-6 font-bold text-xs text-foreground" 
+                />
+                <Button className="rounded-full bg-primary text-white font-black px-6 h-9 text-[10px] uppercase">
+                  Suscribirse
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* 2. Main Footer Row */}
-      <div className="bg-primary text-white pt-10 pb-6 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-10 relative z-20 shadow-2xl">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
+      {/* 2. Main Footer Row - Compacto y pegado */}
+      <div className="bg-primary text-white py-8 px-4 md:px-8 border-t border-white/5">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Logo & Social */}
           <div className="md:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm">
-                <Dog className="w-8 h-8 text-white" />
+              <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                <Dog className="w-6 h-6 text-white" />
               </div>
               <div className="flex flex-col -space-y-1">
-                <span className="font-black text-xl tracking-tighter leading-none uppercase">MyDog</span>
-                <span className="text-[8px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
+                <span className="font-black text-lg tracking-tighter leading-none uppercase">MyDog</span>
+                <span className="text-[7px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
               </div>
             </Link>
-            <p className="text-white/60 text-sm font-medium leading-relaxed max-w-sm">
-              Expertos en bienestar animal desde 2008. Distribución profesional de las mejores marcas para Santiago y regiones.
+            <p className="text-white/60 text-xs font-medium leading-relaxed max-w-xs">
+              Especialistas en nutrición animal desde 2008. Distribución profesional en todo Chile.
             </p>
-            <div className="flex gap-3">
-              <a 
-                href="https://www.instagram.com/mydog_distribuidora" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white text-white hover:text-primary transition-all"
-              >
+            <div className="flex gap-2">
+              <a href="https://www.instagram.com/mydog_distribuidora" target="_blank" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/20 transition-all">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a 
-                href={whatsappUrl}
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#25D366] text-white hover:text-white transition-all"
-              >
+              <a href={whatsappUrl} target="_blank" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#25D366] transition-all">
                 <MessageCircle className="w-4 h-4" />
               </a>
             </div>
           </div>
           
-          {/* Links */}
-          <div className="space-y-4">
-            <h4 className="font-black text-[10px] uppercase tracking-[0.3em] text-secondary">Tienda</h4>
-            <ul className="space-y-2 text-sm font-bold text-white/70">
+          {/* Links de navegación */}
+          <div className="space-y-3">
+            <h4 className="font-black text-[9px] uppercase tracking-[0.3em] text-secondary">Tienda</h4>
+            <ul className="space-y-1.5 text-xs font-bold text-white/70">
               <li><Link href="/catalogo" className="hover:text-white transition-all">Alimentos</Link></li>
               <li><Link href="/catalogo" className="hover:text-white transition-all">Snacks</Link></li>
               <li><Link href="/catalogo" className="hover:text-white transition-all">Accesorios</Link></li>
@@ -100,9 +89,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-black text-[10px] uppercase tracking-[0.3em] text-secondary">Ayuda</h4>
-            <ul className="space-y-2 text-sm font-bold text-white/70">
+          <div className="space-y-3">
+            <h4 className="font-black text-[9px] uppercase tracking-[0.3em] text-secondary">Ayuda</h4>
+            <ul className="space-y-1.5 text-xs font-bold text-white/70">
               <li><Link href="#" className="hover:text-white transition-all">Envíos</Link></li>
               <li><Link href="#" className="hover:text-white transition-all">Términos</Link></li>
               <li><Link href="#" className="hover:text-white transition-all">FAQ</Link></li>
@@ -110,39 +99,30 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-black text-[10px] uppercase tracking-[0.3em] text-secondary">Contacto</h4>
-            <ul className="space-y-2 text-sm font-bold text-white/70">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-secondary shrink-0" />
-                <span className="leading-tight">La Cisterna, RM</span>
+          <div className="space-y-3">
+            <h4 className="font-black text-[9px] uppercase tracking-[0.3em] text-secondary">Contacto</h4>
+            <ul className="space-y-1.5 text-xs font-bold text-white/70">
+              <li className="flex items-center gap-2">
+                <MapPin className="w-3.5 h-3.5 text-secondary shrink-0" />
+                <span>La Cisterna, RM</span>
               </li>
               <li>
-                <a 
-                  href={whatsappUrl}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-secondary transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4 text-secondary shrink-0" />
+                <a href={whatsappUrl} className="flex items-center gap-2 hover:text-secondary transition-colors">
+                  <MessageCircle className="w-3.5 h-3.5 text-secondary shrink-0" />
                   <span>+56 9 1234 5678</span>
                 </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-secondary shrink-0" />
-                <span>hola@mydog.cl</span>
               </li>
             </ul>
           </div>
         </div>
         
-        {/* 3. Bottom Row */}
-        <div className="max-w-7xl mx-auto w-full mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">
-          <p>© 2024 MYDOG DISTRIBUIDORA SPA. TODOS LOS DERECHOS RESERVADOS.</p>
-          <div className="flex gap-4 opacity-40 grayscale">
-            <div className="bg-white px-2 py-1 rounded text-black font-sans font-bold">VISA</div>
-            <div className="bg-white px-2 py-1 rounded text-black font-sans font-bold">MC</div>
-            <div className="bg-white px-2 py-1 rounded text-black font-sans font-bold">WEBPAY</div>
+        {/* 3. Bottom Row - Ultra-compacto */}
+        <div className="max-w-7xl mx-auto w-full mt-8 pt-4 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] font-black text-white/20 uppercase tracking-[0.3em]">
+          <p>© 2024 MYDOG DISTRIBUIDORA SPA.</p>
+          <div className="flex gap-3 opacity-20 grayscale">
+            <div className="bg-white px-1.5 py-0.5 rounded text-black font-sans font-bold">VISA</div>
+            <div className="bg-white px-1.5 py-0.5 rounded text-black font-sans font-bold">MC</div>
+            <div className="bg-white px-1.5 py-0.5 rounded text-black font-sans font-bold">WEBPAY</div>
           </div>
         </div>
       </div>

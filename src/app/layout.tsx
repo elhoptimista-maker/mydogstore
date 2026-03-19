@@ -31,9 +31,9 @@ export default function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <ChatProvider>
-              <div className="flex flex-col min-h-screen">
+              <div className="flex flex-col">
                 <Header />
-                <main className="flex-1 pt-44 pb-0">
+                <main className="pt-44 pb-0">
                   {children}
                 </main>
                 <Footer />
