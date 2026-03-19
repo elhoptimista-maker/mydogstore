@@ -1,25 +1,13 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { 
-  ArrowRight, 
-  Truck,
-  ShieldCheck,
-  Headphones,
-  Clock,
-  Dog
-} from 'lucide-react';
 import { getSanitizedProducts } from '@/lib/services/catalog.service';
-import ProductCard from '@/components/ProductCard';
-import { cn } from '@/lib/utils';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import PetNavigation from '@/components/home/PetNavigation';
+import Hero from '@/components/home/Hero';
+import FeaturedProducts from '@/components/home/FeaturedProducts';
+import SocialProof from '@/components/home/SocialProof';
+import TrustBar from '@/components/home/TrustBar';
+
+/**
+ * @fileOverview Página principal (Home) refactorizada con componentes aislados.
+ */
 
 export default async function Home() {
   // Consumo del servicio de catálogo sanitizado
@@ -33,148 +21,20 @@ export default async function Home() {
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen">
-      
-      {/* 2. Bloque Hero - Armonizado */}
-      <section className="bg-[#FEF9F3] w-full overflow-hidden relative border-b border-black/5">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+      {/* Hero Section */}
+      <Hero />
 
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-16 items-center min-h-[calc(100vh-176px)] relative z-10">
-          <div className="space-y-10 py-16 md:py-0 animate-in fade-in slide-in-from-left duration-1000">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
-                🐾 Bienestar animal garantizado
-              </div>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-foreground leading-[0.95] tracking-tighter">
-                Comida Premium <br /> para tu <span className="text-primary">Mascota</span>
-              </h1>
-              <p className="text-muted-foreground text-lg md:text-xl font-medium max-w-lg leading-relaxed">
-                Distribuidora líder en nutrición animal con más de 15 años de trayectoria. Calidad certificada para los que más quieres.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 pt-4">
-              <Link href="/catalogo">
-                <Button size="lg" className="h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl shadow-primary/20 hover:scale-105 transition-all gap-3">
-                  Explorar Catálogo <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
-              
-              <div className="flex items-center gap-4">
-                <div className="flex -space-x-3">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-[#FEF9F3] overflow-hidden bg-muted shadow-sm ring-1 ring-black/5">
-                      <Image src={`https://picsum.photos/seed/${i+20}/80/80`} alt="usuario" width={40} height={40} />
-                    </div>
-                  ))}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none mb-1">1K+ Clientes</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Felices en Chile</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="hidden md:flex relative h-full items-end justify-center animate-in fade-in slide-in-from-right duration-1000">
-            <div className="relative w-full h-[110%] -mb-16 lg:-mb-24">
-              <Image
-                src="https://picsum.photos/seed/happy-dog-hero/800/1000"
-                alt="Mascota Feliz"
-                fill
-                className="object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.15)]"
-                priority
-                data-ai-hint="happy dog"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Navegación por Mascota (Componentizado) */}
+      {/* Navegación por Mascota */}
       <PetNavigation products={products} />
 
-      {/* 5. Grilla de Productos Destacados */}
-      <section className="pb-24 pt-12 max-w-7xl mx-auto px-4 md:px-8 space-y-12">
-        <div className="flex flex-row justify-between items-end border-b border-black/5 pb-8">
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Selección experta</span>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Productos <span className="text-primary">Destacados</span></h2>
-          </div>
-          <Link href="/catalogo">
-            <Button variant="outline" className="rounded-full font-bold border-2 px-8 h-12 border-primary/10 hover:border-primary transition-all">Ver Todos</Button>
-          </Link>
-        </div>
-        
-        {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-primary/10">
-            <p className="text-muted-foreground font-medium">No se encontraron productos con stock disponibles en este momento.</p>
-          </div>
-        )}
-      </section>
+      {/* Grilla de Productos Destacados */}
+      <FeaturedProducts products={featuredProducts} />
 
-      {/* 9. Prueba Social */}
-      <section className="py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-4 text-center space-y-16">
-          <div className="flex justify-center -space-x-4">
-            {[1,2,3,4,5].map(i => (
-              <div key={i} className={cn(
-                "w-20 h-20 rounded-full border-4 border-white overflow-hidden bg-muted shadow-lg transition-all duration-500",
-                i === 3 ? "scale-125 z-10 border-primary/20" : "opacity-40"
-              )}>
-                <Image src={`https://picsum.photos/seed/testi-${i}/120/120`} alt="user" width={80} height={80} />
-              </div>
-            ))}
-          </div>
-          <Carousel className="w-full">
-            <CarouselContent>
-              {[1,2,3].map(i => (
-                <CarouselItem key={i}>
-                  <div className="space-y-8">
-                    <p className="text-2xl md:text-4xl font-medium italic text-foreground leading-relaxed px-12">
-                      "Excelente servicio de distribución. Los productos siempre llegan frescos y en el tiempo acordado. Mi tienda ha crecido un 40% gracias a su soporte técnico."
-                    </p>
-                    <div className="space-y-1">
-                      <h4 className="text-xl font-bold text-foreground">Carolina Méndez</h4>
-                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Dueña de PetShop "El Refugio"</p>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="h-16 w-16 bg-black text-white hover:bg-primary border-none shadow-xl" />
-            <CarouselNext className="h-16 w-16 bg-black text-white hover:bg-primary border-none shadow-xl" />
-          </Carousel>
-        </div>
-      </section>
+      {/* Prueba Social */}
+      <SocialProof />
 
-      {/* 12. Barra de Confianza */}
-      <section className="py-24 bg-[#FEF9F3] border-y border-black/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          {[
-            { icon: <Clock className="w-8 h-8" />, t: 'Entrega Flash', s: 'Comprando antes de las 14:00' },
-            { icon: <Truck className="w-8 h-8" />, t: 'Envío Gratis', s: 'Sobre $50.000 netos' },
-            { icon: <ShieldCheck className="w-8 h-8" />, t: 'Garantía MyDog', s: 'Productos certificados' },
-            { icon: <Headphones className="w-8 h-8" />, t: 'Soporte 24/7', s: 'Asistencia garantizada' }
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center text-primary shrink-0">
-                {item.icon}
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-bold text-foreground text-lg">{item.t}</h4>
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{item.s}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
+      {/* Barra de Confianza */}
+      <TrustBar />
     </div>
   );
 }

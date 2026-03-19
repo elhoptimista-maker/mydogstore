@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { SanitizedProduct } from '@/types/product';
 import { cn } from '@/lib/utils';
@@ -29,6 +28,12 @@ const SPECIES_DATA: SpeciesData[] = [
       'Mi bebito fiu fiu\nversión canina 🐶',
       'Who let the dogs out?\n(Yo no fui) 🐾',
       'Buscando mi cola...\nOtra vez 🔄',
+      'Tengo un gato en la garganta...\nNo, espera, es un snack 🦴',
+      'Haciendo un Marley & Me\n(pero sin el final triste) 😢🍿',
+      'TikTok: *Dog voice*\n"¡Hellouu!" 👋',
+      'Hachiko... pero para ir al parque 🌳',
+      'I can buy myself flowers...\nand treats 💐🦴',
+      'Guardianes de la Galaxia?\nNo, de la casa 🌌🏠',
       '¡Guau guau!\nDame un snack 🦴'
     ]
   },
@@ -38,11 +43,17 @@ const SPECIES_DATA: SpeciesData[] = [
     filter: 'Gato', 
     messages: [
       'Miau miau miau\nComo dice la gatita 🐱',
-      'Planeando la\ndominación mundial 🌍',
+      'Planeando la\ndominación mundial (como Thanos) 🌍',
       'Te felicito qué bien\nactúas (miau) 💃',
       'Si cabe en la caja,\nentonces me siento 📦',
-      'Necesito cinco minutos\nmás de siesta 😴',
-      'Tengo un gato en\nla garganta 🎤'
+      'No soy tu Michi, soy tu King 👑',
+      'Motomami, Motomiau 🏍️🐱',
+      'Tengo un gato en\nla garganta (es real) 🎤',
+      'Gatúbela, ¿quién te conoce? 🐱💅',
+      'El Padrino Cat: "Miau..." 🌹🐾',
+      'Bajo mi patita\nmiau miau 🐾🎵',
+      'Me pareció ver un lindo...\n¡snack! 🐦🚫',
+      'Necesito cinco minutos\nmás de siesta 😴'
     ]
   },
   { 
@@ -51,9 +62,15 @@ const SPECIES_DATA: SpeciesData[] = [
     filter: 'Aves', 
     messages: [
       'Volaré oh oh\ncantaré oh oh oh 🎶',
-      'Un pajarito me dijo\nque hay ofertas 🐦',
-      '¿Viste ese\ngusanito? 👀',
-      'Libre como\nel viento 🦅',
+      'Un pajarito me dijo\nque hay ofertas 🐦Offers',
+      '¿Viste ese\ngusanito? 👀🐛',
+      'Libre como\nel viento (como Shakira) 🦅',
+      'Up, una aventura...\nde plumas 🎈🐦',
+      'Río, ¿dónde está mi Samba? 🇧🇷🦜',
+      'Un gran poder conlleva\nun gran... gusanito 🕷️ Corn',
+      'Haciendo un Angry Bird... \na mi manera 😡🐦',
+      'El Planeta de los Simios...\ny Aves 🐵🦜',
+      'Me siento el Rey del mundo...\ndel cielo 🚢🦅',
       '¡Pío pío!\n¡Qué rico! 🌽'
     ]
   },
@@ -63,9 +80,15 @@ const SPECIES_DATA: SpeciesData[] = [
     filter: 'Conejo y Roedor', 
     messages: [
       'Bad bunny bebé\nBe-be-be 🐰',
-      'Más rápido que\nSpeedy González 🐭',
-      'Saltando de\nalegría 🐇',
-      'Zanahoria de mi\ncorazón 🥕',
+      'Más rápido que\nSpeedy González 🐭💨',
+      'Titi me preguntó... if I have carrots 🥕🐰',
+      'Dumbo... pero de orejas cortas 🐘🐰',
+      'El Padrino... de los Hamsters 🌹🐹',
+      'Saltando de\nalegría (como Rosalía) 🐇',
+      'Ratatouille? No, gracias 👋👨‍🍳🐭',
+      'Zanahoria de mi\ncorazón (My heart skips a beat) 🥕❤️',
+      'Misión Imposible...\ncon mis dientes 🦷🐇',
+      'Zootopia: Judy Hopps\nstyle! 🐰👮‍♀️',
       'Mis dientes no\ndescansan nunca 🦷'
     ]
   },
@@ -74,25 +97,44 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐠', 
     filter: 'Peces y Tortugas', 
     messages: [
-      'Escuchando:\nBurbujas de amor 🫧',
+      'Escuchando:\nBurbujas de amor 🫧🐠',
       '¡Glup glup!\n¡Muchas burbujas! 🐠',
-      'Bajo el mar\nvivo mucho mejor 🌊',
-      'Lento pero seguro\nComo rayo McQueen 🐢',
-      'Buscando\na Nemo 🔍'
+      'Bajo el mar\nvivo mucho mejor (literal) 🌊🐚',
+      'Lento pero seguro...\nComo Rayo McQueen 🐢⚡',
+      'Titanic? No, gracias 👋🚢🌊',
+      'En el mar, la vida\nes más sabrosa... y mojada 🐠',
+      'Mi burbuja es mi castillo 🫧🏰',
+      'Buscando a Nemo...\ny a Dory 🔍🐠',
+      'Como pez en el agua...\ny en la tienda! 🐠 Offers',
+      'Glup... y a comer!',
+      'Un mundo ideal...\nbajo el agua 🫧🐠'
     ]
   },
 ];
 
 export default function PetNavigation({ products }: { products: SanitizedProduct[] }) {
-  const [mounted, setMounted] = useState(false);
-  const [randomIndices, setRandomIndices] = useState<number[]>([]);
-  const [randomSides, setRandomSides] = useState<boolean[]>([]);
+  // Estado consolidado para evitar renderizados innecesarios y parpadeos en el montaje.
+  const [mountedState, setMountedState] = useState<{
+    randomIndices: number[];
+    randomSides: boolean[];
+  } | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-    setRandomIndices(SPECIES_DATA.map(s => Math.floor(Math.random() * s.messages.length)));
-    setRandomSides(SPECIES_DATA.map(() => Math.random() > 0.5));
+    // Generamos los datos aleatorios solo una vez al montar el componente.
+    setMountedState({
+      randomIndices: SPECIES_DATA.map(s => Math.floor(Math.random() * s.messages.length)),
+      randomSides: SPECIES_DATA.map(() => Math.random() > 0.5),
+    });
   }, []);
+
+  // Pre-calculamos el conteo de productos para mejorar el rendimiento.
+  const productCountsBySpecies = useMemo(() => {
+    return products.reduce((acc, product) => {
+      const species = product.species;
+      acc[species] = (acc[species] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [products]);
 
   return (
     <section id="navegacion-mascota" className="py-16 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
@@ -105,9 +147,16 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
 
       <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x pt-12">
         {SPECIES_DATA.map((species, i) => {
-          const count = products.filter(p => p.species === species.filter).length;
-          const message = mounted ? species.messages[randomIndices[i]] : species.messages[0];
-          const isLeft = mounted ? randomSides[i] : true;
+          const count = productCountsBySpecies[species.filter] || 0;
+          
+          // Lógica robusta para manejar el estado antes y después del montaje, previniendo errores de hidratación.
+          const message = mountedState 
+            ? species.messages[mountedState.randomIndices[i]] 
+            : species.messages[0];
+          
+          const isLeft = mountedState 
+            ? mountedState.randomSides[i] 
+            : true;
 
           return (
             <Link 
@@ -115,7 +164,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
               href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
               className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
             >
-              {/* Burbuja de Pensamiento (Contenedor Principal) */}
+              {/* Burbuja de Pensamiento (Contenedor Principal) - Estética mantenida */}
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
                 <div className="bg-white px-5 py-4 rounded-[1.8rem] border border-black/[0.06] relative min-w-[140px] max-w-[180px] text-center shadow-none">
                   <span className="text-[11px] font-medium text-zinc-800 tracking-tight leading-snug block whitespace-pre-line">
@@ -136,7 +185,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Icono Mascota */}
+              {/* Icono Mascota - Estética mantenida */}
               <div className="relative">
                 <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
                   <span className="text-5xl md:text-6xl">{species.emoji}</span>
@@ -144,7 +193,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Información Inferior */}
+              {/* Información Inferior - Estética mantenida */}
               <div className="flex flex-col items-center gap-1">
                 <span className="text-sm font-black text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
                   {species.name}
