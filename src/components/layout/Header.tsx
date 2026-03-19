@@ -37,7 +37,6 @@ const SEARCH_PLACEHOLDERS = [
 
 export default function Header() {
   const { cartCount } = useCart();
-  const [searchCategory, setSearchCategory] = useState("Todas");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [currentPlaceholder, setCurrentPlaceholder] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -121,29 +120,10 @@ export default function Header() {
 
           <div className="flex-1 hidden md:flex max-w-2xl">
             <div className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div className="flex items-center px-5 border-r border-black/5 cursor-pointer hover:bg-black/5 transition-colors h-full text-foreground shrink-0 outline-none">
-                    <span className="text-[10px] font-bold uppercase tracking-wider mr-2 whitespace-nowrap">
-                      {searchCategory}
-                    </span>
-                    <ChevronDown className="w-3.5 h-3.5 opacity-40" />
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56 rounded-xl border-none shadow-2xl p-2 bg-white z-[60]">
-                  <DropdownMenuItem onClick={() => setSearchCategory("Todas")} className="cursor-pointer font-bold text-[10px] uppercase tracking-widest p-3 rounded-lg hover:bg-primary/5 hover:text-primary">Todas</DropdownMenuItem>
-                  {CATEGORIES.map((category) => (
-                    <DropdownMenuItem key={category} onClick={() => setSearchCategory(category)} className="cursor-pointer font-bold text-[10px] uppercase tracking-widest p-3 rounded-lg hover:bg-primary/5 hover:text-primary">
-                      {category}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              
               <input 
                 type="text" 
                 placeholder={currentPlaceholder}
-                className="flex-1 h-full px-5 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
+                className="flex-1 h-full px-8 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
               />
               <button className="h-10 w-10 bg-primary rounded-full mr-1 flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md">
                 <Search className="w-4 h-4" />
