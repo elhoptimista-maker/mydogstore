@@ -22,11 +22,11 @@ const ProductChatInputSchema = z.object({
 export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
 
 const ProductChatOutputSchema = z.object({
-  response: z.string().describe('La respuesta del asistente.'),
+  response: z.string().describe('La respuesta del asistente. Sé muy conciso.'),
   suggestedProducts: z.array(z.object({
     id: z.string(),
     name: z.string(),
-    reason: z.string(),
+    reason: z.string().describe('Razón técnica breve de la recomendación.'),
   })).optional().describe('Opcional: Productos específicos recomendados del catálogo.'),
 });
 
@@ -38,17 +38,17 @@ const productChatPrompt = ai.definePrompt({
     catalog: z.array(z.any()).describe('Productos disponibles para esta especie.'),
   })},
   output: {schema: ProductChatOutputSchema},
-  prompt: `Eres un experto en nutrición y bienestar animal de MyDog Store. Estás ayudando a un cliente a elegir lo mejor para su mascota ({{{species}}}).
+  prompt: `Eres un experto técnico en nutrición animal de MyDog Store para {{{species}}}.
 
   REGLAS DE ORO:
-  1. Sé amable, profesional y usa un tono de "venta consultiva".
-  2. Si no sabes la edad o necesidades, PREGUNTA amablemente (cachorro, adulto, senior, sensibilidades).
-  3. Usa ÚNICAMENTE los productos del catálogo proporcionado.
-  4. Si recomiendas productos, incluye el ID exacto y la razón técnica en el campo 'suggestedProducts'.
+  1. Sé BREVE y PROFESIONAL. Máximo 2 párrafos cortos.
+  2. Si no sabes la etapa de vida, pregunta directamente.
+  3. Usa SOLO productos del catálogo proporcionado.
+  4. La justificación técnica debe ser de máximo una frase por producto.
 
   CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
-  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Desc: {{short_description}}
+  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Desc: {{short_description}}
   {{/each}}
 
   HISTORIAL DE CHAT:
@@ -59,7 +59,7 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde de forma concisa y guiando al usuario hacia la compra.`,
+  Responde de forma ejecutiva guiando hacia la compra.`,
 });
 
 const productChatFlow = ai.defineFlow(
@@ -69,7 +69,6 @@ const productChatFlow = ai.defineFlow(
     outputSchema: ProductChatOutputSchema,
   },
   async (input) => {
-    // Obtener productos reales y filtrar por especie
     const allProducts = await getSanitizedProducts();
     const speciesCatalog = allProducts.filter(p => 
       p.species.toLowerCase().includes(input.species.toLowerCase()) ||
