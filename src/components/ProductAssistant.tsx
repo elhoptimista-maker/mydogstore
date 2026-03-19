@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Sparkles, Loader2, Send, ChevronDown, MessageCircle } from 'lucide-react';
 import { productChat } from '@/ai/flows/intelligent-product-assistant';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,14 +13,47 @@ import { useChat } from '@/context/ChatContext';
 import { cn } from '@/lib/utils';
 
 const EXPERTS = [
-  { name: 'Perro', emoji: '🐶', color: 'bg-primary', description: 'Experto en Perros' },
-  { name: 'Gato', emoji: '🐱', color: 'bg-orange-500', description: 'Especialista Felino' },
-  { name: 'Aves', emoji: '🦜', color: 'bg-green-500', description: 'Guía de Aves' },
-  { name: 'Conejo y Roedor', emoji: '🐰', color: 'bg-blue-500', description: 'Amigo de los Roedores' },
-  { name: 'Peces y Tortugas', emoji: '🐠', color: 'bg-cyan-500', description: 'Consultor Acuático' },
+  { 
+    name: 'Perro', 
+    emoji: '🐶', 
+    color: 'bg-primary', 
+    description: 'Especialista en Caninos',
+    greeting: "¡Hola! 🐾 Soy tu guía experto en Perros. Me apasiona asegurar que cada peludo tenga la nutrición exacta para su energía. Para asesorarte mejor, ¿cuál es su etapa de vida o tiene alguna necesidad especial como piel sensible?",
+    actions: ["Cachorro", "Adulto", "Senior", "Piel Sensible", "Ofertas"]
+  },
+  { 
+    name: 'Gato', 
+    emoji: '🐱', 
+    color: 'bg-orange-500', 
+    description: 'Consultor Felino',
+    greeting: "¡Hola! 🐱 Soy tu guía especialista en Gatos. Entiendo lo selectivos que pueden ser y lo importante que es su salud urinaria. ¿Tu compañero es gatito, adulto, o quizás está esterilizado?",
+    actions: ["Gatito", "Adulto", "Esterilizado", "Control Bolas Pelo", "Senior"]
+  },
+  { 
+    name: 'Aves', 
+    emoji: '🦜', 
+    color: 'bg-green-500', 
+    description: 'Guía de Aves',
+    greeting: "¡Hola! 🦜 Soy tu consultor en nutrición aviar. Un plumaje brillante y vitalidad dependen de una mixtura correcta. ¿Buscas algo para mantenimiento, cría o especies específicas como loros o canarios?",
+    actions: ["Canarios", "Loros/Cacatúas", "Etapa de Cría", "Mantenimiento", "Mixturas"]
+  },
+  { 
+    name: 'Conejo y Roedor', 
+    emoji: '🐰', 
+    color: 'bg-blue-500', 
+    description: 'Especialista en Pequeños Mamíferos',
+    greeting: "¡Hola! 🐰 Soy tu guía para pequeños compañeros. El heno y el desgaste dental son pilares de su salud. ¿Me cuentas si tienes un conejo, cobaya o hámster para buscar el mix ideal?",
+    actions: ["Conejos", "Hámster/Cobaya", "Heno Premium", "Snacks Saludables", "Gazapos"]
+  },
+  { 
+    name: 'Peces y Tortugas', 
+    emoji: '🐠', 
+    color: 'bg-cyan-500', 
+    description: 'Consultor Acuático',
+    greeting: "¡Hola! 🐠 Soy tu guía en acuariofilia y reptiles. El equilibrio nutricional es vital en el agua. ¿Tu acuario es de agua fría, tropical, o buscas nutrición para tortugas?",
+    actions: ["Agua Fría", "Peces Tropicales", "Tortugas", "Alevines", "Mantenimiento"]
+  },
 ];
-
-const QUICK_ACTIONS = ["Cachorro", "Adulto", "Senior", "Sensibilidad", "Ofertas"];
 
 export default function ProductAssistant() {
   const { isOpen, setIsOpen, activeSpecies, setActiveSpecies, messages, addMessage } = useChat();
@@ -39,13 +71,13 @@ export default function ProductAssistant() {
   }, [activeMessages, loading, isOpen]);
 
   useEffect(() => {
-    if (activeSpecies && (!messages[activeSpecies] || messages[activeSpecies].length === 0)) {
+    if (activeSpecies && activeExpert && (!messages[activeSpecies] || messages[activeSpecies].length === 0)) {
       addMessage(activeSpecies, {
         role: 'assistant',
-        content: `¡Hola! 🐾 Soy tu guía experto en ${activeSpecies} de MyDog. Me apasiona el bienestar de estos compañeros y entiendo lo que necesitan para estar felices. Para asesorarte mejor, ¿me podrías contar si tu amigo es cachorro, adulto o senior?`
+        content: activeExpert.greeting
       });
     }
-  }, [activeSpecies]);
+  }, [activeSpecies, activeExpert]);
 
   const handleSend = async (text: string, e?: React.FormEvent) => {
     e?.preventDefault();
@@ -74,7 +106,7 @@ export default function ProductAssistant() {
     } catch (error) {
       addMessage(activeSpecies, { 
         role: 'assistant', 
-        content: "Lo siento, tuve un pequeño problema técnico. ¿Podrías repetirme eso?" 
+        content: "Lo siento, tuve un pequeño problema técnico con mi radar animal. ¿Podrías repetirme eso?" 
       });
     } finally {
       setLoading(false);
@@ -110,7 +142,7 @@ export default function ProductAssistant() {
             <h3 className="text-xl font-black leading-none tracking-tight">
               {activeExpert ? `${activeExpert.description}` : 'Guía MyDog'}
             </h3>
-            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Venta Consultiva</p>
+            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Venta Consultiva Experta</p>
           </div>
         </div>
         <button 
@@ -126,7 +158,7 @@ export default function ProductAssistant() {
         <div className="flex-1 flex flex-col p-8 space-y-8 bg-[#F9FAFB]">
           <div className="text-center space-y-2">
             <h4 className="text-lg font-black text-foreground tracking-tight">¿Quién necesita mi ayuda hoy?</h4>
-            <p className="text-xs font-medium text-muted-foreground">Habla con uno de nuestros guías especializados.</p>
+            <p className="text-xs font-medium text-muted-foreground">Habla con un guía especializado en tu mascota.</p>
           </div>
           <div className="grid grid-cols-1 gap-3">
             {EXPERTS.map((expert) => (
@@ -192,10 +224,10 @@ export default function ProductAssistant() {
                 </div>
               ))}
               
-              {/* Sugerencias de Botones (Quick Actions) */}
-              {!loading && activeMessages.length === 1 && (
+              {/* Sugerencias de Botones Dinámicos */}
+              {!loading && activeMessages.length === 1 && activeExpert && (
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {QUICK_ACTIONS.map(action => (
+                  {activeExpert.actions.map(action => (
                     <button
                       key={action}
                       onClick={() => handleSend(action)}
@@ -213,7 +245,7 @@ export default function ProductAssistant() {
                     <Loader2 className="w-4 h-4 text-primary animate-spin" />
                   </div>
                   <div className="bg-white p-3 rounded-2xl border border-black/5 text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                    Buscando las mejores opciones...
+                    Consultando catálogo experto...
                   </div>
                 </div>
               )}
@@ -227,7 +259,7 @@ export default function ProductAssistant() {
                  onClick={() => setActiveSpecies(null)}
                  className="text-[9px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1"
                >
-                 Elegir otro guía
+                 Elegir otra mascota
                </button>
                <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -236,7 +268,7 @@ export default function ProductAssistant() {
             </div>
             <form onSubmit={(e) => handleSend(input, e)} className="flex gap-2">
               <input 
-                placeholder="Cuéntame de tu mascota..." 
+                placeholder="Cuéntame de tu compañero..." 
                 className="flex-1 h-12 rounded-2xl border-none bg-muted/30 focus-visible:ring-primary/20 font-bold text-sm px-4 outline-none"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
