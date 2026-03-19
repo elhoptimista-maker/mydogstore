@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Componente de navegación por mascota con burbujas de pensamiento interactivas.
- * Implementa el estilo de "Notas de Instagram" con posicionamiento aleatorio de punteros.
+ * Implementa el estilo de "Notas de Instagram" / "Comic" con posicionamiento aleatorio de punteros.
  */
 
 interface SpeciesData {
@@ -24,11 +24,12 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐶', 
     filter: 'Perro', 
     messages: [
-      'Escuchando el\nperro chocoloco 🐶',
-      '¿Alguien dijo\ngalleta? 🍪',
-      '¡Quiero\npaseooo! 🦴',
-      'Entrenando para\nser el mejor 🎾',
-      'Buscando mi cola...\notra vez 🔄'
+      'yo perreo solo\n(literalmente) 🐕',
+      '¿alguien dijo\ngalleta? 🍪',
+      'mi bebito fiu fiu\nversión canina 🐶',
+      'who let the dogs out?\n(yo no fui) 🐾',
+      'buscando mi cola...\notra vez 🔄',
+      'guau guau guau\nsi me dan snack 🦴'
     ]
   },
   { 
@@ -36,11 +37,12 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐱', 
     filter: 'Gato', 
     messages: [
-      'Mirando por la\nventana... 🪟',
-      'Planeando la\ndominación mundial 🌍',
-      'Necesito 5 min más\nde siesta 😴',
-      'Ignorando a todos\ncon estilo ✨',
-      'Si cabe,\nme siento 📦'
+      'miau miau miau\ncomo dice la gatita 🐱',
+      'planeando la\ndominación mundial 🌍',
+      'te felicito qué bien\nactúas (miau) 💃',
+      'si cabe,\nme siento 📦',
+      'necesito 5 min más\nde siesta 😴',
+      'tengo un gato en\nla garganta 🎤'
     ]
   },
   { 
@@ -48,11 +50,11 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🦜', 
     filter: 'Aves', 
     messages: [
-      'Practicando mi\nhit de verano 🎶',
-      '¡Pío pío!\n¡Qué rico! 🌽',
-      '¿Viste ese\ngusanito? 👀',
-      'Libre como\nel viento 🦅',
-      '¡Hola! ¿Cómo\nestás? 🦜'
+      'volaré oh oh\ncantaré oh oh oh 🎶',
+      'un pajarito me dijo\nque hay ofertas 🐦',
+      '¿viste ese\ngusanito? 👀',
+      'libre como\nel viento 🦅',
+      '¡pío pío!\n¡qué rico! 🌽'
     ]
   },
   { 
@@ -60,11 +62,11 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐰', 
     filter: 'Conejo y Roedor', 
     messages: [
-      '¡Ñam!\n¡Croc croc! 🥕',
-      'Saltando de\nalegría 🐇',
-      'Buscando el\nescondite 🛖',
-      'Mis dientes no\ndescansan 🦷',
-      'Sintiéndome\nfluffy ☁️'
+      'bad bunny bebé\nbe-be-be 🐰',
+      'más rápido que\nspeedy gonzález 🐭',
+      'saltando de\nalegría 🐇',
+      'zanahoria de mi\ncorazón 🥕',
+      'mis dientes no\ndescansan 🦷'
     ]
   },
   { 
@@ -72,11 +74,11 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐠', 
     filter: 'Peces y Tortugas', 
     messages: [
-      'Escuchando:\nBurbujas de Amor 🫧',
-      'Glup glup!\n¡Burbujas! 🐠',
-      'Nadaremos,\nnadaremos... 🌊',
-      'Lento pero\nseguro 🐢',
-      'Buscando\na Nemo 🔍'
+      'escuchando:\nburbujas de amor 🫧',
+      'glup glup!\n¡burbujas! 🐠',
+      'bajo el mar\nvivo mucho mejor 🌊',
+      'lento pero seguro\ncomo rayo mcqueen 🐢',
+      'buscando\na nemo 🔍'
     ]
   },
 ];
@@ -114,21 +116,21 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
               className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
             >
               {/* Burbuja de Pensamiento (Contenedor Principal) */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
                 <div className="bg-white px-5 py-4 rounded-[1.8rem] border border-black/[0.06] relative min-w-[140px] max-w-[180px] text-center shadow-none">
-                  <span className="text-[11px] font-medium text-zinc-800 uppercase tracking-tight leading-snug block whitespace-pre-line">
+                  <span className="text-[11px] font-medium text-zinc-800 tracking-tight leading-snug block whitespace-pre-line">
                     {message}
                   </span>
                   
                   {/* Círculo Mediano de conexión */}
                   <div className={cn(
-                    "absolute -bottom-1 w-4 h-4 bg-white border border-black/[0.06] rounded-full",
+                    "absolute -bottom-2 w-4 h-4 bg-white border border-black/[0.06] rounded-full",
                     isLeft ? "left-6" : "right-6"
                   )} />
                   
                   {/* Círculo Pequeño de conexión (el que solapa el avatar) */}
                   <div className={cn(
-                    "absolute -bottom-4 w-2.5 h-2.5 bg-white border border-black/[0.06] rounded-full",
+                    "absolute -bottom-5 w-2.5 h-2.5 bg-white border border-black/[0.06] rounded-full",
                     isLeft ? "left-10" : "right-10"
                   )} />
                 </div>
