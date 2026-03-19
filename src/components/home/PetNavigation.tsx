@@ -24,12 +24,12 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐶', 
     filter: 'Perro', 
     messages: [
-      'yo perreo solo\n(literalmente) 🐕',
-      '¿alguien dijo\ngalleta? 🍪',
-      'mi bebito fiu fiu\nversión canina 🐶',
-      'who let the dogs out?\n(yo no fui) 🐾',
-      'buscando mi cola...\notra vez 🔄',
-      'guau guau guau\nsi me dan snack 🦴'
+      'Yo perreo solo\n(literalmente) 🐕',
+      '¿Alguien dijo\ngalleta? 🍪',
+      'Mi bebito fiu fiu\nversión canina 🐶',
+      'Who let the dogs out?\n(Yo no fui) 🐾',
+      'Buscando mi cola...\nOtra vez 🔄',
+      '¡Guau guau!\nDame un snack 🦴'
     ]
   },
   { 
@@ -37,12 +37,12 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐱', 
     filter: 'Gato', 
     messages: [
-      'miau miau miau\ncomo dice la gatita 🐱',
-      'planeando la\ndominación mundial 🌍',
-      'te felicito qué bien\nactúas (miau) 💃',
-      'si cabe,\nme siento 📦',
-      'necesito 5 min más\nde siesta 😴',
-      'tengo un gato en\nla garganta 🎤'
+      'Miau miau miau\nComo dice la gatita 🐱',
+      'Planeando la\ndominación mundial 🌍',
+      'Te felicito qué bien\nactúas (miau) 💃',
+      'Si cabe en la caja,\nentonces me siento 📦',
+      'Necesito cinco minutos\nmás de siesta 😴',
+      'Tengo un gato en\nla garganta 🎤'
     ]
   },
   { 
@@ -50,11 +50,11 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🦜', 
     filter: 'Aves', 
     messages: [
-      'volaré oh oh\ncantaré oh oh oh 🎶',
-      'un pajarito me dijo\nque hay ofertas 🐦',
-      '¿viste ese\ngusanito? 👀',
-      'libre como\nel viento 🦅',
-      '¡pío pío!\n¡qué rico! 🌽'
+      'Volaré oh oh\ncantaré oh oh oh 🎶',
+      'Un pajarito me dijo\nque hay ofertas 🐦',
+      '¿Viste ese\ngusanito? 👀',
+      'Libre como\nel viento 🦅',
+      '¡Pío pío!\n¡Qué rico! 🌽'
     ]
   },
   { 
@@ -62,11 +62,11 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐰', 
     filter: 'Conejo y Roedor', 
     messages: [
-      'bad bunny bebé\nbe-be-be 🐰',
-      'más rápido que\nspeedy gonzález 🐭',
-      'saltando de\nalegría 🐇',
-      'zanahoria de mi\ncorazón 🥕',
-      'mis dientes no\ndescansan 🦷'
+      'Bad bunny bebé\nBe-be-be 🐰',
+      'Más rápido que\nSpeedy González 🐭',
+      'Saltando de\nalegría 🐇',
+      'Zanahoria de mi\ncorazón 🥕',
+      'Mis dientes no\ndescansan nunca 🦷'
     ]
   },
   { 
@@ -74,11 +74,11 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐠', 
     filter: 'Peces y Tortugas', 
     messages: [
-      'escuchando:\nburbujas de amor 🫧',
-      'glup glup!\n¡burbujas! 🐠',
-      'bajo el mar\nvivo mucho mejor 🌊',
-      'lento pero seguro\ncomo rayo mcqueen 🐢',
-      'buscando\na nemo 🔍'
+      'Escuchando:\nBurbujas de amor 🫧',
+      '¡Glup glup!\n¡Muchas burbujas! 🐠',
+      'Bajo el mar\nvivo mucho mejor 🌊',
+      'Lento pero seguro\nComo rayo McQueen 🐢',
+      'Buscando\na Nemo 🔍'
     ]
   },
 ];
@@ -128,7 +128,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                     isLeft ? "left-6" : "right-6"
                   )} />
                   
-                  {/* Círculo Pequeño de conexión (el que solapa el avatar) */}
+                  {/* Círculo Pequeño de conexión */}
                   <div className={cn(
                     "absolute -bottom-5 w-2.5 h-2.5 bg-white border border-black/[0.06] rounded-full",
                     isLeft ? "left-10" : "right-10"
