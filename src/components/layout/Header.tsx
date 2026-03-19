@@ -147,9 +147,14 @@ export default function Header() {
           </div>
           
           <div className="absolute right-0 flex items-center gap-4">
-            <Link href="#" className="hover:opacity-70 transition-opacity">
+            <a 
+              href="https://www.instagram.com/mydog_distribuidora" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-70 transition-opacity"
+            >
               <Instagram className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       </div>
@@ -168,20 +173,36 @@ export default function Header() {
               <SheetHeader className="p-8 bg-primary text-white shrink-0">
                 <div className="flex items-center gap-3 mb-2">
                   <Dog className="w-8 h-8 text-secondary" />
-                  <SheetTitle className="text-white font-black text-2xl tracking-tighter text-left uppercase">Categorías</SheetTitle>
+                  <SheetTitle className="text-white font-black text-2xl tracking-tighter text-left uppercase">Menú Principal</SheetTitle>
                 </div>
               </SheetHeader>
-              <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[#F6F6F6]">
-                {CATEGORIES.map((category) => (
-                  <Link 
-                    key={category} 
-                    href={`/catalogo?categoria=${encodeURIComponent(category)}`}
-                    className="flex items-center justify-between p-5 bg-white rounded-2xl border border-black/5 shadow-sm hover:border-primary/20 transition-all group"
-                  >
-                    <span className="font-black text-xs uppercase tracking-widest text-foreground group-hover:text-primary">{category}</span>
-                    <ChevronDown className="w-4 h-4 text-muted-foreground -rotate-90 group-hover:text-primary transition-colors" />
-                  </Link>
-                ))}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#F6F6F6]">
+                <div className="space-y-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Navegación</span>
+                  {mainNav.map((item) => (
+                    <Link 
+                      key={item.label}
+                      href={item.href}
+                      className="flex items-center p-4 bg-white rounded-2xl border border-black/5 shadow-sm font-black text-xs uppercase tracking-widest text-foreground"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="space-y-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Categorías</span>
+                  {CATEGORIES.map((category) => (
+                    <Link 
+                      key={category} 
+                      href={`/catalogo?categoria=${encodeURIComponent(category)}`}
+                      className="flex items-center justify-between p-4 bg-white rounded-2xl border border-black/5 shadow-sm hover:border-primary/20 transition-all group"
+                    >
+                      <span className="font-black text-xs uppercase tracking-widest text-foreground group-hover:text-primary">{category}</span>
+                      <ChevronDown className="w-4 h-4 text-muted-foreground -rotate-90 group-hover:text-primary transition-colors" />
+                    </Link>
+                  ))}
+                </div>
               </div>
             </SheetContent>
           </Sheet>
@@ -269,15 +290,20 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-4 md:gap-6 shrink-0">
-            <div className="hidden lg:flex items-center gap-3 pr-2 border-r border-white/10">
+            <a 
+              href="https://wa.me/56957889012" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hidden lg:flex items-center gap-3 pr-2 border-r border-white/10 hover:opacity-80 transition-opacity"
+            >
               <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
                 <Phone className="w-5 h-5 text-white" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-bold text-white/60 uppercase leading-none mb-1">WhatsApp</span>
-                <span className="text-sm font-black tracking-tight text-white">+56 9 1234 5678</span>
+                <span className="text-sm font-black tracking-tight text-white">+56 9 5788 9012</span>
               </div>
-            </div>
+            </a>
 
             <CartDrawer>
               <button className="relative w-12 h-12 bg-white text-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all">
