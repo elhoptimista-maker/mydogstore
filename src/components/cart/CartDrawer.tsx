@@ -27,42 +27,44 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2.5rem] focus:outline-none focus:ring-0"
       >
-        {/* Cabecera Teal Compacta */}
-        <SheetHeader className="px-6 pt-8 pb-4 bg-primary text-white shrink-0 border-none space-y-0">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <ShoppingCart className="w-5 h-5 text-secondary" />
-            </div>
-            <div className="flex flex-col items-start text-left">
-              <SheetTitle className="text-white text-lg font-black tracking-tight leading-none">
-                Mi Carrito
-              </SheetTitle>
-              <span className="text-white/70 text-[9px] font-bold uppercase tracking-widest mt-1">
-                {cartCount} Productos
-              </span>
+        {/* Cabecera Compacta */}
+        <SheetHeader className="px-6 pt-6 pb-2 bg-primary text-white shrink-0 border-none space-y-0 relative">
+          <div className="flex items-center justify-between pr-12">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                <ShoppingCart className="w-4 h-4 text-secondary" />
+              </div>
+              <div className="flex flex-col items-start text-left">
+                <SheetTitle className="text-white text-base font-black tracking-tight leading-none">
+                  Mi Carrito
+                </SheetTitle>
+                <span className="text-white/70 text-[8px] font-bold uppercase tracking-widest mt-1">
+                  {cartCount} Productos
+                </span>
+              </div>
             </div>
           </div>
         </SheetHeader>
 
-        {/* Gamificación Compacta */}
+        {/* Gamificación Ultra-Compacta */}
         {cart.length > 0 && (
-          <div className="px-6 py-4 bg-secondary/10 border-b border-black/5">
-            <div className="flex justify-between items-end mb-4">
-              <span className="text-[9px] font-black uppercase tracking-widest text-primary leading-tight">
+          <div className="px-6 py-2 bg-secondary/10 border-b border-black/5">
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-[8px] font-black uppercase tracking-widest text-primary leading-tight">
                 {progress < 100 
-                  ? `Faltan $${remaining.toLocaleString('es-CL')} para el envío gratis`
-                  : "¡ENVÍO GRATIS DESBLOQUEADO! 🦴"
+                  ? `Faltan $${remaining.toLocaleString('es-CL')} para envío gratis`
+                  : "¡ENVÍO GRATIS! 🦴"
                 }
               </span>
-              <span className="text-[9px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
+              <span className="text-[8px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
             
-            <div className="relative h-10 flex items-center">
-              <Progress value={progress} className="h-2.5 bg-white/50 border border-white" />
+            <div className="relative h-8 flex items-center">
+              <Progress value={progress} className="h-1.5 bg-white/50 border border-white" />
               
-              {/* Perrito caminando SOBRE la barra */}
+              {/* Perrito 🐶 - Superposición Z-20 */}
               <div 
-                className="absolute transition-all duration-700 ease-out z-10 flex items-center justify-center"
+                className="absolute transition-all duration-700 ease-out z-20 flex items-center justify-center"
                 style={{ 
                   left: `calc(${progress}% - 14px)`,
                   top: '50%',
@@ -72,7 +74,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 <span className="text-2xl animate-bounce leading-none drop-shadow-sm">🐶</span>
               </div>
 
-              {/* Hueso meta SOBRE la barra */}
+              {/* Hueso 🦴 - Superposición Z-10 */}
               <div 
                 className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center"
               >
@@ -87,7 +89,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         )}
 
-        {/* Listado de Productos (Área Maximizada) */}
+        {/* Listado de Productos */}
         <div className="flex-1 overflow-hidden bg-[#f9f9f9] flex flex-col m-0 p-0 border-none">
           <ScrollArea className="flex-1 h-full">
             <div className="px-6 py-2">
