@@ -31,11 +31,13 @@ export default function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <ChatProvider>
-              <Header />
-              <main className="min-h-screen pt-44 pb-0">
-                {children}
-              </main>
-              <Footer />
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-1 pt-44 pb-0">
+                  {children}
+                </main>
+                <Footer />
+              </div>
               <ProductAssistant />
               <Toaster />
             </ChatProvider>

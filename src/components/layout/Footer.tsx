@@ -23,14 +23,13 @@ export default function Footer() {
   }, []);
 
   // Determinamos si estamos en la página de cuenta para ocultar el Newsletter
-  // Durante la hidratación (mounted === false), mostramos el newsletter por defecto para coincidir con el servidor
   const isAccountPage = mounted && pathname === '/cuenta';
 
   return (
-    <footer className="w-full min-h-[calc(100vh-176px)] flex flex-col">
+    <footer className="w-full flex flex-col">
       {/* 1. Newsletter Row - Solo visible fuera de la página de cuenta */}
       {!isAccountPage && (
-        <div className="bg-[#F6F6F6] pt-16 pb-20 md:pb-28 text-center border-t border-black/[0.03]">
+        <div className="bg-[#F6F6F6] pt-12 pb-16 text-center border-t border-black/[0.03]">
           <div className="max-w-4xl mx-auto px-4 space-y-6">
             <div className="space-y-2">
               <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Únete a la manada <span className="text-primary">MyDog</span></h2>
@@ -53,7 +52,7 @@ export default function Footer() {
       )}
 
       {/* 2. Main Footer Row */}
-      <div className="bg-primary text-white py-16 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-12 relative z-20 shadow-2xl flex-1 flex flex-col justify-between">
+      <div className="bg-primary text-white py-12 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-10 relative z-20 shadow-2xl">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           {/* Logo & Social */}
           <div className="md:col-span-2 space-y-6">
