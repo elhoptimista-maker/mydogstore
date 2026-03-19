@@ -87,83 +87,79 @@ export default function CuentaPage() {
         </section>
       )}
 
-      <div className={cn("max-w-7xl mx-auto px-4 lg:px-8", !user && "pt-12 md:pt-20")}>
+      <div className={cn("max-w-7xl mx-auto px-4 lg:px-8", !user && "pt-24 md:pt-32")}>
         {!user ? (
-          /* Formulario de Login/Registro */
-          <div className="max-w-md mx-auto">
-            <Card className="rounded-[3rem] border-none shadow-2xl overflow-hidden bg-white">
-              <CardContent className="p-12 space-y-8">
-                <div className="text-center space-y-4 mb-8">
-                  <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mx-auto">
-                    <UserIcon className="w-8 h-8 text-primary" />
-                  </div>
-                  <div className="space-y-2">
-                    <h2 className="text-3xl font-black tracking-tighter text-foreground">
-                      {isLogin ? 'Inicia Sesión' : 'Crea tu Cuenta'}
-                    </h2>
-                    <p className="text-muted-foreground text-sm font-medium">
-                      Accede a tus pedidos y favoritos personalizados.
-                    </p>
-                  </div>
+          /* Formulario de Login/Registro Simplificado */
+          <div className="max-w-md mx-auto space-y-10">
+            <div className="text-center space-y-4">
+              <div className="w-20 h-20 bg-primary/5 rounded-[2rem] flex items-center justify-center mx-auto shadow-inner">
+                <UserIcon className="w-10 h-10 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-4xl font-black tracking-tighter text-foreground leading-none">
+                  {isLogin ? '¡Hola de nuevo!' : 'Únete a la manada'}
+                </h2>
+                <p className="text-muted-foreground text-sm font-medium">
+                  {isLogin ? 'Ingresa tus datos para continuar.' : 'Crea tu cuenta MyDog en segundos.'}
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleAuth} className="space-y-6">
+              {!isLogin && (
+                <div className="space-y-3">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Nombre Completo</Label>
+                  <Input 
+                    placeholder="Ej: Juan Pérez" 
+                    className="h-16 rounded-[2rem] border-primary/5 bg-white shadow-sm focus-visible:ring-primary/20 font-bold px-6"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    required
+                  />
                 </div>
-
-                <form onSubmit={handleAuth} className="space-y-6">
-                  {!isLogin && (
-                    <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nombre Completo</Label>
-                      <Input 
-                        placeholder="Ej: Juan Pérez" 
-                        className="h-14 rounded-2xl border-primary/5 bg-muted/30 focus-visible:ring-primary/20 font-bold"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                        required
-                      />
-                    </div>
-                  )}
-                  <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Correo Electrónico</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input 
-                        type="email" 
-                        placeholder="tu@email.com" 
-                        className="h-14 rounded-2xl border-primary/5 bg-muted/30 pl-12 focus-visible:ring-primary/20 font-bold"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input 
-                        type="password" 
-                        placeholder="••••••••" 
-                        className="h-14 rounded-2xl border-primary/5 bg-muted/30 pl-12 focus-visible:ring-primary/20 font-bold"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <Button type="submit" className="w-full h-16 rounded-3xl bg-primary text-white font-black text-lg shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                    {isLogin ? 'Entrar a MyDog' : 'Registrarme ahora'}
-                  </Button>
-                </form>
-
-                <div className="text-center pt-4 border-t border-black/5">
-                  <button 
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
-                  >
-                    {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Ingresa'}
-                  </button>
+              )}
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Correo Electrónico</Label>
+                <div className="relative">
+                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input 
+                    type="email" 
+                    placeholder="tu@email.com" 
+                    className="h-16 rounded-[2rem] border-primary/5 bg-white shadow-sm pl-14 focus-visible:ring-primary/20 font-bold"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Contraseña</Label>
+                <div className="relative">
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    className="h-16 rounded-[2rem] border-primary/5 bg-white shadow-sm pl-14 focus-visible:ring-primary/20 font-bold"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full h-16 rounded-[2rem] bg-primary text-white font-black text-lg shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4">
+                {isLogin ? 'Entrar a MyDog' : 'Crear mi cuenta'}
+              </Button>
+            </form>
+
+            <div className="text-center pt-6">
+              <button 
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-[10px] font-black text-primary uppercase tracking-[0.2em] hover:underline"
+              >
+                {isLogin ? '¿Aún no eres parte? Regístrate aquí' : '¿Ya tienes cuenta? Ingresa aquí'}
+              </button>
+            </div>
           </div>
         ) : (
           /* Dashboard de Usuario Logueado */
