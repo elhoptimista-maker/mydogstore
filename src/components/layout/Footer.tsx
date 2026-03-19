@@ -1,19 +1,20 @@
-
 'use client';
 
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Instagram, Dog } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Dog, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 /**
- * @fileOverview Footer Masivo estructurado según el punto 14 del PRD.
- * Ajustado para ocupar el alto restante de la ventana y usar el tono gris global.
+ * @fileOverview Footer Masivo con integración de WhatsApp.
  */
 
 export default function Footer() {
+  const whatsappNumber = "56912345678";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
+
   return (
     <footer className="w-full min-h-[calc(100vh-176px)] flex flex-col">
-      {/* 1. Newsletter Row - Ahora con fondo gris global */}
+      {/* 1. Newsletter Row */}
       <div className="bg-[#F6F6F6] pt-16 pb-20 md:pb-28 text-center border-t border-black/[0.03]">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
           <div className="space-y-2">
@@ -35,7 +36,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* 2. Main Footer Row - Se expande para llenar el alto restante */}
+      {/* 2. Main Footer Row */}
       <div className="bg-primary text-white py-16 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-12 relative z-20 shadow-2xl flex-1 flex flex-col justify-between">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           {/* Logo & Social */}
@@ -53,9 +54,22 @@ export default function Footer() {
               Expertos en bienestar animal desde 2008. Distribución profesional de las mejores marcas para Santiago y regiones.
             </p>
             <div className="flex gap-3">
-              <Link href="#" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white text-white hover:text-primary transition-all">
+              <a 
+                href="https://www.instagram.com/mydog_distribuidora" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white text-white hover:text-primary transition-all"
+              >
                 <Instagram className="w-4 h-4" />
-              </Link>
+              </a>
+              <a 
+                href={whatsappUrl}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#25D366] text-white hover:text-white transition-all"
+              >
+                <MessageCircle className="w-4 h-4" />
+              </a>
             </div>
           </div>
           
@@ -87,9 +101,16 @@ export default function Footer() {
                 <MapPin className="w-4 h-4 text-secondary shrink-0" />
                 <span className="leading-tight">La Cisterna, RM</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-secondary shrink-0" />
-                <span>+56 9 1234 5678</span>
+              <li>
+                <a 
+                  href={whatsappUrl}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-secondary transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4 text-secondary shrink-0" />
+                  <span>+56 9 1234 5678</span>
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-secondary shrink-0" />

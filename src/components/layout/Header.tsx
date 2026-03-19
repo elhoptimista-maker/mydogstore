@@ -12,7 +12,8 @@ import {
   User, 
   Package,
   Instagram,
-  X
+  X,
+  MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
@@ -60,6 +61,9 @@ export default function Header() {
   const [searchResults, setSearchResults] = useState<SanitizedProduct[]>([]);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  const whatsappNumber = "56912345678";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
   useEffect(() => {
     fetchAllProducts().then(products => {
@@ -146,12 +150,22 @@ export default function Header() {
           
           <div className="absolute right-0 flex items-center gap-4">
             <a 
+              href={whatsappUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-70 transition-opacity flex items-center gap-1.5"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </a>
+            <a 
               href="https://www.instagram.com/mydog_distribuidora" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
+              className="hover:opacity-70 transition-opacity flex items-center gap-1.5"
             >
               <Instagram className="w-4 h-4" />
+              <span className="hidden sm:inline">Instagram</span>
             </a>
           </div>
         </div>
