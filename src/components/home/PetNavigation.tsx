@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -26,7 +25,7 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐶', 
     filter: 'Perro', 
     messages: [
-      'Escuchando:\nEl baile del perrito 🎺🐶',
+      '¿Escuchaste eso?\n¡Shakira dijo que las perras ya no lloran, facturan! 💃🐾',
       'Pensando:\n¿A qué hora vamos al parque? 🌳',
       'Viendo:\nMarley y Yo (preparando pañuelos) 😢',
       'Comiendo:\nUn rico huesito 🦴'
@@ -48,7 +47,7 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🦜', 
     filter: 'Aves', 
     messages: [
-      'Escuchando:\nCucurrucucú paloma 🎶🕊️',
+      'Cucurrucucú paloma...\n¡Y que nadie me diga cómo volar! 🎶🕊️',
       'Viendo:\nRio (buscando mi samba) 🇧🇷',
       'Comiendo:\nSemillas y más semillas 🌻'
     ]
@@ -59,7 +58,7 @@ const SPECIES_DATA: SpeciesData[] = [
     filter: 'Conejo y Roedor', 
     messages: [
       'Escuchando:\nEl ratón vaquero 🤠🐭',
-      'Viendo:\nZootopia (Judy Hopps fan) 👮‍♀️',
+      'Bad Bunny...\n¡Yo no soy conejo malo, soy el más tierno! 🥕🐰',
       'Comiendo:\nZanahoria de mi corazón 🥕'
     ]
   },
@@ -68,7 +67,7 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐠', 
     filter: 'Peces y Tortugas', 
     messages: [
-      'Escuchando:\nBurbujas de amor 🫧🎵',
+      'Juan Luis Guerra...\n¡Quisiera ser un pez para tocar mi nariz en tu pecera! 🫧🎵',
       'Viendo:\nBuscando a Nemo 🔍',
       'Pensando:\nMi burbuja es mi castillo 🏰'
     ]
@@ -156,9 +155,9 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                       <span className="text-[9px] font-black uppercase tracking-widest">Asesoría IA</span>
                     </button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[3rem] border-none">
+                  <DialogContent className="max-w-xl p-0 overflow-hidden rounded-[3rem] border-none">
                     <DialogTitle className="sr-only">Asesoría de Productos para {species.name}</DialogTitle>
-                    <ProductAssistant defaultBreed={species.filter} />
+                    <ProductAssistant species={species.filter} emoji={species.emoji} />
                   </DialogContent>
                 </Dialog>
               </div>

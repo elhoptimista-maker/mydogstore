@@ -1,71 +1,94 @@
 'use server';
 /**
- * @fileOverview Un asistente impulsado por IA que recomienda productos para mascotas basados en su raza, edad y necesidades específicas.
- *
- * - intelligentProductAssistant - Función que maneja el proceso de recomendación de productos.
+ * @fileOverview Un asistente de ventas consultivas que recomienda productos en tiempo real.
+ * Integra el catálogo real de productos filtrado por especie para dar respuestas precisas.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getSanitizedProducts } from '@/lib/services/catalog.service';
 
-const IntelligentProductAssistantInputSchema = z.object({
-  dogBreed: z.string().optional().describe('La raza de la mascota (ej: "Golden Retriever", "Poodle").'),
-  dogAge: z.string().optional().describe('La edad o etapa de vida (ej: "Cachorro", "Adulto", "Senior").'),
-  specificNeeds: z.string().optional().describe('Cualquier necesidad específica o condición (ej: "estómago sensible", "energía alta", "soporte articular").'),
-  additionalInfo: z.string().optional().describe('Información adicional relevante.'),
-});
-export type IntelligentProductAssistantInput = z.infer<typeof IntelligentProductAssistantInputSchema>;
-
-const IntelligentProductAssistantOutputSchema = z.object({
-  recommendations: z.array(z.object({
-    productName: z.string().describe('El nombre del producto recomendado.'),
-    productDescription: z.string().describe('Una breve descripción del producto.'),
-    reasonForRecommendation: z.string().describe('La justificación técnica de la recomendación basada en los datos proporcionados.'),
-  })).describe('Una lista de productos recomendados.'),
-});
-export type IntelligentProductAssistantOutput = z.infer<typeof IntelligentProductAssistantOutputSchema>;
-
-const intelligentProductAssistantPrompt = ai.definePrompt({
-  name: 'intelligentProductAssistantPrompt',
-  input: {schema: IntelligentProductAssistantInputSchema},
-  output: {schema: IntelligentProductAssistantOutputSchema},
-  prompt: `Eres un experto en nutrición y bienestar animal. Tu objetivo es recomendar productos adecuados para una mascota basándote en los detalles proporcionados.
-
-  Usa siempre un español neutro y profesional. Evita modismos o jerga local.
-
-  Considera la siguiente información:
-  {{#if dogBreed}}
-  Raza: {{{dogBreed}}}
-  {{/if}}
-  {{#if dogAge}}
-  Edad: {{{dogAge}}}
-  {{/if}}
-  {{#if specificNeeds}}
-  Necesidades Específicas: {{{specificNeeds}}}
-  {{/if}}
-  {{#if additionalInfo}}
-  Información Adicional: {{{additionalInfo}}}
-  {{/if}}
-
-  Basado en esto, recomienda entre 3 y 5 productos del catálogo. Para cada uno, entrega su nombre, descripción y una razón clara de la recomendación. Si no hay suficiente información, ofrece recomendaciones generales pero fundamentadas.
-  `
+const MessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
 });
 
-const intelligentProductAssistantFlow = ai.defineFlow(
+const ProductChatInputSchema = z.object({
+  species: z.string().describe('La especie de la mascota (ej: Perro, Gato).'),
+  history: z.array(MessageSchema).describe('El historial de la conversación actual.'),
+  message: z.string().describe('El mensaje enviado por el usuario.'),
+});
+
+export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
+
+const ProductChatOutputSchema = z.object({
+  response: z.string().describe('La respuesta del asistente.'),
+  suggestedProducts: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    reason: z.string(),
+  })).optional().describe('Opcional: Productos específicos recomendados del catálogo.'),
+});
+
+export type ProductChatOutput = z.infer<typeof ProductChatOutputSchema>;
+
+const productChatPrompt = ai.definePrompt({
+  name: 'productChatPrompt',
+  input: {schema: ProductChatInputSchema.extend({
+    catalog: z.array(z.any()).describe('Productos disponibles para esta especie.'),
+  })},
+  output: {schema: ProductChatOutputSchema},
+  prompt: `Eres un experto en nutrición y bienestar animal de MyDog Store. Estás ayudando a un cliente a elegir lo mejor para su mascota ({{{species}}}).
+
+  REGLAS DE ORO:
+  1. Sé amable, profesional y usa un tono de "venta consultiva".
+  2. Si no sabes la edad o necesidades, PREGUNTA amablemente (cachorro, adulto, senior, sensibilidades).
+  3. Usa ÚNICAMENTE los productos del catálogo proporcionado.
+  4. Si recomiendas productos, incluye el ID exacto y la razón técnica en el campo 'suggestedProducts'.
+
+  CATÁLOGO DISPONIBLE PARA {{{species}}}:
+  {{#each catalog}}
+  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Desc: {{short_description}}
+  {{/each}}
+
+  HISTORIAL DE CHAT:
+  {{#each history}}
+  {{role}}: {{{content}}}
+  {{/each}}
+
+  MENSAJE DEL USUARIO:
+  {{{message}}}
+
+  Responde de forma concisa y guiando al usuario hacia la compra.`,
+});
+
+const productChatFlow = ai.defineFlow(
   {
-    name: 'intelligentProductAssistantFlow',
-    inputSchema: IntelligentProductAssistantInputSchema,
-    outputSchema: IntelligentProductAssistantOutputSchema,
+    name: 'productChatFlow',
+    inputSchema: ProductChatInputSchema,
+    outputSchema: ProductChatOutputSchema,
   },
   async (input) => {
-    const {output} = await intelligentProductAssistantPrompt(input);
+    // Obtener productos reales y filtrar por especie
+    const allProducts = await getSanitizedProducts();
+    const speciesCatalog = allProducts.filter(p => 
+      p.species.toLowerCase().includes(input.species.toLowerCase()) ||
+      input.species.toLowerCase().includes(p.species.toLowerCase())
+    );
+
+    const {output} = await productChatPrompt({
+      ...input,
+      catalog: speciesCatalog,
+    });
+
     if (!output) {
-      throw new Error('No se pudieron generar las recomendaciones.');
+      throw new Error('Error al generar respuesta del chat.');
     }
+
     return output;
   }
 );
 
-export async function intelligentProductAssistant(input: IntelligentProductAssistantInput): Promise<IntelligentProductAssistantOutput> {
-  return intelligentProductAssistantFlow(input);
+export async function productChat(input: ProductChatInput): Promise<ProductChatOutput> {
+  return productChatFlow(input);
 }
