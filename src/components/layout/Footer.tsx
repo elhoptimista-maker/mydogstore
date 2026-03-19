@@ -7,13 +7,14 @@ import { Button } from '@/components/ui/button';
 
 /**
  * @fileOverview Footer Masivo estructurado según el punto 14 del PRD.
+ * Ajustado para ocupar el alto restante de la ventana y usar el tono gris global.
  */
 
 export default function Footer() {
   return (
-    <footer className="w-full">
-      {/* 1. Newsletter Row */}
-      <div className="bg-[#FEF9F3] pt-12 md:pt-16 pb-20 md:pb-28 text-center border-t border-black/[0.03]">
+    <footer className="w-full min-h-[calc(100vh-176px)] flex flex-col">
+      {/* 1. Newsletter Row - Ahora con fondo gris global */}
+      <div className="bg-[#F6F6F6] pt-16 pb-20 md:pb-28 text-center border-t border-black/[0.03]">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
           <div className="space-y-2">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Únete a la manada <span className="text-primary">MyDog</span></h2>
@@ -34,9 +35,9 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* 2. Main Footer Row */}
-      <div className="bg-primary text-white py-12 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-12 relative z-20 shadow-2xl">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
+      {/* 2. Main Footer Row - Se expande para llenar el alto restante */}
+      <div className="bg-primary text-white py-16 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-12 relative z-20 shadow-2xl flex-1 flex flex-col justify-between">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           {/* Logo & Social */}
           <div className="md:col-span-2 space-y-6">
             <Link href="/" className="flex items-center gap-3">
@@ -99,7 +100,7 @@ export default function Footer() {
         </div>
         
         {/* 3. Bottom Row */}
-        <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">
+        <div className="max-w-7xl mx-auto w-full mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">
           <p>© 2024 MYDOG DISTRIBUIDORA SPA. TODOS LOS DERECHOS RESERVADOS.</p>
           <div className="flex gap-4 opacity-40 grayscale">
             <div className="bg-white px-2 py-1 rounded text-black font-sans font-bold">VISA</div>
