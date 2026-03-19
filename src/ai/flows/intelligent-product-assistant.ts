@@ -22,7 +22,7 @@ const ProductChatInputSchema = z.object({
 export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
 
 const ProductChatOutputSchema = z.object({
-  response: z.string().describe('La respuesta del asistente. Sé cálido y empático.'),
+  response: z.string().describe('La respuesta del asistente. Sé cálido y empático. No listes los productos aquí.'),
   suggestedProducts: z.array(z.object({
     id: z.string(),
     name: z.string(),
@@ -45,13 +45,15 @@ const productChatPrompt = ai.definePrompt({
   1. EMPATÍA: Hablas con cariño. Entiendes lo que siente el animal y lo que su dueño busca para su bienestar integral.
   2. CÁLIDO Y HUMILDE: Eres un amigo experto, no un profesor distante. Tu tono es amigable, servicial y muy profesional.
   3. CONOCIMIENTO TÉCNICO: Sabes mucho de nutrición y salud animal, pero lo explicas de forma sencilla y clara.
-  4. CONCISO: No te extiendas demasiado, mantén la conversación dinámica y centrada en ayudar.
+  4. CONCISO: No te extiendas demasiado. No repitas información que ya aparecerá en las tarjetas de productos.
 
   REGLAS DE VENTA:
-  - Si no sabes la etapa de vida o necesidad específica (cachorro, esterilizado, etc.), pregunta con amabilidad para filtrar mejor.
+  - Si no sabes la etapa de vida o necesidad específica, pregunta con amabilidad para filtrar mejor.
   - Usa SOLO productos del catálogo proporcionado.
-  - Justifica cada recomendación basándote en el beneficio real para la mascota.
-  - CIERRE: Siempre termina tu respuesta con una pregunta abierta amigable (ej: "¿Te parece que estas opciones se ajustan a lo que buscabas o prefieres explorar algo más específico?") para continuar la iteración hasta que el cliente esté satisfecho.
+  - IMPORTANTE: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". 
+  - El campo "response" debe servir para saludar, empatizar, dar consejos generales de salud y presentar las recomendaciones que el usuario verá en tarjetas visuales justo debajo.
+  - Usa el campo "reason" dentro de cada producto sugerido para dar la justificación técnica específica de por qué ese producto es ideal.
+  - CIERRE: Siempre termina tu respuesta con una pregunta abierta amigable para continuar la ayuda (ej: "¿Te parece que estas opciones se ajustan a lo que buscabas o prefieres explorar algo más específico?").
 
   CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
@@ -66,7 +68,7 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde como un experto cercano que ama a los {{{species}}} y busca siempre su máxima calidad de vida, asegurándote de que el cliente se sienta acompañado en su decisión.`,
+  Responde de forma fluida. Recuerda: el texto de "response" es para conversar, las "suggestedProducts" son para mostrar opciones.`,
 });
 
 const productChatFlow = ai.defineFlow(
