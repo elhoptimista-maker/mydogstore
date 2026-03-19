@@ -11,11 +11,14 @@ import { cn } from '@/lib/utils';
  * Implementa el estilo de "Notas de Instagram" con posicionamiento aleatorio de punteros.
  */
 
-interface PetNavigationProps {
-  products: SanitizedProduct[];
+interface SpeciesData {
+  name: string;
+  emoji: string;
+  filter: string;
+  messages: string[];
 }
 
-const SPECIES_DATA = [
+const SPECIES_DATA: SpeciesData[] = [
   { 
     name: 'Perros', 
     emoji: '🐶', 
@@ -78,7 +81,7 @@ const SPECIES_DATA = [
   },
 ];
 
-export default function PetNavigation({ products }: PetNavigationProps) {
+export default function PetNavigation({ products }: { products: SanitizedProduct[] }) {
   const [mounted, setMounted] = useState(false);
   const [randomIndices, setRandomIndices] = useState<number[]>([]);
   const [randomSides, setRandomSides] = useState<boolean[]>([]);
@@ -110,29 +113,29 @@ export default function PetNavigation({ products }: PetNavigationProps) {
               href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
               className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
             >
-              {/* Burbuja de Pensamiento */}
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
-                <div className="bg-white px-5 py-3 rounded-[1.8rem] border border-black/[0.06] relative min-w-[140px] max-w-[180px] text-center shadow-none">
+              {/* Burbuja de Pensamiento (Contenedor Principal) */}
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
+                <div className="bg-white px-5 py-4 rounded-[1.8rem] border border-black/[0.06] relative min-w-[140px] max-w-[180px] text-center shadow-none">
                   <span className="text-[11px] font-medium text-zinc-800 uppercase tracking-tight leading-snug block whitespace-pre-line">
                     {message}
                   </span>
                   
-                  {/* Cola de la burbuja (Triángulo) */}
+                  {/* Círculo Mediano de conexión */}
                   <div className={cn(
-                    "absolute -bottom-1.5 w-4 h-4 bg-white border-b border-r border-black/[0.06] rotate-45 rounded-sm",
+                    "absolute -bottom-1 w-4 h-4 bg-white border border-black/[0.06] rounded-full",
                     isLeft ? "left-6" : "right-6"
+                  )} />
+                  
+                  {/* Círculo Pequeño de conexión (el que solapa el avatar) */}
+                  <div className={cn(
+                    "absolute -bottom-4 w-2.5 h-2.5 bg-white border border-black/[0.06] rounded-full",
+                    isLeft ? "left-10" : "right-10"
                   )} />
                 </div>
               </div>
 
-              {/* Icono Mascota y Círculo Decorativo */}
+              {/* Icono Mascota */}
               <div className="relative">
-                {/* Pequeño círculo de "pensamiento" */}
-                <div className={cn(
-                  "absolute w-2.5 h-2.5 bg-white rounded-full border border-black/[0.06] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-                  isLeft ? "top-1 left-4" : "top-1 right-4"
-                )} />
-
                 <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
                   <span className="text-5xl md:text-6xl">{species.emoji}</span>
                   <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
