@@ -5,6 +5,8 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
+import { ChatProvider } from '@/context/ChatContext';
+import ProductAssistant from '@/components/ProductAssistant';
 
 export const metadata: Metadata = {
   title: 'MyDog Distribuidora | Expertos en Nutrición Mascotas 🐾',
@@ -27,12 +29,15 @@ export default function RootLayout({
     <html lang="es">
       <body className="font-sans antialiased selection:bg-primary/20 bg-background text-foreground">
         <CartProvider>
-          <Header />
-          <main className="min-h-screen pt-44 pb-0">
-            {children}
-          </main>
-          <Footer />
-          <Toaster />
+          <ChatProvider>
+            <Header />
+            <main className="min-h-screen pt-44 pb-0">
+              {children}
+            </main>
+            <Footer />
+            <ProductAssistant />
+            <Toaster />
+          </ChatProvider>
         </CartProvider>
       </body>
     </html>

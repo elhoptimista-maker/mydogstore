@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -5,8 +6,7 @@ import Link from 'next/link';
 import { SanitizedProduct } from '@/types/product';
 import { cn } from '@/lib/utils';
 import { Sparkles } from 'lucide-react';
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
-import ProductAssistant from '@/components/ProductAssistant';
+import { useChat } from '@/context/ChatContext';
 
 /**
  * @fileOverview Componente de navegación por mascota con integración de Asistente IA para venta consultiva.
@@ -75,6 +75,7 @@ const SPECIES_DATA: SpeciesData[] = [
 ];
 
 export default function PetNavigation({ products }: { products: SanitizedProduct[] }) {
+  const { toggleChat } = useChat();
   const [mountedState, setMountedState] = useState<{
     randomIndices: number[];
     randomSides: boolean[];
@@ -147,19 +148,14 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                   </span>
                 </div>
 
-                {/* Trigger del Asistente Consultivo */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button className="flex items-center gap-2 bg-secondary/10 hover:bg-secondary text-primary px-4 py-1.5 rounded-full transition-all group/btn">
-                      <Sparkles className="w-3 h-3 text-secondary group-hover/btn:text-primary" />
-                      <span className="text-[9px] font-black uppercase tracking-widest">Asesoría IA</span>
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-xl p-0 overflow-hidden rounded-[3rem] border-none">
-                    <DialogTitle className="sr-only">Asesoría de Productos para {species.name}</DialogTitle>
-                    <ProductAssistant species={species.filter} emoji={species.emoji} />
-                  </DialogContent>
-                </Dialog>
+                {/* Trigger del Asistente Flotante Global */}
+                <button 
+                  onClick={() => toggleChat(species.filter)}
+                  className="flex items-center gap-2 bg-secondary/10 hover:bg-secondary text-primary px-4 py-1.5 rounded-full transition-all group/btn shadow-sm"
+                >
+                  <Sparkles className="w-3 h-3 text-secondary group-hover/btn:text-primary" />
+                  <span className="text-[9px] font-black uppercase tracking-widest">Asesoría IA</span>
+                </button>
               </div>
             </div>
           );
