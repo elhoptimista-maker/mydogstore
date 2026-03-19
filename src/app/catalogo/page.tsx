@@ -16,30 +16,31 @@ export const metadata = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ 
-    page?: string; 
-    limit?: string;
-    categoria?: string;
-    marca?: string;
-    especie?: string;
-    sort?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    q?: string;
-  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function CatalogoPage({ searchParams }: PageProps) {
-  const params = await searchParams;
+export default async function CatalogoPage(props: PageProps) {
+  const searchParams = await props.searchParams;
   
+  // Extraer parámetros de búsqueda de forma segura
+  const q = typeof searchParams.q === 'string' ? searchParams.q : undefined;
+  const categoria = typeof searchParams.categoria === 'string' ? searchParams.categoria : undefined;
+  const marca = typeof searchParams.marca === 'string' ? searchParams.marca : undefined;
+  const especie = typeof searchParams.especie === 'string' ? searchParams.especie : undefined;
+  const sort = typeof searchParams.sort === 'string' ? searchParams.sort : undefined;
+  const minPrice = typeof searchParams.minPrice === 'string' ? searchParams.minPrice : undefined;
+  const maxPrice = typeof searchParams.maxPrice === 'string' ? searchParams.maxPrice : undefined;
+  const page = typeof searchParams.page === 'string' ? searchParams.page : '1';
+  const limit = typeof searchParams.limit === 'string' ? searchParams.limit : '25';
+
   // 1. Obtener solo productos con stock del ERP
   const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
   
   // 2. Aplicar Filtros
   let filteredProducts = [...allProducts];
 
-  if (params.q) {
-    const query = params.q.toLowerCase();
+  if (q) {
+    const query = q.toLowerCase();
     filteredProducts = filteredProducts.filter(p => 
       p.name.toLowerCase().includes(query) || 
       p.brand.toLowerCase().includes(query) ||
@@ -47,41 +48,54 @@ export default async function CatalogoPage({ searchParams }: PageProps) {
     );
   }
 
-  if (params.categoria) {
-    const cats = params.categoria.split(',');
+  if (categoria) {
+    const cats = categoria.split(',');
     filteredProducts = filteredProducts.filter(p => cats.includes(p.category));
   }
 
-  if (params.marca) {
-    const marcas = params.marca.split(',');
+  if (marca) {
+    const marcas = marca.split(',');
     filteredProducts = filteredProducts.filter(p => marcas.includes(p.brand));
   }
 
-  if (params.especie) {
-    const especies = params.especie.split(',');
+  if (especie) {
+    const especies = especie.split(',');
     filteredProducts = filteredProducts.filter(p => especies.includes(p.species));
   }
 
-  if (params.minPrice || params.maxPrice) {
-    const min = parseInt(params.minPrice || '0');
-    const max = parseInt(params.maxPrice || '999999');
+  if (minPrice || maxPrice) {
+    const min = parseInt(minPrice || '0');
+    const max = parseInt(maxPrice || '999999');
     filteredProducts = filteredProducts.filter(p => p.sellingPrice >= min && p.sellingPrice <= max);
   }
 
   // 3. Aplicar Ordenamiento
-  if (params.sort === 'price-asc') {
+  if (sort === 'price-asc') {
     filteredProducts.sort((a, b) => a.sellingPrice - b.sellingPrice);
-  } else if (params.sort === 'price-desc') {
+  } else if (sort === 'price-desc') {
     filteredProducts.sort((a, b) => b.sellingPrice - a.sellingPrice);
   }
 
   // 4. Paginación
-  const currentPage = parseInt(params.page || '1', 10);
-  const itemsPerPage = parseInt(params.limit || '25', 10);
+  const currentPage = parseInt(page, 10);
+  const itemsPerPage = parseInt(limit, 10);
   const totalProducts = filteredProducts.length;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+
+  // Helper para construir URLs de paginación
+  const getPaginationUrl = (p: number) => {
+    const params = new URLSearchParams();
+    params.set('page', p.toString());
+    params.set('limit', itemsPerPage.toString());
+    if (categoria) params.set('categoria', categoria);
+    if (marca) params.set('marca', marca);
+    if (especie) params.set('especie', especie);
+    if (sort) params.set('sort', sort);
+    if (q) params.set('q', q);
+    return `/catalogo?${params.toString()}`;
+  };
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-20">
@@ -144,7 +158,7 @@ export default async function CatalogoPage({ searchParams }: PageProps) {
                   className="w-12 h-12 rounded-full font-black bg-white shadow-sm border border-black/5 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
                 >
                   {currentPage > 1 ? (
-                    <Link href={`/catalogo?page=${currentPage - 1}&limit=${itemsPerPage}${params.categoria ? `&categoria=${params.categoria}` : ''}${params.marca ? `&marca=${params.marca}` : ''}${params.sort ? `&sort=${params.sort}` : ''}`}>
+                    <Link href={getPaginationUrl(currentPage - 1)}>
                       <ChevronLeft className="w-5 h-5" />
                     </Link>
                   ) : (
@@ -171,7 +185,7 @@ export default async function CatalogoPage({ searchParams }: PageProps) {
                         )}
                       >
                         {currentPage !== p ? (
-                          <Link href={`/catalogo?page=${p}&limit=${itemsPerPage}${params.categoria ? `&categoria=${params.categoria}` : ''}${params.marca ? `&marca=${params.marca}` : ''}${params.sort ? `&sort=${params.sort}` : ''}`}>
+                          <Link href={getPaginationUrl(p)}>
                             {p.toString().padStart(2, '0')}
                           </Link>
                         ) : (
@@ -189,7 +203,7 @@ export default async function CatalogoPage({ searchParams }: PageProps) {
                   className="w-12 h-12 rounded-full font-black bg-white shadow-sm border border-black/5 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
                 >
                   {currentPage < totalPages ? (
-                    <Link href={`/catalogo?page=${currentPage + 1}&limit=${itemsPerPage}${params.categoria ? `&categoria=${params.categoria}` : ''}${params.marca ? `&marca=${params.marca}` : ''}${params.sort ? `&sort=${params.sort}` : ''}`}>
+                    <Link href={getPaginationUrl(currentPage + 1)}>
                       <ChevronRight className="w-5 h-5" />
                     </Link>
                   ) : (

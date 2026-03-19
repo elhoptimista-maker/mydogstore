@@ -11,8 +11,9 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function ProductoDetallePage({ params }: PageProps) {
-  const { id } = await params;
+export default async function ProductoDetallePage(props: PageProps) {
+  const params = await props.params;
+  const id = params.id;
   const product = await getSanitizedProductById(id);
 
   if (!product) {
@@ -79,7 +80,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
              {[
                { icon: <Scale className="w-4 h-4" />, label: "Peso", val: `${product.weight_kg}kg` },
                { icon: <Dog className="w-4 h-4" />, label: "Etapa", val: product.life_stage },
-               { icon: <Briefcase className="w-4 h-4" />, label: "Formato", val: "Unidad" }, // Opcional: añadir a SanitizedProduct
+               { icon: <Briefcase className="w-4 h-4" />, label: "Formato", val: "Unidad" }, 
                { icon: <Dog className="w-4 h-4" />, label: "Especie", val: product.species }
              ].map((attr, i) => (
                <div key={i} className="bg-muted/30 p-3 rounded-2xl space-y-1">
