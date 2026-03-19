@@ -4,20 +4,21 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Loader2, Send, Briefcase, ChevronDown, MessageCircle, Dog, ShoppingCart, Info } from 'lucide-react';
+import { Sparkles, Loader2, Send, ChevronDown, MessageCircle } from 'lucide-react';
 import { productChat } from '@/ai/flows/intelligent-product-assistant';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useChat } from '@/context/ChatContext';
 import { cn } from '@/lib/utils';
 
 const EXPERTS = [
-  { name: 'Perro', emoji: '🐶', color: 'bg-primary' },
-  { name: 'Gato', emoji: '🐱', color: 'bg-orange-500' },
-  { name: 'Aves', emoji: '🦜', color: 'bg-green-500' },
-  { name: 'Conejo y Roedor', emoji: '🐰', color: 'bg-blue-500' },
-  { name: 'Peces y Tortugas', emoji: '🐠', color: 'bg-cyan-500' },
+  { name: 'Perro', emoji: '🐶', color: 'bg-primary', description: 'Esencia Canina' },
+  { name: 'Gato', emoji: '🐱', color: 'bg-orange-500', description: 'Alma Felina' },
+  { name: 'Aves', emoji: '🦜', color: 'bg-green-500', description: 'Espíritu Alado' },
+  { name: 'Conejo y Roedor', emoji: '🐰', color: 'bg-blue-500', description: 'Corazón Silvestre' },
+  { name: 'Peces y Tortugas', emoji: '🐠', color: 'bg-cyan-500', description: 'Ser Acuático' },
 ];
 
 const QUICK_ACTIONS = ["Cachorro", "Adulto", "Senior", "Sensibilidad", "Ofertas"];
@@ -39,9 +40,10 @@ export default function ProductAssistant() {
 
   useEffect(() => {
     if (activeSpecies && (!messages[activeSpecies] || messages[activeSpecies].length === 0)) {
+      const expert = EXPERTS.find(e => e.name === activeSpecies);
       addMessage(activeSpecies, {
         role: 'assistant',
-        content: `¡Hola! 🐾 Soy tu experto en ${activeSpecies}. Para darte la mejor recomendación técnica, ¿cuál es la etapa de vida o necesidad de tu peludo?`
+        content: `¡Hola! 🐾 Siento una conexión muy especial contigo. Mi esencia es de ${activeSpecies} y entiendo profundamente lo que tu compañero necesita. Para guiarte desde el corazón, ¿me podrías contar si es cachorro, adulto o senior?`
       });
     }
   }, [activeSpecies]);
@@ -51,8 +53,7 @@ export default function ProductAssistant() {
     if (!text.trim() || loading || !activeSpecies) return;
 
     const userMessage = text.trim();
-    if (!e) setInput(''); // If it's a button click, we don't clear input since it might be empty
-    else setInput('');
+    setInput('');
     
     addMessage(activeSpecies, { role: 'user', content: userMessage });
     setLoading(true);
@@ -74,7 +75,7 @@ export default function ProductAssistant() {
     } catch (error) {
       addMessage(activeSpecies, { 
         role: 'assistant', 
-        content: "Lo siento, tuve un pequeño problema técnico. ¿Podrías repetirme eso?" 
+        content: "Lo siento, mi conexión se nubló un poco. ¿Podrías repetirme eso?" 
       });
     } finally {
       setLoading(false);
@@ -108,9 +109,9 @@ export default function ProductAssistant() {
           </div>
           <div>
             <h3 className="text-xl font-black leading-none tracking-tight">
-              {activeExpert ? `Experto ${activeSpecies}` : 'Asistente MyDog'}
+              {activeExpert ? `${activeExpert.description}` : 'Guía MyDog'}
             </h3>
-            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Asesoría Técnica</p>
+            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Venta Consultiva</p>
           </div>
         </div>
         <button 
@@ -125,8 +126,8 @@ export default function ProductAssistant() {
       {!activeSpecies ? (
         <div className="flex-1 flex flex-col p-8 space-y-8 bg-[#F9FAFB]">
           <div className="text-center space-y-2">
-            <h4 className="text-lg font-black text-foreground">¿Con quién hablamos hoy?</h4>
-            <p className="text-xs font-medium text-muted-foreground">Elige un experto para comenzar.</p>
+            <h4 className="text-lg font-black text-foreground tracking-tight">¿Quién necesita mi ayuda hoy?</h4>
+            <p className="text-xs font-medium text-muted-foreground">Habla con uno de nuestros guías espirituales.</p>
           </div>
           <div className="grid grid-cols-1 gap-3">
             {EXPERTS.map((expert) => (
@@ -140,7 +141,7 @@ export default function ProductAssistant() {
                 </div>
                 <div className="flex-1">
                   <span className="block text-sm font-black text-foreground uppercase tracking-widest mb-1">{expert.name}</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">Especialista MyDog</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">{expert.description}</span>
                 </div>
                 <Sparkles className="w-4 h-4 text-secondary opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
@@ -168,14 +169,19 @@ export default function ProductAssistant() {
                     <div className="grid grid-cols-1 gap-3 w-full max-w-[95%] mt-4">
                       {msg.recommendations.map((rec, idx) => (
                         <Link key={idx} href={`/catalogo/${rec.id}`} className="group">
-                          <div className="bg-white p-4 rounded-3xl border border-primary/10 hover:border-primary/40 transition-all shadow-md flex items-center gap-4 group-hover:-translate-y-1">
-                            <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
-                              <Briefcase className="w-6 h-6" />
+                          <div className="bg-white p-3 rounded-3xl border border-primary/10 hover:border-primary/40 transition-all shadow-md flex items-center gap-4 group-hover:-translate-y-1">
+                            <div className="relative w-16 h-16 bg-muted rounded-2xl overflow-hidden shrink-0 border border-black/5">
+                              <Image 
+                                src={rec.image} 
+                                alt={rec.name} 
+                                fill 
+                                className="object-contain p-2"
+                              />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between mb-1">
-                                <h5 className="text-xs font-black text-primary truncate uppercase tracking-tighter">{rec.name}</h5>
-                                <Badge className="bg-secondary/20 text-primary border-none text-[8px] font-black uppercase">Ver</Badge>
+                                <h5 className="text-[11px] font-black text-primary truncate uppercase tracking-tighter pr-2">{rec.name}</h5>
+                                <Badge className="bg-secondary/20 text-primary border-none text-[8px] font-black uppercase shrink-0">Ver</Badge>
                               </div>
                               <p className="text-[10px] text-muted-foreground font-medium italic leading-tight line-clamp-2">{rec.reason}</p>
                             </div>
@@ -208,7 +214,7 @@ export default function ProductAssistant() {
                     <Loader2 className="w-4 h-4 text-primary animate-spin" />
                   </div>
                   <div className="bg-white p-3 rounded-2xl border border-black/5 text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                    Consultando experto...
+                    Conectando con el alma animal...
                   </div>
                 </div>
               )}
@@ -222,16 +228,16 @@ export default function ProductAssistant() {
                  onClick={() => setActiveSpecies(null)}
                  className="text-[9px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1"
                >
-                 Cambiar Experto
+                 Elegir otro guía
                </button>
                <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">En línea</span>
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Sintonizado</span>
                </div>
             </div>
             <form onSubmit={(e) => handleSend(input, e)} className="flex gap-2">
               <Input 
-                placeholder="Pregunta algo aquí..." 
+                placeholder="Cuéntame de tu compañero..." 
                 className="flex-1 h-12 rounded-2xl border-none bg-muted/30 focus-visible:ring-primary/20 font-bold text-sm"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
