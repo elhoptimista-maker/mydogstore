@@ -1,19 +1,23 @@
+
 import { getSanitizedProducts } from '@/lib/services/catalog.service';
-import PetNavigation from '@/components/home/PetNavigation';
 import Hero from '@/components/home/Hero';
+import PetNavigation from '@/components/home/PetNavigation';
+import PromotionalBanners from '@/components/home/PromotionalBanners';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
+import FlashDeal from '@/components/home/FlashDeal';
 import SocialProof from '@/components/home/SocialProof';
+import BlogSection from '@/components/home/BlogSection';
+import InstagramGallery from '@/components/home/InstagramGallery';
 import TrustBar from '@/components/home/TrustBar';
 
 /**
- * @fileOverview Página principal (Home) refactorizada con componentes aislados.
+ * @fileOverview Página principal (Home) compuesta íntegramente por componentes modulares.
+ * Sigue fielmente la anatomía y jerarquía definida en el PRD.
  */
 
 export default async function Home() {
-  // Consumo del servicio de catálogo sanitizado
   const products = await getSanitizedProducts();
   
-  // Seleccionamos los destacados para la home: con stock y mayor cantidad disponible
   const featuredProducts = products
     .filter(p => p.currentStock > 0)
     .sort((a, b) => b.currentStock - a.currentStock)
@@ -21,19 +25,31 @@ export default async function Home() {
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen">
-      {/* Hero Section */}
+      {/* 1. Hero Impresión Inicial */}
       <Hero />
 
-      {/* Navegación por Mascota */}
+      {/* 2. Navegación por Mascota (Burbujas) */}
       <PetNavigation products={products} />
 
-      {/* Grilla de Productos Destacados */}
+      {/* 3. Banners Promocionales (Super-Cards) */}
+      <PromotionalBanners />
+
+      {/* 4. Productos Destacados */}
       <FeaturedProducts products={featuredProducts} />
 
-      {/* Prueba Social */}
+      {/* 5. Oferta Relámpago */}
+      <FlashDeal />
+
+      {/* 6. Prueba Social (Testimonios) */}
       <SocialProof />
 
-      {/* Barra de Confianza */}
+      {/* 7. Noticias y Blog */}
+      <BlogSection />
+
+      {/* 8. Galería Instagram */}
+      <InstagramGallery />
+
+      {/* 9. Barra de Confianza */}
       <TrustBar />
     </div>
   );
