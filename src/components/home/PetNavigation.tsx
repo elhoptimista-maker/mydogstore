@@ -5,7 +5,6 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { SanitizedProduct } from '@/types/product';
 import { cn } from '@/lib/utils';
-import { Sparkles } from 'lucide-react';
 import { useChat } from '@/context/ChatContext';
 
 /**
@@ -154,15 +153,6 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                     ({count} productos)
                   </Link>
                 </div>
-
-                {/* Trigger del Asistente Flotante Global */}
-                <button 
-                  onClick={() => toggleChat(species.filter)}
-                  className="flex items-center gap-2 bg-secondary/10 hover:bg-secondary text-primary px-4 py-1.5 rounded-full transition-all group/btn shadow-sm"
-                >
-                  <Sparkles className="w-3 h-3 text-secondary group-hover/btn:text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest">Preguntar a Experto</span>
-                </button>
               </div>
             </div>
           );
