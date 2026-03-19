@@ -87,7 +87,7 @@ export default function CuentaPage() {
         </section>
       )}
 
-      <div className={cn("max-w-7xl mx-auto px-4 lg:px-8", !user && "pt-24 md:pt-32")}>
+      <div className={cn("max-w-7xl mx-auto px-4 lg:px-8", !user ? "pt-12 md:pt-16" : "pt-0")}>
         {!user ? (
           /* Formulario de Login/Registro Simplificado */
           <div className="max-w-md mx-auto space-y-10">
