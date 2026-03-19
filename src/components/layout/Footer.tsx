@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 
 /**
- * @fileOverview Footer Masivo con integración de WhatsApp y visibilidad condicional del Newsletter.
+ * @fileOverview Footer Masivo optimizado para eliminar espacios innecesarios.
  */
 
 export default function Footer() {
@@ -17,19 +17,17 @@ export default function Footer() {
   const whatsappNumber = "56912345678";
   const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
-  // Aseguramos que el componente esté montado para evitar errores de hidratación
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Determinamos si estamos en la página de cuenta para ocultar el Newsletter
   const isAccountPage = mounted && pathname === '/cuenta';
 
   return (
     <footer className="w-full flex flex-col">
       {/* 1. Newsletter Row - Solo visible fuera de la página de cuenta */}
       {!isAccountPage && (
-        <div className="bg-[#F6F6F6] pt-12 pb-16 text-center border-t border-black/[0.03]">
+        <div className="bg-[#F6F6F6] pt-8 pb-12 text-center border-t border-black/[0.03]">
           <div className="max-w-4xl mx-auto px-4 space-y-6">
             <div className="space-y-2">
               <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Únete a la manada <span className="text-primary">MyDog</span></h2>
@@ -52,10 +50,10 @@ export default function Footer() {
       )}
 
       {/* 2. Main Footer Row */}
-      <div className="bg-primary text-white py-12 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-10 relative z-20 shadow-2xl">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
+      <div className="bg-primary text-white pt-10 pb-6 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-10 relative z-20 shadow-2xl">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Logo & Social */}
-          <div className="md:col-span-2 space-y-6">
+          <div className="md:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm">
                 <Dog className="w-8 h-8 text-white" />
@@ -91,7 +89,7 @@ export default function Footer() {
           {/* Links */}
           <div className="space-y-4">
             <h4 className="font-black text-[10px] uppercase tracking-[0.3em] text-secondary">Tienda</h4>
-            <ul className="space-y-3 text-sm font-bold text-white/70">
+            <ul className="space-y-2 text-sm font-bold text-white/70">
               <li><Link href="/catalogo" className="hover:text-white transition-all">Alimentos</Link></li>
               <li><Link href="/catalogo" className="hover:text-white transition-all">Snacks</Link></li>
               <li><Link href="/catalogo" className="hover:text-white transition-all">Accesorios</Link></li>
@@ -101,7 +99,7 @@ export default function Footer() {
 
           <div className="space-y-4">
             <h4 className="font-black text-[10px] uppercase tracking-[0.3em] text-secondary">Ayuda</h4>
-            <ul className="space-y-3 text-sm font-bold text-white/70">
+            <ul className="space-y-2 text-sm font-bold text-white/70">
               <li><Link href="#" className="hover:text-white transition-all">Envíos</Link></li>
               <li><Link href="#" className="hover:text-white transition-all">Términos</Link></li>
               <li><Link href="#" className="hover:text-white transition-all">FAQ</Link></li>
@@ -111,7 +109,7 @@ export default function Footer() {
 
           <div className="space-y-4">
             <h4 className="font-black text-[10px] uppercase tracking-[0.3em] text-secondary">Contacto</h4>
-            <ul className="space-y-3 text-sm font-bold text-white/70">
+            <ul className="space-y-2 text-sm font-bold text-white/70">
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-secondary shrink-0" />
                 <span className="leading-tight">La Cisterna, RM</span>
@@ -136,7 +134,7 @@ export default function Footer() {
         </div>
         
         {/* 3. Bottom Row */}
-        <div className="max-w-7xl mx-auto w-full mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">
+        <div className="max-w-7xl mx-auto w-full mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">
           <p>© 2024 MYDOG DISTRIBUIDORA SPA. TODOS LOS DERECHOS RESERVADOS.</p>
           <div className="flex gap-4 opacity-40 grayscale">
             <div className="bg-white px-2 py-1 rounded text-black font-sans font-bold">VISA</div>
