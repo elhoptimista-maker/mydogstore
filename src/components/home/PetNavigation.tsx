@@ -9,7 +9,8 @@ import { Sparkles } from 'lucide-react';
 import { useChat } from '@/context/ChatContext';
 
 /**
- * @fileOverview Componente de navegación por mascota con integración de Asistente IA para venta consultiva.
+ * @fileOverview Componente de navegación transformado en selector de vendedores expertos.
+ * El clic en el círculo ahora dispara el asistente de ventas IA.
  */
 
 interface SpeciesData {
@@ -101,10 +102,13 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
   return (
     <section id="navegacion-mascota" className="py-16 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
       <div className="text-center space-y-3">
-        <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Encuentra lo mejor para tu</span>
+        <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Asesoría especializada</span>
         <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
-          Busca por <span className="text-primary">Mascota</span>
+          Conversa con un <span className="text-primary">Guía Experto</span>
         </h2>
+        <p className="text-sm font-medium text-muted-foreground max-w-lg mx-auto leading-relaxed">
+          Nuestros asesores están listos para ayudarte a elegir la mejor nutrición para tu compañero.
+        </p>
       </div>
 
       <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x">
@@ -126,26 +130,29 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Icono de Mascota */}
-              <Link 
-                href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
-                className="relative"
+              {/* Botón de Mascota (Dispara el Chat) */}
+              <button 
+                onClick={() => toggleChat(species.filter)}
+                className="relative outline-none"
               >
                 <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
                   <span className="text-5xl md:text-6xl">{species.emoji}</span>
                   <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
                 </div>
-              </Link>
+              </button>
 
-              {/* Info y Botón IA */}
+              {/* Info y Link al Catálogo */}
               <div className="flex flex-col items-center gap-3">
                 <div className="text-center">
-                  <span className="text-sm font-black text-foreground uppercase tracking-widest block">
+                  <span className="text-sm font-black text-foreground uppercase tracking-widest block mb-1">
                     {species.name}
                   </span>
-                  <span className="text-[10px] font-bold text-muted-foreground opacity-60 uppercase tracking-tighter">
+                  <Link 
+                    href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
+                    className="text-[10px] font-bold text-muted-foreground opacity-60 uppercase tracking-tighter hover:text-primary hover:opacity-100 transition-all underline decoration-dotted"
+                  >
                     ({count} productos)
-                  </span>
+                  </Link>
                 </div>
 
                 {/* Trigger del Asistente Flotante Global */}
@@ -154,7 +161,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                   className="flex items-center gap-2 bg-secondary/10 hover:bg-secondary text-primary px-4 py-1.5 rounded-full transition-all group/btn shadow-sm"
                 >
                   <Sparkles className="w-3 h-3 text-secondary group-hover/btn:text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest">Asesoría IA</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest">Preguntar a Experto</span>
                 </button>
               </div>
             </div>
