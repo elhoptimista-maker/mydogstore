@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Un asistente de ventas consultivas experto en bienestar animal.
@@ -85,7 +84,7 @@ const productChatFlow = ai.defineFlow(
     outputSchema: ProductChatOutputSchema,
   },
   async (input) => {
-    // 1. Obtener productos y filtrar por stock inmediatamente
+    // 1. Obtener productos y filtrar por stock inmediatamente (Regla de oro: Solo productos con stock)
     const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
     
     // 2. Identificar productos ya recomendados para excluirlos
@@ -108,7 +107,7 @@ const productChatFlow = ai.defineFlow(
              input.species.toLowerCase().includes(p.species.toLowerCase());
     });
 
-    // 4. Algoritmo de Ranking Mejorado
+    // 4. Algoritmo de Ranking Mejorado para marcas compuestas (ej: Master Dog)
     const userMessageLower = input.message.toLowerCase();
     const isAskingForVariety = userMessageLower.includes('otras marcas') || userMessageLower.includes('otros productos');
     const searchTerms = userMessageLower.split(' ').filter(t => t.length > 2);
@@ -118,32 +117,32 @@ const productChatFlow = ai.defineFlow(
       const brandLower = p.brand.toLowerCase();
       const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description} ${p.life_stage}`.toLowerCase();
       
-      // REFUERZO DE MARCA: Si el mensaje contiene la marca completa (ej: "master dog")
+      // REFUERZO DE MARCA CRÍTICO: Si el mensaje contiene la marca completa (ej: "master dog")
       if (userMessageLower.includes(brandLower) && brandLower.length > 3) {
-        score += 150;
+        score += 300; // Aumentado para asegurar que aparezcan
       }
 
       // Coincidencia de términos de búsqueda
       searchTerms.forEach(term => {
         if (productText.includes(term)) score += 10;
-        if (brandLower.includes(term)) score += 30; // Más peso a marca por término
-        if (p.life_stage.toLowerCase().includes(term)) score += 15;
+        if (brandLower.includes(term)) score += 50; // Más peso a marca por término
+        if (p.life_stage.toLowerCase().includes(term)) score += 20;
       });
 
       // Lógica de Variedad: Penalización severa por repetición
       if (previouslyRecommendedIds.has(p.id)) {
-        score -= 500; 
+        score -= 1000; 
       }
 
       // Lógica de Diversidad de Marca: Si pide "otras marcas", penalizamos las ya vistas
       if (isAskingForVariety && previouslyRecommendedBrands.has(brandLower)) {
-        score -= 100; 
+        score -= 200; 
       }
       
       return { ...p, score };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 45); // Entregamos los 45 más relevantes
+    .slice(0, 60); // Enviamos un catálogo más amplio al LLM para mejor curaduría
 
     const {output} = await productChatPrompt({
       ...input,
