@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ShoppingCart, Scale, Dog, Briefcase, Heart, Plus, Minus, X } from 'lucide-react';
+import { Star, ShoppingCart, Scale, Dog, Briefcase, Heart, Plus, Minus } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
@@ -67,28 +67,28 @@ export default function QuickViewModal({ product, open, onOpenChange }: QuickVie
           {/* Columna Derecha: Información y Acción */}
           <div className="p-8 md:p-12 flex flex-col justify-center space-y-8 bg-white relative">
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Badge className="bg-primary text-white border-none text-[9px] font-black uppercase tracking-widest rounded-full px-3 py-1">
-                    {product.brand}
-                  </Badge>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{product.category}</span>
-                </div>
-                <div className="flex items-center gap-1 text-secondary">
-                  <Star className="w-3.5 h-3.5 fill-current" />
-                  <span className="text-xs font-black text-foreground">4.8</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary text-white border-none text-[9px] font-black uppercase tracking-widest rounded-full px-3 py-1">
+                  {product.brand}
+                </Badge>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{product.category}</span>
               </div>
 
               <DialogTitle className="text-2xl md:text-3xl font-black text-foreground tracking-tighter leading-[1.1]">
                 {product.name}
               </DialogTitle>
 
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black text-primary tracking-tighter">
-                  ${product.sellingPrice.toLocaleString('es-CL')}
-                </span>
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">IVA Incl.</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-black text-primary tracking-tighter">
+                    ${product.sellingPrice.toLocaleString('es-CL')}
+                  </span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">IVA Incl.</span>
+                </div>
+                <div className="flex items-center gap-1 text-secondary bg-secondary/10 px-3 py-1 rounded-full">
+                  <Star className="w-3.5 h-3.5 fill-current" />
+                  <span className="text-xs font-black text-primary">4.8</span>
+                </div>
               </div>
             </div>
 
