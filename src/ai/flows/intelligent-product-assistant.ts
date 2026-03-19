@@ -2,7 +2,7 @@
 /**
  * @fileOverview Un asistente de ventas consultivas experto en bienestar animal.
  * Los guías MyDog proporcionan consejos técnicos con un tono cálido y cercano.
- * Utiliza un algoritmo de ranking previo para asegurar precisión en las recomendaciones.
+ * Utiliza un algoritmo de ranking previo y filtrado de repeticiones para asegurar variedad.
  */
 
 import {ai} from '@/ai/genkit';
@@ -12,6 +12,7 @@ import { getSanitizedProducts } from '@/lib/services/catalog.service';
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
   content: z.string(),
+  recommendedIds: z.array(z.string()).optional().describe('IDs de productos recomendados en este mensaje para evitar repeticiones.'),
 });
 
 const ProductChatInputSchema = z.object({
@@ -23,7 +24,7 @@ const ProductChatInputSchema = z.object({
 export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
 
 const ProductChatOutputSchema = z.object({
-  response: z.string().describe('La respuesta del asistente. Sé cálido y empático. No menciones nombres de productos ni IDs aquí.'),
+  response: z.string().describe('La respuesta del asistente. Sé cálido y empático. NO menciones nombres de productos ni IDs aquí.'),
   suggestedProducts: z.array(z.object({
     id: z.string(),
     name: z.string(),
@@ -49,17 +50,18 @@ const productChatPrompt = ai.definePrompt({
   4. CONCISO: No te extiendas. Deja que las tarjetas de productos den los detalles técnicos específicos.
 
   REGLAS DE BÚSQUEDA Y CURADURÍA (CRÍTICO):
+  - NO REPITAS productos que ya hayas recomendado en el historial. El usuario quiere VARIEDAD.
+  - Si el usuario pide "OTRAS MARCAS", busca marcas que no estén presentes en las recomendaciones anteriores.
   - El usuario puede mencionar MARCAS (ej: Master Dog, Pedigree) o ATRIBUTOS (ej: Senior, Cachorro).
-  - DEBES buscar exhaustivamente en el CATÁLOGO proporcionado. Si un producto existe en la lista, NO digas que no lo tenemos.
+  - DEBES buscar exhaustivamente en el CATÁLOGO proporcionado. 
   - Si el usuario pide algo "más económico", busca los 3 con el precio (sellingPrice) más bajo que cumplan la necesidad.
-  - Si pide una categoría específica (ej: snacks, alimento húmedo), prioriza esa categoría.
   - Usa SOLO productos del catálogo proporcionado.
-  - CRÍTICO: Selecciona únicamente los 3 productos que mejor resuelvan la necesidad planteada.
-  - IMPORTANTE: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". 
+  - CRÍTICO: Selecciona únicamente los 3 productos que mejor resuelvan la necesidad planteada y que SEAN DIFERENTES a los anteriores.
+  - PROHIBIDO: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". No pongas listas numeradas con nombres. 
   - Usa el campo "reason" para justificar brevemente por qué ese producto es ideal.
   - CIERRE: Termina con una pregunta abierta amigable para seguir ayudando.
 
-  CATÁLOGO DISPONIBLE PARA {{{species}}} (Ordenado por relevancia):
+  CATÁLOGO DISPONIBLE PARA {{{species}}} (Ya filtrado para evitar repeticiones):
   {{#each catalog}}
   - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Imagen: {{main_image}} | Desc: {{short_description}}
   {{/each}}
@@ -72,7 +74,7 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde de forma fluida.`,
+  Responde de forma fluida y amigable.`,
 });
 
 const productChatFlow = ai.defineFlow(
@@ -84,30 +86,48 @@ const productChatFlow = ai.defineFlow(
   async (input) => {
     const allProducts = await getSanitizedProducts();
     
-    // 1. Filtrado por especie
-    const speciesCatalog = allProducts.filter(p => 
+    // 0. Identificar productos ya recomendados para excluirlos
+    const previouslyRecommendedIds = new Set<string>();
+    input.history.forEach(m => {
+      if (m.recommendedIds) {
+        m.recommendedIds.forEach(id => previouslyRecommendedIds.add(id));
+      }
+    });
+
+    // 1. Filtrado por especie y exclusión de repetidos
+    const speciesCatalog = allProducts.filter(p => {
+      const matchesSpecies = p.species.toLowerCase().includes(input.species.toLowerCase()) ||
+                            input.species.toLowerCase().includes(p.species.toLowerCase());
+      const isNew = !previouslyRecommendedIds.has(p.id);
+      return matchesSpecies && isNew;
+    });
+
+    // Si nos quedamos sin productos nuevos por filtrar demasiado, permitimos repetir pero con menor prioridad
+    const baseCatalog = speciesCatalog.length > 5 ? speciesCatalog : allProducts.filter(p => 
       p.species.toLowerCase().includes(input.species.toLowerCase()) ||
       input.species.toLowerCase().includes(p.species.toLowerCase())
     );
 
-    // 2. Algoritmo de Ranking por Relevancia (Pre-filtrado inteligente)
-    // Identificamos términos clave en el mensaje del usuario para priorizar productos
+    // 2. Algoritmo de Ranking por Relevancia
     const searchTerms = input.message.toLowerCase().split(' ').filter(t => t.length > 2);
     
-    const rankedCatalog = speciesCatalog.map(p => {
+    const rankedCatalog = baseCatalog.map(p => {
       let score = 0;
       const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description} ${p.life_stage}`.toLowerCase();
       
       searchTerms.forEach(term => {
         if (productText.includes(term)) score += 10;
-        if (p.brand.toLowerCase().includes(term)) score += 20; // Bonus por marca
-        if (p.life_stage.toLowerCase().includes(term)) score += 15; // Bonus por etapa de vida
+        if (p.brand.toLowerCase().includes(term)) score += 20;
+        if (p.life_stage.toLowerCase().includes(term)) score += 15;
       });
+
+      // Penalización suave si ya fue recomendado para favorecer variedad
+      if (previouslyRecommendedIds.has(p.id)) score -= 100;
       
       return { ...p, score };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 50); // Enviamos los 50 más relevantes para asegurar que la marca o tipo esté en el contexto
+    .slice(0, 40); 
 
     const {output} = await productChatPrompt({
       ...input,

@@ -18,7 +18,7 @@ const EXPERTS = [
     emoji: '🐶', 
     color: 'bg-primary', 
     description: 'Guía de Perros',
-    greeting: "¡Hola! 🐾 Soy tu guía apasionado en Perros. Me encanta ayudar a encontrar el equilibrio perfecto para su salud. ¿Tu compañero es cachorro, adulto o senior?",
+    greeting: "¡Hola! 🐾 Soy tu guía de MyDog especializado en Perros. Me encanta acompañar a los dueños a encontrar la mejor nutrición para sus peludos. ¿Me cuentas si tu compañero es cachorro, adulto o senior?",
     initialActions: ["Cachorro", "Adulto", "Senior"],
     categories: ["Alimento Húmedo", "Snacks", "Accesorios", "Salud Dental"]
   },
@@ -27,7 +27,7 @@ const EXPERTS = [
     emoji: '🐱', 
     color: 'bg-orange-500', 
     description: 'Guía de Gatos',
-    greeting: "¡Hola! 🐱 Soy tu guía especialista en Gatos. Entiendo lo exigentes que pueden ser. ¿Tu amigo es gatito, adulto, o quizás está esterilizado?",
+    greeting: "¡Hola! 🐱 Soy tu guía en el mundo gatuno. Entiendo lo selectivos que pueden ser. ¿Tu amigo es gatito, adulto, o quizás está esterilizado?",
     initialActions: ["Gatito", "Adulto", "Esterilizado"],
     categories: ["Alimento Húmedo", "Arena Sanitaria", "Snacks", "Juguetes"]
   },
@@ -36,7 +36,7 @@ const EXPERTS = [
     emoji: '🦜', 
     color: 'bg-green-500', 
     description: 'Guía de Aves',
-    greeting: "¡Hola! 🦜 Soy tu experto en aves. Un plumaje sano empieza por dentro. ¿Buscas algo para canarios, loros o quizás para etapa de cría?",
+    greeting: "¡Hola! 🦜 Soy tu guía de Aves. Un plumaje brillante y mucha energía dependen de una buena mixtura. ¿Buscas algo para canarios, loros o para etapa de cría?",
     initialActions: ["Canarios", "Loros/Cacatúas", "Etapa Cría"],
     categories: ["Mixturas", "Vitaminas", "Accesorios", "Higiene"]
   },
@@ -45,7 +45,7 @@ const EXPERTS = [
     emoji: '🐰', 
     color: 'bg-blue-500', 
     description: 'Guía de Pequeños',
-    greeting: "¡Hola! 🐰 Soy tu guía para pequeños amigos. La fibra es el corazón de su dieta. ¿Tienes un conejo, cobaya o hámster?",
+    greeting: "¡Hola! 🐰 Soy tu guía experto en pequeños compañeros. La fibra es vital para ellos. ¿Tienes un conejo, cobaya o hámster?",
     initialActions: ["Conejos", "Cobayas", "Hámster"],
     categories: ["Heno Premium", "Snacks Naturales", "Sustratos", "Juguetes madera"]
   },
@@ -54,7 +54,7 @@ const EXPERTS = [
     emoji: '🐠', 
     color: 'bg-cyan-500', 
     description: 'Guía Acuático',
-    greeting: "¡Hola! 🐠 Soy tu guía del mundo acuático. El balance es clave. ¿Tu acuario es de agua fría, tropical, o buscas para tortugas?",
+    greeting: "¡Hola! 🐠 Soy tu guía del mundo acuático. Mantener el equilibrio del agua es todo un arte. ¿Tu acuario es de agua fría, tropical, o buscas para tortugas?",
     initialActions: ["Agua Fría", "Tropicales", "Tortugas"],
     categories: ["Hojuelas", "Granulados", "Acondicionadores", "Filtración"]
   },
@@ -75,7 +75,6 @@ export default function ProductAssistant() {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [input, setInput] = useState('');
   const [lastRecommendedAt, setLastRecommendedAt] = useState<number | null>(null);
-  const [hasInteractedWithRecs, setHasInteractedWithRecs] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const followUpTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -110,15 +109,14 @@ export default function ProductAssistant() {
   // Lógica de proactividad inteligente
   useEffect(() => {
     if (lastRecommendedAt && !loading) {
-      // Si pasan 12 segundos sin mensajes nuevos, reforzamos la ayuda
       followUpTimerRef.current = setTimeout(() => {
         if (!loading) {
           addMessage(activeSpecies!, {
             role: 'assistant',
-            content: "¿Te gustaría explorar alguna de estas opciones o prefieres que busquemos algo más específico como snacks o accesorios?"
+            content: "¿Qué te han parecido estas opciones? Si prefieres ver otras marcas o algo más específico como snacks, dime con toda confianza."
           });
         }
-      }, 12000);
+      }, 15000);
     }
     return () => {
       if (followUpTimerRef.current) clearTimeout(followUpTimerRef.current);
@@ -131,43 +129,41 @@ export default function ProductAssistant() {
 
     const userMessage = text.trim();
     setInput('');
-    setHasInteractedWithRecs(true);
     
     addMessage(activeSpecies, { role: 'user', content: userMessage });
     setLoading(true);
 
     try {
-      const history = (messages[activeSpecies] || []).concat({ role: 'user', content: userMessage });
+      const history = (messages[activeSpecies] || []).map(m => ({ 
+        role: m.role, 
+        content: m.content,
+        recommendedIds: m.recommendations?.map(r => r.id)
+      })).concat({ role: 'user', content: userMessage });
       
       const chatResponse = await productChat({
         species: activeSpecies,
-        history: history.map(m => ({ role: m.role, content: m.content })),
+        history,
         message: userMessage,
       });
 
       addMessage(activeSpecies, { 
         role: 'assistant', 
         content: chatResponse.response,
-        recommendations: chatResponse.suggestedProducts
+        recommendations: chatResponse.suggestedProducts,
+        recommendedIds: chatResponse.suggestedProducts?.map(p => p.id)
       });
 
       if (chatResponse.suggestedProducts && chatResponse.suggestedProducts.length > 0) {
         setLastRecommendedAt(Date.now());
-        setHasInteractedWithRecs(false);
       }
     } catch (error) {
       addMessage(activeSpecies, { 
         role: 'assistant', 
-        content: "Lo siento, tuve un pequeño problema técnico al revisar la bodega. ¿Podrías repetirme eso?" 
+        content: "Lo siento, tuve un pequeño problema al revisar la bodega. ¿Podrías repetirme eso?" 
       });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRecClick = () => {
-    setHasInteractedWithRecs(true);
-    // No borramos el timer, solo marcamos la interacción para saber que hubo interés
   };
 
   if (!isOpen) {
@@ -256,7 +252,6 @@ export default function ProductAssistant() {
                         <Link 
                           key={idx} 
                           href={`/catalogo/${rec.id}`} 
-                          onClick={handleRecClick}
                           className="group"
                         >
                           <div className="bg-white p-3 rounded-3xl border border-primary/10 hover:border-primary/40 transition-all shadow-md flex items-center gap-4 group-hover:-translate-y-1">
@@ -284,13 +279,10 @@ export default function ProductAssistant() {
                 </div>
               ))}
               
-              {/* Botones de Acción Sugeridos Dinámicos */}
               {!loading && activeExpert && (
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {/* Si es el inicio o hubo recomendaciones, mostramos opciones de navegación */}
-                  {(activeMessages.length === 1 || (lastRecommendedAt && !loading)) && (
+                  {(activeMessages.length === 1 || lastRecommendedAt) && (
                     <>
-                      {/* Acciones de etapa (solo al inicio o si no se han definido) */}
                       {activeMessages.length === 1 && activeExpert.initialActions.map(action => (
                         <button
                           key={action}
@@ -301,7 +293,6 @@ export default function ProductAssistant() {
                         </button>
                       ))}
 
-                      {/* Acciones de Categoría (Dinámicas por especie) */}
                       {activeExpert.categories.map(cat => (
                         <button
                           key={cat}
@@ -312,20 +303,19 @@ export default function ProductAssistant() {
                         </button>
                       ))}
 
-                      {/* Comparadores (Solo después de recomendaciones) */}
                       {lastRecommendedAt && (
                         <>
                           <button
-                            onClick={() => handleSend("Busca opciones más económicas")}
+                            onClick={() => handleSend("Muéstrame otras marcas")}
                             className="px-4 py-2 bg-primary/5 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-primary hover:text-white transition-all flex items-center gap-2"
                           >
-                            <ArrowRight className="w-3 h-3" /> Ver más económicos
+                            <ArrowRight className="w-3 h-3" /> Ver otras marcas
                           </button>
                           <button
-                            onClick={() => handleSend("Muéstrame otras marcas")}
+                            onClick={() => handleSend("Busca opciones más económicas")}
                             className="px-4 py-2 bg-primary/5 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-primary hover:text-white transition-all"
                           >
-                            Otras Marcas
+                            Más Económicos
                           </button>
                         </>
                       )}
