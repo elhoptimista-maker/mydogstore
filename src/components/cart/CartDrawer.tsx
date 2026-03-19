@@ -25,7 +25,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
       </SheetTrigger>
       <SheetContent 
         side="right"
-        className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
+        className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2.5rem] focus:outline-none"
       >
         {/* Cabecera Teal */}
         <SheetHeader className="px-6 pt-10 pb-6 bg-primary text-white shrink-0 border-none space-y-0">
@@ -46,9 +46,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
 
         {/* Gamificación: El Carrito Hambriento */}
         {cart.length > 0 && (
-          <div className="px-6 py-4 bg-secondary/10 border-b border-black/5">
-            <div className="flex justify-between items-end mb-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+          <div className="px-6 py-6 bg-secondary/10 border-b border-black/5">
+            <div className="flex justify-between items-end mb-4">
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary leading-tight">
                 {progress < 100 
                   ? `¡Faltan $${remaining.toLocaleString('es-CL')} para el envío gratis!`
                   : "¡GUAU! ¡ENVÍO GRATIS DESBLOQUEADO! 🦴"
@@ -56,17 +56,17 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               </span>
               <span className="text-[10px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
-            <div className="relative pt-6 pb-2">
-              <Progress value={progress} className="h-2 bg-white" />
+            <div className="relative pt-10 pb-2">
               <div 
-                className="absolute top-0 transition-all duration-500 ease-out"
-                style={{ left: `calc(${progress}% - 24px)` }}
+                className="absolute top-0 transition-all duration-500 ease-out z-10"
+                style={{ left: `calc(${progress}% - 32px)` }}
               >
-                <span className="text-2xl animate-bounce block leading-none">🐶</span>
+                <span className="text-4xl animate-bounce block leading-none">🐶</span>
               </div>
-              <div className="absolute top-0 right-0">
-                <span className="text-2xl leading-none">🦴</span>
+              <div className="absolute top-0 right-0 z-10">
+                <span className="text-4xl leading-none">🦴</span>
               </div>
+              <Progress value={progress} className="h-2 bg-white" />
             </div>
           </div>
         )}

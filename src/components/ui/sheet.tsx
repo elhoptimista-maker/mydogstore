@@ -61,12 +61,12 @@ const SheetContent = React.forwardRef<
     <SheetOverlay />
     <SheetPrimitive.Content
       ref={ref}
-      className={cn(sheetVariants({ side }), className)}
+      className={cn(sheetVariants({ side }), "focus:outline-none", className)}
       {...props}
     >
       {children}
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-        <X className="h-4 w-4" />
+      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-full bg-secondary text-black w-12 h-12 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all z-[70] focus:outline-none">
+        <X className="h-6 w-6 stroke-[3px]" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>
     </SheetPrimitive.Content>
@@ -112,7 +112,7 @@ const SheetTitle = React.forwardRef<
     {...props}
   />
 ))
-SheetTitle.displayName = SheetPrimitive.Title.displayName
+SheetTitle.displayName = "SheetTitle"
 
 const SheetDescription = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Description>,
@@ -124,7 +124,7 @@ const SheetDescription = React.forwardRef<
     {...props}
   />
 ))
-SheetDescription.displayName = SheetPrimitive.Description.displayName
+SheetDescription.displayName = "SheetDescription"
 
 export {
   Sheet,
