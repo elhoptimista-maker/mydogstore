@@ -59,7 +59,7 @@ const productChatPrompt = ai.definePrompt({
   - CRÍTICO: Selecciona únicamente los 3 productos que mejor resuelvan la necesidad planteada y que SEAN DIFERENTES a los anteriores.
   - PROHIBIDO: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". No pongas listas numeradas con nombres. 
   - Usa el campo "reason" para justificar brevemente por qué ese producto es ideal.
-  - CIERRE: Termina con una pregunta abierta amigable para seguir ayudando.
+  - CIERRE: Termina con una pregunta abierta amigable para seguir ayudando y asegurarte de que el cliente esté satisfecho.
 
   CATÁLOGO DISPONIBLE PARA {{{species}}} (Ya filtrado para evitar repeticiones):
   {{#each catalog}}
@@ -88,46 +88,55 @@ const productChatFlow = ai.defineFlow(
     
     // 0. Identificar productos ya recomendados para excluirlos
     const previouslyRecommendedIds = new Set<string>();
+    const previouslyRecommendedBrands = new Set<string>();
+    
     input.history.forEach(m => {
       if (m.recommendedIds) {
-        m.recommendedIds.forEach(id => previouslyRecommendedIds.add(id));
+        m.recommendedIds.forEach(id => {
+          previouslyRecommendedIds.add(id);
+          // También rastreamos las marcas para fomentar diversidad si se pide "otras marcas"
+          const p = allProducts.find(prod => prod.id === id);
+          if (p) previouslyRecommendedBrands.add(p.brand.toLowerCase());
+        });
       }
     });
 
-    // 1. Filtrado por especie y exclusión de repetidos
+    // 1. Filtrado por especie
     const speciesCatalog = allProducts.filter(p => {
-      const matchesSpecies = p.species.toLowerCase().includes(input.species.toLowerCase()) ||
-                            input.species.toLowerCase().includes(p.species.toLowerCase());
-      const isNew = !previouslyRecommendedIds.has(p.id);
-      return matchesSpecies && isNew;
+      return p.species.toLowerCase().includes(input.species.toLowerCase()) ||
+             input.species.toLowerCase().includes(p.species.toLowerCase());
     });
 
-    // Si nos quedamos sin productos nuevos por filtrar demasiado, permitimos repetir pero con menor prioridad
-    const baseCatalog = speciesCatalog.length > 5 ? speciesCatalog : allProducts.filter(p => 
-      p.species.toLowerCase().includes(input.species.toLowerCase()) ||
-      input.species.toLowerCase().includes(p.species.toLowerCase())
-    );
-
-    // 2. Algoritmo de Ranking por Relevancia
-    const searchTerms = input.message.toLowerCase().split(' ').filter(t => t.length > 2);
+    // 2. Algoritmo de Ranking por Relevancia e Inteligencia de Variedad
+    const userMessageLower = input.message.toLowerCase();
+    const isAskingForVariety = userMessageLower.includes('otras marcas') || userMessageLower.includes('otros productos');
+    const searchTerms = userMessageLower.split(' ').filter(t => t.length > 2);
     
-    const rankedCatalog = baseCatalog.map(p => {
+    const rankedCatalog = speciesCatalog.map(p => {
       let score = 0;
       const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description} ${p.life_stage}`.toLowerCase();
       
+      // Coincidencia de términos de búsqueda
       searchTerms.forEach(term => {
         if (productText.includes(term)) score += 10;
         if (p.brand.toLowerCase().includes(term)) score += 20;
         if (p.life_stage.toLowerCase().includes(term)) score += 15;
       });
 
-      // Penalización suave si ya fue recomendado para favorecer variedad
-      if (previouslyRecommendedIds.has(p.id)) score -= 100;
+      // Lógica de Variedad: Penalización por repetición de producto
+      if (previouslyRecommendedIds.has(p.id)) {
+        score -= 200; // Penalización severa para no repetir el mismo SKU
+      }
+
+      // Lógica de Diversidad de Marca: Si pide "otras marcas", penalizamos las ya vistas
+      if (isAskingForVariety && previouslyRecommendedBrands.has(p.brand.toLowerCase())) {
+        score -= 50; // Penalización moderada para favorecer marcas nuevas
+      }
       
       return { ...p, score };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 40); 
+    .slice(0, 40); // Entregamos los 40 más relevantes al LLM para la decisión final
 
     const {output} = await productChatPrompt({
       ...input,
