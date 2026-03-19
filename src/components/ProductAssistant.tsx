@@ -245,7 +245,7 @@ export default function ProductAssistant() {
                     <Loader2 className="w-4 h-4 text-primary animate-spin" />
                   </div>
                   <div className="bg-white p-3 rounded-2xl border border-black/5 text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                    Consultando catálogo experto...
+                    Buscando en nuestro almacén con cariño...
                   </div>
                 </div>
               )}
