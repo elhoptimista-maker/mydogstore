@@ -1,11 +1,12 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { SanitizedProduct } from '@/types/product';
 import { cn } from '@/lib/utils';
-import { Sparkles, MessageCircle } from 'lucide-react';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Sparkles } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import ProductAssistant from '@/components/ProductAssistant';
 
 /**
@@ -156,6 +157,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                     </button>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[3rem] border-none">
+                    <DialogTitle className="sr-only">Asesoría de Productos para {species.name}</DialogTitle>
                     <ProductAssistant defaultBreed={species.filter} />
                   </DialogContent>
                 </Dialog>
