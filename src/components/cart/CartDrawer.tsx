@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCart } from '@/context/CartContext';
@@ -57,18 +56,16 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               </span>
               <span className="text-[10px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
-            <div className="relative pt-4 pb-2">
+            <div className="relative pt-6 pb-2">
               <Progress value={progress} className="h-2 bg-white" />
               <div 
                 className="absolute top-0 transition-all duration-500 ease-out"
-                style={{ left: `calc(${progress}% - 20px)` }}
+                style={{ left: `calc(${progress}% - 24px)` }}
               >
-                <div className="bg-white w-8 h-8 rounded-full shadow-md border border-primary/20 flex items-center justify-center">
-                  <span className="text-lg animate-bounce leading-none">🐶</span>
-                </div>
+                <span className="text-2xl animate-bounce block leading-none">🐶</span>
               </div>
-              <div className="absolute top-2 right-0">
-                <span className="text-lg leading-none">🦴</span>
+              <div className="absolute top-0 right-0">
+                <span className="text-2xl leading-none">🦴</span>
               </div>
             </div>
           </div>
