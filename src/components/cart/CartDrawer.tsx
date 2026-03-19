@@ -28,7 +28,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2.5rem] focus:outline-none focus:ring-0"
       >
         {/* Cabecera Compacta y Alineada */}
-        <SheetHeader className="px-6 py-5 bg-primary text-white shrink-0 border-none space-y-0 relative">
+        <SheetHeader className="px-6 py-4 bg-primary text-white shrink-0 border-none space-y-0 relative min-h-[80px] flex flex-row items-center">
           <div className="flex items-center gap-3 pr-12">
             <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm">
               <ShoppingCart className="w-5 h-5 text-secondary" />
@@ -44,10 +44,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Gamificación Ultra-Compacta */}
+        {/* Gamificación Ultra-Compacta: Perro Hambriento */}
         {cart.length > 0 && (
-          <div className="px-6 py-2 bg-secondary/10 border-b border-black/5">
-            <div className="flex justify-between items-center mb-1">
+          <div className="px-6 py-1 bg-secondary/10 border-b border-black/5">
+            <div className="flex justify-between items-center mb-0.5">
               <span className="text-[8px] font-black uppercase tracking-widest text-primary leading-tight">
                 {progress < 100 
                   ? `Faltan $${remaining.toLocaleString('es-CL')} para envío gratis`
@@ -64,7 +64,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               <div 
                 className="absolute transition-all duration-700 ease-out z-20 flex items-center justify-center"
                 style={{ 
-                  left: `calc(${progress}% - 12px)`,
+                  left: `calc(${progress}% - 14px)`,
                   top: '50%',
                   transform: 'translateY(-50%)'
                 }}
