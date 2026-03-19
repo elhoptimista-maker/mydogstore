@@ -110,12 +110,12 @@ export default function PetNavigation({ products }: PetNavigationProps) {
             >
               {/* Burbuja de Pensamiento (Instagram Notes Style) - Solapando el círculo */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
-                <div className="bg-white px-5 py-3 rounded-[1.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.15)] border border-black/[0.05] relative min-w-[140px] text-center">
-                  <span className="text-[11px] font-black text-zinc-800 uppercase tracking-tight whitespace-nowrap leading-relaxed">
+                <div className="bg-white px-5 py-3 rounded-[1.5rem] border border-black/[0.08] relative min-w-[140px] max-w-[180px] text-center">
+                  <span className="text-[11px] font-medium text-zinc-800 uppercase tracking-tight leading-snug block">
                     {message}
                   </span>
                   {/* Cola de la burbuja refinada */}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b border-r border-black/[0.05] rotate-45 rounded-sm" />
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b border-r border-black/[0.08] rotate-45 rounded-sm" />
                 </div>
               </div>
 
