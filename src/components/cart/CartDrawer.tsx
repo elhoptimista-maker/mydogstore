@@ -27,21 +27,19 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2.5rem] focus:outline-none focus:ring-0"
       >
-        {/* Cabecera Compacta */}
-        <SheetHeader className="px-6 pt-6 pb-2 bg-primary text-white shrink-0 border-none space-y-0 relative">
-          <div className="flex items-center justify-between pr-12">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                <ShoppingCart className="w-4 h-4 text-secondary" />
-              </div>
-              <div className="flex flex-col items-start text-left">
-                <SheetTitle className="text-white text-base font-black tracking-tight leading-none">
-                  Mi Carrito
-                </SheetTitle>
-                <span className="text-white/70 text-[8px] font-bold uppercase tracking-widest mt-1">
-                  {cartCount} Productos
-                </span>
-              </div>
+        {/* Cabecera Compacta y Alineada */}
+        <SheetHeader className="px-6 py-5 bg-primary text-white shrink-0 border-none space-y-0 relative">
+          <div className="flex items-center gap-3 pr-12">
+            <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <ShoppingCart className="w-5 h-5 text-secondary" />
+            </div>
+            <div className="flex flex-col items-start text-left">
+              <SheetTitle className="text-white text-lg font-black tracking-tight leading-none">
+                Mi Carrito
+              </SheetTitle>
+              <span className="text-white/70 text-[9px] font-bold uppercase tracking-widest mt-1">
+                {cartCount} Productos
+              </span>
             </div>
           </div>
         </SheetHeader>
@@ -59,14 +57,14 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               <span className="text-[8px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
             
-            <div className="relative h-8 flex items-center">
-              <Progress value={progress} className="h-1.5 bg-white/50 border border-white" />
+            <div className="relative h-6 flex items-center">
+              <Progress value={progress} className="h-1 bg-white/50 border border-white" />
               
-              {/* Perrito 🐶 - Superposición Z-20 */}
+              {/* Perrito 🐶 - Superposición Superior */}
               <div 
                 className="absolute transition-all duration-700 ease-out z-20 flex items-center justify-center"
                 style={{ 
-                  left: `calc(${progress}% - 14px)`,
+                  left: `calc(${progress}% - 12px)`,
                   top: '50%',
                   transform: 'translateY(-50%)'
                 }}
@@ -74,7 +72,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 <span className="text-2xl animate-bounce leading-none drop-shadow-sm">🐶</span>
               </div>
 
-              {/* Hueso 🦴 - Superposición Z-10 */}
+              {/* Hueso 🦴 - Destino */}
               <div 
                 className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center"
               >

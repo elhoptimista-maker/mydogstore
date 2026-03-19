@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -167,7 +166,7 @@ export default function ProductAssistant() {
     return (
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-[100] bg-primary text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all group animate-in slide-in-from-bottom-4"
+        className="fixed bottom-6 right-6 z-40 bg-primary text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all group animate-in slide-in-from-bottom-4"
       >
         <div className="relative">
           <MessageCircle className="w-8 h-8" />
@@ -178,7 +177,7 @@ export default function ProductAssistant() {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 z-[100] w-[90vw] sm:w-[400px] h-[650px] flex flex-col overflow-hidden bg-white shadow-2xl rounded-[2.5rem] border-none animate-in slide-in-from-bottom-10 duration-500">
+    <Card className="fixed bottom-6 right-6 z-40 w-[90vw] sm:w-[400px] h-[650px] flex flex-col overflow-hidden bg-white shadow-2xl rounded-[2.5rem] border-none animate-in slide-in-from-bottom-10 duration-500">
       {/* Header */}
       <div className={cn(
         "p-6 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10 transition-colors duration-500",
