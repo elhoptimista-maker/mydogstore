@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import PetNavigation from '@/components/home/PetNavigation';
 
 export default async function Home() {
   // Consumo del servicio de catálogo sanitizado
@@ -30,79 +30,6 @@ export default async function Home() {
     .filter(p => p.currentStock > 0)
     .sort((a, b) => b.currentStock - a.currentStock)
     .slice(0, 10);
-
-  // Lista de especies con mensajes aleatorios y temáticos
-  const speciesList = [
-    { 
-      name: 'Perros', 
-      emoji: '🐶', 
-      filter: 'Perro', 
-      messages: [
-        'Escuchando el perro chocoloco 🐶',
-        '¿Alguien dijo galleta? 🍪',
-        '¡Quiero paseooo! 🦴',
-        'Entrenando para ser el mejor amigo 🎾',
-        'Buscando mi cola... otra vez 🔄'
-      ]
-    },
-    { 
-      name: 'Gatos', 
-      emoji: '🐱', 
-      filter: 'Gato', 
-      messages: [
-        'Mirando por la ventana... 🪟',
-        'Planeando la dominación mundial 🌍',
-        'Necesito 5 min más de siesta 😴',
-        'Ignorando a todos con estilo ✨',
-        'Si cabe, me siento 📦'
-      ]
-    },
-    { 
-      name: 'Aves', 
-      emoji: '🦜', 
-      filter: 'Aves', 
-      messages: [
-        'Practicando mi hit de verano 🎶',
-        '¡Pío pío! ¡Qué rico! 🌽',
-        '¿Viste ese gusanito? 👀',
-        'Sintiéndome libre como el viento 🦅',
-        '¡Hola! ¿Cómo estás? 🦜'
-      ]
-    },
-    { 
-      name: 'Conejos y Roedores', 
-      emoji: '🐰', 
-      filter: 'Conejo y Roedor', 
-      messages: [
-        '¡Ñam! ¡Croc croc! 🥕',
-        'Saltando de alegría 🐇',
-        'Buscando el escondite perfecto 🛖',
-        'Mis dientes nunca descansan 🦷',
-        'Sintiéndome muy fluffy hoy ☁️'
-      ]
-    },
-    { 
-      name: 'Peces y Tortugas', 
-      emoji: '🐠', 
-      filter: 'Peces y Tortugas', 
-      messages: [
-        'Juan Luis Guerra - Burbujas de Amor 🫧',
-        'Glup glup! ¡Burbujas! 🐠',
-        'Nadaremos, nadaremos... 🌊',
-        'Lento pero seguro 🐢',
-        'Buscando a Nemo 🔍'
-      ]
-    },
-  ].map((s, index) => {
-    // Selección estable para evitar errores de hidratación
-    // En una iteración futura, esto podría ser un componente cliente con useEffect para azar real
-    const message = s.messages[index % s.messages.length];
-    return {
-      ...s,
-      message,
-      count: products.filter(p => p.species === s.filter).length
-    };
-  });
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen">
@@ -163,51 +90,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Navegación por Mascota con Burbujas Interactivas (Estilo IG Notes) */}
-      <section id="navegacion-mascota" className="py-16 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
-        <div className="text-center space-y-3">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Encuentra lo mejor para tu</span>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
-            Busca por <span className="text-primary">Mascota</span>
-          </h2>
-        </div>
-        <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x pt-12">
-          {speciesList.map((species, i) => (
-            <Link 
-              key={i} 
-              href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
-              className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
-            >
-              {/* Burbuja de Pensamiento (Instagram Notes Style) */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-300 pointer-events-none z-30">
-                <div className="bg-white px-5 py-3 rounded-[1.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.15)] border border-black/[0.05] relative min-w-[140px] text-center">
-                  <span className="text-[11px] font-bold text-zinc-800 uppercase tracking-tight whitespace-nowrap leading-relaxed">
-                    {species.message}
-                  </span>
-                  {/* Cola de la burbuja refinada */}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b border-r border-black/[0.05] rotate-45 rounded-sm" />
-                </div>
-              </div>
-
-              {/* Icono Mascota */}
-              <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
-                <span className="text-5xl md:text-6xl">{species.emoji}</span>
-                {/* Overlay sutil al hover */}
-                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
-              </div>
-
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-sm font-black text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
-                  {species.name}
-                </span>
-                <span className="text-[10px] font-bold text-muted-foreground opacity-60 uppercase tracking-tighter">
-                  ({species.count} productos)
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* 3. Navegación por Mascota (Componentizado) */}
+      <PetNavigation products={products} />
 
       {/* 5. Grilla de Productos Destacados */}
       <section className="pb-24 pt-12 max-w-7xl mx-auto px-4 md:px-8 space-y-12">
