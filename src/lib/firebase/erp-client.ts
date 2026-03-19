@@ -1,13 +1,9 @@
 "use client";
 
-/**
- * @fileOverview Inicialización de la aplicación secundaria de Firebase para el ERP (Lado Cliente).
- * Proporciona acceso a la base de datos del ERP para lecturas directas del catálogo.
- * Utiliza variables de entorno con prefijo NEXT_PUBLIC_ para seguridad en el cliente.
- */
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
-import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
-import { getFirestore, Firestore } from "firebase/firestore";
+const APP_NAME = 'ERP_CLIENT_APP';
 
 const erpFirebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_ERP_FIREBASE_API_KEY,
@@ -18,23 +14,12 @@ const erpFirebaseConfig = {
   appId: process.env.NEXT_PUBLIC_ERP_FIREBASE_APP_ID,
 };
 
-let erpApp: FirebaseApp;
-let erpDb: Firestore;
-
 /**
- * Inicializa y retorna la instancia de la app ERP en el cliente de forma segura.
+ * Inicializa y retorna la instancia de Firestore del ERP en el cliente usando un Singleton.
  */
-export function getErpClient() {
-  if (!getApps().find(app => app.name === "erp-app")) {
-    // Verificación básica de configuración
-    if (!erpFirebaseConfig.apiKey) {
-      console.warn("ERP Client: Missing NEXT_PUBLIC_ERP_FIREBASE_API_KEY environment variable.");
-    }
-    erpApp = initializeApp(erpFirebaseConfig, "erp-app");
-  } else {
-    erpApp = getApp("erp-app");
-  }
-
-  erpDb = getFirestore(erpApp);
-  return { erpApp, erpDb };
+export function getErpDbClient() {
+  const app = getApps().find(a => a.name === APP_NAME) 
+    ? getApp(APP_NAME) 
+    : initializeApp(erpFirebaseConfig, APP_NAME);
+  return getFirestore(app);
 }

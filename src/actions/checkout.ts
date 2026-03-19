@@ -1,11 +1,6 @@
 "use server";
 
-/**
- * @fileOverview Server Action para procesar compras y sincronizar con el ERP.
- * Incluye verificación estricta de identidad mediante tokens de Firebase.
- */
-
-import { getErpAdminDb, getErpAdminAuth } from "@/lib/firebase/erp-admin";
+import { getErpDbAdmin, getErpAuthAdmin } from "@/lib/firebase/erp-admin";
 import { Timestamp } from "firebase-admin/firestore";
 
 interface CheckoutItem {
@@ -29,8 +24,7 @@ export async function processCheckout(params: CheckoutParams) {
   const { idToken, items, total, shippingAddress } = params;
 
   try {
-    // 1. Verificación de Identidad (Regla de Oro de Seguridad)
-    const auth = getErpAdminAuth();
+    const auth = getErpAuthAdmin();
     const decodedToken = await auth.verifyIdToken(idToken);
     const userId = decodedToken.uid;
 
@@ -38,8 +32,7 @@ export async function processCheckout(params: CheckoutParams) {
       throw new Error("Usuario no autenticado para transacciones.");
     }
 
-    // 2. Preparar datos de la orden
-    const db = getErpAdminDb();
+    const db = getErpDbAdmin();
     const orderRef = db.collection("orders").doc();
     
     const orderData = {
@@ -54,7 +47,6 @@ export async function processCheckout(params: CheckoutParams) {
       source: "ecommerce_web"
     };
 
-    // 3. Escritura en el ERP con privilegios administrativos
     await orderRef.set(orderData);
 
     return { 
@@ -64,7 +56,6 @@ export async function processCheckout(params: CheckoutParams) {
     };
 
   } catch (error: any) {
-    // Error Handling: La acción falla atómicamente si el token es inválido o falla la DB
     return { 
       success: false, 
       error: error.message || "Error interno al procesar la compra." 
