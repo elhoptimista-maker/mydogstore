@@ -105,7 +105,7 @@ export default async function Home() {
       </section>
 
       {/* 3. Navegación por Mascota */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
+      <section className="py-16 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <div className="text-center space-y-3">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Encuentra lo mejor para tu</span>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
