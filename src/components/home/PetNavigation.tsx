@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Componente de navegación por mascota con burbujas de pensamiento interactivas.
- * Implementa el estilo de "Notas de Instagram" / "Comic" con posicionamiento aleatorio de punteros.
+ * Implementa el estilo de "Notas de Instagram" / "Comic" con referencias categorizadas (Música, Películas, Comida, Pensamientos).
  */
 
 interface SpeciesData {
@@ -23,18 +23,23 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐶', 
     filter: 'Perro', 
     messages: [
-      'Yo perreo solo\n(literalmente) 🐕',
-      '¿Alguien dijo\ngalleta? 🍪',
-      'Mi bebito fiu fiu\nversión canina 🐶',
-      'Who let the dogs out?\n(Yo no fui) 🐾',
-      'Buscando mi cola...\nOtra vez 🔄',
-      'Tengo un gato en la garganta...\nNo, espera, es un snack 🦴',
-      'Haciendo un Marley & Me\n(pero sin el final triste) 😢🍿',
-      'TikTok: *Dog voice*\n"¡Hellouu!" 👋',
-      'Hachiko... pero para ir al parque 🌳',
-      'I can buy myself flowers...\nand treats 💐🦴',
-      'Guardianes de la Galaxia?\nNo, de la casa 🌌🏠',
-      '¡Guau guau!\nDame un snack 🦴'
+      // Música
+      'Escuchando:\nEl baile del perrito 🎺🐶',
+      'Escuchando:\nPerro Fiel (Shakira) 🎧🐾',
+      'Escuchando:\nCallejero (Alberto Cortez) 🐕',
+      'Escuchando:\nWho let the dogs out? 🎵',
+      // Películas
+      'Viendo:\nLa dama y el vagabundo 🍝🐕',
+      'Viendo:\nMarley y Yo (preparando pañuelos) 😢🍿',
+      'Viendo:\n101 Dálmatas 🎬🐾',
+      'Viendo:\nSiempre a tu lado (Hachiko) 📼',
+      // Comida
+      'Comiendo:\nUn rico huesito 🦴',
+      'Comiendo:\nLas sobras que cayeron de la mesa 🤫🥩',
+      // Pensamientos
+      'Pensando:\n¿A qué hora vamos al parque? 🌳',
+      'Pensando:\nBuscando mi cola... otra vez 🔄',
+      'Pensando:\nSi me hago el lindo, me dan premio 🐶✨'
     ]
   },
   { 
@@ -42,18 +47,22 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐱', 
     filter: 'Gato', 
     messages: [
-      'Miau miau miau\nComo dice la gatita 🐱',
-      'Planeando la\ndominación mundial (como Thanos) 🌍',
-      'Te felicito qué bien\nactúas (miau) 💃',
-      'Si cabe en la caja,\nentonces me siento 📦',
-      'No soy tu Michi, soy tu King 👑',
-      'Motomami, Motomiau 🏍️🐱',
-      'Tengo un gato en\nla garganta (es real) 🎤',
-      'Gatúbela, ¿quién te conoce? 🐱💅',
-      'El Padrino Cat: "Miau..." 🌹🐾',
-      'Bajo mi patita\nmiau miau 🐾🎵',
-      'Me pareció ver un lindo...\n¡snack! 🐦🚫',
-      'Necesito cinco minutos\nmás de siesta 😴'
+      // Música
+      'Escuchando:\nLa gata bajo la lluvia 🌧️🐈',
+      'Escuchando:\nEl gato volador 🚁🐱',
+      'Escuchando:\nMotomami, Motomiau 🏍️🐱',
+      // Películas
+      'Viendo:\nEl Gato con Botas 👢🤺',
+      'Viendo:\nLos Aristogatos 🎹🐈',
+      'Viendo:\nGarfield (con una pizza) 📼🍕',
+      // Comida
+      'Comiendo:\nAtún premium (obvio) 🐟👑',
+      'Comiendo:\nUn snack crujiente de salmón 🍣',
+      // Pensamientos
+      'Pensando:\nPlaneando la dominación mundial 🌍',
+      'Pensando:\nGatúbela, ¿quién te conoce? 🐱💅',
+      'Pensando:\nSi cabe, me siento. Es la ley 📦',
+      'Pensando:\nNecesito cinco minutos más de siesta 😴'
     ]
   },
   { 
@@ -61,17 +70,21 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🦜', 
     filter: 'Aves', 
     messages: [
-      'Volaré oh oh\ncantaré oh oh oh 🎶',
-      'Un pajarito me dijo\nque hay ofertas 🐦Offers',
-      '¿Viste ese\ngusanito? 👀🐛',
-      'Libre como\nel viento (como Shakira) 🦅',
-      'Up, una aventura...\nde plumas 🎈🐦',
-      'Río, ¿dónde está mi Samba? 🇧🇷🦜',
-      'Un gran poder conlleva\nun gran... gusanito 🕷️ Corn',
-      'Haciendo un Angry Bird... \na mi manera 😡🐦',
-      'El Planeta de los Simios...\ny Aves 🐵🦜',
-      'Me siento el Rey del mundo...\ndel cielo 🚢🦅',
-      '¡Pío pío!\n¡Qué rico! 🌽'
+      // Música
+      'Escuchando:\nCucurrucucú paloma 🎶🕊️',
+      'Escuchando:\nVolaré (Gipsy Kings) 🎸',
+      'Escuchando:\nOjalá que llueva café ☕🐦',
+      // Películas
+      'Viendo:\nRio (buscando mi samba) 🇧🇷🦜',
+      'Viendo:\nUp (una aventura de plumas) 🎈',
+      'Viendo:\nPollitos en Fuga 🐓🏃‍♂️',
+      // Comida
+      'Comiendo:\nUn rico gusanito 🐛',
+      'Comiendo:\nSemillas y más semillas 🌻',
+      // Pensamientos
+      'Pensando:\nLibre como el viento 🦅',
+      'Pensando:\nSoy el rey del cielo ☁️👑',
+      'Pensando:\nUn pajarito me dijo que hay ofertas 👀'
     ]
   },
   { 
@@ -79,17 +92,21 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐰', 
     filter: 'Conejo y Roedor', 
     messages: [
-      'Bad bunny bebé\nBe-be-be 🐰',
-      'Más rápido que\nSpeedy González 🐭💨',
-      'Titi me preguntó... if I have carrots 🥕🐰',
-      'Dumbo... pero de orejas cortas 🐘🐰',
-      'El Padrino... de los Hamsters 🌹🐹',
-      'Saltando de\nalegría (como Rosalía) 🐇',
-      'Ratatouille? No, gracias 👋👨‍🍳🐭',
-      'Zanahoria de mi\ncorazón (My heart skips a beat) 🥕❤️',
-      'Misión Imposible...\ncon mis dientes 🦷🐇',
-      'Zootopia: Judy Hopps\nstyle! 🐰👮‍♀️',
-      'Mis dientes no\ndescansan nunca 🦷'
+      // Música
+      'Escuchando:\nEl ratón vaquero (Cri-Cri) 🤠🐭',
+      'Escuchando:\nTití me preguntó... 🥕🎧',
+      'Escuchando:\nBad Bunny bebé 🐰',
+      // Películas
+      'Viendo:\nZootopia (Judy Hopps fan) 👮‍♀️🐰',
+      'Viendo:\nSpace Jam (con Bugs Bunny) 🏀🐇',
+      'Viendo:\nRatatouille (tomando notas) 👨‍🍳🐭',
+      // Comida
+      'Comiendo:\nZanahoria de mi corazón 🥕❤️',
+      'Comiendo:\nQuesito premium 🧀',
+      // Pensamientos
+      'Pensando:\nMás rápido que Speedy González 💨',
+      'Pensando:\nMis dientes no descansan nunca 🦷',
+      'Pensando:\nSaltando de alegría 🐇✨'
     ]
   },
   { 
@@ -97,17 +114,22 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐠', 
     filter: 'Peces y Tortugas', 
     messages: [
-      'Escuchando:\nBurbujas de amor 🫧🐠',
-      '¡Glup glup!\n¡Muchas burbujas! 🐠',
-      'Bajo el mar\nvivo mucho mejor (literal) 🌊🐚',
-      'Lento pero seguro...\nComo Rayo McQueen 🐢⚡',
-      'Titanic? No, gracias 👋🚢🌊',
-      'En el mar, la vida\nes más sabrosa... y mojada 🐠',
-      'Mi burbuja es mi castillo 🫧🏰',
-      'Buscando a Nemo...\ny a Dory 🔍🐠',
-      'Como pez en el agua...\ny en la tienda! 🐠 Offers',
-      'Glup... y a comer!',
-      'Un mundo ideal...\nbajo el agua 🫧🐠'
+      // Música
+      'Escuchando:\nBurbujas de amor 🫧🎵',
+      'Escuchando:\nBajo el mar (Cumbia Remix) 🦀🎶',
+      'Escuchando:\nEn el mar la vida es más sabrosa 🌊',
+      // Películas
+      'Viendo:\nBuscando a Nemo 🔍🐠',
+      'Viendo:\nLas Tortugas Ninja (cowabunga) 🍕🐢',
+      'Viendo:\nEl Espantatiburones 🎬🐡',
+      // Comida
+      'Comiendo:\nHojuelas sabor océano 🌿',
+      'Comiendo:\nLechuga fresca (soy fitness) 🥬🐢',
+      // Pensamientos
+      'Pensando:\nBajo el mar vivo mucho mejor (literal) 🌊🐚',
+      'Pensando:\nMi burbuja es mi castillo 🏰',
+      'Pensando:\nTengo memoria de pez... ¿qué decía? 🤔',
+      'Pensando:\nLento pero seguro, como Rayo McQueen 🐢⚡'
     ]
   },
 ];
@@ -130,8 +152,12 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
   // Pre-calculamos el conteo de productos para mejorar el rendimiento.
   const productCountsBySpecies = useMemo(() => {
     return products.reduce((acc, product) => {
-      const species = product.species;
-      acc[species] = (acc[species] || 0) + 1;
+      // Nota: Asumimos que product.attributes.species es donde vive el dato según la sanitización.
+      // Ajusta 'product.attributes.species' si la propiedad está en la raíz (product.species).
+      const species = product.attributes?.species || product.species; 
+      if (species) {
+        acc[species] = (acc[species] || 0) + 1;
+      }
       return acc;
     }, {} as Record<string, number>);
   }, [products]);
@@ -149,7 +175,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
         {SPECIES_DATA.map((species, i) => {
           const count = productCountsBySpecies[species.filter] || 0;
           
-          // Lógica robusta para manejar el estado antes y después del montaje, previniendo errores de hidratación.
+          // Lógica robusta para manejar el estado antes y después del montaje.
           const message = mountedState 
             ? species.messages[mountedState.randomIndices[i]] 
             : species.messages[0];
@@ -164,7 +190,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
               href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
               className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
             >
-              {/* Burbuja de Pensamiento (Contenedor Principal) - Estética mantenida */}
+              {/* Burbuja de Pensamiento (Contenedor Principal) */}
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
                 <div className="bg-white px-5 py-4 rounded-[1.8rem] border border-black/[0.06] relative min-w-[140px] max-w-[180px] text-center shadow-none">
                   <span className="text-[11px] font-medium text-zinc-800 tracking-tight leading-snug block whitespace-pre-line">
@@ -185,7 +211,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Icono Mascota - Estética mantenida */}
+              {/* Icono Mascota */}
               <div className="relative">
                 <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
                   <span className="text-5xl md:text-6xl">{species.emoji}</span>
@@ -193,7 +219,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Información Inferior - Estética mantenida */}
+              {/* Información Inferior */}
               <div className="flex flex-col items-center gap-1">
                 <span className="text-sm font-black text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
                   {species.name}

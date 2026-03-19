@@ -29,7 +29,10 @@ export default function RootLayout({
     <html lang="es">
       <body className="font-sans antialiased selection:bg-primary/20 bg-background text-foreground">
         <CartProvider>
+          {/* El Header de 3 niveles es un componente independiente */}
           <Header />
+          
+          {/* Padding top para compensar el header fixed (10 + 20 + 14 = h-44 aprox) */}
           <main className="min-h-screen pt-44 pb-0">
             {children}
           </main>
@@ -57,7 +60,7 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* Footer Super-Card */}
+            {/* Footer Masivo */}
             <div className="bg-primary text-white py-12 px-4 md:px-8 rounded-t-[3rem] mx-4 -mt-12 relative z-20 shadow-2xl">
               <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
                 <div className="md:col-span-2 space-y-6">
