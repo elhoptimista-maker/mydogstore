@@ -4,10 +4,12 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { SanitizedProduct } from '@/types/product';
 import { cn } from '@/lib/utils';
+import { Sparkles, MessageCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import ProductAssistant from '@/components/ProductAssistant';
 
 /**
- * @fileOverview Componente de navegación por mascota con burbujas de pensamiento interactivas.
- * Implementa el estilo de "Notas de Instagram" / "Comic" con referencias categorizadas.
+ * @fileOverview Componente de navegación por mascota con integración de Asistente IA para venta consultiva.
  */
 
 interface SpeciesData {
@@ -24,18 +26,9 @@ const SPECIES_DATA: SpeciesData[] = [
     filter: 'Perro', 
     messages: [
       'Escuchando:\nEl baile del perrito 🎺🐶',
-      'Escuchando:\nPerro Fiel (Shakira) 🎧🐾',
-      'Escuchando:\nCallejero (Alberto Cortez) 🐕',
-      'Escuchando:\nWho let the dogs out? 🎵',
-      'Viendo:\nLa dama y el vagabundo 🍝🐕',
-      'Viendo:\nMarley y Yo (preparando pañuelos) 😢🍿',
-      'Viendo:\n101 Dálmatas 🎬🐾',
-      'Viendo:\nSiempre a tu lado (Hachiko) 📼',
-      'Comiendo:\nUn rico huesito 🦴',
-      'Comiendo:\nLas sobras que cayeron de la mesa 🤫🥩',
       'Pensando:\n¿A qué hora vamos al parque? 🌳',
-      'Pensando:\nBuscando mi cola... otra vez 🔄',
-      'Pensando:\nSi me hago el lindo, me dan premio 🐶✨'
+      'Viendo:\nMarley y Yo (preparando pañuelos) 😢',
+      'Comiendo:\nUn rico huesito 🦴'
     ]
   },
   { 
@@ -43,18 +36,10 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐱', 
     filter: 'Gato', 
     messages: [
-      'Escuchando:\nLa gata bajo la lluvia 🌧️🐈',
-      'Escuchando:\nEl gato volador 🚁🐱',
-      'Escuchando:\nMotomami, Motomiau 🏍️🐱',
-      'Viendo:\nEl Gato con Botas 👢🤺',
-      'Viendo:\nLos Aristogatos 🎹🐈',
-      'Viendo:\nGarfield (con una pizza) 📼🍕',
-      'Comiendo:\nAtún premium (obvio) 🐟👑',
-      'Comiendo:\nUn snack crujiente de salmón 🍣',
+      'Escuchando:\nLa gata bajo la lluvia 🌧️',
       'Pensando:\nPlaneando la dominación mundial 🌍',
-      'Pensando:\nGatúbela, ¿quién te conoce? 🐱💅',
-      'Pensando:\nSi cabe, me siento. Es la ley 📦',
-      'Pensando:\nNecesito cinco minutos más de siesta 😴'
+      'Viendo:\nEl Gato con Botas 👢',
+      'Comiendo:\nAtún premium (obvio) 🐟'
     ]
   },
   { 
@@ -63,16 +48,8 @@ const SPECIES_DATA: SpeciesData[] = [
     filter: 'Aves', 
     messages: [
       'Escuchando:\nCucurrucucú paloma 🎶🕊️',
-      'Escuchando:\nVolaré (Gipsy Kings) 🎸',
-      'Escuchando:\nOjalá que llueva café ☕🐦',
-      'Viendo:\nRio (buscando mi samba) 🇧🇷🦜',
-      'Viendo:\nUp (una aventura de plumas) 🎈',
-      'Viendo:\nPollitos en Fuga 🐓🏃‍♂️',
-      'Comiendo:\nUn rico gusanito 🐛',
-      'Comiendo:\nSemillas y más semillas 🌻',
-      'Pensando:\nLibre como el viento 🦅',
-      'Pensando:\nSoy el rey del cielo ☁️👑',
-      'Pensando:\nUn pajarito me dijo que hay ofertas 👀'
+      'Viendo:\nRio (buscando mi samba) 🇧🇷',
+      'Comiendo:\nSemillas y más semillas 🌻'
     ]
   },
   { 
@@ -80,17 +57,9 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐰', 
     filter: 'Conejo y Roedor', 
     messages: [
-      'Escuchando:\nEl ratón vaquero (Cri-Cri) 🤠🐭',
-      'Escuchando:\nTití me preguntó... 🥕🎧',
-      'Escuchando:\nBad Bunny bebé 🐰',
-      'Viendo:\nZootopia (Judy Hopps fan) 👮‍♀️🐰',
-      'Viendo:\nSpace Jam (con Bugs Bunny) 🏀🐇',
-      'Viendo:\nRatatouille (tomando notas) 👨‍🍳🐭',
-      'Comiendo:\nZanahoria de mi corazón 🥕❤️',
-      'Comiendo:\nQuesito premium 🧀',
-      'Pensando:\nMás rápido que Speedy González 💨',
-      'Pensando:\nMis dientes no descansan nunca 🦷',
-      'Pensando:\nSaltando de alegría 🐇✨'
+      'Escuchando:\nEl ratón vaquero 🤠🐭',
+      'Viendo:\nZootopia (Judy Hopps fan) 👮‍♀️',
+      'Comiendo:\nZanahoria de mi corazón 🥕'
     ]
   },
   { 
@@ -99,17 +68,8 @@ const SPECIES_DATA: SpeciesData[] = [
     filter: 'Peces y Tortugas', 
     messages: [
       'Escuchando:\nBurbujas de amor 🫧🎵',
-      'Escuchando:\nBajo el mar (Cumbia Remix) 🦀🎶',
-      'Escuchando:\nEn el mar la vida es más sabrosa 🌊',
-      'Viendo:\nBuscando a Nemo 🔍🐠',
-      'Viendo:\nLas Tortugas Ninja (cowabunga) 🍕🐢',
-      'Viendo:\nEl Espantatiburones 🎬🐡',
-      'Comiendo:\nHojuelas sabor océano 🌿',
-      'Comiendo:\nLechuga fresca (soy fitness) 🥬🐢',
-      'Pensando:\nBajo el mar vivo mucho mejor (literal) 🌊🐚',
-      'Pensando:\nMi burbuja es mi castillo 🏰',
-      'Pensando:\nTengo memoria de pez... ¿qué decía? 🤔',
-      'Pensando:\nLento pero seguro, como Rayo McQueen 🐢⚡'
+      'Viendo:\nBuscando a Nemo 🔍',
+      'Pensando:\nMi burbuja es mi castillo 🏰'
     ]
   },
 ];
@@ -149,55 +109,58 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
       <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x">
         {SPECIES_DATA.map((species, i) => {
           const count = productCountsBySpecies[species.filter] || 0;
-          
-          const message = mountedState 
-            ? species.messages[mountedState.randomIndices[i]] 
-            : species.messages[0];
-          
-          const isLeft = mountedState 
-            ? mountedState.randomSides[i] 
-            : true;
+          const message = mountedState ? species.messages[mountedState.randomIndices[i]] : species.messages[0];
+          const isLeft = mountedState ? mountedState.randomSides[i] : true;
 
           return (
-            <Link 
-              key={i} 
-              href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
-              className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
-            >
+            <div key={i} className="flex flex-col items-center gap-5 group snap-center shrink-0 relative">
+              {/* Burbuja de Pensamiento Estilo Comic */}
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-300 pointer-events-none z-30">
                 <div className="bg-white px-5 py-4 rounded-[1.8rem] border border-black/[0.06] relative min-w-[140px] max-w-[180px] text-center shadow-none">
                   <span className="text-[11px] font-medium text-zinc-800 tracking-tight leading-snug block whitespace-pre-line">
                     {message}
                   </span>
-                  
-                  <div className={cn(
-                    "absolute -bottom-2 w-4 h-4 bg-white border border-black/[0.06] rounded-full",
-                    isLeft ? "left-6" : "right-6"
-                  )} />
-                  
-                  <div className={cn(
-                    "absolute -bottom-5 w-2.5 h-2.5 bg-white border border-black/[0.06] rounded-full",
-                    isLeft ? "left-10" : "right-10"
-                  )} />
+                  <div className={cn("absolute -bottom-2 w-4 h-4 bg-white border border-black/[0.06] rounded-full", isLeft ? "left-6" : "right-6")} />
+                  <div className={cn("absolute -bottom-5 w-2.5 h-2.5 bg-white border border-black/[0.06] rounded-full", isLeft ? "left-10" : "right-10")} />
                 </div>
               </div>
 
-              <div className="relative">
+              {/* Icono de Mascota */}
+              <Link 
+                href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
+                className="relative"
+              >
                 <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
                   <span className="text-5xl md:text-6xl">{species.emoji}</span>
                   <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
                 </div>
-              </div>
+              </Link>
 
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-sm font-black text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">
-                  {species.name}
-                </span>
-                <span className="text-[10px] font-bold text-muted-foreground opacity-60 uppercase tracking-tighter">
-                  ({count} productos)
-                </span>
+              {/* Info y Botón IA */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="text-center">
+                  <span className="text-sm font-black text-foreground uppercase tracking-widest block">
+                    {species.name}
+                  </span>
+                  <span className="text-[10px] font-bold text-muted-foreground opacity-60 uppercase tracking-tighter">
+                    ({count} productos)
+                  </span>
+                </div>
+
+                {/* Trigger del Asistente Consultivo */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button className="flex items-center gap-2 bg-secondary/10 hover:bg-secondary text-primary px-4 py-1.5 rounded-full transition-all group/btn">
+                      <Sparkles className="w-3 h-3 text-secondary group-hover/btn:text-primary" />
+                      <span className="text-[9px] font-black uppercase tracking-widest">Asesoría IA</span>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[3rem] border-none">
+                    <ProductAssistant defaultBreed={species.filter} />
+                  </DialogContent>
+                </Dialog>
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>
