@@ -11,6 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useChat } from '@/context/ChatContext';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 const EXPERTS = [
   { 
@@ -77,6 +78,7 @@ export default function ProductAssistant() {
   const [lastRecommendedAt, setLastRecommendedAt] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const followUpTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pathname = usePathname();
 
   const activeMessages = activeSpecies ? messages[activeSpecies] || [] : [];
   const activeExpert = EXPERTS.find(e => e.name === activeSpecies);
@@ -161,6 +163,10 @@ export default function ProductAssistant() {
       setLoading(false);
     }
   };
+
+  // Ocultar asistente en páginas de cuenta o configuración
+  const isExcludedPage = pathname === '/cuenta' || pathname?.startsWith('/settings');
+  if (isExcludedPage) return null;
 
   if (!isOpen) {
     return (
