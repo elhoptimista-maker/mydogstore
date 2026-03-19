@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight, ShoppingBag } from 'lucide-react';
+import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight, ShoppingBag, ExternalLink } from 'lucide-react';
 import { productChat } from '@/ai/flows/intelligent-product-assistant';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -274,6 +274,13 @@ export default function ProductAssistant() {
                           </div>
                         </Link>
                       ))}
+                      
+                      <Link 
+                        href={`/catalogo?especie=${encodeURIComponent(activeSpecies)}`}
+                        className="flex items-center justify-center gap-2 py-3 bg-primary/5 rounded-2xl border border-dashed border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest hover:bg-primary/10 transition-colors mt-2"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Ver más en el catálogo de {activeSpecies}
+                      </Link>
                     </div>
                   )}
                 </div>

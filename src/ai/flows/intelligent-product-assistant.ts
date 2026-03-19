@@ -30,7 +30,7 @@ const ProductChatOutputSchema = z.object({
     name: z.string(),
     image: z.string().describe('URL de la imagen del producto.'),
     reason: z.string().describe('Razón técnica amigable de la recomendación.'),
-  })).optional().describe('Selecciona estrictamente los 3 productos más relevantes del catálogo que mejor se ajusten a la necesidad del usuario.'),
+  })).optional().describe('Selecciona estrictamente los 5 productos más relevantes del catálogo que mejor se ajusten a la necesidad del usuario.'),
 });
 
 export type ProductChatOutput = z.infer<typeof ProductChatOutputSchema>;
@@ -54,9 +54,9 @@ const productChatPrompt = ai.definePrompt({
   - Si el usuario pide "OTRAS MARCAS", busca marcas que no estén presentes en las recomendaciones anteriores.
   - El usuario puede mencionar MARCAS (ej: Master Dog, Pedigree) o ATRIBUTOS (ej: Senior, Cachorro).
   - DEBES buscar exhaustivamente en el CATÁLOGO proporcionado. 
-  - Si el usuario pide algo "más económico", busca los 3 con el precio (sellingPrice) más bajo que cumplan la necesidad.
+  - Si el usuario pide algo "más económico", busca los 5 con el precio (sellingPrice) más bajo que cumplan la necesidad.
   - Usa SOLO productos del catálogo proporcionado.
-  - CRÍTICO: Selecciona únicamente los 3 productos que mejor resuelvan la necesidad planteada y que SEAN DIFERENTES a los anteriores.
+  - CRÍTICO: Selecciona únicamente los 5 productos que mejor resuelvan la necesidad planteada y que SEAN DIFERENTES a los anteriores.
   - PROHIBIDO: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". No pongas listas numeradas con nombres. 
   - Usa el campo "reason" para justificar brevemente por qué ese producto es ideal.
   - CIERRE: Termina con una pregunta abierta amigable para seguir ayudando y asegurarte de que el cliente esté satisfecho.
