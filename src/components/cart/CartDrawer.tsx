@@ -25,7 +25,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
       </SheetTrigger>
       <SheetContent 
         side="right"
-        className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2.5rem] focus:outline-none"
+        className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2.5rem] focus:outline-none focus:ring-0"
       >
         {/* Cabecera Teal */}
         <SheetHeader className="px-6 pt-10 pb-6 bg-primary text-white shrink-0 border-none space-y-0">
@@ -44,10 +44,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Gamificación: El Carrito Hambriento */}
+        {/* Gamificación: El Carrito Hambriento con Emojis SOBRE la barra */}
         {cart.length > 0 && (
-          <div className="px-6 py-6 bg-secondary/10 border-b border-black/5">
-            <div className="flex justify-between items-end mb-4">
+          <div className="px-6 py-8 bg-secondary/10 border-b border-black/5">
+            <div className="flex justify-between items-end mb-6">
               <span className="text-[10px] font-black uppercase tracking-widest text-primary leading-tight">
                 {progress < 100 
                   ? `¡Faltan $${remaining.toLocaleString('es-CL')} para el envío gratis!`
@@ -56,17 +56,34 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               </span>
               <span className="text-[10px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
-            <div className="relative pt-10 pb-2">
+            
+            <div className="relative h-12 flex items-center">
+              {/* Barra de progreso base */}
+              <Progress value={progress} className="h-4 bg-white/50 border border-white" />
+              
+              {/* Perrito caminando SOBRE la barra */}
               <div 
-                className="absolute top-0 transition-all duration-500 ease-out z-10"
-                style={{ left: `calc(${progress}% - 32px)` }}
+                className="absolute transition-all duration-700 ease-out z-10 flex items-center justify-center"
+                style={{ 
+                  left: `calc(${progress}% - 24px)`,
+                  top: '50%',
+                  transform: 'translateY(-50%)'
+                }}
               >
-                <span className="text-4xl animate-bounce block leading-none">🐶</span>
+                <span className="text-4xl animate-bounce leading-none drop-shadow-md">🐶</span>
               </div>
-              <div className="absolute top-0 right-0 z-10">
-                <span className="text-4xl leading-none">🦴</span>
+
+              {/* Hueso meta SOBRE la barra */}
+              <div 
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center"
+              >
+                <span className={cn(
+                  "text-4xl leading-none transition-transform duration-500",
+                  progress >= 100 ? "scale-125 rotate-12" : "scale-100 opacity-60"
+                )}>
+                  🦴
+                </span>
               </div>
-              <Progress value={progress} className="h-2 bg-white" />
             </div>
           </div>
         )}
