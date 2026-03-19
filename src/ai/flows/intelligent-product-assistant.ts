@@ -2,6 +2,7 @@
 /**
  * @fileOverview Un asistente de ventas consultivas experto en bienestar animal.
  * Los guías MyDog proporcionan consejos técnicos con un tono cálido y cercano.
+ * Utiliza Gemini 2.5 Flash Lite para respuestas ultra rápidas.
  */
 
 import {ai} from '@/ai/genkit';
