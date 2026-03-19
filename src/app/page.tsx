@@ -1,13 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
   ArrowRight, 
   Truck,
   ShieldCheck,
   Headphones,
-  Star,
   Clock,
   Dog
 } from 'lucide-react';
@@ -47,50 +45,57 @@ export default async function Home() {
   return (
     <div className="bg-[#F6F6F6] min-h-screen">
       
-      {/* 2. Bloque Hero */}
+      {/* 2. Bloque Hero - Armonizado */}
       <section className="bg-[#FEF9F3] w-full overflow-hidden relative border-b border-black/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-[calc(100vh-176px)]">
-          <div className="space-y-8 py-12 md:py-0">
-            <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">
-              🐾 Bienestar animal garantizado
+        {/* Elemento decorativo de fondo */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-16 items-center min-h-[calc(100vh-176px)] relative z-10">
+          <div className="space-y-10 py-16 md:py-0 animate-in fade-in slide-in-from-left duration-1000">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+                🐾 Bienestar animal garantizado
+              </div>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-foreground leading-[0.95] tracking-tighter">
+                Comida Premium <br /> para tu <span className="text-primary">Mascota</span>
+              </h1>
+              <p className="text-muted-foreground text-lg md:text-xl font-medium max-w-lg leading-relaxed">
+                Distribuidora líder en nutrición animal con más de 15 años de trayectoria. Calidad certificada para los que más quieres.
+              </p>
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-foreground leading-[0.95] tracking-tighter">
-              Comida Premium <br /> para tu <span className="text-primary">Mascota</span>
-            </h1>
-            <p className="text-muted-foreground text-lg md:text-xl font-medium max-w-lg leading-relaxed">
-              Distribuidora líder en nutrición animal con más de 15 años de trayectoria. Calidad certificada para los que más quieres.
-            </p>
-            <div className="pt-4">
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 pt-4">
               <Link href="/catalogo">
-                <Button size="lg" className="h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl hover:scale-105 transition-all gap-3">
+                <Button size="lg" className="h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl shadow-primary/20 hover:scale-105 transition-all gap-3">
                   Explorar Catálogo <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
-            </div>
-            
-            {/* Social Proof */}
-            <div className="flex items-center gap-4 pt-6">
-              <div className="flex -space-x-3">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-12 h-12 rounded-full border-4 border-[#FEF9F3] overflow-hidden bg-muted shadow-sm">
-                    <Image src={`https://picsum.photos/seed/${i+10}/100/100`} alt="usuario" width={48} height={48} />
-                  </div>
-                ))}
+              
+              {/* Social Proof Armonizado */}
+              <div className="flex items-center gap-4">
+                <div className="flex -space-x-3">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-[#FEF9F3] overflow-hidden bg-muted shadow-sm ring-1 ring-black/5">
+                      <Image src={`https://picsum.photos/seed/${i+20}/80/80`} alt="usuario" width={40} height={40} />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none mb-1">1K+ Clientes</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Felices en Chile</span>
+                </div>
               </div>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                <span className="text-primary font-black">1K+</span> Clientes Felices
-              </p>
             </div>
           </div>
           
-          {/* Imagen oculta en móvil para priorizar el contenido */}
-          <div className="hidden md:flex relative h-full items-end justify-center">
-            <div className="relative w-full h-[120%] -mb-24 lg:-mb-32">
+          {/* Imagen Hero - Refinada */}
+          <div className="hidden md:flex relative h-full items-end justify-center animate-in fade-in slide-in-from-right duration-1000">
+            <div className="relative w-full h-[110%] -mb-16 lg:-mb-24">
               <Image
-                src="https://picsum.photos/seed/happy-dog/800/1000"
+                src="https://picsum.photos/seed/happy-dog-hero/800/1000"
                 alt="Mascota Feliz"
                 fill
-                className="object-contain drop-shadow-2xl"
+                className="object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.15)]"
                 priority
                 data-ai-hint="happy dog"
               />
@@ -99,7 +104,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Navegación por Especies (Mascotas) */}
+      {/* 3. Navegación por Mascota */}
       <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <div className="text-center space-y-3">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Encuentra lo mejor para tu</span>
