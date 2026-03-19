@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { User as UserIcon, LogOut, Package, Settings, ShieldCheck, Mail, Lock, Heart } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export default function CuentaPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -72,19 +73,21 @@ export default function CuentaPage() {
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-24">
-      {/* Hero Account */}
-      <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-12 border-b border-black/5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 w-full relative z-10">
-          <div className="space-y-2 text-center md:text-left">
-            <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Gestión de perfil</span>
-            <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-none">
-              {user ? `Hola, ${user.displayName || 'Usuario'}` : 'Mi Cuenta'}
-            </h1>
+      {/* Hero Account - Solo visible si hay usuario */}
+      {user && (
+        <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-12 border-b border-black/5">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8 w-full relative z-10">
+            <div className="space-y-2 text-center md:text-left">
+              <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Gestión de perfil</span>
+              <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-none">
+                Hola, {user.displayName || 'Miembro MyDog'}
+              </h1>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+      <div className={cn("max-w-7xl mx-auto px-4 lg:px-8", !user && "pt-12 md:pt-20")}>
         {!user ? (
           /* Formulario de Login/Registro */
           <div className="max-w-md mx-auto">
