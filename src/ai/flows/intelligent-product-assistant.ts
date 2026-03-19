@@ -1,8 +1,9 @@
+
 'use server';
 /**
  * @fileOverview Un asistente de ventas consultivas experto en bienestar animal.
  * Los guías MyDog proporcionan consejos técnicos con un tono cálido y cercano.
- * Utiliza un algoritmo de ranking previo y filtrado de repeticiones para asegurar variedad.
+ * Utiliza un algoritmo de ranking previo optimizado para marcas y stock.
  */
 
 import {ai} from '@/ai/genkit';
@@ -44,24 +45,24 @@ const productChatPrompt = ai.definePrompt({
   prompt: `Eres un guía experto de MyDog, apasionado y gran conocedor de los {{{species}}}.
 
   TU PERSONALIDAD:
-  1. EMPATÍA: Hablas con cariño. Entiendes lo que siente el animal y lo que su dueño busca para su bienestar integral.
-  2. CÁLIDO Y HUMILDE: Eres un amigo experto, no un profesor distante. Tu tono es amigable y servicial.
+  1. EMPATÍA: Hablas con cariño. Entiendes lo que siente el animal y lo que su dueño busca.
+  2. CÁLIDO Y HUMILDE: Eres un amigo experto.
   3. CONOCIMIENTO TÉCNICO: Sabes mucho de nutrición, pero lo explicas de forma sencilla.
-  4. CONCISO: No te extiendas. Deja que las tarjetas de productos den los detalles técnicos específicos.
+  4. CONCISO: No te extiendas.
 
   REGLAS DE BÚSQUEDA Y CURADURÍA (CRÍTICO):
   - NO REPITAS productos que ya hayas recomendado en el historial. El usuario quiere VARIEDAD.
-  - Si el usuario pide "OTRAS MARCAS", busca marcas que no estén presentes en las recomendaciones anteriores.
-  - El usuario puede mencionar MARCAS (ej: Master Dog, Pedigree) o ATRIBUTOS (ej: Senior, Cachorro).
+  - Si el usuario menciona una MARCA (ej: Master Dog, Pedigree, Champion), busca prioritariamente esa marca en el catálogo.
+  - El usuario puede mencionar ATRIBUTOS (ej: Senior, Cachorro, Light).
   - DEBES buscar exhaustivamente en el CATÁLOGO proporcionado. 
   - Si el usuario pide algo "más económico", busca los 5 con el precio (sellingPrice) más bajo que cumplan la necesidad.
-  - Usa SOLO productos del catálogo proporcionado.
-  - CRÍTICO: Selecciona únicamente los 5 productos que mejor resuelvan la necesidad planteada y que SEAN DIFERENTES a los anteriores.
+  - Usa SOLO productos del catálogo proporcionado. Todos los productos en el catálogo TIENEN STOCK.
+  - CRÍTICO: Selecciona únicamente los 5 productos que mejor resuelvan la necesidad planteada.
   - PROHIBIDO: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". No pongas listas numeradas con nombres. 
   - Usa el campo "reason" para justificar brevemente por qué ese producto es ideal.
-  - CIERRE: Termina con una pregunta abierta amigable para seguir ayudando y asegurarte de que el cliente esté satisfecho.
+  - CIERRE: Termina con una pregunta abierta amigable.
 
-  CATÁLOGO DISPONIBLE PARA {{{species}}} (Ya filtrado para evitar repeticiones):
+  CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
   - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Imagen: {{main_image}} | Desc: {{short_description}}
   {{/each}}
@@ -84,9 +85,10 @@ const productChatFlow = ai.defineFlow(
     outputSchema: ProductChatOutputSchema,
   },
   async (input) => {
-    const allProducts = await getSanitizedProducts();
+    // 1. Obtener productos y filtrar por stock inmediatamente
+    const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
     
-    // 0. Identificar productos ya recomendados para excluirlos
+    // 2. Identificar productos ya recomendados para excluirlos
     const previouslyRecommendedIds = new Set<string>();
     const previouslyRecommendedBrands = new Set<string>();
     
@@ -94,49 +96,54 @@ const productChatFlow = ai.defineFlow(
       if (m.recommendedIds) {
         m.recommendedIds.forEach(id => {
           previouslyRecommendedIds.add(id);
-          // También rastreamos las marcas para fomentar diversidad si se pide "otras marcas"
           const p = allProducts.find(prod => prod.id === id);
           if (p) previouslyRecommendedBrands.add(p.brand.toLowerCase());
         });
       }
     });
 
-    // 1. Filtrado por especie
+    // 3. Filtrado por especie
     const speciesCatalog = allProducts.filter(p => {
       return p.species.toLowerCase().includes(input.species.toLowerCase()) ||
              input.species.toLowerCase().includes(p.species.toLowerCase());
     });
 
-    // 2. Algoritmo de Ranking por Relevancia e Inteligencia de Variedad
+    // 4. Algoritmo de Ranking Mejorado
     const userMessageLower = input.message.toLowerCase();
     const isAskingForVariety = userMessageLower.includes('otras marcas') || userMessageLower.includes('otros productos');
     const searchTerms = userMessageLower.split(' ').filter(t => t.length > 2);
     
     const rankedCatalog = speciesCatalog.map(p => {
       let score = 0;
+      const brandLower = p.brand.toLowerCase();
       const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description} ${p.life_stage}`.toLowerCase();
       
+      // REFUERZO DE MARCA: Si el mensaje contiene la marca completa (ej: "master dog")
+      if (userMessageLower.includes(brandLower) && brandLower.length > 3) {
+        score += 150;
+      }
+
       // Coincidencia de términos de búsqueda
       searchTerms.forEach(term => {
         if (productText.includes(term)) score += 10;
-        if (p.brand.toLowerCase().includes(term)) score += 20;
+        if (brandLower.includes(term)) score += 30; // Más peso a marca por término
         if (p.life_stage.toLowerCase().includes(term)) score += 15;
       });
 
-      // Lógica de Variedad: Penalización por repetición de producto
+      // Lógica de Variedad: Penalización severa por repetición
       if (previouslyRecommendedIds.has(p.id)) {
-        score -= 200; // Penalización severa para no repetir el mismo SKU
+        score -= 500; 
       }
 
       // Lógica de Diversidad de Marca: Si pide "otras marcas", penalizamos las ya vistas
-      if (isAskingForVariety && previouslyRecommendedBrands.has(p.brand.toLowerCase())) {
-        score -= 50; // Penalización moderada para favorecer marcas nuevas
+      if (isAskingForVariety && previouslyRecommendedBrands.has(brandLower)) {
+        score -= 100; 
       }
       
       return { ...p, score };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 40); // Entregamos los 40 más relevantes al LLM para la decisión final
+    .slice(0, 45); // Entregamos los 45 más relevantes
 
     const {output} = await productChatPrompt({
       ...input,

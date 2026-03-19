@@ -32,8 +32,8 @@ interface PageProps {
 export default async function CatalogoPage({ searchParams }: PageProps) {
   const params = await searchParams;
   
-  // 1. Obtener todos los productos del ERP
-  const allProducts = await getSanitizedProducts();
+  // 1. Obtener solo productos con stock del ERP
+  const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
   
   // 2. Aplicar Filtros
   let filteredProducts = [...allProducts];
@@ -127,7 +127,7 @@ export default async function CatalogoPage({ searchParams }: PageProps) {
               </div>
             ) : (
               <div className="bg-white rounded-[3rem] p-20 text-center border border-dashed border-primary/20">
-                <p className="text-muted-foreground font-bold">No se encontraron productos con los filtros seleccionados.</p>
+                <p className="text-muted-foreground font-bold">No se encontraron productos con stock en este momento.</p>
                 <Link href="/catalogo">
                   <Button variant="link" className="mt-4 text-primary font-black uppercase tracking-widest text-xs">Limpiar filtros</Button>
                 </Link>
