@@ -92,18 +92,21 @@ export default function CuentaPage() {
           /* Formulario de Login/Registro */
           <div className="max-w-md mx-auto">
             <Card className="rounded-[3rem] border-none shadow-2xl overflow-hidden bg-white">
-              <div className="bg-primary p-12 text-center text-white space-y-4">
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto backdrop-blur-md">
-                  <UserIcon className="w-8 h-8" />
-                </div>
-                <h2 className="text-3xl font-black tracking-tighter">
-                  {isLogin ? 'Inicia Sesión' : 'Crea tu Cuenta'}
-                </h2>
-                <p className="text-white/60 text-sm font-medium">
-                  Accede a tus pedidos y favoritos personalizados.
-                </p>
-              </div>
               <CardContent className="p-12 space-y-8">
+                <div className="text-center space-y-4 mb-8">
+                  <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mx-auto">
+                    <UserIcon className="w-8 h-8 text-primary" />
+                  </div>
+                  <div className="space-y-2">
+                    <h2 className="text-3xl font-black tracking-tighter text-foreground">
+                      {isLogin ? 'Inicia Sesión' : 'Crea tu Cuenta'}
+                    </h2>
+                    <p className="text-muted-foreground text-sm font-medium">
+                      Accede a tus pedidos y favoritos personalizados.
+                    </p>
+                  </div>
+                </div>
+
                 <form onSubmit={handleAuth} className="space-y-6">
                   {!isLogin && (
                     <div className="space-y-3">
@@ -151,7 +154,7 @@ export default function CuentaPage() {
                   </Button>
                 </form>
 
-                <div className="text-center">
+                <div className="text-center pt-4 border-t border-black/5">
                   <button 
                     onClick={() => setIsLogin(!isLogin)}
                     className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
