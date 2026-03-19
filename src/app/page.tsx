@@ -60,11 +60,13 @@ export default async function Home() {
             <p className="text-muted-foreground text-lg md:text-xl font-medium max-w-lg leading-relaxed">
               Distribuidora líder en nutrición animal con más de 15 años de trayectoria. Calidad certificada para los que más quieres.
             </p>
-            <Link href="/catalogo">
-              <Button size="lg" className="h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl hover:scale-105 transition-all gap-3">
-                Explorar Catálogo <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
+            <div className="pt-4">
+              <Link href="/catalogo">
+                <Button size="lg" className="h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl hover:scale-105 transition-all gap-3">
+                  Explorar Catálogo <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
             
             {/* Social Proof */}
             <div className="flex items-center gap-4 pt-6">
