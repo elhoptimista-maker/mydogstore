@@ -142,6 +142,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
+      {/* 1. Top Bar */}
       <div className="h-10 bg-accent text-accent-foreground flex items-center px-4 md:px-8 text-[10px] font-bold uppercase tracking-widest border-b border-black/5">
         <div className="max-w-7xl mx-auto w-full flex justify-center items-center relative">
           <div className="flex items-center gap-2">
@@ -171,6 +172,7 @@ export default function Header() {
         </div>
       </div>
 
+      {/* 2. Main Header */}
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-6 md:gap-12">
           <Sheet>
@@ -317,16 +319,11 @@ export default function Header() {
                 )}
               </button>
             </CartDrawer>
-
-            <Link href="/cuenta">
-              <button className="hidden sm:flex relative w-10 h-10 rounded-full bg-white/10 items-center justify-center hover:bg-white/20 transition-all text-white">
-                <User className="w-5 h-5" />
-              </button>
-            </Link>
           </div>
         </div>
       </div>
 
+      {/* 3. Menu Bar */}
       <div className="h-14 bg-primary border-t border-white/10 hidden md:flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           <div className="flex items-center gap-8 h-full">
@@ -359,7 +356,10 @@ export default function Header() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
+            <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
+              <User className="w-4 h-4" /> Mi Cuenta
+            </Link>
             <Link href="/b2b" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
               <Package className="w-4 h-4" /> Portal B2B
             </Link>
