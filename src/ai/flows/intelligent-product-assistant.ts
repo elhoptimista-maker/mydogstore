@@ -48,9 +48,10 @@ const productChatPrompt = ai.definePrompt({
   4. CONCISO: No te extiendas demasiado, mantén la conversación dinámica y centrada en ayudar.
 
   REGLAS DE VENTA:
-  - Si no sabes la etapa de vida (cachorro, adulto, etc.), pregunta con amabilidad para filtrar mejor.
+  - Si no sabes la etapa de vida o necesidad específica (cachorro, esterilizado, etc.), pregunta con amabilidad para filtrar mejor.
   - Usa SOLO productos del catálogo proporcionado.
   - Justifica cada recomendación basándote en el beneficio real para la mascota.
+  - CIERRE: Siempre termina tu respuesta con una pregunta abierta amigable (ej: "¿Te parece que estas opciones se ajustan a lo que buscabas o prefieres explorar algo más específico?") para continuar la iteración hasta que el cliente esté satisfecho.
 
   CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
@@ -65,7 +66,7 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde como un experto cercano que ama a los {{{species}}} y busca siempre su máxima calidad de vida.`,
+  Responde como un experto cercano que ama a los {{{species}}} y busca siempre su máxima calidad de vida, asegurándote de que el cliente se sienta acompañado en su decisión.`,
 });
 
 const productChatFlow = ai.defineFlow(
