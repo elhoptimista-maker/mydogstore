@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -17,8 +18,8 @@ const EXPERTS = [
     name: 'Perro', 
     emoji: '🐶', 
     color: 'bg-primary', 
-    description: 'Guía de Perros',
-    greeting: "¡Hola! 🐾 Soy tu guía de MyDog especializado en Perros. Me encanta acompañar a los dueños a encontrar la mejor nutrición para sus peludos. ¿Me cuentas si tu compañero es cachorro, adulto o senior?",
+    description: 'Dogtor Firulais',
+    greeting: "¡Guau! 🐾 Soy el Dogtor Firulais, experto en bienestar perruno. ¿Tu mejor amigo es cachorro, adulto o ya está en su etapa dorada?",
     initialActions: ["Cachorro", "Adulto", "Senior"],
     categories: ["Alimento Húmedo", "Snacks", "Accesorios", "Salud Dental"]
   },
@@ -26,8 +27,8 @@ const EXPERTS = [
     name: 'Gato', 
     emoji: '🐱', 
     color: 'bg-orange-500', 
-    description: 'Guía de Gatos',
-    greeting: "¡Hola! 🐱 Soy tu guía en el mundo gatuno. Entiendo lo selectivos que pueden ser. ¿Tu amigo es gatito, adulto, o quizás está esterilizado?",
+    description: 'Michi Sommelier',
+    greeting: "¡Miau! 🐱 Soy el Michi Sommelier, catador de las texturas más finas. ¿Buscamos algo para un gatito, un rey de la casa adulto o un felino esterilizado?",
     initialActions: ["Gatito", "Adulto", "Esterilizado"],
     categories: ["Alimento Húmedo", "Arena Sanitaria", "Snacks", "Juguetes"]
   },
@@ -35,8 +36,8 @@ const EXPERTS = [
     name: 'Aves', 
     emoji: '🦜', 
     color: 'bg-green-500', 
-    description: 'Guía de Aves',
-    greeting: "¡Hola! 🦜 Soy tu guía de Aves. Un plumaje brillante y mucha energía dependen de una buena mixtura. ¿Buscas algo para canarios, loros o para etapa de cría?",
+    description: 'Capitán Pico',
+    greeting: "¡Hola! 🦜 Soy el Capitán Pico. Un plumaje brillante requiere la mejor mixtura. ¿Buscas para canarios, loros o etapa de cría?",
     initialActions: ["Canarios", "Loros/Cacatúas", "Etapa Cría"],
     categories: ["Mixturas", "Vitaminas", "Accesorios", "Higiene"]
   },
@@ -44,8 +45,8 @@ const EXPERTS = [
     name: 'Conejo y Roedor', 
     emoji: '🐰', 
     color: 'bg-blue-500', 
-    description: 'Guía de Pequeños',
-    greeting: "¡Hola! 🐰 Soy tu guía experto en pequeños compañeros. La fibra es vital para ellos. ¿Tienes un conejo, cobaya o hámster?",
+    description: 'Profesor Orejas',
+    greeting: "¡Hola! 🐰 Soy el Profesor Orejas. La fibra es el secreto de una vida feliz. ¿Tienes un conejo saltarín, una cobaya o un hámster?",
     initialActions: ["Conejos", "Cobayas", "Hámster"],
     categories: ["Heno Premium", "Snacks Naturales", "Sustratos", "Juguetes madera"]
   },
@@ -53,8 +54,8 @@ const EXPERTS = [
     name: 'Peces y Tortugas', 
     emoji: '🐠', 
     color: 'bg-cyan-500', 
-    description: 'Guía Acuático',
-    greeting: "¡Hola! 🐠 Soy tu guía del mundo acuático. Mantener el equilibrio del agua es todo un arte. ¿Tu acuario es de agua fría, tropical, o buscas para tortugas?",
+    description: 'Almirante Burbujas',
+    greeting: "¡Glup! 🐠 Soy el Almirante Burbujas. El equilibrio del agua es mi especialidad. ¿Tu acuario es tropical, de agua fría o buscas para tortugas?",
     initialActions: ["Agua Fría", "Tropicales", "Tortugas"],
     categories: ["Hojuelas", "Granulados", "Acondicionadores", "Filtración"]
   },
@@ -81,14 +82,12 @@ export default function ProductAssistant() {
   const activeMessages = activeSpecies ? messages[activeSpecies] || [] : [];
   const activeExpert = EXPERTS.find(e => e.name === activeSpecies);
 
-  // Auto-scroll
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [activeMessages, loading, isOpen]);
 
-  // Saludo inicial
   useEffect(() => {
     if (activeSpecies && activeExpert && (!messages[activeSpecies] || messages[activeSpecies].length === 0)) {
       addMessage(activeSpecies, {
@@ -98,7 +97,6 @@ export default function ProductAssistant() {
     }
   }, [activeSpecies, activeExpert]);
 
-  // Mensaje de carga aleatorio
   useEffect(() => {
     if (loading) {
       const randomMsg = LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
@@ -106,7 +104,6 @@ export default function ProductAssistant() {
     }
   }, [loading]);
 
-  // Lógica de proactividad inteligente
   useEffect(() => {
     if (lastRecommendedAt && !loading) {
       followUpTimerRef.current = setTimeout(() => {

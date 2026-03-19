@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -18,18 +19,22 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const { addToCart } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
+    setIsAdding(true);
     addToCart(product); 
     
+    setTimeout(() => setIsAdding(false), 800);
+    
     toast({
-      title: "¡Añadido!",
-      description: product.name,
-      className: "bg-primary text-white rounded-2xl border-none font-bold",
+      title: "¡Añadido! 🐾",
+      description: `Agregaste ${product.name} al carrito`,
+      className: "bg-primary text-white rounded-2xl border-none font-bold shadow-2xl",
     });
   };
 
@@ -106,10 +111,17 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
             <button 
               onClick={handleAddToCart}
-              disabled={product.currentStock === 0}
-              className="w-10 h-10 rounded-xl bg-muted group-hover:bg-primary text-primary group-hover:text-white transition-all flex items-center justify-center shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={product.currentStock === 0 || isAdding}
+              className={cn(
+                "w-10 h-10 rounded-xl transition-all flex items-center justify-center shadow-sm disabled:cursor-not-allowed relative overflow-hidden",
+                isAdding ? "bg-secondary scale-110" : "bg-muted group-hover:bg-primary text-primary group-hover:text-white"
+              )}
             >
-              <ShoppingCart className="w-4 h-4" />
+              {isAdding ? (
+                <span className="animate-in zoom-in duration-300">🐾</span>
+              ) : (
+                <ShoppingCart className="w-4 h-4" />
+              )}
             </button>
           </div>
         </div>

@@ -1,17 +1,23 @@
+
 "use client";
 
 import { useCart } from '@/context/CartContext';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2, Plus, Minus, Package, ShieldCheck, Truck } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Package, ShieldCheck, Truck, Dog } from 'lucide-react';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress';
 
 export default function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount } = useCart();
+  
+  const FREE_SHIPPING_THRESHOLD = 50000;
+  const progress = Math.min((cartTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+  const remaining = Math.max(FREE_SHIPPING_THRESHOLD - cartTotal, 0);
 
   return (
     <Sheet>
@@ -22,7 +28,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 gap-0 border-none shadow-2xl bg-background overflow-hidden rounded-l-[2rem]"
       >
-        {/* Cabecera Teal - Sin márgenes ni gaps */}
+        {/* Cabecera Teal */}
         <SheetHeader className="px-6 pt-10 pb-6 bg-primary text-white shrink-0 border-none space-y-0">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-sm">
@@ -39,7 +45,36 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Listado de Productos - Integración continua */}
+        {/* Gamificación: El Carrito Hambriento */}
+        {cart.length > 0 && (
+          <div className="px-6 py-4 bg-secondary/10 border-b border-black/5">
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                {progress < 100 
+                  ? `¡Faltan $${remaining.toLocaleString('es-CL')} para el envío gratis!`
+                  : "¡GUAU! ¡ENVÍO GRATIS DESBLOQUEADO! 🦴"
+                }
+              </span>
+              <span className="text-[10px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
+            </div>
+            <div className="relative pt-4 pb-2">
+              <Progress value={progress} className="h-2 bg-white" />
+              <div 
+                className="absolute top-0 transition-all duration-500 ease-out"
+                style={{ left: `calc(${progress}% - 20px)` }}
+              >
+                <div className="bg-white p-1 rounded-full shadow-md border border-primary/20">
+                  <Dog className="w-4 h-4 text-primary animate-bounce" />
+                </div>
+              </div>
+              <div className="absolute top-2 right-0">
+                <span className="text-lg">🥣</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Listado de Productos */}
         <div className="flex-1 overflow-hidden bg-[#f9f9f9] flex flex-col m-0 p-0 border-none">
           <ScrollArea className="flex-1 h-full">
             <div className="px-6 py-2">
@@ -63,8 +98,8 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                   >
                     <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
                       <Image 
-                        src={item.media.main_image} 
-                        alt={item.metadata.name} 
+                        src={item.main_image} 
+                        alt={item.name} 
                         fill 
                         className="object-contain p-2"
                         sizes="80px"
@@ -75,10 +110,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                       <div className="flex justify-between items-start gap-2">
                         <div className="space-y-1">
                           <h4 className="font-bold text-sm leading-tight text-foreground line-clamp-2">
-                            {item.metadata.name}
+                            {item.name}
                           </h4>
                           <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                            {item.attributes.brand}
+                            {item.brand}
                           </span>
                         </div>
                         <button 
@@ -107,7 +142,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                           </button>
                         </div>
                         <span className="font-black text-primary text-base tracking-tighter">
-                          ${(item.financials.pricing.base_price * item.quantity).toLocaleString('es-CL')}
+                          ${(item.sellingPrice * item.quantity).toLocaleString('es-CL')}
                         </span>
                       </div>
                     </div>
@@ -118,7 +153,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </ScrollArea>
         </div>
 
-        {/* Resumen Final - Unión física con el listado */}
+        {/* Resumen Final */}
         {cart.length > 0 && (
           <div className="px-6 py-8 md:px-8 bg-white shrink-0 border-none shadow-[0_-20px_50px_rgba(0,0,0,0.1)] relative z-10">
             <div className="space-y-4 mb-6">
@@ -132,10 +167,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground font-medium text-sm">Despacho</span>
                   <Badge variant="outline" className="text-[9px] font-black bg-primary/5 text-primary border-primary/20 uppercase tracking-tighter px-2">
-                    <Truck className="w-3 h-3 mr-1" /> Gratis en Stgo
+                    <Truck className="w-3 h-3 mr-1" /> {progress >= 100 ? "Gratis" : "Por calcular"}
                   </Badge>
                 </div>
-                <span className="font-black text-primary text-xs tracking-widest">GRATIS*</span>
+                <span className="font-black text-primary text-xs tracking-widest">{progress >= 100 ? "GRATIS" : "-"}</span>
               </div>
               
               <Separator className="bg-border/40" />
