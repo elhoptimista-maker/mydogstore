@@ -134,7 +134,7 @@ export default function Header() {
     { label: 'Tienda', href: '/catalogo' },
     { label: 'Ofertas', href: '/catalogo' },
     { label: 'Blog', href: '#' },
-    { label: 'B2B Mayoristas', href: '/b2b' },
+    { label: 'Mayoristas', href: '/b2b' },
   ];
 
   return (
