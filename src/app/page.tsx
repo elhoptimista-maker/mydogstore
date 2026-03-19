@@ -30,13 +30,13 @@ export default async function Home() {
     .sort((a, b) => b.currentStock - a.currentStock)
     .slice(0, 10);
 
-  // Lista de especies con lógica de conteo dinámico
+  // Lista de especies con lógica de conteo dinámico y mensajes divertidos
   const speciesList = [
-    { name: 'Perros', emoji: '🐶', filter: 'Perro' },
-    { name: 'Gatos', emoji: '🐱', filter: 'Gato' },
-    { name: 'Aves', emoji: '🦜', filter: 'Aves' },
-    { name: 'Conejos y Roedores', emoji: '🐰', filter: 'Conejo y Roedor' },
-    { name: 'Peces y Tortugas', emoji: '🐠', filter: 'Peces y Tortugas' },
+    { name: 'Perros', emoji: '🐶', filter: 'Perro', message: '¡Guau! ¿Vamos de paseo?' },
+    { name: 'Gatos', emoji: '🐱', filter: 'Gato', message: '¡Miau! ¿Es hora de dormir?' },
+    { name: 'Aves', emoji: '🦜', filter: 'Aves', message: '¡Pío pío! ¡Qué rico!' },
+    { name: 'Conejos y Roedores', emoji: '🐰', filter: 'Conejo y Roedor', message: '¡Ñam! ¡Croc croc!' },
+    { name: 'Peces y Tortugas', emoji: '🐠', filter: 'Peces y Tortugas', message: '¡Glup glup! ¡Burbujas!' },
   ].map(s => ({
     ...s,
     count: products.filter(p => p.species === s.filter).length
@@ -104,7 +104,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Navegación por Mascota */}
+      {/* 3. Navegación por Mascota con Burbujas Interactivas */}
       <section id="navegacion-mascota" className="py-16 max-w-7xl mx-auto px-4 md:px-8 space-y-16">
         <div className="text-center space-y-3">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.3em]">Encuentra lo mejor para tu</span>
@@ -112,13 +112,24 @@ export default async function Home() {
             Busca por <span className="text-primary">Mascota</span>
           </h2>
         </div>
-        <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x">
+        <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x pt-12">
           {speciesList.map((species, i) => (
             <Link 
               key={i} 
               href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
-              className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0"
+              className="flex flex-col items-center gap-5 group cursor-pointer snap-center shrink-0 relative"
             >
+              {/* Burbuja de Pensamiento IA */}
+              <div className="absolute -top-14 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-300 pointer-events-none z-20">
+                <div className="bg-white px-5 py-2.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-black/[0.03] relative">
+                  <span className="text-[10px] font-black text-primary uppercase tracking-tight whitespace-nowrap">
+                    {species.message}
+                  </span>
+                  {/* Cola de la burbuja */}
+                  <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-b border-r border-black/[0.03] rotate-45 rounded-sm" />
+                </div>
+              </div>
+
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:border-primary/20">
                 <span className="text-5xl md:text-6xl">{species.emoji}</span>
               </div>
