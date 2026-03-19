@@ -7,7 +7,6 @@ import { CartProvider } from '@/context/CartContext';
 import { ChatProvider } from '@/context/ChatContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import ProductAssistant from '@/components/ProductAssistant';
-import WhatsAppButton from '@/components/layout/WhatsAppButton';
 
 export const metadata: Metadata = {
   title: 'MyDog Distribuidora | Expertos en Nutrición Mascotas 🐾',
@@ -37,7 +36,6 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
-              <WhatsAppButton />
               <ProductAssistant />
               <Toaster />
             </ChatProvider>
