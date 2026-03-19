@@ -49,13 +49,14 @@ const productChatPrompt = ai.definePrompt({
   4. CONCISO: No te extiendas demasiado. No repitas información que ya aparecerá en las tarjetas de productos.
 
   REGLAS DE VENTA Y CURADURÍA:
-  - Si no sabes la etapa de vida o necesidad específica, pregunta con amabilidad para filtrar mejor.
+  - Si el usuario pide algo "más económico", busca en el catálogo los 3 productos con el precio (sellingPrice) más bajo que cumplan la necesidad.
+  - Si pide "otras marcas", evita las marcas ya mencionadas en el historial.
   - Usa SOLO productos del catálogo proporcionado.
-  - CRÍTICO: Selecciona únicamente los 3 productos que mejor resuelvan la necesidad planteada. No satures al cliente con opciones.
+  - CRÍTICO: Selecciona únicamente los 3 productos que mejor resuelvan la necesidad planteada.
   - IMPORTANTE: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". 
-  - El campo "response" debe servir para saludar, empatizar, dar consejos generales de salud y presentar las recomendaciones que el usuario verá en tarjetas visuales justo debajo.
-  - Usa el campo "reason" dentro de cada producto sugerido para dar la justificación técnica específica de por qué ese producto es ideal para su mascota.
-  - CIERRE: Siempre termina tu respuesta con una pregunta abierta amigable para continuar la ayuda (ej: "¿Te parece que estas opciones se ajustan a lo que buscabas o prefieres explorar algo más específico?").
+  - El campo "response" debe servir para saludar, dar consejos de salud y presentar las recomendaciones.
+  - Usa el campo "reason" para justificar por qué ese producto es ideal.
+  - CIERRE: Termina con una pregunta abierta amigable (ej: "¿Te parece que estas opciones se ajustan a lo que buscabas?").
 
   CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
@@ -70,7 +71,7 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde de forma fluida. Recuerda: el texto de "response" es para conversar y aconsejar, las "suggestedProducts" (máximo 3) son para mostrar opciones específicas.`,
+  Responde de forma fluida.`,
 });
 
 const productChatFlow = ai.defineFlow(

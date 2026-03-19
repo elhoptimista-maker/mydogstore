@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Loader2, Send, ChevronDown, MessageCircle } from 'lucide-react';
+import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight } from 'lucide-react';
 import { productChat } from '@/ai/flows/intelligent-product-assistant';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -17,41 +17,41 @@ const EXPERTS = [
     name: 'Perro', 
     emoji: '🐶', 
     color: 'bg-primary', 
-    description: 'Especialista en Caninos',
-    greeting: "¡Hola! 🐾 Soy tu guía experto en Perros. Me apasiona asegurar que cada peludo tenga la nutrición exacta para su energía. Para asesorarte mejor, ¿cuál es su etapa de vida o tiene alguna necesidad especial como piel sensible?",
-    actions: ["Cachorro", "Adulto", "Senior", "Piel Sensible", "Ofertas"]
+    description: 'Especialista en Perros',
+    greeting: "¡Hola! 🐾 Soy tu guía experto en Perros. Me encanta ayudar a encontrar la nutrición perfecta. ¿Tu peludo es cachorro, adulto o senior?",
+    actions: ["Cachorro", "Adulto", "Senior", "Piel Sensible", "Sobrepeso"]
   },
   { 
     name: 'Gato', 
     emoji: '🐱', 
     color: 'bg-orange-500', 
     description: 'Consultor Felino',
-    greeting: "¡Hola! 🐱 Soy tu guía especialista en Gatos. Entiendo lo selectivos que pueden ser y lo importante que es su salud urinaria. ¿Tu compañero es gatito, adulto, o quizás está esterilizado?",
-    actions: ["Gatito", "Adulto", "Esterilizado", "Control Bolas Pelo", "Senior"]
+    greeting: "¡Hola! 🐱 Soy tu guía especialista en Gatos. Entiendo lo especiales que son. ¿Tu compañero es gatito, adulto, o quizás está esterilizado?",
+    actions: ["Gatito", "Adulto", "Esterilizado", "Senior", "Urinario"]
   },
   { 
     name: 'Aves', 
     emoji: '🦜', 
     color: 'bg-green-500', 
     description: 'Guía de Aves',
-    greeting: "¡Hola! 🦜 Soy tu consultor en nutrición aviar. Un plumaje brillante y vitalidad dependen de una mixtura correcta. ¿Buscas algo para mantenimiento, cría o especies específicas como loros o canarios?",
-    actions: ["Canarios", "Loros/Cacatúas", "Etapa de Cría", "Mantenimiento", "Mixturas"]
+    greeting: "¡Hola! 🦜 Soy tu consultor en nutrición aviar. Un plumaje brillante depende de una buena base. ¿Buscas algo para canarios, loros o etapa de cría?",
+    actions: ["Canarios", "Loros/Cacatúas", "Cría", "Mantenimiento"]
   },
   { 
     name: 'Conejo y Roedor', 
     emoji: '🐰', 
     color: 'bg-blue-500', 
-    description: 'Especialista en Pequeños Mamíferos',
-    greeting: "¡Hola! 🐰 Soy tu guía para pequeños compañeros. El heno y el desgaste dental son pilares de su salud. ¿Me cuentas si tienes un conejo, cobaya o hámster para buscar el mix ideal?",
-    actions: ["Conejos", "Hámster/Cobaya", "Heno Premium", "Snacks Saludables", "Gazapos"]
+    description: 'Especialista en Pequeños',
+    greeting: "¡Hola! 🐰 Soy tu guía para pequeños amigos. El heno es clave, ¿sabías? ¿Tienes un conejo, cobaya o hámster?",
+    actions: ["Conejos", "Hámster/Cobaya", "Heno Premium", "Snacks"]
   },
   { 
     name: 'Peces y Tortugas', 
     emoji: '🐠', 
     color: 'bg-cyan-500', 
     description: 'Consultor Acuático',
-    greeting: "¡Hola! 🐠 Soy tu guía en acuariofilia y reptiles. El equilibrio nutricional es vital en el agua. ¿Tu acuario es de agua fría, tropical, o buscas nutrición para tortugas?",
-    actions: ["Agua Fría", "Peces Tropicales", "Tortugas", "Alevines", "Mantenimiento"]
+    greeting: "¡Hola! 🐠 Soy tu guía acuático. El equilibrio es vital. ¿Tu acuario es de agua fría, tropical, o buscas para tortugas?",
+    actions: ["Agua Fría", "Tropicales", "Tortugas", "Alevines"]
   },
 ];
 
@@ -59,18 +59,11 @@ const LOADING_MESSAGES = [
   "Buscando en nuestro almacén con olfato de sabueso...",
   "Revolviendo el gallinero para encontrar lo mejor...",
   "Limpiando las algas del acuario para ver mejor...",
-  "Olfateando las croquetas más frescas del depósito...",
-  "Persiguiendo el puntero láser por los pasillos de snacks...",
-  "Afilando las garras para darte la mejor asesoría...",
-  "Contando granos de alpiste premium...",
-  "Ordenando los juguetes por nivel de '¡CUA-CUA!'...",
+  "Olfateando las croquetas más frescas...",
+  "Persiguiendo el puntero láser por los pasillos...",
   "Revisando el rincón secreto de las golosinas...",
   "Sincronizando ronroneos con nuestra base de datos...",
-  "Cavando un hoyo para encontrar el tesoro nutricional...",
-  "Explorando la madriguera de las ofertas...",
-  "Nadando contra la corriente para traerte calidad...",
-  "Buscando debajo de la cama (donde siempre hay tesoros)...",
-  "Ajustando las antenas para captar tus necesidades..."
+  "Cavando un hoyo para encontrar el tesoro nutricional..."
 ];
 
 export default function ProductAssistant() {
@@ -78,17 +71,22 @@ export default function ProductAssistant() {
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [input, setInput] = useState('');
+  const [lastRecommendedAt, setLastRecommendedAt] = useState<number | null>(null);
+  const [hasInteractedWithRecs, setHasInteractedWithRecs] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const followUpTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const activeMessages = activeSpecies ? messages[activeSpecies] || [] : [];
   const activeExpert = EXPERTS.find(e => e.name === activeSpecies);
 
+  // Auto-scroll
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [activeMessages, loading, isOpen]);
 
+  // Saludo inicial
   useEffect(() => {
     if (activeSpecies && activeExpert && (!messages[activeSpecies] || messages[activeSpecies].length === 0)) {
       addMessage(activeSpecies, {
@@ -98,6 +96,7 @@ export default function ProductAssistant() {
     }
   }, [activeSpecies, activeExpert]);
 
+  // Mensaje de carga aleatorio
   useEffect(() => {
     if (loading) {
       const randomMsg = LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
@@ -105,12 +104,30 @@ export default function ProductAssistant() {
     }
   }, [loading]);
 
+  // Lógica de proactividad (esperar 10s si no hay clic en recomendación)
+  useEffect(() => {
+    if (lastRecommendedAt && !hasInteractedWithRecs && !loading) {
+      followUpTimerRef.current = setTimeout(() => {
+        if (!hasInteractedWithRecs) {
+          addMessage(activeSpecies!, {
+            role: 'assistant',
+            content: "¿Te gustaría explorar alguna de estas opciones o prefieres que busquemos algo de otras marcas o quizás algo más económico?"
+          });
+        }
+      }, 10000);
+    }
+    return () => {
+      if (followUpTimerRef.current) clearTimeout(followUpTimerRef.current);
+    };
+  }, [lastRecommendedAt, hasInteractedWithRecs, loading]);
+
   const handleSend = async (text: string, e?: React.FormEvent) => {
     e?.preventDefault();
     if (!text.trim() || loading || !activeSpecies) return;
 
     const userMessage = text.trim();
     setInput('');
+    setHasInteractedWithRecs(true); // Cualquier mensaje cuenta como interacción
     
     addMessage(activeSpecies, { role: 'user', content: userMessage });
     setLoading(true);
@@ -129,14 +146,24 @@ export default function ProductAssistant() {
         content: chatResponse.response,
         recommendations: chatResponse.suggestedProducts
       });
+
+      if (chatResponse.suggestedProducts && chatResponse.suggestedProducts.length > 0) {
+        setLastRecommendedAt(Date.now());
+        setHasInteractedWithRecs(false);
+      }
     } catch (error) {
       addMessage(activeSpecies, { 
         role: 'assistant', 
-        content: "Lo siento, tuve un pequeño problema técnico con mi radar animal. ¿Podrías repetirme eso?" 
+        content: "Lo siento, tuve un pequeño problema técnico. ¿Podrías repetirme eso?" 
       });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRecClick = () => {
+    setHasInteractedWithRecs(true);
+    if (followUpTimerRef.current) clearTimeout(followUpTimerRef.current);
   };
 
   if (!isOpen) {
@@ -155,7 +182,7 @@ export default function ProductAssistant() {
 
   return (
     <Card className="fixed bottom-6 right-6 z-[100] w-[90vw] sm:w-[400px] h-[650px] flex flex-col overflow-hidden bg-white shadow-2xl rounded-[2.5rem] border-none animate-in slide-in-from-bottom-10 duration-500">
-      {/* Header del Chat */}
+      {/* Header */}
       <div className={cn(
         "p-6 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10 transition-colors duration-500",
         activeExpert ? activeExpert.color : "bg-primary"
@@ -168,23 +195,20 @@ export default function ProductAssistant() {
             <h3 className="text-xl font-black leading-none tracking-tight">
               {activeExpert ? `${activeExpert.description}` : 'Guía MyDog'}
             </h3>
-            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Venta Consultiva Experta</p>
+            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Venta Consultiva</p>
           </div>
         </div>
-        <button 
-          onClick={() => setIsOpen(false)}
-          className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
-        >
+        <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
           <ChevronDown className="w-6 h-6" />
         </button>
       </div>
 
-      {/* Contenido Principal */}
+      {/* Main Content */}
       {!activeSpecies ? (
         <div className="flex-1 flex flex-col p-8 space-y-8 bg-[#F9FAFB]">
           <div className="text-center space-y-2">
-            <h4 className="text-lg font-black text-foreground tracking-tight">¿Quién necesita mi ayuda hoy?</h4>
-            <p className="text-xs font-medium text-muted-foreground">Habla con un guía especializado en tu mascota.</p>
+            <h4 className="text-lg font-black text-foreground tracking-tight">¿Quién necesita mi ayuda?</h4>
+            <p className="text-xs font-medium text-muted-foreground">Habla con un guía especializado.</p>
           </div>
           <div className="grid grid-cols-1 gap-3">
             {EXPERTS.map((expert) => (
@@ -210,7 +234,7 @@ export default function ProductAssistant() {
           <ScrollArea className="flex-1 p-6 bg-[#F9FAFB]">
             <div className="space-y-6">
               {activeMessages.map((msg, i) => (
-                <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} space-y-2`}>
+                <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} space-y-2 animate-in fade-in slide-in-from-bottom-2`}>
                   <div 
                     className={cn(
                       "max-w-[85%] p-4 rounded-3xl text-sm font-medium leading-relaxed shadow-sm",
@@ -225,7 +249,12 @@ export default function ProductAssistant() {
                   {msg.recommendations && msg.recommendations.length > 0 && (
                     <div className="grid grid-cols-1 gap-3 w-full max-w-[95%] mt-4">
                       {msg.recommendations.map((rec, idx) => (
-                        <Link key={idx} href={`/catalogo/${rec.id}`} className="group">
+                        <Link 
+                          key={idx} 
+                          href={`/catalogo/${rec.id}`} 
+                          onClick={handleRecClick}
+                          className="group"
+                        >
                           <div className="bg-white p-3 rounded-3xl border border-primary/10 hover:border-primary/40 transition-all shadow-md flex items-center gap-4 group-hover:-translate-y-1">
                             <div className="relative w-16 h-16 bg-muted rounded-2xl overflow-hidden shrink-0 border border-black/5">
                               <Image 
@@ -250,10 +279,11 @@ export default function ProductAssistant() {
                 </div>
               ))}
               
-              {/* Sugerencias de Botones Dinámicos */}
-              {!loading && activeMessages.length === 1 && activeExpert && (
+              {/* Botones de Acción Sugeridos (Contextuales) */}
+              {!loading && (
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {activeExpert.actions.map(action => (
+                  {/* Botones iniciales */}
+                  {activeMessages.length === 1 && activeExpert && activeExpert.actions.map(action => (
                     <button
                       key={action}
                       onClick={() => handleSend(action)}
@@ -262,11 +292,35 @@ export default function ProductAssistant() {
                       {action}
                     </button>
                   ))}
+
+                  {/* Botones de seguimiento inteligente */}
+                  {lastRecommendedAt && !hasInteractedWithRecs && activeMessages.length > 2 && (
+                    <>
+                      <button
+                        onClick={() => handleSend("Muéstrame otras marcas")}
+                        className="px-4 py-2 bg-white border border-secondary text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-secondary/10 transition-all flex items-center gap-2"
+                      >
+                        <Sparkles className="w-3 h-3" /> Ver otras marcas
+                      </button>
+                      <button
+                        onClick={() => handleSend("Busca opciones más económicas")}
+                        className="px-4 py-2 bg-white border border-primary text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-primary/5 transition-all flex items-center gap-2"
+                      >
+                        <ArrowRight className="w-3 h-3" /> Más económicos
+                      </button>
+                      <button
+                        onClick={() => { setHasInteractedWithRecs(true); setLastRecommendedAt(null); }}
+                        className="px-4 py-2 bg-muted border border-black/10 text-[10px] font-black text-muted-foreground uppercase tracking-widest rounded-full hover:bg-muted/80 transition-all"
+                      >
+                        Estoy satisfecho
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
 
               {loading && (
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 animate-pulse">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                     <Loader2 className="w-4 h-4 text-primary animate-spin" />
                   </div>
@@ -282,19 +336,19 @@ export default function ProductAssistant() {
           <div className="p-4 bg-white border-t border-black/5">
             <div className="flex items-center justify-between mb-3 px-2">
                <button 
-                 onClick={() => setActiveSpecies(null)}
+                 onClick={() => { setActiveSpecies(null); setLastRecommendedAt(null); }}
                  className="text-[9px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1"
                >
-                 Elegir otra mascota
+                 Cambiar mascota
                </button>
                <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">En línea</span>
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Experto en línea</span>
                </div>
             </div>
             <form onSubmit={(e) => handleSend(input, e)} className="flex gap-2">
               <input 
-                placeholder="Cuéntame de tu compañero..." 
+                placeholder="Pregúntame lo que necesites..." 
                 className="flex-1 h-12 rounded-2xl border-none bg-muted/30 focus-visible:ring-primary/20 font-bold text-sm px-4 outline-none"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
