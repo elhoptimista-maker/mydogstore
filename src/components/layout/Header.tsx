@@ -31,10 +31,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CATEGORIES, MOCK_PRODUCTS } from '@/lib/mock-db';
+import { CATEGORIES } from '@/lib/mock-db';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { fetchAllProducts } from '@/actions/products';
+import { SanitizedProduct } from '@/types/product';
 
 const SEARCH_PLACEHOLDERS = [
   "Buscando 'el juguete indestructible' 🦴...",
@@ -52,9 +54,18 @@ export default function Header() {
   const [currentPlaceholder, setCurrentPlaceholder] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(100);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  
+  const [allProducts, setAllProducts] = useState<SanitizedProduct[]>([]);
+  const [searchResults, setSearchResults] = useState<SanitizedProduct[]>([]);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Cargar productos al inicio
+  useEffect(() => {
+    fetchAllProducts().then(products => {
+      setAllProducts(products.filter(p => p.currentStock > 0));
+    });
+  }, []);
 
   useEffect(() => {
     const handleTyping = () => {
@@ -82,22 +93,23 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [currentPlaceholder, isDeleting, placeholderIndex, typingSpeed]);
 
-  // Lógica de búsqueda inteligente
+  // Lógica de búsqueda inteligente en cliente
   useEffect(() => {
     if (searchTerm.trim().length > 1) {
       const query = searchTerm.toLowerCase();
-      const filtered = MOCK_PRODUCTS.filter(p => 
-        p.metadata.name.toLowerCase().includes(query) || 
-        p.attributes.brand.toLowerCase().includes(query) ||
-        p.metadata.sku.toLowerCase().includes(query)
-      ).slice(0, 6); // Limitamos a 6 resultados para el dropdown
+      const filtered = allProducts.filter(p => 
+        p.name.toLowerCase().includes(query) || 
+        p.brand.toLowerCase().includes(query) ||
+        p.sku.toLowerCase().includes(query)
+      ).slice(0, 6);
+      
       setSearchResults(filtered);
-      setShowResults(true);
+      setShowResults(filtered.length > 0);
     } else {
       setSearchResults([]);
       setShowResults(false);
     }
-  }, [searchTerm]);
+  }, [searchTerm, allProducts]);
 
   // Cerrar resultados al hacer click fuera
   useEffect(() => {
@@ -157,7 +169,7 @@ export default function Header() {
               <SheetHeader className="p-8 bg-primary text-white shrink-0">
                 <div className="flex items-center gap-3 mb-2">
                   <Dog className="w-8 h-8 text-secondary" />
-                  <SheetTitle className="text-white font-black text-2xl tracking-tighter text-left">Categorías</SheetTitle>
+                  <SheetTitle className="text-white font-black text-2xl tracking-tighter text-left uppercase">Categorías</SheetTitle>
                 </div>
               </SheetHeader>
               <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[#F6F6F6]">
@@ -185,14 +197,14 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Buscador Inteligente con Dropdown */}
+          {/* Buscador Inteligente */}
           <div className="flex-1 hidden md:flex max-w-2xl relative" ref={searchRef}>
             <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
               <input 
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => searchTerm.length > 1 && setShowResults(true)}
+                onFocus={() => searchTerm.length > 1 && searchResults.length > 0 && setShowResults(true)}
                 placeholder={currentPlaceholder}
                 className="flex-1 h-full px-8 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
               />
@@ -210,38 +222,38 @@ export default function Header() {
               </button>
             </form>
 
-            {/* Panel de resultados inteligentes */}
-            {showResults && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-[2rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[100]">
-                <div className="p-4 bg-muted/30 border-b border-black/[0.03]">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Resultados sugeridos</span>
+            {/* Dropdown de Resultados Inteligentes */}
+            {showResults && (
+              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
+                <div className="p-4 bg-primary/5 border-b border-black/[0.03]">
+                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">Encontramos estos productos</span>
                 </div>
-                <div className="max-h-[400px] overflow-y-auto">
+                <div className="max-h-[420px] overflow-y-auto">
                   {searchResults.map((product) => (
                     <Link 
                       key={product.id} 
                       href={`/catalogo/${product.id}`}
                       onClick={() => setShowResults(false)}
-                      className="flex items-center gap-4 p-4 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
+                      className="flex items-center gap-4 p-5 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
                     >
-                      <div className="relative w-12 h-12 rounded-xl bg-muted overflow-hidden shrink-0 border border-black/[0.05]">
+                      <div className="relative w-14 h-14 rounded-2xl bg-muted/30 overflow-hidden shrink-0 border border-black/[0.05]">
                         <Image 
-                          src={product.media.main_image} 
-                          alt={product.metadata.name} 
+                          src={product.main_image} 
+                          alt={product.name} 
                           fill 
-                          className="object-contain p-1.5"
-                          sizes="48px"
+                          className="object-contain p-2 transition-transform group-hover:scale-110"
+                          sizes="56px"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col">
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">{product.attributes.brand}</span>
-                          <h4 className="font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors">{product.metadata.name}</h4>
+                          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">{product.brand}</span>
+                          <h4 className="font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors leading-tight">{product.name}</h4>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="block text-xs font-black text-primary tracking-tighter">${product.financials.pricing.base_price.toLocaleString('es-CL')}</span>
-                        <span className="text-[8px] font-bold text-muted-foreground uppercase">IVA Incl.</span>
+                        <span className="block text-sm font-black text-primary tracking-tighter">${product.sellingPrice.toLocaleString('es-CL')}</span>
+                        <span className="text-[8px] font-bold text-muted-foreground uppercase">Stock: {product.currentStock}</span>
                       </div>
                     </Link>
                   ))}
@@ -249,7 +261,7 @@ export default function Header() {
                 <Link 
                   href={`/catalogo?q=${encodeURIComponent(searchTerm)}`}
                   onClick={() => setShowResults(false)}
-                  className="flex items-center justify-center p-4 bg-primary text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
+                  className="flex items-center justify-center p-5 bg-primary text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
                 >
                   Ver todos los resultados para "{searchTerm}"
                 </Link>
