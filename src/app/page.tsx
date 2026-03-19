@@ -1,4 +1,3 @@
-
 import { getSanitizedProducts } from '@/lib/services/catalog.service';
 import Hero from '@/components/home/Hero';
 import PetNavigation from '@/components/home/PetNavigation';
@@ -6,13 +5,11 @@ import PromotionalBanners from '@/components/home/PromotionalBanners';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import FlashDeal from '@/components/home/FlashDeal';
 import SocialProof from '@/components/home/SocialProof';
-import BlogSection from '@/components/home/BlogSection';
-import InstagramGallery from '@/components/home/InstagramGallery';
 import TrustBar from '@/components/home/TrustBar';
 
 /**
  * @fileOverview Página principal (Home) compuesta íntegramente por componentes modulares.
- * Sigue fielmente la anatomía y jerarquía definida en el PRD.
+ * Se han ocultado temporalmente las secciones de Blog e Instagram.
  */
 
 export default async function Home() {
@@ -43,14 +40,14 @@ export default async function Home() {
       {/* 6. Prueba Social (Testimonios) */}
       <SocialProof />
 
-      {/* 7. Noticias y Blog */}
-      <BlogSection />
-
-      {/* 8. Galería Instagram */}
-      <InstagramGallery />
-
-      {/* 9. Barra de Confianza */}
+      {/* 7. Barra de Confianza */}
       <TrustBar />
+      
+      {/* 
+          Secciones ocultas temporalmente:
+          <BlogSection />
+          <InstagramGallery />
+      */}
     </div>
   );
 }
