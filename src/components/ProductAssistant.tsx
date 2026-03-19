@@ -55,9 +55,28 @@ const EXPERTS = [
   },
 ];
 
+const LOADING_MESSAGES = [
+  "Buscando en nuestro almacén con olfato de sabueso...",
+  "Revolviendo el gallinero para encontrar lo mejor...",
+  "Limpiando las algas del acuario para ver mejor...",
+  "Olfateando las croquetas más frescas del depósito...",
+  "Persiguiendo el puntero láser por los pasillos de snacks...",
+  "Afilando las garras para darte la mejor asesoría...",
+  "Contando granos de alpiste premium...",
+  "Ordenando los juguetes por nivel de '¡CUA-CUA!'...",
+  "Revisando el rincón secreto de las golosinas...",
+  "Sincronizando ronroneos con nuestra base de datos...",
+  "Cavando un hoyo para encontrar el tesoro nutricional...",
+  "Explorando la madriguera de las ofertas...",
+  "Nadando contra la corriente para traerte calidad...",
+  "Buscando debajo de la cama (donde siempre hay tesoros)...",
+  "Ajustando las antenas para captar tus necesidades..."
+];
+
 export default function ProductAssistant() {
   const { isOpen, setIsOpen, activeSpecies, setActiveSpecies, messages, addMessage } = useChat();
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -78,6 +97,13 @@ export default function ProductAssistant() {
       });
     }
   }, [activeSpecies, activeExpert]);
+
+  useEffect(() => {
+    if (loading) {
+      const randomMsg = LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
+      setLoadingMessage(randomMsg);
+    }
+  }, [loading]);
 
   const handleSend = async (text: string, e?: React.FormEvent) => {
     e?.preventDefault();
@@ -245,7 +271,7 @@ export default function ProductAssistant() {
                     <Loader2 className="w-4 h-4 text-primary animate-spin" />
                   </div>
                   <div className="bg-white p-3 rounded-2xl border border-black/5 text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                    Buscando en nuestro almacén con cariño...
+                    {loadingMessage}
                   </div>
                 </div>
               )}
