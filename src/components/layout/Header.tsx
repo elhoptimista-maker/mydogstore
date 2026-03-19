@@ -12,7 +12,8 @@ import {
   ChevronDown, 
   User, 
   Package,
-  Instagram
+  Instagram,
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
@@ -30,9 +31,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CATEGORIES } from '@/lib/mock-db';
-import { useState, useEffect } from 'react';
+import { CATEGORIES, MOCK_PRODUCTS } from '@/lib/mock-db';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const SEARCH_PLACEHOLDERS = [
   "Buscando 'el juguete indestructible' 🦴...",
@@ -50,6 +52,9 @@ export default function Header() {
   const [currentPlaceholder, setCurrentPlaceholder] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(100);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleTyping = () => {
@@ -77,10 +82,39 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [currentPlaceholder, isDeleting, placeholderIndex, typingSpeed]);
 
+  // Lógica de búsqueda inteligente
+  useEffect(() => {
+    if (searchTerm.trim().length > 1) {
+      const query = searchTerm.toLowerCase();
+      const filtered = MOCK_PRODUCTS.filter(p => 
+        p.metadata.name.toLowerCase().includes(query) || 
+        p.attributes.brand.toLowerCase().includes(query) ||
+        p.metadata.sku.toLowerCase().includes(query)
+      ).slice(0, 6); // Limitamos a 6 resultados para el dropdown
+      setSearchResults(filtered);
+      setShowResults(true);
+    } else {
+      setSearchResults([]);
+      setShowResults(false);
+    }
+  }, [searchTerm]);
+
+  // Cerrar resultados al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
       router.push(`/catalogo?q=${encodeURIComponent(searchTerm.trim())}`);
+      setShowResults(false);
     }
   };
 
@@ -94,7 +128,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
-      {/* 1. Top Bar - Mensaje central y RRSS a la derecha */}
+      {/* 1. Top Bar */}
       <div className="h-10 bg-accent text-accent-foreground flex items-center px-4 md:px-8 text-[10px] font-bold uppercase tracking-widest border-b border-black/5">
         <div className="max-w-7xl mx-auto w-full flex justify-center items-center relative">
           <div className="flex items-center gap-2">
@@ -112,7 +146,7 @@ export default function Header() {
       {/* 2. Main Header */}
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-6 md:gap-12">
-          {/* Menu Hamburguesa Móvil (Funcional con Sheet) */}
+          {/* Menu Hamburguesa Móvil */}
           <Sheet>
             <SheetTrigger asChild>
               <button className="md:hidden text-white hover:bg-white/10 p-2 rounded-xl transition-colors">
@@ -151,20 +185,76 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Buscador Inteligente - Filtro de categoría descartado */}
-          <div className="flex-1 hidden md:flex max-w-2xl">
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner">
+          {/* Buscador Inteligente con Dropdown */}
+          <div className="flex-1 hidden md:flex max-w-2xl relative" ref={searchRef}>
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
               <input 
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => searchTerm.length > 1 && setShowResults(true)}
                 placeholder={currentPlaceholder}
                 className="flex-1 h-full px-8 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
               />
+              {searchTerm && (
+                <button 
+                  type="button" 
+                  onClick={() => setSearchTerm("")}
+                  className="p-2 text-muted-foreground/40 hover:text-primary transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
               <button type="submit" className="h-10 w-10 bg-primary rounded-full mr-1 flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md">
                 <Search className="w-4 h-4" />
               </button>
             </form>
+
+            {/* Panel de resultados inteligentes */}
+            {showResults && searchResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-[2rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[100]">
+                <div className="p-4 bg-muted/30 border-b border-black/[0.03]">
+                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Resultados sugeridos</span>
+                </div>
+                <div className="max-h-[400px] overflow-y-auto">
+                  {searchResults.map((product) => (
+                    <Link 
+                      key={product.id} 
+                      href={`/catalogo/${product.id}`}
+                      onClick={() => setShowResults(false)}
+                      className="flex items-center gap-4 p-4 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
+                    >
+                      <div className="relative w-12 h-12 rounded-xl bg-muted overflow-hidden shrink-0 border border-black/[0.05]">
+                        <Image 
+                          src={product.media.main_image} 
+                          alt={product.metadata.name} 
+                          fill 
+                          className="object-contain p-1.5"
+                          sizes="48px"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">{product.attributes.brand}</span>
+                          <h4 className="font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors">{product.metadata.name}</h4>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="block text-xs font-black text-primary tracking-tighter">${product.financials.pricing.base_price.toLocaleString('es-CL')}</span>
+                        <span className="text-[8px] font-bold text-muted-foreground uppercase">IVA Incl.</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <Link 
+                  href={`/catalogo?q=${encodeURIComponent(searchTerm)}`}
+                  onClick={() => setShowResults(false)}
+                  className="flex items-center justify-center p-4 bg-primary text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
+                >
+                  Ver todos los resultados para "{searchTerm}"
+                </Link>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-4 md:gap-6 shrink-0">
