@@ -1,23 +1,30 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Reglas para la colección de usuarios
+    // Helper: Usuario es dueño del recurso
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Reglas para la colección de usuarios y su perfil
     match /users/{userId} {
-      // Un usuario solo puede leer su propio perfil
-      allow get: if request.auth != null && request.auth.uid == userId;
-      
-      // Un usuario puede crear su perfil si está autenticado y el ID coincide
-      allow create: if request.auth != null && request.auth.uid == userId;
-      
-      // Un usuario puede actualizar su perfil si está autenticado y es el dueño
-      allow update: if request.auth != null && request.auth.uid == userId;
-      
-      // Por seguridad, no permitimos listar (list) toda la colección de usuarios
+      allow get, create, update: if isOwner(userId);
       allow list: if false;
+
+      // Favoritos como subcolección
+      match /wishlist/{productId} {
+        allow read, write: if isOwner(userId);
+      }
     }
     
-    // Regla por defecto: denegar todo lo demás
+    // Los pedidos son de solo lectura para el usuario (se crean vía Server Action/ERP)
+    match /orders/{orderId} {
+      allow read: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow write: if false; // Solo el sistema ERP escribe aquí
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
