@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "User": {
+      "title": "Usuario",
+      "description": "Perfil de usuario registrado en el e-commerce.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "ID único de Firebase Authentication."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Correo electrónico del usuario."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Nombre visible del usuario."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "admin"],
+          "description": "Rol del usuario en el sistema."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de creación de la cuenta."
+        },
+        "lastLogin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha del último inicio de sesión."
+        }
+      },
+      "required": ["uid", "email", "role"]
+    }
+  },
+  "auth": {
+    "providers": ["password"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Colección de perfiles de usuario."
+    }
+  }
+}
