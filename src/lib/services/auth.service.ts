@@ -10,18 +10,30 @@ import {
   updateProfile,
   UserCredential
 } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase/client";
 
 /**
- * Registra un nuevo usuario y actualiza su perfil con el nombre proporcionado.
+ * Registra un nuevo usuario, actualiza su perfil y guarda sus datos en Firestore.
  */
 export async function registerUser(email: string, password: string, displayName: string): Promise<UserCredential> {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    
-    // Actualizar el nombre del perfil inmediatamente después de la creación
-    await updateProfile(userCredential.user, {
+    const user = userCredential.user;
+
+    // 1. Actualizar el perfil en Firebase Auth
+    await updateProfile(user, {
       displayName: displayName
+    });
+
+    // 2. Crear documento de usuario en Firestore para persistencia
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email: email,
+      displayName: displayName,
+      role: 'customer',
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp()
     });
     
     return userCredential;
@@ -36,6 +48,13 @@ export async function registerUser(email: string, password: string, displayName:
 export async function loginUser(email: string, password: string): Promise<UserCredential> {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    
+    // Actualizar última conexión en Firestore de forma no bloqueante
+    const user = userCredential.user;
+    setDoc(doc(db, "users", user.uid), {
+      lastLogin: serverTimestamp()
+    }, { merge: true });
+
     return userCredential;
   } catch (error: any) {
     throw error;
