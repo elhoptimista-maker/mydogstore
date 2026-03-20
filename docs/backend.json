@@ -26,11 +26,60 @@
     },
     "Order": {
       "title": "Pedido",
-      "description": "Registro de una compra realizada por el usuario.",
+      "description": "Registro detallado de una compra realizada por el usuario.",
       "type": "object",
       "properties": {
         "orderId": { "type": "string" },
         "userId": { "type": "string" },
+        "customer": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string" },
+            "phone": { "type": "string" }
+          }
+        },
+        "shipping": {
+          "type": "object",
+          "properties": {
+            "address": { "type": "string" },
+            "commune": { "type": "string" },
+            "region": { "type": "string" },
+            "method": { "type": "string" },
+            "cost": { "type": "number" }
+          }
+        },
+        "billing": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["boleta", "factura"] },
+            "rut": { "type": "string" },
+            "companyName": { "type": "string" },
+            "businessLine": { "type": "string" },
+            "address": { "type": "string" }
+          }
+        },
+        "payment": {
+          "type": "object",
+          "properties": {
+            "method": { "type": "string" },
+            "status": { "type": "string" },
+            "transactionId": { "type": "string" }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "quantity": { "type": "number" },
+              "price": { "type": "number" },
+              "subtotal": { "type": "number" }
+            }
+          }
+        },
         "totalAmount": { "type": "number" },
         "status": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" }
