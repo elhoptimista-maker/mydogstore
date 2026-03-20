@@ -11,32 +11,46 @@ import {
   deleteDoc, 
   collection, 
   onSnapshot,
-  query,
   serverTimestamp,
   getDoc
 } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import { auth, db } from "@/lib/firebase/client";
-import { SanitizedProduct } from "@/types/product";
 import { errorEmitter, FirestorePermissionError } from "@/lib/error-emitter";
 
 /**
- * Actualiza el nombre visible del usuario en Auth y Firestore.
+ * Obtiene el documento completo del usuario desde Firestore.
  */
-export async function updateUserProfile(displayName: string) {
+export async function getUserData(uid: string) {
+  const userRef = doc(db, "users", uid);
+  const snap = await getDoc(userRef);
+  return snap.exists() ? snap.data() : null;
+}
+
+/**
+ * Actualiza el perfil extendido del usuario en Firestore.
+ */
+export async function updateUserProfile(data: any) {
   const user = auth.currentUser;
   if (!user) throw new Error("No hay sesión activa");
 
-  // 1. Actualizar en Firebase Auth
-  await updateProfile(user, { displayName });
+  // 1. Si hay nombre, actualizar en Firebase Auth
+  if (data.displayName) {
+    await updateProfile(user, { displayName: data.displayName });
+  }
 
-  // 2. Actualizar en Firestore
+  // 2. Actualizar todo en Firestore
   const userRef = doc(db, "users", user.uid);
-  updateDoc(userRef, { displayName }).catch(async () => {
+  
+  // Usar set con merge por si el documento no existe (primera vez)
+  setDoc(userRef, { 
+    ...data,
+    updatedAt: serverTimestamp() 
+  }, { merge: true }).catch(async () => {
     errorEmitter.emit('permission-error', new FirestorePermissionError({
       path: userRef.path,
       operation: 'update',
-      requestResourceData: { displayName }
+      requestResourceData: data
     }));
   });
 }
