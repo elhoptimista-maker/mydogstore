@@ -1,7 +1,8 @@
 
 "use server";
 
-import { getErpDbAdmin, getErpAuthAdmin } from "@/lib/firebase/erp-admin";
+import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
+import { getStorefrontAuthAdmin } from "@/lib/firebase/storefront-admin";
 import { Timestamp } from "firebase-admin/firestore";
 
 interface CheckoutItem {
@@ -42,23 +43,24 @@ interface CheckoutParams {
 }
 
 /**
- * Procesa la orden de compra verificando la identidad del usuario y guardando la información detallada en el ERP.
+ * Procesa la orden de compra verificando la identidad en el Storefront 
+ * y guardando la información en el ERP.
  */
 export async function processCheckout(params: CheckoutParams) {
   const { idToken, customer, items, shipping, billing, paymentMethod, total } = params;
 
   try {
-    const auth = getErpAuthAdmin();
-    const decodedToken = await auth.verifyIdToken(idToken);
+    // 1. Validar identidad en el proyecto Storefront
+    const storefrontAuth = getStorefrontAuthAdmin();
+    const decodedToken = await storefrontAuth.verifyIdToken(idToken);
     const userId = decodedToken.uid;
     const email = decodedToken.email;
 
-    if (!userId) {
-      throw new Error("Sesión expirada o inválida. Por favor, reingresa.");
-    }
+    if (!userId) throw new Error("Sesión inválida.");
 
-    const db = getErpDbAdmin();
-    const orderRef = db.collection("orders").doc();
+    // 2. Escribir en el proyecto ERP con privilegios administrativos
+    const erpDb = getErpDbAdmin();
+    const orderRef = erpDb.collection("orders").doc();
     
     const orderData = {
       orderId: orderRef.id,
@@ -91,13 +93,13 @@ export async function processCheckout(params: CheckoutParams) {
     return { 
       success: true, 
       orderId: orderRef.id,
-      message: "Tu pedido ha sido recibido y está pendiente de pago." 
+      message: "Orden registrada exitosamente en el ERP." 
     };
 
   } catch (error: any) {
     return { 
       success: false, 
-      error: error.message || "No pudimos procesar tu pedido en este momento." 
+      error: error.message || "Fallo crítico en el procesamiento del pedido." 
     };
   }
 }
