@@ -57,7 +57,6 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
 
     return sanitizedProducts;
   } catch (error) {
-    console.error("CatalogService Error:", error);
     return [];
   }
 }
