@@ -1,4 +1,3 @@
-
 import { getSanitizedProductById } from '@/lib/services/catalog.service';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -6,6 +5,8 @@ import { Star, ShoppingCart, ShieldCheck, Heart, Share2, Truck, RefreshCw, Scale
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ id: string }>;

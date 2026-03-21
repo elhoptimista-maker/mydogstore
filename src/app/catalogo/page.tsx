@@ -14,6 +14,8 @@ export const metadata = {
   description: 'Catálogo profesional de nutrición y accesorios certificados.',
 };
 
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
