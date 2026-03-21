@@ -5,7 +5,6 @@
 
 import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
-import { globalErrorEmitter } from "@/lib/utils/error-emitter";
 
 /**
  * Calcula un precio de venta comercial basado en el costo neto.
@@ -18,11 +17,11 @@ function calculateCommercialPrice(netCost: number): number {
 
 /**
  * Obtiene la lista de productos activos, calcula precios y sanitiza la salida.
+ * Se eliminaron los logs de cliente para evitar fallos en SSR/Build.
  */
 export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
-  const db = getErpDbAdmin();
-  
   try {
+    const db = getErpDbAdmin();
     const productsSnap = await db.collection("products")
       .where("active", "==", true)
       .get();
@@ -58,11 +57,7 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
 
     return sanitizedProducts;
   } catch (error: any) {
-    globalErrorEmitter.emit({
-      message: error?.message || "Failed to fetch products from ERP",
-      context: "getSanitizedProducts",
-      details: error
-    });
+    console.error("[CatalogService] Error fetching products:", error.message);
     return [];
   }
 }
@@ -71,9 +66,8 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
  * Obtiene un único producto por su ID.
  */
 export async function getSanitizedProductById(id: string): Promise<SanitizedProduct | null> {
-  const db = getErpDbAdmin();
-  
   try {
+    const db = getErpDbAdmin();
     const doc = await db.collection("products").doc(id).get();
     if (!doc.exists) return null;
 
@@ -100,11 +94,7 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
       sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
     } as SanitizedProduct;
   } catch (error: any) {
-    globalErrorEmitter.emit({
-      message: error?.message || `Failed to fetch product ${id} from ERP`,
-      context: "getSanitizedProductById",
-      details: error
-    });
+    console.error(`[CatalogService] Error fetching product ${id}:`, error.message);
     return null;
   }
 }

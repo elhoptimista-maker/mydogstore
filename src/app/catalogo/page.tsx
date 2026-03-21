@@ -1,4 +1,3 @@
-
 import { getSanitizedProducts } from '@/lib/services/catalog.service';
 import ProductCard from '@/components/ProductCard';
 import { LayoutGrid } from 'lucide-react';
@@ -15,6 +14,9 @@ export const metadata = {
   description: 'Catálogo profesional de nutrición y accesorios certificados.',
 };
 
+// Forzamos dynamic ya que la búsqueda depende de parámetros de URL en tiempo de ejecución
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -22,7 +24,6 @@ interface PageProps {
 export default async function CatalogoPage(props: PageProps) {
   const searchParams = await props.searchParams;
   
-  // Extraer parámetros de búsqueda de forma segura
   const q = typeof searchParams.q === 'string' ? searchParams.q : undefined;
   const categoria = typeof searchParams.categoria === 'string' ? searchParams.categoria : undefined;
   const marca = typeof searchParams.marca === 'string' ? searchParams.marca : undefined;
@@ -33,10 +34,8 @@ export default async function CatalogoPage(props: PageProps) {
   const page = typeof searchParams.page === 'string' ? searchParams.page : '1';
   const limit = typeof searchParams.limit === 'string' ? searchParams.limit : '25';
 
-  // 1. Obtener solo productos con stock del ERP
   const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
   
-  // 2. Aplicar Filtros
   let filteredProducts = [...allProducts];
 
   if (q) {
@@ -69,14 +68,12 @@ export default async function CatalogoPage(props: PageProps) {
     filteredProducts = filteredProducts.filter(p => p.sellingPrice >= min && p.sellingPrice <= max);
   }
 
-  // 3. Aplicar Ordenamiento
   if (sort === 'price-asc') {
     filteredProducts.sort((a, b) => a.sellingPrice - b.sellingPrice);
   } else if (sort === 'price-desc') {
     filteredProducts.sort((a, b) => b.sellingPrice - a.sellingPrice);
   }
 
-  // 4. Paginación
   const currentPage = parseInt(page, 10);
   const itemsPerPage = parseInt(limit, 10);
   const totalProducts = filteredProducts.length;
@@ -84,7 +81,6 @@ export default async function CatalogoPage(props: PageProps) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
-  // Helper para construir URLs de paginación
   const getPaginationUrl = (p: number) => {
     const params = new URLSearchParams();
     params.set('page', p.toString());
@@ -99,7 +95,6 @@ export default async function CatalogoPage(props: PageProps) {
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-20">
-      {/* Hero Header */}
       <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-8 border-b border-black/5">
         <div className="absolute top-0 right-0 w-1/4 h-full opacity-5 pointer-events-none">
           <LayoutGrid className="w-full h-full text-primary" />
@@ -116,8 +111,6 @@ export default async function CatalogoPage(props: PageProps) {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          
-          {/* Sidebar de Filtros Interactivos */}
           <aside className="hidden lg:block lg:col-span-1">
             <FilterSidebar 
               categories={CATEGORIES} 
@@ -125,14 +118,8 @@ export default async function CatalogoPage(props: PageProps) {
               petTypes={PET_TYPES} 
             />
           </aside>
-
-          {/* Área de Productos */}
           <main className="lg:col-span-3 space-y-8">
-            
-            {/* Controles de Vista Interactivos */}
             <CatalogControls totalCount={totalProducts} />
-
-            {/* Grid de Productos */}
             {paginatedProducts.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {paginatedProducts.map((product) => (
@@ -147,8 +134,6 @@ export default async function CatalogoPage(props: PageProps) {
                 </Link>
               </div>
             )}
-
-            {/* Paginación */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 pt-12">
                 <Button 
@@ -165,14 +150,12 @@ export default async function CatalogoPage(props: PageProps) {
                     <ChevronLeft className="w-5 h-5" />
                   )}
                 </Button>
-
                 <div className="flex items-center gap-2">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
                     if (totalPages > 5 && p > 3 && p < totalPages) {
                       if (p === 4) return <span key={p} className="px-2 text-muted-foreground">...</span>;
                       return null;
                     }
-                    
                     return (
                       <Button 
                         key={p}
@@ -195,7 +178,6 @@ export default async function CatalogoPage(props: PageProps) {
                     );
                   })}
                 </div>
-
                 <Button 
                   variant="ghost" 
                   disabled={currentPage >= totalPages}

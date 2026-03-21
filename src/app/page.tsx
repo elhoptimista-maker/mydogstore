@@ -8,9 +8,11 @@ import SocialProof from '@/components/home/SocialProof';
 import TrustBar from '@/components/home/TrustBar';
 
 /**
- * @fileOverview Página principal (Home) compuesta íntegramente por componentes modulares.
- * Se han ocultado temporalmente las secciones de Blog e Instagram.
+ * @fileOverview Página principal (Home). 
+ * Forzamos dynamic para evitar errores de conexión al ERP durante el build estático.
  */
+
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const products = await getSanitizedProducts();
@@ -42,12 +44,6 @@ export default async function Home() {
 
       {/* 7. Barra de Confianza */}
       <TrustBar />
-      
-      {/* 
-          Secciones ocultas temporalmente:
-          <BlogSection />
-          <InstagramGallery />
-      */}
     </div>
   );
 }
