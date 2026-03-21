@@ -299,21 +299,27 @@ export default function Header() {
             )}
           </div>
 
-          <div className="flex items-center gap-4 md:gap-6 shrink-0">
-            <Link href="/wishlist" className="hidden sm:flex relative w-12 h-12 bg-white/10 text-white rounded-full items-center justify-center hover:bg-white/20 transition-all group">
-              <Heart className={cn("w-5 h-5", wishlist.length > 0 && "fill-current text-secondary")} />
+          <div className="flex items-center gap-3 sm:gap-4 md:gap-6 shrink-0">
+            {/* User Icon Mobile */}
+            <Link href="/cuenta" className="md:hidden relative w-10 h-10 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
+               <User className="w-4 h-4" />
+            </Link>
+
+            {/* Wishlist Icon */}
+            <Link href="/wishlist" className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
+              <Heart className={cn("w-4 h-4 sm:w-5 sm:h-5", wishlist.length > 0 && "fill-current text-secondary")} />
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-secondary text-primary font-black text-[8px] w-4 h-4 flex items-center justify-center border-2 border-primary rounded-full">
+                <span className="absolute -top-1 -right-1 bg-secondary text-primary font-black text-[8px] sm:text-[10px] w-4 border-2 h-4 sm:w-5 sm:h-5 flex items-center justify-center border-primary rounded-full">
                   {wishlist.length}
                 </span>
               )}
             </Link>
 
             <CartDrawer>
-              <button className="relative w-12 h-12 bg-white text-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all">
-                <ShoppingCart className="w-5 h-5" />
+              <button className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white text-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all">
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground font-black text-[10px] w-5 h-5 flex items-center justify-center border-2 border-primary rounded-full animate-in zoom-in">
+                  <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground font-black text-[8px] sm:text-[10px] w-4 border-2 h-4 sm:w-5 sm:h-5 flex items-center justify-center border-primary rounded-full animate-in zoom-in">
                     {cartCount}
                   </span>
                 )}
@@ -323,47 +329,78 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Menu Bar */}
-      <div className="h-14 bg-primary border-t border-white/10 hidden md:flex items-center px-4 md:px-8">
+      {/* 3. Menu Bar & Mobile Search */}
+      <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
-          <div className="flex items-center gap-8 h-full">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="bg-secondary text-primary h-10 px-6 items-center gap-3 cursor-pointer hover:bg-secondary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
-                  <Menu className="w-4 h-4" />
-                  Todas las Categorías
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-64 rounded-2xl border-none shadow-2xl p-2 mt-2 bg-white animate-in slide-in-from-top-2 duration-300">
-                {CATEGORIES.map((category) => (
-                  <DropdownMenuItem key={category} asChild>
-                    <Link href={`/catalogo?categoria=${encodeURIComponent(category)}`} className="cursor-pointer font-bold text-xs uppercase tracking-widest p-3 rounded-xl hover:bg-primary/5 hover:text-primary flex items-center justify-between group">
-                      {category}
-                      <ChevronDown className="w-3 h-3 -rotate-90 opacity-0 group-hover:opacity-40 transition-all" />
-                    </Link>
-                  </DropdownMenuItem>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center justify-between w-full h-full">
+            <div className="flex items-center gap-8 h-full">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="bg-secondary text-primary h-10 px-6 items-center gap-3 cursor-pointer hover:bg-secondary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
+                    <Menu className="w-4 h-4" />
+                    Todas las Categorías
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-64 rounded-2xl border-none shadow-2xl p-2 mt-2 bg-white animate-in slide-in-from-top-2 duration-300">
+                  {CATEGORIES.map((category) => (
+                    <DropdownMenuItem key={category} asChild>
+                      <Link href={`/catalogo?categoria=${encodeURIComponent(category)}`} className="cursor-pointer font-bold text-xs uppercase tracking-widest p-3 rounded-xl hover:bg-primary/5 hover:text-primary flex items-center justify-between group">
+                        {category}
+                        <ChevronDown className="w-3 h-3 -rotate-90 opacity-0 group-hover:opacity-40 transition-all" />
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <nav className="flex items-center gap-8">
+                {mainNav.map((item) => (
+                  <Link key={item.label} href={item.href} className="text-[11px] font-bold text-white/80 hover:text-white uppercase tracking-widest transition-all relative group">
+                    {item.label}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary transition-all group-hover:w-full"></span>
+                  </Link>
                 ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </nav>
+            </div>
 
-            <nav className="flex items-center gap-8">
-              {mainNav.map((item) => (
-                <Link key={item.label} href={item.href} className="text-[11px] font-bold text-white/80 hover:text-white uppercase tracking-widest transition-all relative group">
-                  {item.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary transition-all group-hover:w-full"></span>
-                </Link>
-              ))}
-            </nav>
+            <div className="flex items-center gap-8">
+              <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
+                <User className="w-4 h-4" /> Mi Cuenta
+              </Link>
+              <Link href="/b2b" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
+                <Package className="w-4 h-4" /> Portal B2B
+              </Link>
+            </div>
           </div>
 
-          <div className="flex items-center gap-8">
-            <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
-              <User className="w-4 h-4" /> Mi Cuenta
-            </Link>
-            <Link href="/b2b" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
-              <Package className="w-4 h-4" /> Portal B2B
-            </Link>
+          {/* Mobile Search Bar */}
+          <div className="flex md:hidden flex-1 relative w-full h-10">
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-full overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
+              <input 
+                type="text" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => searchTerm.length > 1 && searchResults.length > 0 && setShowResults(true)}
+                placeholder={currentPlaceholder}
+                className="flex-1 h-full px-5 text-xs font-bold text-foreground bg-transparent outline-none placeholder:text-muted-foreground/60"
+              />
+              {searchTerm && (
+                <button 
+                  type="button" 
+                  onClick={() => setSearchTerm("")}
+                  className="p-1.5 text-muted-foreground/40 hover:text-primary transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <button type="submit" className="h-8 w-8 bg-primary rounded-full mr-1 flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md shrink-0">
+                <Search className="w-3.5 h-3.5" />
+              </button>
+            </form>
           </div>
+
         </div>
       </div>
     </header>

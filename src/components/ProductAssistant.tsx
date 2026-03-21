@@ -135,8 +135,8 @@ export default function ProductAssistant() {
       const history = (messages[activeSpecies] || []).map(m => ({ 
         role: m.role, 
         content: m.content,
-        recommendedIds: m.recommendations?.map(r => r.id)
-      })).concat({ role: 'user', content: userMessage });
+        recommendedIds: m.recommendations?.map((r: any) => r.id)
+      })).concat({ role: 'user', content: userMessage, recommendedIds: undefined });
       
       const chatResponse = await productChat({
         species: activeSpecies,
@@ -147,8 +147,7 @@ export default function ProductAssistant() {
       addMessage(activeSpecies, { 
         role: 'assistant', 
         content: chatResponse.response,
-        recommendations: chatResponse.suggestedProducts,
-        recommendedIds: chatResponse.suggestedProducts?.map(p => p.id)
+        recommendations: chatResponse.suggestedProducts
       });
 
       if (chatResponse.suggestedProducts && chatResponse.suggestedProducts.length > 0) {
@@ -172,7 +171,7 @@ export default function ProductAssistant() {
     return (
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-primary text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all group animate-in slide-in-from-bottom-4"
+        className="fixed bottom-6 right-6 z-[100] bg-primary text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all group animate-in slide-in-from-bottom-4"
       >
         <div className="relative">
           <MessageCircle className="w-8 h-8" />
@@ -183,7 +182,7 @@ export default function ProductAssistant() {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 z-40 w-[90vw] sm:w-[400px] h-[650px] flex flex-col overflow-hidden bg-white shadow-2xl rounded-[2.5rem] border-none animate-in slide-in-from-bottom-10 duration-500">
+    <Card className="fixed max-md:inset-0 md:bottom-6 md:right-6 z-[100] w-full md:w-[400px] h-[100dvh] md:h-[650px] flex flex-col overflow-hidden bg-white shadow-2xl md:rounded-[2.5rem] border-none animate-in slide-in-from-bottom-10 duration-500">
       {/* Header */}
       <div className={cn(
         "p-6 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10 transition-colors duration-500",
@@ -207,30 +206,32 @@ export default function ProductAssistant() {
 
       {/* Content */}
       {!activeSpecies ? (
-        <div className="flex-1 flex flex-col p-8 space-y-8 bg-[#F9FAFB]">
-          <div className="text-center space-y-2">
-            <h4 className="text-lg font-black text-foreground tracking-tight">¿Con quién deseas hablar?</h4>
-            <p className="text-xs font-medium text-muted-foreground">Selecciona un experto especializado.</p>
+        <ScrollArea className="flex-1 bg-[#F9FAFB]">
+          <div className="flex flex-col p-8 space-y-8 min-h-full">
+            <div className="text-center space-y-2">
+              <h4 className="text-lg font-black text-foreground tracking-tight">¿Con quién deseas hablar?</h4>
+              <p className="text-xs font-medium text-muted-foreground">Selecciona un experto especializado.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-3 pb-8">
+              {EXPERTS.map((expert) => (
+                <button
+                  key={expert.name}
+                  onClick={() => setActiveSpecies(expert.name)}
+                  className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-black/[0.03] hover:border-primary/20 hover:shadow-md transition-all group text-left"
+                >
+                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-inner", expert.color + "/10")}>
+                    {expert.emoji}
+                  </div>
+                  <div className="flex-1">
+                    <span className="block text-sm font-black text-foreground uppercase tracking-widest mb-1">{expert.name}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">{expert.description}</span>
+                  </div>
+                  <Sparkles className="w-4 h-4 text-secondary opacity-0 group-hover:opacity-100 transition-opacity" />
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 gap-3">
-            {EXPERTS.map((expert) => (
-              <button
-                key={expert.name}
-                onClick={() => setActiveSpecies(expert.name)}
-                className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-black/[0.03] hover:border-primary/20 hover:shadow-md transition-all group text-left"
-              >
-                <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-inner", expert.color + "/10")}>
-                  {expert.emoji}
-                </div>
-                <div className="flex-1">
-                  <span className="block text-sm font-black text-foreground uppercase tracking-widest mb-1">{expert.name}</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">{expert.description}</span>
-                </div>
-                <Sparkles className="w-4 h-4 text-secondary opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-            ))}
-          </div>
-        </div>
+        </ScrollArea>
       ) : (
         <>
           <ScrollArea className="flex-1 p-6 bg-[#F9FAFB]">

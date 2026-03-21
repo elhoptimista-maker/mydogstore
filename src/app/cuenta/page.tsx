@@ -222,19 +222,26 @@ export default function CuentaPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <aside className="lg:col-span-1 space-y-6">
-              <Card className="rounded-[2.5rem] border-none shadow-xl bg-white overflow-hidden sticky top-44">
-                <div className="p-8 text-center space-y-6">
-                  <div className="w-20 h-20 bg-primary/5 rounded-[2rem] flex items-center justify-center mx-auto text-3xl">
-                    🐾
+              <Card className="rounded-[2rem] lg:rounded-[2.5rem] border-none shadow-xl bg-white overflow-hidden lg:sticky lg:top-48 z-10 transition-all">
+                <div className="p-6 lg:p-8 flex flex-row lg:flex-col items-center lg:text-center justify-between gap-4 lg:gap-6">
+                  <div className="flex items-center gap-4 lg:flex-col lg:gap-6 w-full">
+                    <div className="w-14 h-14 lg:w-20 lg:h-20 bg-primary/5 rounded-2xl lg:rounded-[2rem] flex items-center justify-center text-2xl lg:text-3xl shrink-0">
+                      🐾
+                    </div>
+                    <div className="space-y-1 flex-1 text-left lg:text-center min-w-0">
+                      <h3 className="text-lg lg:text-xl font-black tracking-tight truncate">{user.displayName || 'Miembro'}</h3>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest truncate">{user.email}</p>
+                      <Badge className="mt-1 bg-secondary lg:hidden text-primary border-none rounded-full px-3 py-0.5 text-[8px] font-black uppercase tracking-widest inline-flex">Verificado</Badge>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-black tracking-tight">{user.displayName || 'Miembro'}</h3>
-                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest truncate">{user.email}</p>
-                  </div>
-                  <Badge className="bg-secondary text-primary border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest">Cliente Verificado</Badge>
                   
-                  <div className="pt-6 border-t border-black/5 flex flex-col gap-2">
-                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start h-11 rounded-xl font-bold gap-3 text-red-500 hover:bg-red-50">
+                  <Badge className="bg-secondary hidden lg:inline-flex text-primary border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest">Cliente Verificado</Badge>
+                  
+                  <div className="w-auto lg:w-full lg:pt-6 lg:border-t lg:border-black/5 flex flex-col gap-2 shrink-0">
+                    <Button variant="ghost" size="icon" onClick={handleLogout} className="lg:hidden w-12 h-12 rounded-xl text-red-500 hover:bg-red-50 bg-red-50/50">
+                      <LogOut className="w-5 h-5 mx-auto" />
+                    </Button>
+                    <Button variant="ghost" onClick={handleLogout} className="hidden lg:flex w-full justify-start h-11 rounded-xl font-bold gap-3 text-red-500 hover:bg-red-50">
                       <LogOut className="w-4 h-4" /> Cerrar Sesión
                     </Button>
                   </div>

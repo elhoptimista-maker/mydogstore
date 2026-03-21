@@ -44,21 +44,21 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         </SheetHeader>
 
-        {/* Gamificación Ultra-Compacta: Perro Hambriento */}
+        {/* Gamificación: Perro Hambriento */}
         {cart.length > 0 && (
-          <div className="px-6 py-1 bg-secondary/10 border-b border-black/5">
-            <div className="flex justify-between items-center mb-0.5">
-              <span className="text-[8px] font-black uppercase tracking-widest text-primary leading-tight">
+          <div className="px-6 py-4 bg-secondary/10 border-b border-black/5">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-[9px] font-black uppercase tracking-widest text-primary leading-tight">
                 {progress < 100 
                   ? `Faltan $${remaining.toLocaleString('es-CL')} para envío gratis`
                   : "¡ENVÍO GRATIS! 🦴"
                 }
               </span>
-              <span className="text-[8px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
+              <span className="text-[9px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
             
-            <div className="relative h-5 flex items-center">
-              <Progress value={progress} className="h-1 bg-white/50 border border-white" />
+            <div className="relative h-8 flex items-center">
+              <Progress value={progress} className="h-2 bg-white/50 border border-white" />
               
               {/* Perrito 🐶 - Superposición Superior */}
               <div 

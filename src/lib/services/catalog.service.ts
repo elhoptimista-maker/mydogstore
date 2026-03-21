@@ -5,6 +5,7 @@
 
 import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
+import { globalErrorEmitter } from "@/lib/utils/error-emitter";
 
 /**
  * Calcula un precio de venta comercial basado en el costo neto.
@@ -56,7 +57,12 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
     );
 
     return sanitizedProducts;
-  } catch (error) {
+  } catch (error: any) {
+    globalErrorEmitter.emit({
+      message: error?.message || "Failed to fetch products from ERP",
+      context: "getSanitizedProducts",
+      details: error
+    });
     return [];
   }
 }
@@ -93,7 +99,12 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
       currentStock,
       sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
     } as SanitizedProduct;
-  } catch (error) {
+  } catch (error: any) {
+    globalErrorEmitter.emit({
+      message: error?.message || `Failed to fetch product ${id} from ERP`,
+      context: "getSanitizedProductById",
+      details: error
+    });
     return null;
   }
 }

@@ -11,6 +11,17 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+export async function generateMetadata(props: PageProps) {
+  const params = await props.params;
+  const product = await getSanitizedProductById(params.id);
+  if (!product) return { title: 'Producto No Encontrado' };
+  
+  return {
+    title: `${product.name} | MyDog Distribuidora`,
+    description: product.short_description || `Compra ${product.name} al mejor precio.`
+  };
+}
+
 export default async function ProductoDetallePage(props: PageProps) {
   const params = await props.params;
   const id = params.id;
@@ -20,8 +31,31 @@ export default async function ProductoDetallePage(props: PageProps) {
     notFound();
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.main_image,
+    description: product.short_description,
+    sku: product.sku,
+    brand: {
+      '@type': 'Brand',
+      name: product.brand,
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'CLP',
+      price: product.sellingPrice,
+      availability: product.currentStock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    },
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Galería de Imágenes */}
         <div className="space-y-6">

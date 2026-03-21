@@ -110,7 +110,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
         </p>
       </div>
 
-      <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pb-4 snap-x">
+      <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pt-16 -mt-16 pb-8 snap-x px-4 -mx-4 md:px-0 md:mx-0">
         {SPECIES_DATA.map((species, i) => {
           const count = productCountsBySpecies[species.filter] || 0;
           const message = mountedState ? species.messages[mountedState.randomIndices[i]] : species.messages[0];

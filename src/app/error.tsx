@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dog, RefreshCcw } from 'lucide-react';
+import { globalErrorEmitter } from '@/lib/utils/error-emitter';
 
 export default function Error({
   error,
@@ -12,8 +13,13 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Aquí podrías loguear el error a un servicio externo (Sentry, etc.)
-    console.warn('UI Error Boundary caught:', error.message);
+    // Log the error to our centralized emitter
+    globalErrorEmitter.emit({
+      message: error.message,
+      context: 'UI_ERROR_BOUNDARY',
+      code: error.digest,
+      details: error
+    });
   }, [error]);
 
   return (
