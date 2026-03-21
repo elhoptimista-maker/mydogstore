@@ -1,13 +1,19 @@
+
 "use client";
 
 import { useWishlist } from '@/context/WishlistContext';
 import ProductCard from '@/components/ProductCard';
-import { Heart, ArrowRight, LayoutGrid } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function WishlistPage() {
   const { wishlist } = useWishlist();
+
+  // Aseguramos unicidad absoluta por ID para evitar errores de duplicidad de llaves en React
+  const uniqueWishlist = Array.from(
+    new Map(wishlist.map(item => [item.id, item])).values()
+  );
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-24">
@@ -27,10 +33,10 @@ export default function WishlistPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        {wishlist.length > 0 ? (
+        {uniqueWishlist.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-            {wishlist.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {uniqueWishlist.map((product) => (
+              <ProductCard key={`wishlist-${product.id}`} product={product} />
             ))}
           </div>
         ) : (

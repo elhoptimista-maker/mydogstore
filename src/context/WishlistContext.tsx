@@ -20,46 +20,59 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<SanitizedProduct[]>([]);
-  const [syncedIds, setSyncedIds] = useState<string[]>([]);
 
   // 1. Cargar desde LocalStorage inicialmente (para invitados)
   useEffect(() => {
     const saved = localStorage.getItem('mydog_wishlist');
     if (saved) {
-      try { setWishlist(JSON.parse(saved)); } catch (e) {}
+      try { 
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setWishlist(parsed);
+      } catch (e) {}
     }
   }, []);
 
   // 2. Sincronizar con Firestore cuando el usuario se loguea
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubscribeFirestore: (() => void) | null = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      // Limpiar suscripción previa si existe
+      if (unsubscribeFirestore) {
+        unsubscribeFirestore();
+        unsubscribeFirestore = null;
+      }
+
       if (user) {
         // Suscribirse a cambios en Firestore
-        const unsubscribeFirestore = subscribeToWishlist(user.uid, async (ids) => {
-          setSyncedIds(ids);
-          
-          // Hidratar los productos que no tengamos en el estado actual
-          const newProducts: SanitizedProduct[] = [];
-          for (const id of ids) {
-            if (!wishlist.some(p => p.id === id)) {
-              const fullProduct = await fetchProductById(id);
-              if (fullProduct) newProducts.push(fullProduct);
-            }
+        unsubscribeFirestore = subscribeToWishlist(user.uid, async (ids) => {
+          try {
+            // Hidratar los productos que vienen de Firestore
+            const fetchedProducts = await Promise.all(
+              ids.map(id => fetchProductById(id))
+            );
+
+            // Filtrar nulos y asegurar unicidad
+            const validProducts = fetchedProducts.filter((p): p is SanitizedProduct => p !== null);
+            
+            // Usamos un Map para garantizar que no haya IDs duplicados en el estado
+            const uniqueMap = new Map();
+            validProducts.forEach(p => uniqueMap.set(p.id, p));
+            const finalProducts = Array.from(uniqueMap.values());
+
+            setWishlist(finalProducts);
+            localStorage.setItem('mydog_wishlist', JSON.stringify(finalProducts));
+          } catch (error) {
+            console.error("Error sincronizando wishlist:", error);
           }
-          
-          setWishlist(prev => {
-            const filtered = prev.filter(p => ids.includes(p.id));
-            const merged = [...filtered, ...newProducts];
-            localStorage.setItem('mydog_wishlist', JSON.stringify(merged));
-            return merged;
-          });
         });
-        return () => unsubscribeFirestore();
-      } else {
-        setSyncedIds([]);
       }
     });
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeFirestore) unsubscribeFirestore();
+    };
   }, []);
 
   const toggleWishlist = (product: SanitizedProduct) => {
@@ -67,18 +80,28 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     const user = auth.currentUser;
 
     if (exists) {
-      setWishlist(prev => prev.filter(item => item.id !== product.id));
+      const updated = wishlist.filter(item => item.id !== product.id);
+      setWishlist(updated);
+      localStorage.setItem('mydog_wishlist', JSON.stringify(updated));
+      
       if (user) syncWishlistItem(product.id, 'remove');
       toast({ title: "Eliminado de favoritos 💔", description: `${product.name} ya no está en tu lista.` });
     } else {
-      setWishlist(prev => [...prev, product]);
+      const updated = [...wishlist, product];
+      setWishlist(updated);
+      localStorage.setItem('mydog_wishlist', JSON.stringify(updated));
+      
       if (user) syncWishlistItem(product.id, 'add');
       toast({ title: "¡Añadido a favoritos! ❤️", description: `${product.name} se guardó en tu lista.` });
     }
   };
 
   const isInWishlist = (id: string) => wishlist.some(item => item.id === id);
-  const clearWishlist = () => setWishlist([]);
+  
+  const clearWishlist = () => {
+    setWishlist([]);
+    localStorage.removeItem('mydog_wishlist');
+  };
 
   return (
     <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist, clearWishlist }}>
