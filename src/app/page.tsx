@@ -8,11 +8,8 @@ import SocialProof from '@/components/home/SocialProof';
 import TrustBar from '@/components/home/TrustBar';
 
 /**
- * @fileOverview Página principal (Home). 
- * Forzamos dynamic para evitar errores de conexión al ERP durante el build estático.
+ * @fileOverview Página principal (Home).
  */
-
-export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const products = await getSanitizedProducts();
