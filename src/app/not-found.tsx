@@ -1,7 +1,10 @@
-
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Dog, ArrowLeft } from 'lucide-react';
+
+// Forzamos que la página de 404 sea dinámica para evitar que el build intente 
+// estatizarla usando los proveedores de Firebase en el layout.
+export const dynamic = 'force-dynamic';
 
 export default function NotFound() {
   return (
