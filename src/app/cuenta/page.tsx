@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,6 +6,8 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { loginUser, registerUser, logoutUser } from '@/lib/services/auth.service';
 import { updateUserProfile, getUserData } from '@/lib/services/user.service';
 import { fetchUserOrders, UserOrder } from '@/actions/orders';
+import { getErpDbClient } from '@/lib/firebase/erp-client';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,6 +41,7 @@ export default function CuentaPage() {
   const [orders, setOrders] = useState<UserOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLogin, setIsLogin] = useState(true);
+  const [communes, setCommunes] = useState<string[]>([]);
   
   // Auth Form
   const [email, setEmail] = useState('');
@@ -52,7 +54,7 @@ export default function CuentaPage() {
     phone: '',
     shippingAddress: '',
     commune: '',
-    region: '',
+    region: 'Metropolitana',
     billingType: 'boleta',
     rut: '',
     companyName: '',
@@ -62,6 +64,29 @@ export default function CuentaPage() {
 
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const router = useRouter();
+
+  // Cargar comunas desde el ERP
+  useEffect(() => {
+    const loadCommunes = async () => {
+      try {
+        const erpDb = getErpDbClient();
+        const communesRef = collection(erpDb, "map_communes");
+        const q = query(communesRef, orderBy("name", "asc"));
+        const snap = await getDocs(q);
+        const list = snap.docs.map(doc => doc.data().name as string);
+        if (list.length > 0) {
+          setCommunes(list);
+        } else {
+          // Fallback si la colección está vacía
+          setCommunes(["La Cisterna", "San Bernardo", "Maipú", "Santiago Central"]);
+        }
+      } catch (error) {
+        console.error("Error loading communes from ERP:", error);
+        setCommunes(["La Cisterna", "San Bernardo", "Maipú", "Santiago Central"]);
+      }
+    };
+    loadCommunes();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -75,7 +100,7 @@ export default function CuentaPage() {
             phone: dbData.phone || '',
             shippingAddress: dbData.shippingAddress || '',
             commune: dbData.commune || '',
-            region: dbData.region || '',
+            region: 'Metropolitana', // Siempre Metropolitana por requerimiento
             billingType: dbData.billingType || 'boleta',
             rut: dbData.rut || '',
             companyName: dbData.companyName || '',
@@ -83,7 +108,7 @@ export default function CuentaPage() {
             billingAddress: dbData.billingAddress || ''
           });
         } else {
-          setProfileData(prev => ({ ...prev, displayName: currentUser.displayName || '' }));
+          setProfileData(prev => ({ ...prev, displayName: currentUser.displayName || '', region: 'Metropolitana' }));
         }
 
         const userOrders = await fetchUserOrders(currentUser.uid);
@@ -116,7 +141,9 @@ export default function CuentaPage() {
     e.preventDefault();
     setUpdatingProfile(true);
     try {
-      await updateUserProfile(profileData);
+      // Forzamos región metropolitana antes de guardar
+      const finalData = { ...profileData, region: 'Metropolitana' };
+      await updateUserProfile(finalData);
       toast({ title: "Perfil actualizado ✨", description: "Tus datos se guardaron correctamente." });
     } catch (error) {
       toast({ variant: "destructive", title: "Error al actualizar" });
@@ -371,20 +398,26 @@ export default function CuentaPage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Comuna</Label>
-                                <Input 
-                                  placeholder="Ej: La Cisterna"
+                                <Select 
                                   value={profileData.commune} 
-                                  onChange={(e) => setProfileData({...profileData, commune: e.target.value})}
-                                  className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6" 
-                                />
+                                  onValueChange={(val) => setProfileData({...profileData, commune: val})}
+                                >
+                                  <SelectTrigger className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6">
+                                    <SelectValue placeholder="Selecciona tu comuna" />
+                                  </SelectTrigger>
+                                  <SelectContent className="rounded-xl border-none shadow-xl">
+                                    {communes.map((c) => (
+                                      <SelectItem key={c} value={c} className="font-bold">{c}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
                              </div>
                              <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Región</Label>
                                 <Input 
-                                  placeholder="Ej: Metropolitana"
-                                  value={profileData.region} 
-                                  onChange={(e) => setProfileData({...profileData, region: e.target.value})}
-                                  className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6" 
+                                  value="Metropolitana" 
+                                  readOnly
+                                  className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6 opacity-60 cursor-not-allowed" 
                                 />
                              </div>
                           </div>
