@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { auth } from '@/lib/firebase/client';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { loginUser, registerUser, logoutUser } from '@/lib/services/auth.service';
@@ -14,7 +14,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   User as UserIcon, 
@@ -30,7 +29,8 @@ import {
   MapPin,
   FileText,
   Search,
-  Check
+  Check,
+  X
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -45,7 +45,8 @@ export default function CuentaPage() {
   
   // Search state for communes
   const [communeSearch, setCommuneSearch] = useState("");
-  const [isCommunePopoverOpen, setIsCommunePopoverOpen] = useState(false);
+  const [showCommuneResults, setShowCommuneResults] = useState(false);
+  const communeSearchRef = useRef<HTMLDivElement>(null);
 
   // Auth Form
   const [email, setEmail] = useState('');
@@ -69,10 +70,21 @@ export default function CuentaPage() {
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const router = useRouter();
 
-  // Filtro de comunas basado en la búsqueda
+  // Filtrado de comunas basado en el texto del input
   const filteredCommunes = communes.filter(c => 
     c.toLowerCase().includes(communeSearch.toLowerCase())
   );
+
+  // Manejador de clics fuera del buscador de comunas
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (communeSearchRef.current && !communeSearchRef.current.contains(event.target as Node)) {
+        setShowCommuneResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Cargar comunas desde el ERP mediante Server Action
   useEffect(() => {
@@ -98,13 +110,14 @@ export default function CuentaPage() {
             phone: dbData.phone || '',
             shippingAddress: dbData.shippingAddress || '',
             commune: dbData.commune || '',
-            region: dbData.region || 'Metropolitana',
+            region: 'Metropolitana',
             billingType: dbData.billingType || 'boleta',
             rut: dbData.rut || '',
             companyName: dbData.companyName || '',
             businessLine: dbData.businessLine || '',
             billingAddress: dbData.billingAddress || ''
           });
+          setCommuneSearch(dbData.commune || "");
         } else {
           setProfileData(prev => ({ ...prev, displayName: currentUser.displayName || '', region: 'Metropolitana' }));
         }
@@ -139,7 +152,11 @@ export default function CuentaPage() {
     e.preventDefault();
     setUpdatingProfile(true);
     try {
-      const finalData = { ...profileData, region: 'Metropolitana' };
+      const finalData = { 
+        ...profileData, 
+        commune: communeSearch, // Asegurar que guardamos lo que está en el buscador
+        region: 'Metropolitana' 
+      };
       await updateUserProfile(finalData);
       toast({ title: "Perfil actualizado ✨", description: "Tus datos se guardaron correctamente." });
     } catch (error) {
@@ -368,7 +385,7 @@ export default function CuentaPage() {
                       </CardContent>
                     </Card>
 
-                    {/* Dirección de Envío */}
+                    {/* Dirección de Envío con Buscador Estilo Header */}
                     <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-hidden">
                       <CardContent className="p-8 space-y-6">
                         <div className="flex items-center gap-3">
@@ -392,31 +409,32 @@ export default function CuentaPage() {
                             />
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                             <div className="space-y-2">
+                             <div className="space-y-2 relative" ref={communeSearchRef}>
                                 <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Comuna</Label>
-                                <Popover open={isCommunePopoverOpen} onOpenChange={setIsCommunePopoverOpen}>
-                                  <PopoverTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      role="combobox"
-                                      aria-expanded={isCommunePopoverOpen}
-                                      className="w-full h-12 justify-between rounded-xl border-black/5 bg-muted/30 font-bold px-6 hover:bg-muted/40 transition-colors"
-                                    >
-                                      {profileData.commune || "Selecciona tu comuna"}
-                                      <ChevronRight className={cn("ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform", isCommunePopoverOpen ? "rotate-90" : "")} />
-                                    </Button>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 rounded-2xl border-none shadow-2xl overflow-hidden">
-                                    <div className="flex items-center border-b border-black/5 px-4 h-12 bg-white">
-                                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-primary" />
-                                      <input
-                                        className="flex h-full w-full rounded-md bg-transparent py-3 text-xs outline-none placeholder:text-muted-foreground font-bold"
-                                        placeholder="Escribe para filtrar..."
-                                        value={communeSearch}
-                                        onChange={(e) => setCommuneSearch(e.target.value)}
-                                      />
-                                    </div>
-                                    <ScrollArea className="h-72 bg-white">
+                                <div className="relative">
+                                  <Input 
+                                    placeholder="Escribe tu comuna..."
+                                    value={communeSearch}
+                                    onChange={(e) => {
+                                      setCommuneSearch(e.target.value);
+                                      setShowCommuneResults(true);
+                                    }}
+                                    onFocus={() => setShowCommuneResults(true)}
+                                    className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6 pr-10"
+                                  />
+                                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40">
+                                    {communeSearch ? (
+                                      <X className="w-4 h-4 cursor-pointer hover:text-primary" onClick={() => { setCommuneSearch(""); setShowCommuneResults(true); }} />
+                                    ) : (
+                                      <Search className="w-4 h-4" />
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Resultados del buscador estilo Header */}
+                                {showCommuneResults && (
+                                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-black/[0.03] overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <ScrollArea className="h-64">
                                       <div className="p-2 space-y-1">
                                         {filteredCommunes.length > 0 ? (
                                           filteredCommunes.map((c) => (
@@ -425,29 +443,28 @@ export default function CuentaPage() {
                                               type="button"
                                               className={cn(
                                                 "flex w-full items-center justify-between px-4 py-3 text-xs font-bold rounded-xl transition-all text-left",
-                                                profileData.commune === c 
+                                                communeSearch === c 
                                                   ? "bg-primary text-white" 
                                                   : "hover:bg-primary/5 text-foreground"
                                               )}
                                               onClick={() => {
-                                                setProfileData({...profileData, commune: c});
-                                                setIsCommunePopoverOpen(false);
-                                                setCommuneSearch("");
+                                                setCommuneSearch(c);
+                                                setShowCommuneResults(false);
                                               }}
                                             >
                                               {c}
-                                              {profileData.commune === c && <Check className="w-3 h-3 text-secondary" />}
+                                              {communeSearch === c && <Check className="w-3 h-3 text-secondary" />}
                                             </button>
                                           ))
                                         ) : (
-                                          <div className="p-8 text-center space-y-2">
+                                          <div className="p-8 text-center">
                                             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Sin resultados</p>
                                           </div>
                                         )}
                                       </div>
                                     </ScrollArea>
-                                  </PopoverContent>
-                                </Popover>
+                                  </div>
+                                )}
                              </div>
                              <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Región</Label>
@@ -485,7 +502,7 @@ export default function CuentaPage() {
                               <SelectTrigger className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl border-none shadow-2xl">
+                              <SelectContent className="rounded-xl border-none shadow-xl">
                                 <SelectItem value="boleta" className="font-bold">Boleta</SelectItem>
                                 <SelectItem value="factura" className="font-bold">Factura</SelectItem>
                               </SelectContent>

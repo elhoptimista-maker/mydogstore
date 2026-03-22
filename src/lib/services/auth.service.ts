@@ -36,7 +36,9 @@ export async function registerUser(email: string, password: string, displayName:
       email: email,
       displayName: displayName,
       role: 'customer',
-      region: 'Metropolitana', // Seteado por defecto para logística actual
+      region: 'Metropolitana', // Seteado por defecto para logística actual (CRÍTICO)
+      commune: '',
+      phone: '',
       createdAt: serverTimestamp(),
       lastLogin: serverTimestamp(),
       updatedAt: serverTimestamp()
@@ -68,7 +70,8 @@ export async function loginUser(email: string, password: string): Promise<UserCr
     // Actualizar última conexión en Firestore
     const userDocRef = doc(db, "users", user.uid);
     const updateData = {
-      lastLogin: serverTimestamp()
+      lastLogin: serverTimestamp(),
+      updatedAt: serverTimestamp()
     };
 
     setDoc(userDocRef, updateData, { merge: true }).catch(async () => {
