@@ -17,6 +17,7 @@ import { errorEmitter, FirestorePermissionError } from "@/lib/error-emitter";
 
 /**
  * Registra un nuevo usuario, actualiza su perfil en Auth y crea su documento en Firestore.
+ * Asegura que la región quede fijada como Metropolitana desde la creación.
  */
 export async function registerUser(email: string, password: string, displayName: string): Promise<UserCredential> {
   try {
@@ -35,6 +36,7 @@ export async function registerUser(email: string, password: string, displayName:
       email: email,
       displayName: displayName,
       role: 'customer',
+      region: 'Metropolitana', // Seteado por defecto para logística actual
       createdAt: serverTimestamp(),
       lastLogin: serverTimestamp()
     };

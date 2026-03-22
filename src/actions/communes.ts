@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -9,18 +8,22 @@ import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
 
 /**
  * Obtiene los nombres de las comunas disponibles para despacho.
- * Según la arquitectura del ERP, el ID del documento es el nombre de la comuna.
+ * Se utiliza el campo 'name' del documento en lugar del ID para obtener el nombre formateado.
  */
 export async function fetchCommunes(): Promise<string[]> {
   try {
     const db = getErpDbAdmin();
-    // Obtenemos todos los documentos de la colección map_communes
     const snapshot = await db.collection("map_communes").get();
     
     if (snapshot.empty) return [];
 
-    // Retornamos los IDs de los documentos ordenados alfabéticamente
-    return snapshot.docs.map(doc => doc.id).sort((a, b) => a.localeCompare(b));
+    // Mapeamos al campo 'name' y usamos el ID como fallback si no existe
+    return snapshot.docs
+      .map(doc => {
+        const data = doc.data();
+        return (data.name || doc.id) as string;
+      })
+      .sort((a, b) => a.localeCompare(b));
   } catch (error: any) {
     console.error("[CommunesAction] Error fetching communes from ERP:", error.message);
     return [];
