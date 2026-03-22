@@ -25,7 +25,7 @@ export default function WishlistPage() {
           <div className="space-y-2">
             <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Mis favoritos</span>
             <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-none">
-              Tu <span className="text-primary">Lista de Deseos</span>
+              Tu Lista de <span className="text-primary">Deseos</span>
             </h1>
           </div>
         </div>
