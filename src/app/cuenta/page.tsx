@@ -70,9 +70,13 @@ export default function CuentaPage() {
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const router = useRouter();
 
-  // Filtrado de comunas basado en el texto del input
+  // Función para normalizar texto (quitar acentos y pasar a minúsculas)
+  const normalizeText = (str: string) => 
+    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  // Filtrado de comunas basado en el texto del input (insensible a acentos y mayúsculas)
   const filteredCommunes = communes.filter(c => 
-    c.toLowerCase().includes(communeSearch.toLowerCase())
+    normalizeText(c).includes(normalizeText(communeSearch))
   );
 
   // Manejador de clics fuera del buscador de comunas
@@ -154,7 +158,7 @@ export default function CuentaPage() {
     try {
       const finalData = { 
         ...profileData, 
-        commune: communeSearch, // Asegurar que guardamos lo que está en el buscador
+        commune: communeSearch, 
         region: 'Metropolitana' 
       };
       await updateUserProfile(finalData);
@@ -348,7 +352,7 @@ export default function CuentaPage() {
                 <TabsContent value="perfil" className="animate-in fade-in slide-in-from-bottom-2">
                   <form onSubmit={handleUpdateProfile} className="space-y-6">
                     {/* Datos Personales */}
-                    <Card className="rounded-[2.5rem] border-none shadow-sm bg-white">
+                    <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-visible">
                       <CardContent className="p-8 space-y-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
@@ -385,8 +389,8 @@ export default function CuentaPage() {
                       </CardContent>
                     </Card>
 
-                    {/* Dirección de Envío con Buscador Estilo Header */}
-                    <Card className="rounded-[2.5rem] border-none shadow-sm bg-white">
+                    {/* Dirección de Envío */}
+                    <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-visible">
                       <CardContent className="p-8 space-y-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
@@ -418,11 +422,9 @@ export default function CuentaPage() {
                                     onChange={(e) => {
                                       const val = e.target.value;
                                       setCommuneSearch(val);
-                                      // Mostrar resultados solo si hay texto escrito
                                       setShowCommuneResults(val.trim().length > 0);
                                     }}
                                     onFocus={() => {
-                                      // Mostrar si ya tiene texto al ganar el foco
                                       if (communeSearch.trim().length > 0) {
                                         setShowCommuneResults(true);
                                       }
@@ -438,7 +440,6 @@ export default function CuentaPage() {
                                   </div>
                                 </div>
 
-                                {/* Resultados del buscador estilo Header - Ajustado para mostrar máx 5 items */}
                                 {showCommuneResults && communeSearch.trim().length > 0 && (
                                   <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-black/[0.03] overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
                                     <ScrollArea className="max-h-[210px] min-h-[40px]">
