@@ -348,7 +348,7 @@ export default function CuentaPage() {
                 <TabsContent value="perfil" className="animate-in fade-in slide-in-from-bottom-2">
                   <form onSubmit={handleUpdateProfile} className="space-y-6">
                     {/* Datos Personales */}
-                    <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-hidden">
+                    <Card className="rounded-[2.5rem] border-none shadow-sm bg-white">
                       <CardContent className="p-8 space-y-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
@@ -438,10 +438,10 @@ export default function CuentaPage() {
                                   </div>
                                 </div>
 
-                                {/* Resultados del buscador estilo Header */}
+                                {/* Resultados del buscador estilo Header - Ajustado para mostrar máx 5 items */}
                                 {showCommuneResults && communeSearch.trim().length > 0 && (
                                   <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-black/[0.03] overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
-                                    <ScrollArea className="h-64">
+                                    <ScrollArea className="max-h-[210px] min-h-[40px]">
                                       <div className="p-2 space-y-1">
                                         {filteredCommunes.length > 0 ? (
                                           filteredCommunes.map((c) => (
