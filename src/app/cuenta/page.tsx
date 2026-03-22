@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -6,8 +7,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { loginUser, registerUser, logoutUser } from '@/lib/services/auth.service';
 import { updateUserProfile, getUserData } from '@/lib/services/user.service';
 import { fetchUserOrders, UserOrder } from '@/actions/orders';
-import { getErpDbClient } from '@/lib/firebase/erp-client';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { fetchCommunes } from '@/actions/communes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,18 +23,15 @@ import {
   ShieldCheck, 
   Mail, 
   Lock, 
-  Heart,
   ChevronRight,
   Clock,
   Phone,
   MapPin,
-  FileText,
-  CreditCard
-} from 'lucide-react';
+  FileText
+} from 'lucide-center';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
 
 export default function CuentaPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -65,23 +62,14 @@ export default function CuentaPage() {
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const router = useRouter();
 
-  // Cargar comunas desde el ERP
+  // Cargar comunas desde el ERP mediante Server Action (para evitar errores de permisos en el cliente)
   useEffect(() => {
     const loadCommunes = async () => {
-      try {
-        const erpDb = getErpDbClient();
-        const communesRef = collection(erpDb, "map_communes");
-        const q = query(communesRef, orderBy("name", "asc"));
-        const snap = await getDocs(q);
-        const list = snap.docs.map(doc => doc.data().name as string);
-        if (list.length > 0) {
-          setCommunes(list);
-        } else {
-          // Fallback si la colección está vacía
-          setCommunes(["La Cisterna", "San Bernardo", "Maipú", "Santiago Central"]);
-        }
-      } catch (error) {
-        console.error("Error loading communes from ERP:", error);
+      const list = await fetchCommunes();
+      if (list.length > 0) {
+        setCommunes(list);
+      } else {
+        // Fallback local si la consulta falla o está vacía
         setCommunes(["La Cisterna", "San Bernardo", "Maipú", "Santiago Central"]);
       }
     };
@@ -92,7 +80,7 @@ export default function CuentaPage() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // Cargar datos de Firestore
+        // Cargar datos de Firestore Local (Storefront)
         const dbData = await getUserData(currentUser.uid);
         if (dbData) {
           setProfileData({
@@ -100,7 +88,7 @@ export default function CuentaPage() {
             phone: dbData.phone || '',
             shippingAddress: dbData.shippingAddress || '',
             commune: dbData.commune || '',
-            region: 'Metropolitana', // Siempre Metropolitana por requerimiento
+            region: 'Metropolitana',
             billingType: dbData.billingType || 'boleta',
             rut: dbData.rut || '',
             companyName: dbData.companyName || '',
@@ -141,7 +129,6 @@ export default function CuentaPage() {
     e.preventDefault();
     setUpdatingProfile(true);
     try {
-      // Forzamos región metropolitana antes de guardar
       const finalData = { ...profileData, region: 'Metropolitana' };
       await updateUserProfile(finalData);
       toast({ title: "Perfil actualizado ✨", description: "Tus datos se guardaron correctamente." });
@@ -258,7 +245,6 @@ export default function CuentaPage() {
                     <div className="space-y-1 flex-1 text-left lg:text-center min-w-0">
                       <h3 className="text-lg lg:text-xl font-black tracking-tight truncate">{user.displayName || 'Miembro'}</h3>
                       <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest truncate">{user.email}</p>
-                      <Badge className="mt-1 bg-secondary lg:hidden text-primary border-none rounded-full px-3 py-0.5 text-[8px] font-black uppercase tracking-widest inline-flex">Verificado</Badge>
                     </div>
                   </div>
                   
@@ -399,7 +385,7 @@ export default function CuentaPage() {
                              <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Comuna</Label>
                                 <Select 
-                                  value={profileData.commune} 
+                                  value={profileData.commune || ""} 
                                   onValueChange={(val) => setProfileData({...profileData, commune: val})}
                                 >
                                   <SelectTrigger className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6">
