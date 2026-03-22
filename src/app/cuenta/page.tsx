@@ -63,7 +63,8 @@ export default function CuentaPage() {
     rut: '',
     companyName: '',
     businessLine: '',
-    billingAddress: ''
+    billingAddress: '',
+    role: 'customer'
   });
 
   const [updatingProfile, setUpdatingProfile] = useState(false);
@@ -118,7 +119,8 @@ export default function CuentaPage() {
             rut: dbData.rut || '',
             companyName: dbData.companyName || '',
             businessLine: dbData.businessLine || '',
-            billingAddress: dbData.billingAddress || ''
+            billingAddress: dbData.billingAddress || '',
+            role: dbData.role || 'customer'
           });
           setCommuneSearch(dbData.commune || "");
         } else {
@@ -132,6 +134,16 @@ export default function CuentaPage() {
     });
     return () => unsubscribe();
   }, []);
+
+  // Lógica para determinar el estatus de lealtad
+  const getLoyaltyStatus = () => {
+    if (profileData.role === 'admin') return { text: "Staff MyDog", color: "bg-primary text-white shadow-none" };
+    if (orders.length >= 5) return { text: "Miembro de Honor 🏆", color: "bg-secondary text-primary shadow-lg shadow-secondary/20" };
+    if (orders.length > 0) return { text: "Cliente Amigo 🦴", color: "bg-primary/10 text-primary shadow-none" };
+    return { text: "Nuevo en la Manada 🐾", color: "bg-muted text-muted-foreground shadow-none" };
+  };
+
+  const loyalty = getLoyaltyStatus();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -278,7 +290,13 @@ export default function CuentaPage() {
                     </div>
                   </div>
                   
-                  <Badge className="bg-secondary hidden lg:inline-flex text-primary border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest">Cliente Verificado</Badge>
+                  {/* Badge de Estatus Dinámico */}
+                  <Badge className={cn(
+                    "hidden lg:inline-flex border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest transition-all",
+                    loyalty.color
+                  )}>
+                    {loyalty.text}
+                  </Badge>
                   
                   <div className="w-auto lg:w-full lg:pt-6 lg:border-t lg:border-black/5 flex flex-col gap-2 shrink-0">
                     <Button variant="ghost" size="icon" onClick={handleLogout} className="lg:hidden w-12 h-12 rounded-xl text-red-500 hover:bg-red-50 bg-red-50/50">
