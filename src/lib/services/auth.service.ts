@@ -38,7 +38,8 @@ export async function registerUser(email: string, password: string, displayName:
       role: 'customer',
       region: 'Metropolitana', // Seteado por defecto para logística actual
       createdAt: serverTimestamp(),
-      lastLogin: serverTimestamp()
+      lastLogin: serverTimestamp(),
+      updatedAt: serverTimestamp()
     };
 
     // La escritura se inicia pero no bloquea el retorno del credential (escritura optimista)

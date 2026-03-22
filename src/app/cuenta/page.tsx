@@ -14,6 +14,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   User as UserIcon, 
   LogOut, 
@@ -26,7 +28,9 @@ import {
   Clock,
   Phone,
   MapPin,
-  FileText
+  FileText,
+  Search,
+  Check
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -39,6 +43,10 @@ export default function CuentaPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [communes, setCommunes] = useState<string[]>([]);
   
+  // Search state for communes
+  const [communeSearch, setCommuneSearch] = useState("");
+  const [isCommunePopoverOpen, setIsCommunePopoverOpen] = useState(false);
+
   // Auth Form
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -61,14 +69,18 @@ export default function CuentaPage() {
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const router = useRouter();
 
-  // Cargar comunas desde el ERP mediante Server Action (para evitar errores de permisos en el cliente)
+  // Filtro de comunas basado en la búsqueda
+  const filteredCommunes = communes.filter(c => 
+    c.toLowerCase().includes(communeSearch.toLowerCase())
+  );
+
+  // Cargar comunas desde el ERP mediante Server Action
   useEffect(() => {
     const loadCommunes = async () => {
       const list = await fetchCommunes();
       if (list.length > 0) {
         setCommunes(list);
       } else {
-        // Fallback local si la consulta falla o está vacía
         setCommunes(["La Cisterna", "San Bernardo", "Maipú", "Santiago Central"]);
       }
     };
@@ -79,7 +91,6 @@ export default function CuentaPage() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // Cargar datos de Firestore Local (Storefront)
         const dbData = await getUserData(currentUser.uid);
         if (dbData) {
           setProfileData({
@@ -87,7 +98,7 @@ export default function CuentaPage() {
             phone: dbData.phone || '',
             shippingAddress: dbData.shippingAddress || '',
             commune: dbData.commune || '',
-            region: 'Metropolitana',
+            region: dbData.region || 'Metropolitana',
             billingType: dbData.billingType || 'boleta',
             rut: dbData.rut || '',
             companyName: dbData.companyName || '',
@@ -383,19 +394,60 @@ export default function CuentaPage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Comuna</Label>
-                                <Select 
-                                  value={profileData.commune || ""} 
-                                  onValueChange={(val) => setProfileData({...profileData, commune: val})}
-                                >
-                                  <SelectTrigger className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6">
-                                    <SelectValue placeholder="Selecciona tu comuna" />
-                                  </SelectTrigger>
-                                  <SelectContent className="rounded-xl border-none shadow-xl">
-                                    {communes.map((c) => (
-                                      <SelectItem key={c} value={c} className="font-bold">{c}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                <Popover open={isCommunePopoverOpen} onOpenChange={setIsCommunePopoverOpen}>
+                                  <PopoverTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      role="combobox"
+                                      aria-expanded={isCommunePopoverOpen}
+                                      className="w-full h-12 justify-between rounded-xl border-black/5 bg-muted/30 font-bold px-6 hover:bg-muted/40 transition-colors"
+                                    >
+                                      {profileData.commune || "Selecciona tu comuna"}
+                                      <ChevronRight className={cn("ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform", isCommunePopoverOpen ? "rotate-90" : "")} />
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 rounded-2xl border-none shadow-2xl overflow-hidden">
+                                    <div className="flex items-center border-b border-black/5 px-4 h-12 bg-white">
+                                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-primary" />
+                                      <input
+                                        className="flex h-full w-full rounded-md bg-transparent py-3 text-xs outline-none placeholder:text-muted-foreground font-bold"
+                                        placeholder="Escribe para filtrar..."
+                                        value={communeSearch}
+                                        onChange={(e) => setCommuneSearch(e.target.value)}
+                                      />
+                                    </div>
+                                    <ScrollArea className="h-72 bg-white">
+                                      <div className="p-2 space-y-1">
+                                        {filteredCommunes.length > 0 ? (
+                                          filteredCommunes.map((c) => (
+                                            <button
+                                              key={c}
+                                              type="button"
+                                              className={cn(
+                                                "flex w-full items-center justify-between px-4 py-3 text-xs font-bold rounded-xl transition-all text-left",
+                                                profileData.commune === c 
+                                                  ? "bg-primary text-white" 
+                                                  : "hover:bg-primary/5 text-foreground"
+                                              )}
+                                              onClick={() => {
+                                                setProfileData({...profileData, commune: c});
+                                                setIsCommunePopoverOpen(false);
+                                                setCommuneSearch("");
+                                              }}
+                                            >
+                                              {c}
+                                              {profileData.commune === c && <Check className="w-3 h-3 text-secondary" />}
+                                            </button>
+                                          ))
+                                        ) : (
+                                          <div className="p-8 text-center space-y-2">
+                                            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Sin resultados</p>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </ScrollArea>
+                                  </PopoverContent>
+                                </Popover>
                              </div>
                              <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Región</Label>
@@ -433,7 +485,7 @@ export default function CuentaPage() {
                               <SelectTrigger className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl border-none shadow-xl">
+                              <SelectContent className="rounded-xl border-none shadow-2xl">
                                 <SelectItem value="boleta" className="font-bold">Boleta</SelectItem>
                                 <SelectItem value="factura" className="font-bold">Factura</SelectItem>
                               </SelectContent>
