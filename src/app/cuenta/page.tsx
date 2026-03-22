@@ -416,15 +416,22 @@ export default function CuentaPage() {
                                     placeholder="Escribe tu comuna..."
                                     value={communeSearch}
                                     onChange={(e) => {
-                                      setCommuneSearch(e.target.value);
-                                      setShowCommuneResults(true);
+                                      const val = e.target.value;
+                                      setCommuneSearch(val);
+                                      // Mostrar resultados solo si hay texto escrito
+                                      setShowCommuneResults(val.trim().length > 0);
                                     }}
-                                    onFocus={() => setShowCommuneResults(true)}
+                                    onFocus={() => {
+                                      // Mostrar si ya tiene texto al ganar el foco
+                                      if (communeSearch.trim().length > 0) {
+                                        setShowCommuneResults(true);
+                                      }
+                                    }}
                                     className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6 pr-10"
                                   />
                                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40">
                                     {communeSearch ? (
-                                      <X className="w-4 h-4 cursor-pointer hover:text-primary" onClick={() => { setCommuneSearch(""); setShowCommuneResults(true); }} />
+                                      <X className="w-4 h-4 cursor-pointer hover:text-primary" onClick={() => { setCommuneSearch(""); setShowCommuneResults(false); }} />
                                     ) : (
                                       <Search className="w-4 h-4" />
                                     )}
@@ -432,7 +439,7 @@ export default function CuentaPage() {
                                 </div>
 
                                 {/* Resultados del buscador estilo Header */}
-                                {showCommuneResults && (
+                                {showCommuneResults && communeSearch.trim().length > 0 && (
                                   <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-black/[0.03] overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
                                     <ScrollArea className="h-64">
                                       <div className="p-2 space-y-1">
