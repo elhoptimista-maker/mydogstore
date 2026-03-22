@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useWishlist } from '@/context/WishlistContext';
+import { useCart } from '@/context/CartContext';
 import { 
   User as UserIcon, 
   Package, 
@@ -42,6 +44,9 @@ export default function CuentaPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [communes, setCommunes] = useState<string[]>([]);
   
+  const { clearWishlist } = useWishlist();
+  const { clearCart } = useCart();
+
   // Search state for communes
   const [communeSearch, setCommuneSearch] = useState("");
   const [showCommuneResults, setShowCommuneResults] = useState(false);
@@ -183,6 +188,8 @@ export default function CuentaPage() {
 
   const handleLogout = async () => {
     await logoutUser();
+    clearWishlist();
+    clearCart();
     router.push('/');
   };
 
@@ -278,7 +285,7 @@ export default function CuentaPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <aside className="lg:col-span-1 space-y-6">
-              <Card className="rounded-[2rem] lg:rounded-[2.5rem] border-none shadow-xl bg-white lg:sticky lg:top-48 z-10 transition-all">
+              <Card className="rounded-[2rem] lg:rounded-[2.5rem] border-none shadow-xl bg-white lg:sticky lg:top-48 z-10 transition-all overflow-visible">
                 <div className="p-6 lg:p-8 flex flex-row lg:flex-col items-center lg:text-center justify-between gap-4 lg:gap-6">
                   <div className="flex items-center gap-4 lg:flex-col lg:gap-6 w-full">
                     <div className="w-14 h-14 lg:w-20 lg:h-20 bg-primary/5 rounded-2xl lg:rounded-[2rem] flex items-center justify-center text-2xl lg:text-3xl shrink-0">
