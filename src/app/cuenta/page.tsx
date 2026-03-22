@@ -17,7 +17,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   User as UserIcon, 
-  LogOut, 
   Package, 
   Settings, 
   ShieldCheck, 
@@ -283,10 +282,10 @@ export default function CuentaPage() {
                   
                   <div className="w-auto lg:w-full lg:pt-6 lg:border-t lg:border-black/5 flex flex-col gap-2 shrink-0">
                     <Button variant="ghost" size="icon" onClick={handleLogout} className="lg:hidden w-12 h-12 rounded-xl text-red-500 hover:bg-red-50 bg-red-50/50">
-                      <LogOut className="w-5 h-5 mx-auto" />
+                      <span className="text-xl">👋</span>
                     </Button>
-                    <Button variant="ghost" onClick={handleLogout} className="hidden lg:flex w-full justify-start h-11 rounded-xl font-bold gap-3 text-red-500 hover:bg-red-50">
-                      <LogOut className="w-4 h-4" /> Cerrar Sesión
+                    <Button variant="ghost" onClick={handleLogout} className="hidden lg:flex w-full justify-center h-11 rounded-xl font-bold gap-3 text-red-500 hover:bg-red-50 transition-colors">
+                      <span className="text-lg">👋</span> Cerrar Sesión
                     </Button>
                   </div>
                 </div>
