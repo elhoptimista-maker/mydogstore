@@ -8,6 +8,7 @@ import { SanitizedProduct } from "@/types/product";
 
 /**
  * Calcula un precio de venta comercial basado en el costo neto.
+ * Margen del 30% sobre el costo neto.
  */
 function calculateCommercialPrice(netCost: number): number {
   if (!netCost || netCost <= 0) return 0;
@@ -16,8 +17,18 @@ function calculateCommercialPrice(netCost: number): number {
 }
 
 /**
+ * Calcula el precio mayorista basado en el costo neto.
+ * Aplicamos un margen menor (ej. 15%) o simplemente un recargo fijo sobre el neto.
+ * Para este ejemplo, usaremos un margen del 15%.
+ */
+function calculateWholesalePrice(netCost: number): number {
+  if (!netCost || netCost <= 0) return 0;
+  const basePrice = netCost / (1 - 0.15);
+  return Math.round(basePrice / 10) * 10; // Redondeo más fino para mayoristas
+}
+
+/**
  * Obtiene la lista de productos activos, calcula precios y sanitiza la salida.
- * Se eliminaron los logs de cliente para evitar fallos en SSR/Build.
  */
 export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
   try {
@@ -35,6 +46,7 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
         const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
 
         const productName = data.name || data.metadata?.name || data.metadata?.title || "Producto sin nombre";
+        const netCost = data.financials?.cost?.net || 0;
 
         return {
           id: doc.id,
@@ -50,7 +62,8 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
           short_description: data.content?.short_description || data.description || "",
           main_image: data.media?.main_image || data.image || "https://picsum.photos/seed/placeholder/600/600",
           currentStock,
-          sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
+          sellingPrice: calculateCommercialPrice(netCost),
+          wholesalePrice: calculateWholesalePrice(netCost)
         } as SanitizedProduct;
       })
     );
@@ -76,6 +89,7 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
     const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
 
     const productName = data.name || data.metadata?.name || data.metadata?.title || "Producto sin nombre";
+    const netCost = data.financials?.cost?.net || 0;
 
     return {
       id: doc.id,
@@ -91,7 +105,8 @@ export async function getSanitizedProductById(id: string): Promise<SanitizedProd
       short_description: data.content?.short_description || data.description || "",
       main_image: data.media?.main_image || data.image || "",
       currentStock,
-      sellingPrice: calculateCommercialPrice(data.financials?.cost?.net || 0)
+      sellingPrice: calculateCommercialPrice(netCost),
+      wholesalePrice: calculateWholesalePrice(netCost)
     } as SanitizedProduct;
   } catch (error: any) {
     console.error(`[CatalogService] Error fetching product ${id}:`, error.message);

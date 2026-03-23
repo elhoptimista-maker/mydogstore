@@ -13,7 +13,8 @@ import {
   Package,
   Instagram,
   X,
-  MessageCircle
+  MessageCircle,
+  Building2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
@@ -43,7 +44,7 @@ const SEARCH_PLACEHOLDERS = [
   "Buscando 'el juguete indestructible' 🦴...",
   "Buscando 'catnip para un viernes' 🌿...",
   "Buscando 'comida para perros mañosos' 🐕...",
-  "Buscando 'el mejor rascador del mundo' 🐱...",
+  "Buscando 'el mejor rascador del mundo' 🌿...",
   "Buscando 'arena que no huela a arena' ✨...",
 ];
 
@@ -369,8 +370,8 @@ export default function Header() {
               <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
                 <User className="w-4 h-4" /> Mi Cuenta
               </Link>
-              <Link href="/b2b" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
-                <Package className="w-4 h-4" /> Portal B2B
+              <Link href="/b2b/portal" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
+                <Building2 className="w-4 h-4" /> Portal B2B
               </Link>
             </div>
           </div>

@@ -18,4 +18,5 @@ export interface SanitizedProduct {
   main_image: string;
   currentStock: number;
   sellingPrice: number;
+  wholesalePrice: number;
 }
