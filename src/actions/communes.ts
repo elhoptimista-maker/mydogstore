@@ -15,11 +15,11 @@ export async function fetchCommunes(): Promise<string[]> {
     const db = getErpDbAdmin();
     const snapshot = await db.collection("map_communes").get();
     
-    if (snapshot.empty) return [];
+    if (!snapshot || snapshot.empty) return [];
 
     // Mapeamos al campo 'name' y usamos el ID como fallback si no existe
     return snapshot.docs
-      .map(doc => {
+      .map((doc: any) => {
         const data = doc.data();
         return (data.name || doc.id) as string;
       })

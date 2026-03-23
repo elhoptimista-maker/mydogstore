@@ -26,10 +26,10 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
       .where("active", "==", true)
       .get();
 
-    if (productsSnap.empty) return [];
+    if (!productsSnap || productsSnap.empty) return [];
 
     const sanitizedProducts = await Promise.all(
-      productsSnap.docs.map(async (doc) => {
+      productsSnap.docs.map(async (doc: any) => {
         const data = doc.data();
         const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
         const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;

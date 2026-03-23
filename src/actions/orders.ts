@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -27,9 +26,9 @@ export async function fetchUserOrders(userId: string): Promise<UserOrder[]> {
       .limit(20)
       .get();
 
-    if (snapshot.empty) return [];
+    if (!snapshot || snapshot.empty) return [];
 
-    return snapshot.docs.map(doc => {
+    return snapshot.docs.map((doc: any) => {
       const data = doc.data();
       return {
         id: doc.id,
