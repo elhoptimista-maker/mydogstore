@@ -23,7 +23,7 @@ export async function fetchCommunes(): Promise<string[]> {
         const data = doc.data();
         return (data.name || doc.id) as string;
       })
-      .sort((a, b) => a.localeCompare(b));
+      .sort((a: string, b: string) => a.localeCompare(b));
   } catch (error: any) {
     console.error("[CommunesAction] Error fetching communes from ERP:", error.message);
     return [];
