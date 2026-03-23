@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -31,7 +32,8 @@ import {
   FileText,
   Search,
   Check,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -41,6 +43,7 @@ export default function CuentaPage() {
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<UserOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [communes, setCommunes] = useState<string[]>([]);
   
@@ -79,7 +82,7 @@ export default function CuentaPage() {
   const normalizeText = (str: string) => 
     str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-  // Filtrado de comunas basado en el texto del input (insensible a acentos y mayúsculas)
+  // Filtrado de comunas basado en el texto del input
   const filteredCommunes = communes.filter(c => 
     normalizeText(c).includes(normalizeText(communeSearch))
   );
@@ -108,14 +111,32 @@ export default function CuentaPage() {
     loadCommunes();
   }, []);
 
+  // 1. Escuchar cambios de autenticación
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      if (currentUser) {
-        const dbData = await getUserData(currentUser.uid);
+      if (!currentUser) {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Cargar datos de perfil cuando el usuario está disponible (evita delay al login)
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!user) return;
+      
+      setDataLoading(true);
+      try {
+        const [dbData, userOrders] = await Promise.all([
+          getUserData(user.uid),
+          fetchUserOrders(user.uid)
+        ]);
+
         if (dbData) {
           setProfileData({
-            displayName: currentUser.displayName || '',
+            displayName: user.displayName || dbData.displayName || '',
             phone: dbData.phone || '',
             shippingAddress: dbData.shippingAddress || '',
             commune: dbData.commune || '',
@@ -129,16 +150,25 @@ export default function CuentaPage() {
           });
           setCommuneSearch(dbData.commune || "");
         } else {
-          setProfileData(prev => ({ ...prev, displayName: currentUser.displayName || '', region: 'Metropolitana' }));
+          setProfileData(prev => ({ 
+            ...prev, 
+            displayName: user.displayName || '', 
+            region: 'Metropolitana' 
+          }));
         }
-
-        const userOrders = await fetchUserOrders(currentUser.uid);
         setOrders(userOrders);
+      } catch (error) {
+        console.error("Error cargando datos de usuario:", error);
+      } finally {
+        setDataLoading(false);
+        setLoading(false);
       }
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+    };
+
+    if (user) {
+      loadUserData();
+    }
+  }, [user]);
 
   // Lógica para determinar el estatus de lealtad
   const getLoyaltyStatus = () => {
@@ -163,7 +193,6 @@ export default function CuentaPage() {
       }
     } catch (error: any) {
       toast({ variant: "destructive", title: "Error", description: "Verifica tus credenciales e intenta de nuevo." });
-    } finally {
       setLoading(false);
     }
   };
@@ -193,10 +222,11 @@ export default function CuentaPage() {
     router.push('/');
   };
 
-  if (loading) {
+  if (loading || (user && dataLoading && orders.length === 0)) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 text-primary animate-spin" />
+        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest animate-pulse">Cargando tu perfil...</p>
       </div>
     );
   }
@@ -211,7 +241,7 @@ export default function CuentaPage() {
                 Panel de Control Personal
               </div>
               <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-none">
-                Hola, <span className="text-primary">{user.displayName || 'Miembro MyDog'}</span>
+                Hola, <span className="text-primary">{profileData.displayName || user.displayName || 'Miembro MyDog'}</span>
               </h1>
             </div>
           </div>
@@ -292,7 +322,7 @@ export default function CuentaPage() {
                       🐾
                     </div>
                     <div className="space-y-1 flex-1 text-left lg:text-center min-w-0">
-                      <h3 className="text-lg lg:text-xl font-black tracking-tight truncate">{user.displayName || 'Miembro'}</h3>
+                      <h3 className="text-lg lg:text-xl font-black tracking-tight truncate">{profileData.displayName || user.displayName || 'Miembro'}</h3>
                       <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest truncate">{user.email}</p>
                     </div>
                   </div>
@@ -592,7 +622,7 @@ export default function CuentaPage() {
                         disabled={updatingProfile} 
                         className="h-14 rounded-2xl bg-primary text-white font-black px-12 gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all"
                       >
-                        {updatingProfile && <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white" />}
+                        {updatingProfile && <Loader2 className="animate-spin h-4 w-4" />}
                         Guardar Configuración
                       </Button>
                     </div>
