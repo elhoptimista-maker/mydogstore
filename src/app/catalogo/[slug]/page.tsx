@@ -71,13 +71,13 @@ export default async function ProductoDetallePage(props: PageProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6 pb-24 space-y-20">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-4 pb-24 space-y-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      <div className="space-y-10">
+      <div className="space-y-8">
         {/* Breadcrumbs */}
         <nav className="flex items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
            <Link href="/catalogo" className="hover:text-primary transition-colors">Catálogo</Link>
@@ -168,17 +168,18 @@ export default async function ProductoDetallePage(props: PageProps) {
 
             <ProductClientControls product={product} />
 
-            <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* CINTA DE CONFIANZA: Reubicada para mayor impacto visual */}
+            <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { icon: <Truck className="w-4 h-4" />, text: "Despacho Express" },
-                { icon: <ShieldCheck className="w-4 h-4" />, text: "Pago 100% Seguro" },
-                { icon: <RefreshCw className="w-4 h-4" />, text: "Garantía MyDog" }
+                { icon: <ShieldCheck className="h-4 w-4" />, text: "Pago Seguro" },
+                { icon: <RefreshCw className="h-4 w-4" />, text: "Garantía MyDog" }
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 bg-white border border-black/5 rounded-xl shadow-sm">
-                  <div className="w-8 h-8 bg-primary/5 rounded-lg flex items-center justify-center text-primary shrink-0">
+                <div key={i} className="flex items-center gap-2.5 p-3 bg-white border border-black/5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-8 h-8 bg-primary/5 rounded-xl flex items-center justify-center text-primary shrink-0">
                     {item.icon}
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-wider leading-none">{item.text}</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider leading-none text-muted-foreground">{item.text}</span>
                 </div>
               ))}
             </div>
@@ -186,19 +187,19 @@ export default async function ProductoDetallePage(props: PageProps) {
         </div>
       </div>
 
-      {/* Sección de Productos Similares Refinada */}
+      {/* SECCIÓN DE PRODUCTOS SIMILARES: Con espaciado refinado */}
       {similarProducts.length > 0 && (
-        <section className="space-y-12 pt-12 border-t border-black/5">
+        <section className="space-y-10 pt-16 border-t border-black/5">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="space-y-2">
-              <Badge variant="outline" className="rounded-full font-black text-[9px] uppercase tracking-[0.2em] border-primary/20 text-primary px-4 py-1">
-                Sugerencias de la manada
+              <Badge variant="outline" className="rounded-full font-black text-[9px] uppercase tracking-[0.2em] border-primary/20 text-primary px-4 py-1 bg-primary/5">
+                Selección basada en atributos
               </Badge>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Productos <span className="text-primary">Similares</span></h2>
-              <p className="text-sm font-medium text-muted-foreground">Selección experta basada en atributos técnicos para tu mascota.</p>
+              <p className="text-sm font-medium text-muted-foreground">Expertos en nutrición recomiendan estas alternativas técnicas.</p>
             </div>
             <Link href={`/catalogo?especie=${encodeURIComponent(product.species)}`}>
-              <button className="h-12 px-8 rounded-full border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all">
+              <button className="h-12 px-8 rounded-full border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all bg-white">
                 Ver todo para {product.species}
               </button>
             </Link>
