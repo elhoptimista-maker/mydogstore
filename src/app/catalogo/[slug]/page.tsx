@@ -113,9 +113,8 @@ export default async function ProductoDetallePage(props: PageProps) {
           </div>
 
           <div className="space-y-2">
-            <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center justify-between">
+            <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest block mb-1">
                Precio Detalle
-               <span className="text-[10px] font-black text-secondary bg-secondary/10 px-2 py-0.5 rounded-md border border-secondary/20">Mayorista: ${product.wholesalePrice.toLocaleString('es-CL')}</span>
             </span>
             <div className="text-5xl font-black text-primary tracking-tighter flex items-baseline gap-4">
               ${product.sellingPrice.toLocaleString('es-CL')}
