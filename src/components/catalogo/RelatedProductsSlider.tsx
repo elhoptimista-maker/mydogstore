@@ -35,7 +35,7 @@ export default function RelatedProductsSlider({
   if (!products || products.length === 0) return null;
 
   return (
-    <section className="space-y-10 pt-8">
+    <section className="space-y-10 pt-16 pb-12">
       <div className="flex flex-col md:flex-row justify-between items-end gap-6">
         <div className="space-y-2">
           {badge && (
