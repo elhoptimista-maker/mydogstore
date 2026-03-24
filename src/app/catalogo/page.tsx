@@ -94,7 +94,7 @@ export default async function CatalogoPage(props: PageProps) {
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-20">
-      <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-8 border-b border-black/5">
+      <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-6 border-b border-black/5">
         <div className="absolute top-0 right-0 w-1/4 h-full opacity-5 pointer-events-none">
           <LayoutGrid className="w-full h-full text-primary" />
         </div>
@@ -117,7 +117,7 @@ export default async function CatalogoPage(props: PageProps) {
               petTypes={PET_TYPES} 
             />
           </aside>
-          <main className="lg:col-span-3 space-y-8">
+          <main className="lg:col-span-3 space-y-6">
             <CatalogControls totalCount={totalProducts} />
             {paginatedProducts.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

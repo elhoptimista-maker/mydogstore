@@ -77,7 +77,7 @@ export default async function ProductoDetallePage(props: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      <div className="space-y-8">
+      <div className="space-y-4">
         {/* Breadcrumbs */}
         <nav className="flex items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
            <Link href="/catalogo" className="hover:text-primary transition-colors">Catálogo</Link>
