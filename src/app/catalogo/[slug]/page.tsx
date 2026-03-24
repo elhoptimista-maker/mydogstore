@@ -49,7 +49,7 @@ export default async function ProductoDetallePage(props: PageProps) {
     })
     .filter(p => p.similarityScore >= 10)
     .sort((a, b) => b.similarityScore - a.similarityScore)
-    .slice(0, 10); // Aumentamos el límite para el slider
+    .slice(0, 15); // Aumentamos para el slider
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -186,11 +186,10 @@ export default async function ProductoDetallePage(props: PageProps) {
         </div>
       </div>
 
-      {/* SECCIÓN DE PRODUCTOS SIMILARES: Transformada en Slider Reutilizable */}
       <RelatedProductsSlider 
         products={similarProducts} 
         title="Productos Similares"
-        subtitle="Expertos en nutrición recomiendan estas alternativas basadas en los mismos atributos."
+        subtitle="Alternativas técnicas seleccionadas por expertos para tu mascota."
         viewAllHref={`/catalogo?especie=${encodeURIComponent(product.species)}`}
       />
     </div>

@@ -22,7 +22,8 @@ interface RelatedProductsSliderProps {
 
 /**
  * @fileOverview Componente reutilizable de Slider para productos relacionados.
- * Implementa un diseño responsivo con efecto de "asomo" (peeking) en móviles.
+ * Implementa un diseño responsivo con efecto de "asomo" (peeking) en móviles
+ * utilizando lógica de Scroll Snapping técnica similar a PetNavigation.
  */
 export default function RelatedProductsSlider({ 
   products, 
@@ -63,7 +64,10 @@ export default function RelatedProductsSlider({
       >
         <CarouselContent className="-ml-4">
           {products.map((product) => (
-            <CarouselItem key={product.id} className="pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+            <CarouselItem 
+              key={product.id} 
+              className="pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+            >
               <div className="h-full py-4">
                 <ProductCard product={product} />
               </div>
