@@ -5,6 +5,7 @@ import { Star, ShieldCheck, Truck, RefreshCw, Scale, Dog, Briefcase, ChevronRigh
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import ProductClientControls from '@/components/catalogo/ProductClientControls';
+import ProductHeaderActions from '@/components/catalogo/ProductHeaderActions';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -94,6 +95,7 @@ export default async function ProductoDetallePage(props: PageProps) {
               <Badge className="px-4 py-1.5 bg-primary text-white border-none text-[10px] font-bold uppercase tracking-widest rounded-full">
                 {product.brand} | {product.category}
               </Badge>
+              <ProductHeaderActions product={product} />
             </div>
             
             <h1 className="text-4xl md:text-5xl font-black text-foreground leading-tight tracking-tighter">
