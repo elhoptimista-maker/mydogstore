@@ -77,6 +77,7 @@ export default function ProductAssistant() {
   const [input, setInput] = useState('');
   const [lastRecommendedAt, setLastRecommendedAt] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const followUpTimerRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
 
@@ -120,6 +121,22 @@ export default function ProductAssistant() {
       if (followUpTimerRef.current) clearTimeout(followUpTimerRef.current);
     };
   }, [lastRecommendedAt, loading]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, setIsOpen]);
 
   const handleSend = async (text: string, e?: React.FormEvent) => {
     e?.preventDefault();
@@ -182,7 +199,10 @@ export default function ProductAssistant() {
   }
 
   return (
-    <Card className="fixed max-md:inset-0 md:bottom-6 md:right-6 z-[100] w-full md:w-[400px] h-[100dvh] md:h-[650px] flex flex-col overflow-hidden bg-white shadow-2xl md:rounded-[2.5rem] border-none animate-in slide-in-from-bottom-10 duration-500">
+    <Card 
+      ref={containerRef}
+      className="fixed max-md:inset-0 md:bottom-6 md:right-6 z-[100] w-full md:w-[400px] h-[100dvh] md:h-[650px] flex flex-col overflow-hidden bg-white shadow-2xl md:rounded-[2.5rem] border-none animate-in slide-in-from-bottom-10 duration-500"
+    >
       {/* Header */}
       <div className={cn(
         "p-6 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10 transition-colors duration-500",
