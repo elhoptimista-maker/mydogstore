@@ -35,10 +35,25 @@ export default async function ProductoDetallePage(props: PageProps) {
     notFound();
   }
 
-  // Cargar productos similares (misma categoría, excluyendo el actual)
+  // Lógica Avanzada de Productos Similares basada en Atributos
   const allProducts = await fetchAllProducts();
   const similarProducts = allProducts
-    .filter(p => p.category === product.category && p.id !== product.id && p.currentStock > 0)
+    .filter(p => p.id !== product.id && p.currentStock > 0)
+    .map(p => {
+      let score = 0;
+      // La misma especie es el factor más crítico para la similitud
+      if (p.species === product.species) score += 10;
+      // Misma categoría técnica
+      if (p.category === product.category) score += 5;
+      // Misma marca (fidelidad de cliente)
+      if (p.brand === product.brand) score += 3;
+      // Misma etapa de vida (ej: Cachorro, Senior)
+      if (p.life_stage === product.life_stage) score += 2;
+      
+      return { ...p, similarityScore: score };
+    })
+    .filter(p => p.similarityScore >= 10) // Aseguramos que al menos coincida la especie
+    .sort((a, b) => b.similarityScore - a.similarityScore)
     .slice(0, 5);
 
   const jsonLd = {
@@ -182,17 +197,17 @@ export default async function ProductoDetallePage(props: PageProps) {
         </div>
       </div>
 
-      {/* Sección de Productos Similares */}
+      {/* Sección de Productos Similares Refinada */}
       {similarProducts.length > 0 && (
         <section className="space-y-12">
           <div className="flex flex-col md:flex-row justify-between items-end border-b border-black/5 pb-8">
             <div className="space-y-2">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Más opciones para ti</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Selección basada en atributos</span>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Productos <span className="text-primary">Similares</span></h2>
             </div>
-            <Link href={`/catalogo?categoria=${encodeURIComponent(product.category)}`}>
+            <Link href={`/catalogo?especie=${encodeURIComponent(product.species)}`}>
               <Badge variant="outline" className="rounded-full font-bold border-2 px-6 py-2 border-primary/10 hover:border-primary transition-all cursor-pointer">
-                Ver todo en {product.category}
+                Ver todo para {product.species}
               </Badge>
             </Link>
           </div>
