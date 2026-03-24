@@ -52,7 +52,7 @@ export default function RelatedProductsSlider({
         {viewAllHref && (
           <Link href={viewAllHref} className="hidden md:inline-block">
             <button className="h-12 px-8 rounded-full border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all bg-white whitespace-nowrap">
-              Ver todo
+              Ver todo el catálogo
             </button>
           </Link>
         )}

@@ -35,19 +35,38 @@ export default async function ProductoDetallePage(props: PageProps) {
     notFound();
   }
 
-  // Lógica Avanzada de Productos Similares basada en Atributos
+  // Lógica de Atributos Estricta para Productos Similares
   const allProducts = await fetchAllProducts();
   const similarProducts = allProducts
     .filter(p => p.id !== product.id && p.currentStock > 0)
+    .filter(p => p.species === product.species) // REGLA 1: Nunca mostrar otra especie
     .map(p => {
       let score = 0;
-      if (p.species === product.species) score += 10;
-      if (p.category === product.category) score += 5;
-      if (p.brand === product.brand) score += 3;
-      if (p.life_stage === product.life_stage) score += 2;
+      
+      const pLifeStage = p.life_stage.toLowerCase();
+      const currentLifeStage = product.life_stage.toLowerCase();
+
+      // REGLA 2: Exclusión por etapa de vida (Cachorro vs Adulto/Senior)
+      const isCachorro = currentLifeStage.includes('cachorro');
+      const isAdultoSenior = currentLifeStage.includes('adulto') || currentLifeStage.includes('senior');
+
+      if (isCachorro && (pLifeStage.includes('adulto') || pLifeStage.includes('senior'))) {
+        score -= 100; // Penalización máxima para no mostrar
+      } else if (isAdultoSenior && pLifeStage.includes('cachorro')) {
+        score -= 100; // Penalización máxima para no mostrar
+      } else if (pLifeStage === currentLifeStage) {
+        score += 20; // Puntuación máxima por misma etapa
+      }
+
+      // REGLA 3: Misma categoría dentro de la misma especie
+      if (p.category === product.category) score += 10;
+      
+      // REGLA 4: Misma marca
+      if (p.brand === product.brand) score += 5;
+
       return { ...p, similarityScore: score };
     })
-    .filter(p => p.similarityScore >= 10)
+    .filter(p => p.similarityScore > 0) // Solo los que cumplen la lógica de afinidad
     .sort((a, b) => b.similarityScore - a.similarityScore)
     .slice(0, 15);
 
