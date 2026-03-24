@@ -251,10 +251,10 @@ export default function ProductAssistant() {
 
                   {msg.recommendations && msg.recommendations.length > 0 && (
                     <div className="grid grid-cols-1 gap-3 w-full max-w-[95%] mt-4">
-                      {msg.recommendations.map((rec, idx) => (
+                      {msg.recommendations.map((rec: any, idx: number) => (
                         <Link 
                           key={idx} 
-                          href={`/catalogo/${rec.id}`} 
+                          href={`/catalogo/${rec.slug || rec.id}`} 
                           className="group"
                         >
                           <div className="bg-white p-3 rounded-3xl border border-primary/10 hover:border-primary/40 transition-all shadow-md flex items-center gap-4 group-hover:-translate-y-1">

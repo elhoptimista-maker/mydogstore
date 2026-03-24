@@ -6,7 +6,7 @@
  * Expone de forma segura las funciones de lectura del catálogo al cliente.
  */
 
-import { getSanitizedProducts, getSanitizedProductById } from "@/lib/services/catalog.service";
+import { getSanitizedProducts, getSanitizedProductBySlug, getSanitizedProductById } from "@/lib/services/catalog.service";
 import { SanitizedProduct } from "@/types/product";
 
 /**
@@ -17,7 +17,14 @@ export async function fetchAllProducts(): Promise<SanitizedProduct[]> {
 }
 
 /**
- * Obtiene un producto por su ID.
+ * Obtiene un producto por su Slug.
+ */
+export async function fetchProductBySlug(slug: string): Promise<SanitizedProduct | null> {
+  return await getSanitizedProductBySlug(slug);
+}
+
+/**
+ * Obtiene un producto por su ID (Necesario para procesos internos como Wishlist).
  */
 export async function fetchProductById(id: string): Promise<SanitizedProduct | null> {
   return await getSanitizedProductById(id);

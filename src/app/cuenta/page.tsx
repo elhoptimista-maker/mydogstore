@@ -33,11 +33,18 @@ import {
   Search,
   Check,
   X,
-  Loader2
+  Loader2,
+  Building2,
+  ArrowRight,
+  MapPinIcon,
+  Map,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function CuentaPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -64,9 +71,6 @@ export default function CuentaPage() {
   const [profileData, setProfileData] = useState({
     displayName: '',
     phone: '',
-    shippingAddress: '',
-    commune: '',
-    region: 'Metropolitana',
     billingType: 'boleta',
     rut: '',
     companyName: '',
@@ -75,14 +79,27 @@ export default function CuentaPage() {
     role: 'customer'
   });
 
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [currentAddress, setCurrentAddress] = useState({
+    id: '',
+    name: 'Casa',
+    streetAndNumber: '',
+    apartmentOrLocal: '',
+    commune: '',
+    region: 'Metropolitana',
+    isDefault: false
+  });
+
   const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [savingAddress, setSavingAddress] = useState(false);
   const router = useRouter();
 
-  // Función para normalizar texto (quitar acentos y pasar a minúsculas)
+  // Función para normalizar texto
   const normalizeText = (str: string) => 
     str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-  // Filtrado de comunas basado en el texto del input
+  // Filtrado de comunas
   const filteredCommunes = communes.filter(c => 
     normalizeText(c).includes(normalizeText(communeSearch))
   );
@@ -98,7 +115,7 @@ export default function CuentaPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Cargar comunas desde el ERP mediante Server Action
+  // Cargar comunas
   useEffect(() => {
     const loadCommunes = async () => {
       const list = await fetchCommunes();
@@ -111,66 +128,93 @@ export default function CuentaPage() {
     loadCommunes();
   }, []);
 
-  // 1. Escuchar cambios de autenticación
+  const validateAndSetupRetailUser = async (currentUser: User) => {
+    try {
+      const dbData = await getUserData(currentUser.uid);
+      if (dbData?.role === 'wholesale') {
+        return { isValid: false, reason: 'wholesale' };
+      }
+      return { isValid: true, dbData };
+    } catch (error) {
+      console.error("Error validating user role:", error);
+      return { isValid: false, reason: 'error' };
+    }
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      if (!currentUser) {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setDataLoading(true);
+        const { isValid, reason, dbData } = await validateAndSetupRetailUser(currentUser);
+        
+        if (!isValid) {
+           if (reason === 'wholesale') {
+             toast({ title: "Redirigiendo", description: "Detectamos que eres distribuidor. Te llevaremos al Portal B2B." });
+             router.push('/b2b/portal');
+           } else {
+             await logoutUser();
+             clearCart();
+             clearWishlist();
+             setUser(null);
+             toast({ variant: "destructive", title: "Error", description: "Hubo un problema verificando tu cuenta." });
+           }
+           setLoading(false);
+           setDataLoading(false);
+           return;
+        }
+
+        setUser(currentUser);
+        
+        try {
+          const userOrders = await fetchUserOrders(currentUser.uid);
+
+          if (dbData) {
+            setProfileData({
+              displayName: currentUser.displayName || dbData.displayName || '',
+              phone: dbData.phone || '',
+              billingType: dbData.billingType || 'boleta',
+              rut: dbData.rut || '',
+              companyName: dbData.companyName || '',
+              businessLine: dbData.businessLine || '',
+              billingAddress: dbData.billingAddress || '',
+              role: dbData.role || 'customer'
+            });
+
+            // Compatibilidad hacia atrás
+            if (dbData.addresses && dbData.addresses.length > 0) {
+               setAddresses(dbData.addresses);
+            } else if (dbData.shippingAddress) {
+               setAddresses([{
+                  id: 'default',
+                  name: 'Principal',
+                  streetAndNumber: dbData.shippingAddress,
+                  apartmentOrLocal: '',
+                  commune: dbData.commune || '',
+                  region: 'Metropolitana',
+                  isDefault: true
+               }]);
+            }
+          } else {
+            setProfileData(prev => ({ 
+              ...prev, 
+              displayName: currentUser.displayName || ''
+            }));
+          }
+          setOrders(userOrders);
+        } catch (error) {
+          console.error("Error cargando pedidos:", error);
+        } finally {
+          setDataLoading(false);
+          setLoading(false);
+        }
+      } else {
+        setUser(null);
         setLoading(false);
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router, clearCart, clearWishlist]);
 
-  // 2. Cargar datos de perfil cuando el usuario está disponible (evita delay al login)
-  useEffect(() => {
-    const loadUserData = async () => {
-      if (!user) return;
-      
-      setDataLoading(true);
-      try {
-        const [dbData, userOrders] = await Promise.all([
-          getUserData(user.uid),
-          fetchUserOrders(user.uid)
-        ]);
-
-        if (dbData) {
-          setProfileData({
-            displayName: user.displayName || dbData.displayName || '',
-            phone: dbData.phone || '',
-            shippingAddress: dbData.shippingAddress || '',
-            commune: dbData.commune || '',
-            region: 'Metropolitana',
-            billingType: dbData.billingType || 'boleta',
-            rut: dbData.rut || '',
-            companyName: dbData.companyName || '',
-            businessLine: dbData.businessLine || '',
-            billingAddress: dbData.billingAddress || '',
-            role: dbData.role || 'customer'
-          });
-          setCommuneSearch(dbData.commune || "");
-        } else {
-          setProfileData(prev => ({ 
-            ...prev, 
-            displayName: user.displayName || '', 
-            region: 'Metropolitana' 
-          }));
-        }
-        setOrders(userOrders);
-      } catch (error) {
-        console.error("Error cargando datos de usuario:", error);
-      } finally {
-        setDataLoading(false);
-        setLoading(false);
-      }
-    };
-
-    if (user) {
-      loadUserData();
-    }
-  }, [user]);
-
-  // Lógica para determinar el estatus de lealtad
   const getLoyaltyStatus = () => {
     if (profileData.role === 'admin') return { text: "Staff MyDog", color: "bg-primary text-white shadow-none" };
     if (orders.length >= 5) return { text: "Miembro de Honor 🏆", color: "bg-secondary text-primary shadow-lg shadow-secondary/20" };
@@ -185,14 +229,27 @@ export default function CuentaPage() {
     setLoading(true);
     try {
       if (isLogin) {
-        await loginUser(email, password);
-        toast({ title: "¡Bienvenido de vuelta! 🐾" });
+        const userCredential = await loginUser(email, password);
+        const { isValid, reason } = await validateAndSetupRetailUser(userCredential.user);
+        
+        if (!isValid) {
+           if (reason === 'wholesale') {
+              toast({ title: "Redirigiendo", description: "Detectamos que eres distribuidor. Te llevaremos al Portal B2B." });
+              router.push('/b2b/portal');
+           } else {
+              await logoutUser();
+              toast({ variant: "destructive", title: "Error", description: "Error al validar la cuenta." });
+           }
+        } else {
+           toast({ title: "¡Bienvenido de vuelta! 🐾" });
+        }
       } else {
         await registerUser(email, password, displayName);
         toast({ title: "¡Cuenta creada! ✨" });
       }
     } catch (error: any) {
       toast({ variant: "destructive", title: "Error", description: "Verifica tus credenciales e intenta de nuevo." });
+    } finally {
       setLoading(false);
     }
   };
@@ -203,8 +260,7 @@ export default function CuentaPage() {
     try {
       const finalData = { 
         ...profileData, 
-        commune: communeSearch, 
-        region: 'Metropolitana' 
+        addresses 
       };
       await updateUserProfile(finalData);
       toast({ title: "Perfil actualizado ✨", description: "Tus datos se guardaron correctamente." });
@@ -213,6 +269,71 @@ export default function CuentaPage() {
     } finally {
       setUpdatingProfile(false);
     }
+  };
+
+  const handleSaveAddress = async () => {
+    if (!currentAddress.streetAndNumber || !communeSearch || !currentAddress.name) {
+       toast({ variant: "destructive", title: "Faltan datos", description: "Nombre, Calle y Comuna son obligatorios." });
+       return;
+    }
+
+    setSavingAddress(true);
+    try {
+      const addrId = (editingAddressId && editingAddressId !== 'new') ? editingAddressId : Math.random().toString(36).substring(2, 9);
+      const addrToSave = {
+         ...currentAddress,
+         id: addrId,
+         commune: communeSearch,
+         isDefault: (addresses.length === 0) ? true : currentAddress.isDefault
+      };
+
+      let newAddresses = [...addresses];
+
+      // Si la nueva dirección es predeterminada, quitamos el flag a las demás
+      if (addrToSave.isDefault) {
+         newAddresses = newAddresses.map(a => ({...a, isDefault: false}));
+      }
+
+      if (editingAddressId && editingAddressId !== 'new') {
+         newAddresses = newAddresses.map(a => a.id === editingAddressId ? addrToSave : a);
+      } else {
+         newAddresses.push(addrToSave);
+      }
+
+      // Actualizar en Firestore inmediatamente para que sea intuitivo
+      await updateUserProfile({ addresses: newAddresses });
+      
+      setAddresses(newAddresses);
+      setEditingAddressId(null);
+      setCurrentAddress({ id: '', name: 'Casa', streetAndNumber: '', apartmentOrLocal: '', commune: '', region: 'Metropolitana', isDefault: false });
+      setCommuneSearch("");
+      toast({ title: "Dirección guardada ✨", description: "La libreta de direcciones se actualizó en la nube." });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error al guardar", description: "No se pudo sincronizar con el servidor." });
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  const handleDeleteAddress = async (id: string) => {
+     const newAddresses = addresses.filter(a => a.id !== id);
+     if (newAddresses.length > 0 && addresses.find(a => a.id === id)?.isDefault) {
+        newAddresses[0].isDefault = true;
+     }
+     
+     try {
+       await updateUserProfile({ addresses: newAddresses });
+       setAddresses(newAddresses);
+       toast({ title: "Dirección eliminada" });
+     } catch (error) {
+       toast({ variant: "destructive", title: "Error al eliminar" });
+     }
+  };
+
+  const handleEditAddress = (addr: any) => {
+     setEditingAddressId(addr.id);
+     setCurrentAddress(addr);
+     setCommuneSearch(addr.commune || "");
   };
 
   const handleLogout = async () => {
@@ -311,6 +432,13 @@ export default function CuentaPage() {
             <button onClick={() => setIsLogin(!isLogin)} className="w-full text-center text-[10px] font-black text-primary uppercase tracking-[0.2em] hover:underline">
               {isLogin ? '¿Aún no eres parte? Regístrate aquí' : '¿Ya tienes cuenta? Ingresa aquí'}
             </button>
+            
+            <div className="pt-8 border-t border-black/5 mt-8 text-center">
+               <p className="text-[10px] font-bold text-muted-foreground uppercase mb-4">¿Tienes un negocio?</p>
+               <Link href="/b2b/portal" className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-2xl border border-secondary/50 text-secondary bg-secondary/5 font-black text-[10px] uppercase tracking-widest hover:bg-secondary/10 transition-colors w-full">
+                  <Building2 className="w-4 h-4" /> Ir al Portal Mayorista <ArrowRight className="w-3 h-3" />
+               </Link>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -327,7 +455,6 @@ export default function CuentaPage() {
                     </div>
                   </div>
                   
-                  {/* Badge de Estatus Dinámico */}
                   <Badge className={cn(
                     "hidden lg:inline-flex border-none rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-widest transition-all",
                     loyalty.color
@@ -403,7 +530,7 @@ export default function CuentaPage() {
                   )}
                 </TabsContent>
 
-                <TabsContent value="perfil" className="animate-in fade-in slide-in-from-bottom-2">
+                <TabsContent value="perfil" className="animate-in fade-in slide-in-from-bottom-2 space-y-8">
                   <form onSubmit={handleUpdateProfile} className="space-y-6">
                     {/* Datos Personales */}
                     <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-visible">
@@ -438,104 +565,6 @@ export default function CuentaPage() {
                                 className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold pl-14" 
                               />
                             </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Dirección de Envío */}
-                    <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-visible">
-                      <CardContent className="p-8 space-y-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
-                            <MapPin className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-black tracking-tight">Dirección de Despacho</h3>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">¿Dónde entregamos tus pedidos?</p>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Calle y Número</Label>
-                            <Input 
-                              placeholder="Ej: Av. Principal 123, Depto 401"
-                              value={profileData.shippingAddress} 
-                              onChange={(e) => setProfileData({...profileData, shippingAddress: e.target.value})}
-                              className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6" 
-                            />
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                             <div className="space-y-2 relative" ref={communeSearchRef}>
-                                <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Comuna</Label>
-                                <div className="relative">
-                                  <Input 
-                                    placeholder="Escribe tu comuna..."
-                                    value={communeSearch}
-                                    onChange={(e) => {
-                                      const val = e.target.value;
-                                      setCommuneSearch(val);
-                                      setShowCommuneResults(val.trim().length > 0);
-                                    }}
-                                    onFocus={() => {
-                                      if (communeSearch.trim().length > 0) {
-                                        setShowCommuneResults(true);
-                                      }
-                                    }}
-                                    className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6 pr-10"
-                                  />
-                                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40">
-                                    {communeSearch ? (
-                                      <X className="w-4 h-4 cursor-pointer hover:text-primary" onClick={() => { setCommuneSearch(""); setShowCommuneResults(false); }} />
-                                    ) : (
-                                      <Search className="w-4 h-4" />
-                                    )}
-                                  </div>
-                                </div>
-
-                                {showCommuneResults && communeSearch.trim().length > 0 && (
-                                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-black/[0.03] overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
-                                    <ScrollArea className="max-h-[210px] min-h-[40px]">
-                                      <div className="p-2 space-y-1">
-                                        {filteredCommunes.length > 0 ? (
-                                          filteredCommunes.map((c) => (
-                                            <button
-                                              key={c}
-                                              type="button"
-                                              className={cn(
-                                                "flex w-full items-center justify-between px-4 py-3 text-xs font-bold rounded-xl transition-all text-left",
-                                                communeSearch === c 
-                                                  ? "bg-primary text-white" 
-                                                  : "hover:bg-primary/5 text-foreground"
-                                              )}
-                                              onClick={() => {
-                                                setCommuneSearch(c);
-                                                setShowCommuneResults(false);
-                                              }}
-                                            >
-                                              {c}
-                                              {communeSearch === c && <Check className="w-3 h-3 text-secondary" />}
-                                            </button>
-                                          ))
-                                        ) : (
-                                          <div className="p-8 text-center">
-                                            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Sin resultados</p>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </ScrollArea>
-                                  </div>
-                                )}
-                             </div>
-                             <div className="space-y-2">
-                                <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Región</Label>
-                                <Input 
-                                  value="Metropolitana" 
-                                  readOnly
-                                  className="h-12 rounded-xl border-black/5 bg-muted/30 font-bold px-6 opacity-60 cursor-not-allowed" 
-                                />
-                             </div>
                           </div>
                         </div>
                       </CardContent>
@@ -623,10 +652,207 @@ export default function CuentaPage() {
                         className="h-14 rounded-2xl bg-primary text-white font-black px-12 gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all"
                       >
                         {updatingProfile && <Loader2 className="animate-spin h-4 w-4" />}
-                        Guardar Configuración
+                        Guardar Perfil y Facturación
                       </Button>
                     </div>
                   </form>
+
+                  {/* Direcciones de Envío (Sincronización Inmediata) */}
+                  <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-visible">
+                    <CardContent className="p-8 space-y-6">
+                      <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                              <MapPin className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-black tracking-tight">Mis Direcciones</h3>
+                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Gestión instantánea de puntos de despacho</p>
+                            </div>
+                          </div>
+                          {!editingAddressId && (
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => {
+                                  setEditingAddressId('new');
+                                  setCurrentAddress({ id: '', name: 'Casa', streetAndNumber: '', apartmentOrLocal: '', commune: '', region: 'Metropolitana', isDefault: false });
+                                  setCommuneSearch("");
+                              }}
+                              className="h-8 rounded-lg font-black text-[10px] uppercase tracking-widest"
+                            >
+                              <Plus className="w-3 h-3 mr-1" /> Nueva
+                            </Button>
+                          )}
+                      </div>
+
+                      {/* Lista de Direcciones Guardadas */}
+                      {!editingAddressId && addresses.length > 0 && (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in">
+                            {addresses.map((addr) => (
+                                <div key={addr.id} className="p-4 rounded-2xl border border-black/5 bg-muted/20 relative group">
+                                  {addr.isDefault && (
+                                      <Badge className="absolute -top-2.5 -right-2 bg-primary text-white border-none text-[8px] uppercase tracking-widest px-2 py-0.5">Predeterminada</Badge>
+                                  )}
+                                  <div className="flex items-center gap-2 mb-2">
+                                      <MapPin className="w-4 h-4 text-primary" />
+                                      <span className="font-black text-sm uppercase">{addr.name}</span>
+                                  </div>
+                                  <p className="text-xs font-medium text-muted-foreground mb-1 truncate">{addr.streetAndNumber} {addr.apartmentOrLocal}</p>
+                                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{addr.commune}, {addr.region}</p>
+                                  
+                                  <div className="absolute bottom-4 right-4 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <button type="button" onClick={() => handleEditAddress(addr)} className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
+                                        <Settings className="w-3 h-3" /> Editar
+                                      </button>
+                                      <button type="button" onClick={() => handleDeleteAddress(addr.id)} className="flex items-center gap-1 text-xs font-bold text-destructive hover:underline">
+                                        <Trash2 className="w-3 h-3" /> Eliminar
+                                      </button>
+                                  </div>
+                                </div>
+                            ))}
+                          </div>
+                      )}
+
+                      {/* Formulario de Edición/Creación */}
+                      {editingAddressId && (
+                          <div className="space-y-6 bg-muted/10 p-6 rounded-2xl border border-black/5 animate-in slide-in-from-top-2">
+                            <div className="flex justify-between items-center mb-2">
+                              <h4 className="font-black text-sm uppercase tracking-widest">
+                                  {editingAddressId === 'new' ? 'Nueva Dirección' : 'Editar Dirección'}
+                              </h4>
+                              <button type="button" onClick={() => setEditingAddressId(null)} className="text-muted-foreground hover:text-foreground">
+                                  <X className="w-4 h-4" />
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                              <div className="space-y-2">
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Nombre (Ej: Casa) *</Label>
+                                <Input 
+                                  value={currentAddress.name} 
+                                  onChange={(e) => setCurrentAddress({...currentAddress, name: e.target.value})}
+                                  placeholder="Casa, Oficina, Local..."
+                                  className="h-12 rounded-xl border-black/5 bg-white font-bold px-4" 
+                                />
+                              </div>
+                              <div className="space-y-2 md:col-span-2">
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Calle y Número *</Label>
+                                <Input 
+                                  value={currentAddress.streetAndNumber} 
+                                  onChange={(e) => setCurrentAddress({...currentAddress, streetAndNumber: e.target.value})}
+                                  placeholder="Av. Principal 123"
+                                  className="h-12 rounded-xl border-black/5 bg-white font-bold px-4" 
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                              <div className="space-y-2">
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Depto/Casa/Local</Label>
+                                <Input 
+                                  value={currentAddress.apartmentOrLocal} 
+                                  onChange={(e) => setCurrentAddress({...currentAddress, apartmentOrLocal: e.target.value})}
+                                  placeholder="Depto 402"
+                                  className="h-12 rounded-xl border-black/5 bg-white font-bold px-4" 
+                                />
+                              </div>
+                              <div className="space-y-2 relative" ref={communeSearchRef}>
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Comuna *</Label>
+                                <div className="relative">
+                                  <Input 
+                                    placeholder="Escribe tu comuna..."
+                                    value={communeSearch}
+                                    onChange={(e) => {
+                                      const val = e.target.value;
+                                      setCommuneSearch(val);
+                                      setShowCommuneResults(val.trim().length > 0);
+                                    }}
+                                    onFocus={() => {
+                                      if (communeSearch.trim().length > 0) {
+                                        setShowCommuneResults(true);
+                                      }
+                                    }}
+                                    className="h-12 rounded-xl border-black/5 bg-white font-bold px-4 pr-10"
+                                  />
+                                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40">
+                                    {communeSearch ? (
+                                      <X className="w-4 h-4 cursor-pointer hover:text-primary" onClick={() => { setCommuneSearch(""); setShowCommuneResults(false); }} />
+                                    ) : (
+                                      <Search className="w-4 h-4" />
+                                    )}
+                                  </div>
+                                </div>
+
+                                {showCommuneResults && communeSearch.trim().length > 0 && (
+                                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-black/[0.03] overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <ScrollArea className="max-h-[210px] min-h-[40px]">
+                                      <div className="p-2 space-y-1">
+                                        {filteredCommunes.length > 0 ? (
+                                          filteredCommunes.map((c) => (
+                                            <button
+                                              key={c}
+                                              type="button"
+                                              className={cn(
+                                                "flex w-full items-center justify-between px-4 py-3 text-xs font-bold rounded-xl transition-all text-left",
+                                                communeSearch === c 
+                                                  ? "bg-primary text-white" 
+                                                  : "hover:bg-primary/5 text-foreground"
+                                              )}
+                                              onClick={() => {
+                                                setCommuneSearch(c);
+                                                setShowCommuneResults(false);
+                                              }}
+                                            >
+                                              {c}
+                                              {communeSearch === c && <Check className="w-3 h-3 text-secondary" />}
+                                            </button>
+                                          ))
+                                        ) : (
+                                          <div className="p-8 text-center">
+                                            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Sin resultados</p>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </ScrollArea>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Región</Label>
+                                <Input 
+                                  value="Metropolitana" 
+                                  readOnly
+                                  className="h-12 rounded-xl border-black/5 bg-white font-bold px-4 opacity-60 cursor-not-allowed" 
+                                />
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-4 border-t border-black/5">
+                              <Label className="flex items-center gap-2 cursor-pointer">
+                                  <input 
+                                    type="checkbox" 
+                                    checked={currentAddress.isDefault}
+                                    onChange={(e) => setCurrentAddress({...currentAddress, isDefault: e.target.checked})}
+                                    className="w-4 h-4 rounded text-primary focus:ring-primary accent-primary"
+                                  />
+                                  <span className="text-xs font-bold">Fijar como predeterminada</span>
+                              </Label>
+                              <Button 
+                                type="button" 
+                                disabled={savingAddress}
+                                onClick={handleSaveAddress} 
+                                className="h-12 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest px-8 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all gap-2"
+                              >
+                                {savingAddress ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                Sincronizar y Guardar
+                              </Button>
+                            </div>
+                          </div>
+                      )}
+                    </CardContent>
+                  </Card>
                 </TabsContent>
 
                 <TabsContent value="seguridad" className="animate-in fade-in slide-in-from-bottom-2">

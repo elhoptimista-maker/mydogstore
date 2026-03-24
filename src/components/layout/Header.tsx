@@ -7,7 +7,6 @@ import {
   Dog, 
   Search, 
   Heart, 
-  Phone, 
   ChevronDown, 
   User, 
   Package,
@@ -39,6 +38,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { fetchAllProducts } from '@/actions/products';
 import { SanitizedProduct } from '@/types/product';
+import { Badge } from '@/components/ui/badge';
 
 const SEARCH_PLACEHOLDERS = [
   "Buscando 'el juguete indestructible' 🦴...",
@@ -49,7 +49,7 @@ const SEARCH_PLACEHOLDERS = [
 ];
 
 export default function Header() {
-  const { cartCount } = useCart();
+  const { cartCount, cartType } = useCart();
   const { wishlist } = useWishlist();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -256,14 +256,17 @@ export default function Header() {
 
             {showResults && (
               <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
-                <div className="p-4 bg-primary/5 border-b border-black/[0.03]">
+                <div className="p-4 bg-primary/5 border-b border-black/[0.03] flex justify-between items-center">
                   <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">Encontramos estos productos</span>
+                  {cartType === 'wholesale' && (
+                    <Badge className="bg-primary text-white text-[8px] border-none font-black uppercase">Modo Mayorista</Badge>
+                  )}
                 </div>
                 <div className="max-h-[420px] overflow-y-auto">
                   {searchResults.map((product) => (
                     <Link 
                       key={product.id} 
-                      href={`/catalogo/${product.id}`}
+                      href={`/catalogo/${product.slug || product.id}`}
                       onClick={() => setShowResults(false)}
                       className="flex items-center gap-4 p-5 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
                     >
@@ -283,7 +286,9 @@ export default function Header() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="block text-sm font-black text-primary tracking-tighter">${product.sellingPrice.toLocaleString('es-CL')}</span>
+                        <span className="block text-sm font-black text-primary tracking-tighter">
+                          ${(cartType === 'wholesale' ? product.wholesalePrice : product.sellingPrice).toLocaleString('es-CL')}
+                        </span>
                         <span className="text-[8px] font-bold text-muted-foreground uppercase">Stock: {product.currentStock}</span>
                       </div>
                     </Link>
@@ -317,7 +322,10 @@ export default function Header() {
             </Link>
 
             <CartDrawer>
-              <button className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white text-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all">
+              <button className={cn(
+                "relative w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all",
+                cartType === 'wholesale' ? "bg-secondary text-primary" : "bg-white text-primary"
+              )}>
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground font-black text-[8px] sm:text-[10px] w-4 border-2 h-4 sm:w-5 sm:h-5 flex items-center justify-center border-primary rounded-full animate-in zoom-in">

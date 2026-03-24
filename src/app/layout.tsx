@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
 import { ChatProvider } from '@/context/ChatContext';
 import { WishlistProvider } from '@/context/WishlistContext';
-import ProductAssistant from '@/components/ProductAssistant';
+import ProductAssistantWrapper from '@/components/ProductAssistantWrapper';
 
 export const metadata: Metadata = {
   title: 'MyDog Distribuidora | Expertos en Nutrición Mascotas 🐾',
@@ -48,13 +48,15 @@ export default function RootLayout({
           <WishlistProvider>
             <ChatProvider>
               <div className="flex flex-col">
-                <Header />
-                <main className="pt-44 pb-0">
+                <div id="global-header">
+                  <Header />
+                </div>
+                <main id="global-main" className="pt-44 pb-0">
                   {children}
                 </main>
                 <Footer />
               </div>
-              <ProductAssistant />
+              <ProductAssistantWrapper />
               <Toaster />
             </ChatProvider>
           </WishlistProvider>

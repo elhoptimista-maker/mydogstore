@@ -5,13 +5,27 @@ import { Heart, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import WishlistProductCard from '@/components/WishlistProductCard';
+import { useCart } from '@/context/CartContext';
+import { SanitizedProduct } from '@/types/product';
+import { toast } from '@/hooks/use-toast';
 
-/**
- * Página de Lista de Deseos (Favoritos).
- * Utiliza el componente reutilizable WishlistProductCard para mantener la consistencia del diseño.
- */
 export default function WishlistPage() {
-  const { wishlist } = useWishlist();
+  const { wishlist, toggleWishlist } = useWishlist();
+  const { addToCart } = useCart();
+
+  const handleRemove = (id: string) => {
+    // Encontramos el producto para dar un feedback correcto en el toast
+    const product = wishlist.find(p => p.id === id);
+    if (product) toggleWishlist(product);
+  };
+
+  const handleAddToCart = (product: SanitizedProduct) => {
+    addToCart(product);
+    toast({
+      title: "¡Añadido!",
+      description: `${product.name} está en tu carrito.`
+    });
+  };
 
   // Aseguramos unicidad absoluta por ID para evitar errores de duplicidad de llaves en React
   const uniqueWishlist = Array.from(
@@ -37,9 +51,14 @@ export default function WishlistPage() {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         {uniqueWishlist.length > 0 ? (
-          <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {uniqueWishlist.map((product) => (
-              <WishlistProductCard key={`wishlist-item-${product.id}`} product={product} />
+              <WishlistProductCard 
+                key={`wishlist-item-${product.id}`} 
+                product={product}
+                onRemove={handleRemove}
+                onAddToCart={handleAddToCart}
+              />
             ))}
           </div>
         ) : (

@@ -11,7 +11,14 @@ export function getStorefrontAdmin() {
   const existingApp = admin.apps.find(app => app?.name === APP_NAME);
   if (existingApp) return existingApp;
 
+  // Verificamos que la variable de entorno exista y formateamos los saltos de línea.
+  // Dado que .env no tiene FIREBASE_PRIVATE_KEY, debemos usar las credenciales locales de forma explícita
+  // Si no existen en el entorno actual, la inicialización fallará.
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+  if (!privateKey) {
+     console.error("FATAL ERROR: No se encontró FIREBASE_PRIVATE_KEY en las variables de entorno. Asegúrate de configurar las credenciales del Storefront.");
+  }
 
   return admin.initializeApp({
     credential: admin.credential.cert({
