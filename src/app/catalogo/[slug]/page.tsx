@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import ProductClientControls from '@/components/catalogo/ProductClientControls';
 import ProductHeaderActions from '@/components/catalogo/ProductHeaderActions';
-import ProductCard from '@/components/ProductCard';
+import RelatedProductsSlider from '@/components/catalogo/RelatedProductsSlider';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -49,7 +49,7 @@ export default async function ProductoDetallePage(props: PageProps) {
     })
     .filter(p => p.similarityScore >= 10)
     .sort((a, b) => b.similarityScore - a.similarityScore)
-    .slice(0, 5);
+    .slice(0, 10); // Aumentamos el límite para el slider
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -71,7 +71,7 @@ export default async function ProductoDetallePage(props: PageProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-4 pb-24 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-2 pb-24 space-y-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -168,7 +168,6 @@ export default async function ProductoDetallePage(props: PageProps) {
 
             <ProductClientControls product={product} />
 
-            {/* CINTA DE CONFIANZA: Reubicada para mayor impacto visual */}
             <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { icon: <Truck className="w-4 h-4" />, text: "Despacho Express" },
@@ -187,31 +186,13 @@ export default async function ProductoDetallePage(props: PageProps) {
         </div>
       </div>
 
-      {/* SECCIÓN DE PRODUCTOS SIMILARES: Con espaciado refinado */}
-      {similarProducts.length > 0 && (
-        <section className="space-y-10 pt-16 border-t border-black/5">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div className="space-y-2">
-              <Badge variant="outline" className="rounded-full font-black text-[9px] uppercase tracking-[0.2em] border-primary/20 text-primary px-4 py-1 bg-primary/5">
-                Selección basada en atributos
-              </Badge>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Productos <span className="text-primary">Similares</span></h2>
-              <p className="text-sm font-medium text-muted-foreground">Expertos en nutrición recomiendan estas alternativas técnicas.</p>
-            </div>
-            <Link href={`/catalogo?especie=${encodeURIComponent(product.species)}`}>
-              <button className="h-12 px-8 rounded-full border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all bg-white">
-                Ver todo para {product.species}
-              </button>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {similarProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* SECCIÓN DE PRODUCTOS SIMILARES: Transformada en Slider Reutilizable */}
+      <RelatedProductsSlider 
+        products={similarProducts} 
+        title="Productos Similares"
+        subtitle="Expertos en nutrición recomiendan estas alternativas basadas en los mismos atributos."
+        viewAllHref={`/catalogo?especie=${encodeURIComponent(product.species)}`}
+      />
     </div>
   );
 }
