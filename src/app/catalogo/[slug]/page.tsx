@@ -1,7 +1,7 @@
 import { fetchProductBySlug, fetchAllProducts } from '@/actions/products';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { Star, ShieldCheck, Truck, RefreshCw, Scale, Dog, Briefcase, ChevronRight } from 'lucide-react';
+import { Star, Scale, Dog, Briefcase, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import ProductClientControls from '@/components/catalogo/ProductClientControls';
@@ -167,21 +167,6 @@ export default async function ProductoDetallePage(props: PageProps) {
             </p>
 
             <ProductClientControls product={product} />
-
-            <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { icon: <Truck className="w-4 h-4" />, text: "Despacho Express" },
-                { icon: <ShieldCheck className="h-4 w-4" />, text: "Pago Seguro" },
-                { icon: <RefreshCw className="h-4 w-4" />, text: "Garantía MyDog" }
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2.5 p-3 bg-white border border-black/5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                  <div className="w-8 h-8 bg-primary/5 rounded-xl flex items-center justify-center text-primary shrink-0">
-                    {item.icon}
-                  </div>
-                  <span className="text-[9px] font-black uppercase tracking-wider leading-none text-muted-foreground">{item.text}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
