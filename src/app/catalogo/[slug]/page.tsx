@@ -49,7 +49,7 @@ export default async function ProductoDetallePage(props: PageProps) {
     })
     .filter(p => p.similarityScore >= 10)
     .sort((a, b) => b.similarityScore - a.similarityScore)
-    .slice(0, 15); // Aumentamos para el slider
+    .slice(0, 15);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -71,7 +71,7 @@ export default async function ProductoDetallePage(props: PageProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-2 pb-24 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-1 pb-24 space-y-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
