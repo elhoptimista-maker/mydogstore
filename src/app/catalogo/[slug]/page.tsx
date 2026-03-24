@@ -41,18 +41,13 @@ export default async function ProductoDetallePage(props: PageProps) {
     .filter(p => p.id !== product.id && p.currentStock > 0)
     .map(p => {
       let score = 0;
-      // La misma especie es el factor más crítico para la similitud
       if (p.species === product.species) score += 10;
-      // Misma categoría técnica
       if (p.category === product.category) score += 5;
-      // Misma marca (fidelidad de cliente)
       if (p.brand === product.brand) score += 3;
-      // Misma etapa de vida (ej: Cachorro, Senior)
       if (p.life_stage === product.life_stage) score += 2;
-      
       return { ...p, similarityScore: score };
     })
-    .filter(p => p.similarityScore >= 10) // Aseguramos que al menos coincida la especie
+    .filter(p => p.similarityScore >= 10)
     .sort((a, b) => b.similarityScore - a.similarityScore)
     .slice(0, 5);
 
@@ -76,15 +71,15 @@ export default async function ProductoDetallePage(props: PageProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-20 space-y-24">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6 pb-24 space-y-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      <div>
+      <div className="space-y-10">
         {/* Breadcrumbs */}
-        <nav className="flex items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-8">
+        <nav className="flex items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
            <Link href="/catalogo" className="hover:text-primary transition-colors">Catálogo</Link>
            <ChevronRight className="w-3 h-3 mx-2 opacity-50" />
            <Link href={`/catalogo?categoria=${encodeURIComponent(product.category)}`} className="hover:text-primary transition-colors">{product.category}</Link>
@@ -92,7 +87,7 @@ export default async function ProductoDetallePage(props: PageProps) {
            <span className="text-foreground truncate max-w-[200px] md:max-w-none">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           {/* Galería de Imágenes */}
           <div className="space-y-6">
             <div className="aspect-square relative rounded-[3rem] overflow-hidden bg-white shadow-xl shadow-black/5 border border-border/50 group">
@@ -112,7 +107,7 @@ export default async function ProductoDetallePage(props: PageProps) {
           </div>
 
           {/* Información Técnica y Venta */}
-          <div className="flex flex-col justify-center space-y-8 relative">
+          <div className="flex flex-col justify-center space-y-8">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Badge className="px-4 py-1.5 bg-primary text-white border-none text-[10px] font-bold uppercase tracking-widest rounded-full">
@@ -138,9 +133,6 @@ export default async function ProductoDetallePage(props: PageProps) {
             </div>
 
             <div className="space-y-2">
-              <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest block mb-1">
-                 Precio Detalle
-              </span>
               <div className="text-5xl font-black text-primary tracking-tighter flex items-baseline gap-4">
                 ${product.sellingPrice.toLocaleString('es-CL')}
                 {product.currentStock > 0 ? (
@@ -176,20 +168,17 @@ export default async function ProductoDetallePage(props: PageProps) {
 
             <ProductClientControls product={product} />
 
-            <Separator className="bg-border/50 my-4" />
-
-            {/* Beneficios Corporativos */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
-                { icon: <Truck className="w-5 h-5" />, text: "Despacho Express" },
-                { icon: <ShieldCheck className="w-5 h-5" />, text: "Pago 100% Seguro" },
-                { icon: <RefreshCw className="w-5 h-5" />, text: "Garantía MyDog" }
+                { icon: <Truck className="w-4 h-4" />, text: "Despacho Express" },
+                { icon: <ShieldCheck className="w-4 h-4" />, text: "Pago 100% Seguro" },
+                { icon: <RefreshCw className="w-4 h-4" />, text: "Garantía MyDog" }
               ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 p-4 bg-muted/30 rounded-2xl text-center hover:bg-muted/50 transition-colors">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-secondary shadow-sm">
+                <div key={i} className="flex items-center gap-3 p-3 bg-white border border-black/5 rounded-xl shadow-sm">
+                  <div className="w-8 h-8 bg-primary/5 rounded-lg flex items-center justify-center text-primary shrink-0">
                     {item.icon}
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider">{item.text}</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider leading-none">{item.text}</span>
                 </div>
               ))}
             </div>
@@ -199,16 +188,19 @@ export default async function ProductoDetallePage(props: PageProps) {
 
       {/* Sección de Productos Similares Refinada */}
       {similarProducts.length > 0 && (
-        <section className="space-y-12">
-          <div className="flex flex-col md:flex-row justify-between items-end border-b border-black/5 pb-8">
+        <section className="space-y-12 pt-12 border-t border-black/5">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="space-y-2">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">Selección basada en atributos</span>
+              <Badge variant="outline" className="rounded-full font-black text-[9px] uppercase tracking-[0.2em] border-primary/20 text-primary px-4 py-1">
+                Sugerencias de la manada
+              </Badge>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Productos <span className="text-primary">Similares</span></h2>
+              <p className="text-sm font-medium text-muted-foreground">Selección experta basada en atributos técnicos para tu mascota.</p>
             </div>
             <Link href={`/catalogo?especie=${encodeURIComponent(product.species)}`}>
-              <Badge variant="outline" className="rounded-full font-bold border-2 px-6 py-2 border-primary/10 hover:border-primary transition-all cursor-pointer">
+              <button className="h-12 px-8 rounded-full border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all">
                 Ver todo para {product.species}
-              </Badge>
+              </button>
             </Link>
           </div>
           
