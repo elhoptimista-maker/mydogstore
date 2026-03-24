@@ -5,44 +5,45 @@ import { SanitizedProduct } from '@/types/product';
 import { 
   Dialog, 
   DialogContent, 
-  DialogTrigger 
+  DialogTrigger,
+  DialogTitle,
+  DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ShoppingCart, Scale, Dog, Briefcase, Plus, Minus, X as CloseIcon, ArrowRight } from 'lucide-react'; // Agregué ArrowRight
+import { ShoppingCart, Scale, Dog, Briefcase, Plus, Minus, X as CloseIcon, ArrowRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 interface QuickViewModalProps {
   product: SanitizedProduct;
-  children: React.ReactNode; // Para que el botón de apertura se pase como child
+  children: React.ReactNode;
 }
 
 export default function QuickViewModal({ product, children }: QuickViewModalProps) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [open, setOpen] = useState(false); // Controla el estado de apertura/cierre del modal
+  const [open, setOpen] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault(); // Previene propagación si estuviera dentro de un link
-    e.stopPropagation(); // Detiene el evento para que no se propague a elementos padres
+    e.preventDefault();
+    e.stopPropagation();
 
     addToCart(product, false, quantity);
     toast({
       title: "¡Añadido al carrito!",
       description: `${quantity}x ${product.name}`,
     });
-    setOpen(false); // Cierra el modal después de añadir al carrito
+    setOpen(false);
   };
 
   const handleGoToDetail = (e: React.MouseEvent) => {
-    e.preventDefault(); // Previene cualquier navegación por defecto del elemento clickeado
-    e.stopPropagation(); // Detiene el evento para que no se propague al Link padre
-    setOpen(false); // Cierra el modal
-    window.location.href = `/catalogo/${product.slug || product.id}`; // Navega a la página de detalle
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen(false);
+    window.location.href = `/catalogo/${product.slug || product.id}`;
   };
 
   return (
@@ -52,10 +53,9 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
       </DialogTrigger>
       <DialogContent 
         className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl bg-white gap-0"
-        onOpenAutoFocus={(e) => e.preventDefault()} // Previene que el foco se mueva automáticamente al abrir
-        onClick={(e) => e.stopPropagation()} // Detiene la propagación de clics dentro del contenido del modal
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Botón de Cierre del Modal */}
         <button onClick={() => setOpen(false)} className="absolute top-4 right-4 z-50 w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 transition-colors flex items-center justify-center">
           <CloseIcon className="w-4 h-4" />
         </button>
@@ -81,11 +81,15 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
                 </Badge>
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tighter leading-[1.1]">
+              <DialogTitle className="text-2xl md:text-3xl font-black text-foreground tracking-tighter leading-[1.1]">
                 {product.name}
-              </h2>
+              </DialogTitle>
+              
+              <DialogDescription className="text-sm text-muted-foreground line-clamp-2">
+                {product.short_description}
+              </DialogDescription>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between pt-2">
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-black text-primary tracking-tighter">
                     ${product.sellingPrice.toLocaleString('es-CL')}
@@ -127,7 +131,7 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
                 </Button>
                 
                 <Button 
-                  onClick={handleGoToDetail} // Usa la nueva función para navegar
+                  onClick={handleGoToDetail}
                   type="button"
                   variant="outline" 
                   size="icon" 
