@@ -9,7 +9,7 @@ import { useChat } from '@/context/ChatContext';
 /**
  * @fileOverview Componente de navegación transformado en selector de vendedores expertos.
  * El clic en el círculo dispara el asistente de ventas IA.
- * Rediseñado para máxima armonía visual, eliminando espaciados excesivos marcados por el usuario.
+ * Rediseñado para máxima armonía visual con tamaños de 145px (mobile) y 170px (desktop).
  */
 
 interface SpeciesData {
@@ -100,7 +100,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
 
   return (
     <section id="navegacion-mascota" className="py-8 md:py-16 max-w-7xl mx-auto px-4 md:px-8 overflow-hidden">
-      {/* Header más ajustado verticalmente */}
+      {/* Header ajustado */}
       <div className="text-center space-y-3 max-w-2xl mx-auto mb-6 md:mb-10">
         <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-1">
           🎯 Asesoría técnica especializada
@@ -113,7 +113,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
         </p>
       </div>
 
-      {/* Contenedor de navegación - Círculos más grandes para efecto asomado en mobile */}
+      {/* Contenedor de navegación con scroll horizontal en mobile y centrado en desktop */}
       <div className="flex overflow-x-auto lg:overflow-visible justify-start lg:justify-center items-start gap-4 md:gap-10 lg:gap-16 no-scrollbar pt-14 pb-2 snap-x px-4 -mx-4 lg:px-0 lg:mx-0">
         {SPECIES_DATA.map((species, i) => {
           const count = productCountsBySpecies[species.filter] || 0;
@@ -122,7 +122,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
 
           return (
             <div key={i} className="flex flex-col items-center gap-4 group snap-center shrink-0 relative animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: `${i * 100}ms` }}>
-              {/* Burbuja de Pensamiento Estilo Comic */}
+              {/* Burbuja de Pensamiento */}
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-500 pointer-events-none z-30">
                 <div className="bg-white px-5 py-4 rounded-[1.5rem] border border-black/[0.08] relative min-w-[140px] max-w-[180px] text-center shadow-2xl shadow-black/10">
                   <span className="text-[10px] font-bold text-zinc-800 tracking-tight leading-snug block whitespace-pre-line">
@@ -133,20 +133,20 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Botón de Mascota - Aumentado para 2.5 visibles en mobile y ancho total en desktop */}
+              {/* Botón de Mascota con tamaños exactos: 145px mobile / 170px desktop */}
               <button 
                 onClick={() => toggleChat(species.filter)}
                 className="relative outline-none focus-visible:ring-4 focus-visible:ring-primary/20 rounded-full transition-all"
                 aria-label={`Hablar con experto en ${species.name}`}
               >
-                <div className="w-40 h-40 md:w-44 lg:w-48 rounded-full bg-white shadow-xl shadow-black/[0.02] border border-black/5 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
+                <div className="w-[145px] h-[145px] lg:w-[170px] lg:h-[170px] rounded-full bg-white shadow-xl shadow-black/[0.02] border border-black/5 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
                   <span className="text-6xl md:text-7xl lg:text-8xl drop-shadow-sm select-none">{species.emoji}</span>
                   <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
                 </div>
                 <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-0" />
               </button>
 
-              {/* Info más compacta */}
+              {/* Información de la especie */}
               <div className="flex flex-col items-center gap-1">
                 <span className="text-sm md:text-base font-black text-foreground uppercase tracking-widest block transition-colors group-hover:text-primary">
                   {species.name}
