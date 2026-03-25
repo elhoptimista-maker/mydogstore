@@ -97,7 +97,7 @@ export async function processCheckout(params: CheckoutParams) {
             isDefault: true
           }]
         });
-      } catch (err) {
+      } catch (err: any) {
         userId = "guest";
       }
     } else {
@@ -127,7 +127,6 @@ export async function processCheckout(params: CheckoutParams) {
     const friendlyOrderId = generateFriendlyOrderId();
     const orderType = items.some(i => i.cartType === 'wholesale') ? 'wholesale' : 'retail';
 
-    // Se inicializa el objeto de pago con los tipos correctos para evitar errores de TS (null vs string)
     const orderData: any = {
       orderId: friendlyOrderId,
       firestoreId: orderRef.id,
@@ -151,8 +150,8 @@ export async function processCheckout(params: CheckoutParams) {
       payment: {
         method: paymentMethod,
         status: "pending_payment",
-        providerId: "" as string | null,
-        paymentUrl: "" as string | null
+        providerId: null as string | null,
+        paymentUrl: null as string | null
       },
       totalAmount: total,
       status: "pending_payment",
