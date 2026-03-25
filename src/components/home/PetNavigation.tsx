@@ -99,9 +99,9 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
   }, [products]);
 
   return (
-    <section id="navegacion-mascota" className="py-12 md:py-20 max-w-7xl mx-auto px-4 md:px-8 overflow-hidden">
+    <section id="navegacion-mascota" className="py-8 md:py-16 max-w-7xl mx-auto px-4 md:px-8 overflow-hidden">
       {/* Header más ajustado verticalmente */}
-      <div className="text-center space-y-3 max-w-2xl mx-auto mb-8 md:mb-12">
+      <div className="text-center space-y-3 max-w-2xl mx-auto mb-6 md:mb-10">
         <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-1">
           🎯 Asesoría técnica especializada
         </div>
@@ -113,8 +113,8 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
         </p>
       </div>
 
-      {/* Contenedor de navegación - Ajustado para eliminar espacios muertos */}
-      <div className="flex overflow-x-auto lg:overflow-visible justify-start lg:justify-center items-start gap-6 md:gap-10 lg:gap-14 no-scrollbar pt-14 pb-2 snap-x px-4 -mx-4 lg:px-0 lg:mx-0">
+      {/* Contenedor de navegación - Círculos más grandes para efecto asomado en mobile */}
+      <div className="flex overflow-x-auto lg:overflow-visible justify-start lg:justify-center items-start gap-4 md:gap-10 lg:gap-16 no-scrollbar pt-14 pb-2 snap-x px-4 -mx-4 lg:px-0 lg:mx-0">
         {SPECIES_DATA.map((species, i) => {
           const count = productCountsBySpecies[species.filter] || 0;
           const message = mountedState ? species.messages[mountedState.randomIndices[i]] : species.messages[0];
@@ -122,7 +122,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
 
           return (
             <div key={i} className="flex flex-col items-center gap-4 group snap-center shrink-0 relative animate-in fade-in slide-in-from-bottom-6 duration-700" style={{ animationDelay: `${i * 100}ms` }}>
-              {/* Burbuja de Pensamiento Estilo Comic - Optimizada */}
+              {/* Burbuja de Pensamiento Estilo Comic */}
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-500 pointer-events-none z-30">
                 <div className="bg-white px-5 py-4 rounded-[1.5rem] border border-black/[0.08] relative min-w-[140px] max-w-[180px] text-center shadow-2xl shadow-black/10">
                   <span className="text-[10px] font-bold text-zinc-800 tracking-tight leading-snug block whitespace-pre-line">
@@ -133,14 +133,14 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Botón de Mascota - Tamaño más equilibrado en móvil */}
+              {/* Botón de Mascota - Aumentado para 2.5 visibles en mobile y ancho total en desktop */}
               <button 
                 onClick={() => toggleChat(species.filter)}
                 className="relative outline-none focus-visible:ring-4 focus-visible:ring-primary/20 rounded-full transition-all"
                 aria-label={`Hablar con experto en ${species.name}`}
               >
-                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white shadow-xl shadow-black/[0.02] border border-black/5 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
-                  <span className="text-5xl md:text-6xl drop-shadow-sm select-none">{species.emoji}</span>
+                <div className="w-40 h-40 md:w-44 lg:w-48 rounded-full bg-white shadow-xl shadow-black/[0.02] border border-black/5 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
+                  <span className="text-6xl md:text-7xl lg:text-8xl drop-shadow-sm select-none">{species.emoji}</span>
                   <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors" />
                 </div>
                 <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-0" />
@@ -148,12 +148,12 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
 
               {/* Info más compacta */}
               <div className="flex flex-col items-center gap-1">
-                <span className="text-xs md:text-sm font-black text-foreground uppercase tracking-widest block transition-colors group-hover:text-primary">
+                <span className="text-sm md:text-base font-black text-foreground uppercase tracking-widest block transition-colors group-hover:text-primary">
                   {species.name}
                 </span>
                 <Link 
                   href={`/catalogo?especie=${encodeURIComponent(species.filter)}`}
-                  className="inline-flex items-center gap-1 text-[8px] md:text-[9px] font-black text-muted-foreground/60 uppercase tracking-tighter hover:text-primary transition-all px-2.5 py-0.5 rounded-full border border-transparent hover:border-primary/10 hover:bg-white"
+                  className="inline-flex items-center gap-1 text-[9px] md:text-[10px] font-black text-muted-foreground/60 uppercase tracking-tighter hover:text-primary transition-all px-2.5 py-0.5 rounded-full border border-transparent hover:border-primary/10 hover:bg-white"
                 >
                   <span className="w-1 h-1 rounded-full bg-primary/30" />
                   {count} Productos
