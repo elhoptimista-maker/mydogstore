@@ -41,7 +41,8 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
     // Obtenemos todo el inventario de una vez para evitar N+1 queries
     const inventorySnap = await db.collection("inventory").get();
     const inventoryMap = new Map();
-    inventorySnap.forEach(doc => inventoryMap.set(doc.id, doc.data().physical_qty || 0));
+    // Corregido: Se añade tipo 'any' explícito al documento para evitar TS7006
+    inventorySnap.forEach((doc: any) => inventoryMap.set(doc.id, doc.data().physical_qty || 0));
 
     const sanitizedProducts = productsSnap.docs.map((doc: any) => {
       const data = doc.data();
