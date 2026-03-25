@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "hero-dog",
-      "description": "Happy dog playing with a toy",
-      "imageUrl": "https://picsum.photos/seed/dog1/1200/800",
-      "imageHint": "happy dog"
+      "description": "Mascota principal Golden Retriever MyDog",
+      "imageUrl": "/src/img/golden-retriever.png",
+      "imageHint": "golden retriever"
     },
     {
       "id": "product-food-1",
