@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -74,7 +75,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
   const hasActiveFilters = selectedCats.length > 0 || selectedBrands.length > 0 || selectedPets.length > 0 || priceRange[0] > 0 || priceRange[1] < 200000;
 
   return (
-    <div className="bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-black/[0.03] overflow-hidden sticky top-44 flex flex-col max-h-[calc(100vh-200px)]">
+    <div className="bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-black/[0.03] overflow-hidden sticky top-48 flex flex-col max-h-[calc(100vh-200px)]">
       {/* 1. Header Fijo */}
       <div className="p-6 border-b border-black/[0.03] flex items-center justify-between bg-primary/5 shrink-0">
         <div className="flex items-center gap-2">

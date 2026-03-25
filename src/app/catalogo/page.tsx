@@ -97,7 +97,7 @@ export default async function CatalogoPage(props: PageProps) {
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-20">
-      <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-6 border-b border-black/5">
+      <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-10 border-b border-black/5">
         <div className="absolute top-0 right-0 w-1/4 h-full opacity-5 pointer-events-none">
           <LayoutGrid className="w-full h-full text-primary" />
         </div>
