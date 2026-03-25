@@ -112,7 +112,8 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
         </p>
       </div>
 
-      <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center gap-8 md:gap-16 no-scrollbar pt-16 -mt-16 pb-12 snap-x px-4 -mx-4 md:px-0 md:mx-0">
+      {/* Contenedor de navegación - Optimizado para fila única en Desktop y Scroll en Mobile */}
+      <div className="flex overflow-x-auto lg:overflow-visible justify-start lg:justify-center items-start gap-8 md:gap-12 lg:gap-16 no-scrollbar pt-16 -mt-16 pb-12 snap-x px-4 -mx-4 lg:px-0 lg:mx-0">
         {SPECIES_DATA.map((species, i) => {
           const count = productCountsBySpecies[species.filter] || 0;
           const message = mountedState ? species.messages[mountedState.randomIndices[i]] : species.messages[0];
@@ -120,7 +121,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
 
           return (
             <div key={i} className="flex flex-col items-center gap-6 group snap-center shrink-0 relative animate-in fade-in slide-in-from-bottom-10 duration-700" style={{ animationDelay: `${i * 100}ms` }}>
-              {/* Burbuja de Pensamiento Estilo Comic - Refinada */}
+              {/* Burbuja de Pensamiento Estilo Comic */}
               <div className="absolute -top-14 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-4 transition-all duration-500 pointer-events-none z-30">
                 <div className="bg-white px-6 py-5 rounded-[2rem] border border-black/[0.08] relative min-w-[160px] max-w-[200px] text-center shadow-2xl shadow-black/10">
                   <span className="text-[11px] font-bold text-zinc-800 tracking-tight leading-snug block whitespace-pre-line">
@@ -132,7 +133,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 </div>
               </div>
 
-              {/* Botón de Mascota - Ingeniería de Círculos */}
+              {/* Botón de Mascota */}
               <button 
                 onClick={() => toggleChat(species.filter)}
                 className="relative outline-none focus-visible:ring-4 focus-visible:ring-primary/20 rounded-full transition-all"
@@ -147,7 +148,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                 <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-0" />
               </button>
 
-              {/* Info y Link al Catálogo - Jerarquía Limpia */}
+              {/* Info y Link al Catálogo */}
               <div className="flex flex-col items-center gap-2">
                 <span className="text-sm md:text-base font-black text-foreground uppercase tracking-widest block transition-colors group-hover:text-primary">
                   {species.name}
@@ -157,7 +158,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
                   className="inline-flex items-center gap-1.5 text-[9px] md:text-[10px] font-black text-muted-foreground/60 uppercase tracking-tighter hover:text-primary hover:opacity-100 transition-all px-3 py-1 rounded-full border border-transparent hover:border-primary/10 hover:bg-white"
                 >
                   <span className="w-1 h-1 rounded-full bg-primary/30" />
-                  {count} Productos disponibles
+                  {count} Productos
                 </Link>
               </div>
             </div>
