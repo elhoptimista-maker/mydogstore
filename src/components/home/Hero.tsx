@@ -1,25 +1,18 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 // Importamos la imagen local para que Next.js la procese correctamente desde src/img
-// Nota: Si la imagen no existiera físicamente en la ruta durante el build, esto lanzaría un error, 
-// lo cual es preferible a una imagen rota en producción.
 import HeroDogImage from '@/img/golden-retriever-gato-calico-juntos.png';
 
 /**
  * @fileOverview Componente Hero de alta ingeniería.
- * Implementa una arquitectura de capas (layering) optimizada para rendimiento y SEO.
- * Utiliza importación de assets locales para optimización de imagen de Next.js.
+ * Optimizado para eliminar el rectángulo de carga (blur) en imágenes con transparencia.
  */
 
 export default function Hero() {
-  const heroData = PlaceHolderImages.find(img => img.id === 'hero-dog');
-
   return (
     <section className="relative w-full bg-[#FEF9F3] overflow-hidden border-b border-black/5 flex items-center min-h-[calc(100dvh-176px)]">
       
@@ -82,7 +75,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* 4. Columna Visual: Imagen Hero con Optimización Local */}
+          {/* 4. Columna Visual: Imagen Hero sin efecto blur para transparencia limpia */}
           <div className="relative w-full h-[320px] sm:h-[450px] lg:h-[600px] flex items-end justify-center order-1 lg:order-2 animate-in fade-in zoom-in duration-1000">
             {/* Aura de luz decorativa */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] aspect-square bg-white/40 rounded-full border border-white/60 blur-md -z-10" />
@@ -95,7 +88,7 @@ export default function Hero() {
                 className="object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)] scale-110"
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"
-                placeholder="blur" // Next.js crea un blur automático para imágenes importadas
+                // Hemos eliminado placeholder="blur" para evitar el cuadro difuminado en el fondo transparente
               />
             </div>
           </div>
