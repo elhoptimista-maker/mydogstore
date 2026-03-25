@@ -34,15 +34,12 @@ export async function updateUserProfile(data: any) {
   const user = auth.currentUser;
   if (!user) throw new Error("No hay sesión activa");
 
-  // 1. Si hay nombre, actualizar en Firebase Auth
   if (data.displayName) {
     await updateProfile(user, { displayName: data.displayName });
   }
 
-  // 2. Actualizar todo en Firestore
   const userRef = doc(db, "users", user.uid);
   
-  // Usar set con merge por si el documento no existe (primera vez)
   setDoc(userRef, { 
     ...data,
     updatedAt: serverTimestamp() 
@@ -65,7 +62,7 @@ export function syncWishlistItem(productId: string, action: 'add' | 'remove') {
   const favRef = doc(db, "users", user.uid, "wishlist", productId);
 
   if (action === 'add') {
-    const data = { productId, addedAt: serverTimestamp() };
+    const data = { productId, addedAt: serverTimestamp(), notifyWhenInStock: false };
     setDoc(favRef, data).catch(async () => {
       errorEmitter.emit('permission-error', new FirestorePermissionError({
         path: favRef.path,
@@ -84,13 +81,33 @@ export function syncWishlistItem(productId: string, action: 'add' | 'remove') {
 }
 
 /**
- * Escucha en tiempo real los favoritos del usuario.
+ * Activa o desactiva la notificación de stock para un producto favorito.
  */
-export function subscribeToWishlist(userId: string, callback: (ids: string[]) => void) {
+export async function toggleStockNotification(productId: string, enabled: boolean) {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const favRef = doc(db, "users", user.uid, "wishlist", productId);
+  await updateDoc(favRef, { notifyWhenInStock: enabled }).catch(async () => {
+    errorEmitter.emit('permission-error', new FirestorePermissionError({
+      path: favRef.path,
+      operation: 'update'
+    }));
+  });
+}
+
+/**
+ * Escucha en tiempo real los favoritos del usuario.
+ * Retorna tanto los IDs como sus flags de notificación.
+ */
+export function subscribeToWishlist(userId: string, callback: (items: {id: string, notify: boolean}[]) => void) {
   const wishlistRef = collection(db, "users", userId, "wishlist");
   return onSnapshot(wishlistRef, (snapshot) => {
-    const ids = snapshot.docs.map(doc => doc.id);
-    callback(ids);
+    const items = snapshot.docs.map(doc => ({
+      id: doc.id,
+      notify: doc.data().notifyWhenInStock || false
+    }));
+    callback(items);
   }, async (error) => {
     errorEmitter.emit('permission-error', new FirestorePermissionError({
       path: wishlistRef.path,

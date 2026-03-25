@@ -6,7 +6,7 @@ import { SanitizedProduct } from '@/types/product';
 import { toast } from '@/hooks/use-toast';
 import { auth } from '@/lib/firebase/client';
 import { onAuthStateChanged } from 'firebase/auth';
-import { syncWishlistItem, subscribeToWishlist } from '@/lib/services/user.service';
+import { syncWishlistItem, subscribeToWishlist, toggleStockNotification } from '@/lib/services/user.service';
 import { fetchProductById } from '@/actions/products';
 
 interface WishlistContextType {
@@ -14,12 +14,16 @@ interface WishlistContextType {
   toggleWishlist: (product: SanitizedProduct) => void;
   isInWishlist: (id: string) => boolean;
   clearWishlist: () => void;
+  // Notificaciones de Stock
+  isNotified: (id: string) => boolean;
+  toggleNotification: (id: string) => Promise<void>;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<SanitizedProduct[]>([]);
+  const [notifications, setNotifications] = useState<Record<string, boolean>>({});
 
   // 1. Cargar desde LocalStorage inicialmente (para invitados)
   useEffect(() => {
@@ -37,25 +41,23 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     let unsubscribeFirestore: (() => void) | null = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      // Limpiar suscripción previa si existe
       if (unsubscribeFirestore) {
         unsubscribeFirestore();
         unsubscribeFirestore = null;
       }
 
       if (user) {
-        // Suscribirse a cambios en Firestore
-        unsubscribeFirestore = subscribeToWishlist(user.uid, async (ids) => {
+        unsubscribeFirestore = subscribeToWishlist(user.uid, async (items) => {
           try {
-            // Hidratar los productos que vienen de Firestore
+            const ids = items.map(i => i.id);
+            const notifyMap = items.reduce((acc, i) => ({ ...acc, [i.id]: i.notify }), {});
+            setNotifications(notifyMap);
+
             const fetchedProducts = await Promise.all(
               ids.map(id => fetchProductById(id))
             );
 
-            // Filtrar nulos y asegurar unicidad
             const validProducts = fetchedProducts.filter((p): p is SanitizedProduct => p !== null);
-            
-            // Usamos un Map para garantizar que no haya IDs duplicados en el estado
             const uniqueMap = new Map();
             validProducts.forEach(p => uniqueMap.set(p.id, p));
             const finalProducts = Array.from(uniqueMap.values());
@@ -98,13 +100,43 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const isInWishlist = (id: string) => wishlist.some(item => item.id === id);
   
+  const isNotified = (id: string) => notifications[id] || false;
+
+  const toggleNotification = async (id: string) => {
+    const user = auth.currentUser;
+    if (!user) {
+      toast({ variant: "destructive", title: "Inicia sesión", description: "Debes estar registrado para recibir avisos de stock." });
+      return;
+    }
+
+    const currentState = isNotified(id);
+    try {
+      await toggleStockNotification(id, !currentState);
+      setNotifications(prev => ({ ...prev, [id]: !currentState }));
+      toast({ 
+        title: !currentState ? "¡Aviso activado! 🔔" : "Aviso desactivado", 
+        description: !currentState ? "Te enviaremos un correo apenas vuelva el stock." : "Ya no recibirás alertas para este producto."
+      });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: "No se pudo actualizar la preferencia." });
+    }
+  };
+
   const clearWishlist = () => {
     setWishlist([]);
+    setNotifications({});
     localStorage.removeItem('mydog_wishlist');
   };
 
   return (
-    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist, clearWishlist }}>
+    <WishlistContext.Provider value={{ 
+      wishlist, 
+      toggleWishlist, 
+      isInWishlist, 
+      clearWishlist,
+      isNotified,
+      toggleNotification
+    }}>
       {children}
     </WishlistContext.Provider>
   );
