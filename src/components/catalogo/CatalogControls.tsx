@@ -35,61 +35,69 @@ export default function CatalogControls({ totalCount }: { totalCount: number }) 
   };
 
   return (
-    <div className="bg-white p-4 rounded-[2rem] shadow-sm border border-black/[0.03] flex flex-col md:flex-row items-center justify-between gap-4">
-      <div className="flex items-center gap-4 w-full md:w-auto">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" className="lg:hidden rounded-full bg-primary text-white hover:bg-primary/90 px-6 font-bold h-11 gap-2 shadow-lg shadow-primary/20">
-              <Filter className="w-4 h-4" /> Filtros
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[85%] sm:max-w-md p-0 overflow-y-auto bg-[#F6F6F6]">
-            <SheetHeader className="p-8 bg-primary text-white sticky top-0 z-10">
-              <SheetTitle className="text-white font-black text-2xl tracking-tighter leading-none">Filtrar</SheetTitle>
-            </SheetHeader>
-            <div className="p-8 pb-20">
-              <FilterSidebar categories={CATEGORIES} brands={BRANDS} petTypes={PET_TYPES} />
-            </div>
-          </SheetContent>
-        </Sheet>
+    <div className="bg-white p-4 md:p-5 rounded-[2rem] shadow-sm border border-black/[0.03] flex flex-col lg:flex-row items-center justify-between gap-4">
+      {/* Sección Izquierda: Filtros, Vista y Contador */}
+      <div className="flex items-center justify-between lg:justify-start gap-4 w-full lg:w-auto">
+        <div className="flex items-center gap-3">
+          {/* Trigger de Filtros (Solo Móvil) */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" className="lg:hidden rounded-full bg-primary text-white hover:bg-primary/90 px-5 font-black text-[10px] uppercase h-10 gap-2 shadow-lg shadow-primary/20">
+                <Filter className="w-3.5 h-3.5" /> Filtros
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[85%] sm:max-w-md p-0 overflow-y-auto bg-[#F6F6F6]">
+              <SheetHeader className="p-8 bg-primary text-white sticky top-0 z-10">
+                <SheetTitle className="text-white font-black text-2xl tracking-tighter leading-none">FILTRAR</SheetTitle>
+              </SheetHeader>
+              <div className="p-8 pb-20">
+                <FilterSidebar categories={CATEGORIES} brands={BRANDS} petTypes={PET_TYPES} />
+              </div>
+            </SheetContent>
+          </Sheet>
 
-        <div className="hidden md:flex items-center gap-2 bg-muted/30 p-1 rounded-xl">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => updateParam('view', 'grid')}
-            className={cn(
-              "rounded-lg w-9 h-9 transition-all",
-              currentView === 'grid' ? "bg-white shadow-sm text-primary" : "text-muted-foreground hover:text-primary"
-            )}
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => updateParam('view', 'list')}
-            className={cn(
-              "rounded-lg w-9 h-9 transition-all",
-              currentView === 'list' ? "bg-white shadow-sm text-primary" : "text-muted-foreground hover:text-primary"
-            )}
-          >
-            <List className="w-4 h-4" />
-          </Button>
+          {/* Switcher de Vista (Visible siempre) */}
+          <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-xl">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => updateParam('view', 'grid')}
+              className={cn(
+                "rounded-lg w-8 h-8 transition-all",
+                currentView === 'grid' ? "bg-white shadow-sm text-primary" : "text-muted-foreground/60 hover:text-primary"
+              )}
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => updateParam('view', 'list')}
+              className={cn(
+                "rounded-lg w-8 h-8 transition-all",
+                currentView === 'list' ? "bg-white shadow-sm text-primary" : "text-muted-foreground/60 hover:text-primary"
+              )}
+            >
+              <List className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
-        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 whitespace-nowrap">
+
+        {/* Contador de resultados */}
+        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap bg-muted/20 px-3 py-2 rounded-lg lg:ml-4">
           {totalCount} productos
         </span>
       </div>
       
-      <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-        <div className="flex items-center gap-2">
-          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest hidden sm:inline">Ver:</span>
+      {/* Sección Derecha: Selectores de Orden y Cantidad */}
+      <div className="flex items-center gap-2 w-full lg:w-auto">
+        <div className="flex-1 lg:flex-none">
           <Select 
             defaultValue={searchParams.get('limit') || "25"} 
             onValueChange={(val) => updateParam('limit', val)}
           >
-            <SelectTrigger className="w-20 rounded-xl border-none bg-muted/30 focus:ring-primary/20 h-11 font-bold text-xs">
+            <SelectTrigger className="w-full lg:w-24 rounded-xl border-none bg-muted/30 focus:ring-primary/20 h-10 font-black text-[10px] uppercase">
+              <span className="mr-1 text-muted-foreground/60">Ver:</span>
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-none shadow-2xl">
@@ -100,19 +108,21 @@ export default function CatalogControls({ totalCount }: { totalCount: number }) 
           </Select>
         </div>
 
-        <Select 
-          defaultValue={searchParams.get('sort') || "default"}
-          onValueChange={(val) => updateParam('sort', val)}
-        >
-          <SelectTrigger className="w-36 md:w-44 rounded-xl border-none bg-muted/30 focus:ring-primary/20 h-11 font-bold text-xs uppercase tracking-wider">
-            <SelectValue placeholder="Ordenar" />
-          </SelectTrigger>
-          <SelectContent className="rounded-2xl border-none shadow-2xl">
-            <SelectItem value="default" className="font-bold text-[10px] uppercase tracking-widest">Por defecto</SelectItem>
-            <SelectItem value="price-asc" className="font-bold text-[10px] uppercase tracking-widest">Menor Precio</SelectItem>
-            <SelectItem value="price-desc" className="font-bold text-[10px] uppercase tracking-widest">Mayor Precio</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex-[2] lg:flex-none">
+          <Select 
+            defaultValue={searchParams.get('sort') || "default"}
+            onValueChange={(val) => updateParam('sort', val)}
+          >
+            <SelectTrigger className="w-full lg:w-48 rounded-xl border-none bg-muted/30 focus:ring-primary/20 h-10 font-black text-[10px] uppercase tracking-widest text-left">
+              <SelectValue placeholder="ORDENAR" />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-none shadow-2xl">
+              <SelectItem value="default" className="font-bold text-[10px] uppercase tracking-widest">Relevancia</SelectItem>
+              <SelectItem value="price-asc" className="font-bold text-[10px] uppercase tracking-widest">Menor Precio</SelectItem>
+              <SelectItem value="price-desc" className="font-bold text-[10px] uppercase tracking-widest">Mayor Precio</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );
