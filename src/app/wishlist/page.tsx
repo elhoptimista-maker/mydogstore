@@ -14,7 +14,6 @@ export default function WishlistPage() {
   const { addToCart } = useCart();
 
   const handleRemove = (id: string) => {
-    // Encontramos el producto para dar un feedback correcto en el toast
     const product = wishlist.find(p => p.id === id);
     if (product) toggleWishlist(product);
   };
@@ -27,14 +26,12 @@ export default function WishlistPage() {
     });
   };
 
-  // Aseguramos unicidad absoluta por ID para evitar errores de duplicidad de llaves en React
   const uniqueWishlist = Array.from(
     new Map(wishlist.map(item => [item.id, item])).values()
   );
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-24">
-      {/* Hero Header */}
       <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-12 border-b border-black/5">
         <div className="absolute top-0 right-0 w-1/4 h-full opacity-5 pointer-events-none">
           <Heart className="w-full h-full text-primary" />
@@ -51,13 +48,11 @@ export default function WishlistPage() {
 
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         {uniqueWishlist.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             {uniqueWishlist.map((product) => (
               <WishlistProductCard 
                 key={`wishlist-item-${product.id}`} 
                 product={product}
-                onRemove={handleRemove}
-                onAddToCart={handleAddToCart}
               />
             ))}
           </div>

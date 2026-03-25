@@ -20,15 +20,10 @@ interface RelatedProductsSliderProps {
   viewAllHref?: string;
 }
 
-/**
- * @fileOverview Componente reutilizable de Slider para productos relacionados.
- * Implementa un diseño responsivo con efecto de "asomo" (peeking) en móviles.
- * Corregida la alineación de textos a la izquierda y ubicación del botón en mobile.
- */
 export default function RelatedProductsSlider({ 
   products, 
   title = "Productos Similares", 
-  subtitle = "Expertos en nutrición recomiendan estas alternativas técnicas.",
+  subtitle = "Alternativas técnicas seleccionadas por expertos para tu mascota.",
   badge = "Selección basada en atributos",
   viewAllHref
 }: RelatedProductsSliderProps) {
@@ -36,7 +31,6 @@ export default function RelatedProductsSlider({
 
   return (
     <section className="pt-2 pb-8">
-      {/* Header: Alineado a la izquierda siempre, horizontal con botón en MD+ */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
         <div className="space-y-2 text-left">
           {badge && (
@@ -48,11 +42,10 @@ export default function RelatedProductsSlider({
           {subtitle && <p className="text-sm font-medium text-muted-foreground">{subtitle}</p>}
         </div>
         
-        {/* Botón Desktop: Visible solo desde MD */}
         {viewAllHref && (
           <Link href={viewAllHref} className="hidden md:inline-block">
             <button className="h-12 px-8 rounded-full border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all bg-white whitespace-nowrap">
-              Ver todo el catálogo
+              Ver más productos
             </button>
           </Link>
         )}
@@ -78,19 +71,17 @@ export default function RelatedProductsSlider({
           ))}
         </CarouselContent>
         
-        {/* Botones de navegación solo visibles en desktop */}
         <div className="hidden lg:block">
           <CarouselPrevious className="h-12 w-12 -left-6 border-none shadow-xl bg-white text-primary hover:bg-primary hover:text-white" />
           <CarouselNext className="h-12 w-12 -right-6 border-none shadow-xl bg-white text-primary hover:bg-primary hover:text-white" />
         </div>
       </Carousel>
 
-      {/* Botón Mobile: Visible solo en pantallas pequeñas, ubicado debajo de los cards */}
       {viewAllHref && (
         <div className="mt-8 flex md:hidden">
           <Link href={viewAllHref} className="w-full">
             <button className="w-full h-14 rounded-2xl border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest text-primary bg-white shadow-sm active:scale-95 transition-all">
-              Ver todo el catálogo
+              Ver más productos similares
             </button>
           </Link>
         </div>
