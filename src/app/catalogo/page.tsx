@@ -1,9 +1,10 @@
 import { fetchFilteredCatalog } from '@/actions/products';
 import ProductCard from '@/components/ProductCard';
-import { LayoutGrid, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { CATEGORIES, PET_TYPES, BRANDS } from '@/lib/mock-db';
 import FilterSidebar from '@/components/catalogo/FilterSidebar';
 import CatalogControls from '@/components/catalogo/CatalogControls';
+import Pagination from '@/components/catalogo/Pagination';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -19,55 +20,21 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
+/**
+ * @fileOverview Página principal del catálogo. Orquestador de servidor.
+ * Delega el filtrado al Server Action y la navegación a componentes especializados.
+ */
 export default async function CatalogoPage(props: PageProps) {
   const searchParams = await props.searchParams;
   
-  // 1. Delegamos el filtrado y paginación al Server Action (Optimizado con Caché)
+  // 1. Delegamos el filtrado y lógica de negocio al Server Action (Optimizado con Caché)
   const { 
     products, 
     totalCount, 
     totalPages, 
-    currentPage, 
-    limit 
   } = await fetchFilteredCatalog(searchParams);
 
   const view = (typeof searchParams.view === 'string' ? searchParams.view : 'grid') as 'grid' | 'list';
-
-  /**
-   * Genera la URL de paginación clonando todos los parámetros actuales.
-   */
-  const getPaginationUrl = (p: number) => {
-    const params = new URLSearchParams();
-    
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        params.set(key, value.join(','));
-      } else if (value !== undefined) {
-        params.set(key, value);
-      }
-    });
-
-    params.set('page', p.toString());
-    params.set('limit', limit.toString());
-    return `/catalogo?${params.toString()}`;
-  };
-
-  /**
-   * Lógica inteligente para mostrar números de página
-   */
-  const getVisiblePages = () => {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-    const pages: (number | string)[] = [1];
-    if (currentPage > 3) pages.push('...');
-    const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
-    for (let i = start; i <= end; i++) {
-      if (!pages.includes(i)) pages.push(i);
-    }
-    if (currentPage < totalPages - 2) pages.push('...');
-    if (!pages.includes(totalPages)) pages.push(totalPages);
-    return pages;
-  };
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-20">
@@ -133,70 +100,8 @@ export default async function CatalogoPage(props: PageProps) {
               </div>
             )}
             
-            {/* Paginación */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 pt-12">
-                <Button 
-                  variant="ghost" 
-                  disabled={currentPage <= 1}
-                  asChild={currentPage > 1}
-                  className="w-12 h-12 rounded-full font-black bg-white shadow-sm border border-black/5 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
-                >
-                  {currentPage > 1 ? (
-                    <Link href={getPaginationUrl(currentPage - 1)}>
-                      <ChevronLeft className="w-5 h-5" />
-                    </Link>
-                  ) : (
-                    <ChevronLeft className="w-5 h-5" />
-                  )}
-                </Button>
-                
-                <div className="flex items-center gap-2">
-                  {getVisiblePages().map((p, i) => {
-                    if (p === '...') {
-                      return <span key={`dots-${i}`} className="px-2 text-muted-foreground font-black">...</span>;
-                    }
-                    
-                    const pageNum = p as number;
-                    return (
-                      <Button 
-                        key={pageNum}
-                        asChild={currentPage !== pageNum}
-                        className={cn(
-                          "w-12 h-12 rounded-full font-black transition-all",
-                          currentPage === pageNum 
-                            ? "bg-secondary text-primary shadow-xl shadow-secondary/20 scale-110 pointer-events-none" 
-                            : "bg-white text-foreground shadow-sm border border-black/5 hover:bg-primary/5 hover:text-primary"
-                        )}
-                      >
-                        {currentPage !== pageNum ? (
-                          <Link href={getPaginationUrl(pageNum)}>
-                            {pageNum.toString().padStart(2, '0')}
-                          </Link>
-                        ) : (
-                          <span>{pageNum.toString().padStart(2, '0')}</span>
-                        )}
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                <Button 
-                  variant="ghost" 
-                  disabled={currentPage >= totalPages}
-                  asChild={currentPage < totalPages}
-                  className="w-12 h-12 rounded-full font-black bg-white shadow-sm border border-black/5 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
-                >
-                  {currentPage < totalPages ? (
-                    <Link href={getPaginationUrl(currentPage + 1)}>
-                      <ChevronRight className="w-5 h-5" />
-                    </Link>
-                  ) : (
-                    <ChevronRight className="w-5 h-5" />
-                  )}
-                </Button>
-              </div>
-            )}
+            {/* Paginación Profesional */}
+            <Pagination totalPages={totalPages} />
           </main>
         </div>
       </div>
