@@ -1,11 +1,8 @@
-
 "use client";
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useMemo, useEffect, useTransition } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -13,9 +10,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
-import { X, Filter, Sparkles, Tag } from 'lucide-react';
+import { X, Filter, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { useAssistedFilters } from '@/hooks/use-assisted-filters';
 
 interface FilterSidebarProps {
   categories: string[];
@@ -24,106 +21,25 @@ interface FilterSidebarProps {
 }
 
 /**
- * @fileOverview Sidebar de filtros optimizado con estados optimistas y tags visuales.
- * Proporciona feedback instantáneo al usuario y sincroniza con la URL de forma fluida.
+ * @fileOverview Sidebar de filtros puramente presentacional.
+ * Delega toda la lógica de estado y enrutamiento al hook useAssistedFilters.
  */
 export default function FilterSidebar({ categories, brands, petTypes }: FilterSidebarProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-
-  // 1. Estados Locales para Feedback Instantáneo (Optimistic UI)
-  const [localPets, setLocalPets] = useState<string[]>([]);
-  const [localCats, setLocalCats] = useState<string[]>([]);
-  const [localBrands, setLocalBrands] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 200000]);
-
-  // Sincronizar estados locales con la URL cuando esta cambie (ej: atrás/adelante)
-  useEffect(() => {
-    setLocalPets(searchParams.get('especie')?.split(',').filter(Boolean) || []);
-    setLocalCats(searchParams.get('categoria')?.split(',').filter(Boolean) || []);
-    setLocalBrands(searchParams.get('marca')?.split(',').filter(Boolean) || []);
-    
-    const min = parseInt(searchParams.get('minPrice') || '0');
-    const max = parseInt(searchParams.get('maxPrice') || '200000');
-    setPriceRange([min, max]);
-  }, [searchParams]);
-
-  // Estado de secciones abiertas
-  const [openSections, setOpenSections] = useState<string[]>(() => {
-    if (!searchParams.get('especie')) return ["especies"];
-    if (!searchParams.get('categoria')) return ["categoria"];
-    return ["marca"];
-  });
-
-  // 2. Lógica de Selección con persistencia inmediata en UI
-  const handleToggle = (key: string, value: string) => {
-    // Determinamos el nuevo estado local basado en la acción
-    const updateList = (prev: string[]) => 
-      prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value];
-
-    let nextPets = localPets;
-    let nextCats = localCats;
-    let nextBrands = localBrands;
-
-    // Actualización inmediata de la UI
-    if (key === 'especie') {
-      nextPets = updateList(localPets);
-      setLocalPets(nextPets);
-      // Lógica asistida: Si seleccionamos especie y no hay categorías, abrimos categorías
-      if (nextPets.length > 0 && localCats.length === 0) setOpenSections(["categoria"]);
-    } else if (key === 'categoria') {
-      nextCats = updateList(localCats);
-      setLocalCats(nextCats);
-      if (nextCats.length > 0 && localBrands.length === 0) setOpenSections(["marca"]);
-    } else if (key === 'marca') {
-      nextBrands = updateList(localBrands);
-      setLocalBrands(nextBrands);
-    }
-
-    // Sincronización diferida con la URL (sin bloquear la UI)
-    startTransition(() => {
-      const params = new URLSearchParams(searchParams.toString());
-      
-      const sync = (k: string, list: string[]) => {
-        if (list.length > 0) params.set(k, list.join(','));
-        else params.delete(k);
-      };
-
-      sync('especie', nextPets);
-      sync('categoria', nextCats);
-      sync('marca', nextBrands);
-      params.set('page', '1');
-
-      router.push(`/catalogo?${params.toString()}`, { scroll: false });
-    });
-  };
-
-  const updatePriceUrl = (values: number[]) => {
-    startTransition(() => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('minPrice', values[0].toString());
-      params.set('maxPrice', values[1].toString());
-      params.set('page', '1');
-      router.push(`/catalogo?${params.toString()}`, { scroll: false });
-    });
-  };
-
-  const clearAll = () => {
-    setLocalPets([]);
-    setLocalCats([]);
-    setLocalBrands([]);
-    setPriceRange([0, 200000]);
-    setOpenSections(["especies"]);
-    router.push('/catalogo');
-  };
-
-  // Construcción de la lista de filtros activos para los Tags
-  const activeFilters = [
-    ...localPets.map(v => ({ key: 'especie', val: v })),
-    ...localCats.map(v => ({ key: 'categoria', val: v })),
-    ...localBrands.map(v => ({ key: 'marca', val: v }))
-  ];
+  const {
+    isPending,
+    localPets,
+    localCats,
+    localBrands,
+    priceRange,
+    setPriceRange,
+    openSections,
+    setOpenSections,
+    handleToggle,
+    updatePriceUrl,
+    clearAll,
+    activeFilters,
+    hasPriceFilter
+  } = useAssistedFilters();
 
   return (
     <div className="bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-black/[0.03] overflow-hidden sticky top-48 flex flex-col max-h-[calc(100vh-200px)]">
@@ -133,7 +49,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
           <Filter className="w-4 h-4 text-primary" />
           <span className="text-[10px] font-black uppercase tracking-widest text-primary">Filtros Técnicos</span>
         </div>
-        {(activeFilters.length > 0 || searchParams.has('minPrice')) && (
+        {(activeFilters.length > 0 || hasPriceFilter) && (
           <Button 
             variant="ghost" 
             size="sm" 
@@ -145,7 +61,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         )}
       </div>
 
-      {/* Tags de Filtros Activos (Feedback Visual Inmediato) */}
+      {/* Tags de Filtros Activos (Optimistic Feedback) */}
       {activeFilters.length > 0 && (
         <div className="px-6 py-4 bg-white border-b border-black/[0.03] flex flex-wrap gap-2 shrink-0 max-h-32 overflow-y-auto no-scrollbar">
           {activeFilters.map((filter) => (
@@ -189,7 +105,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
           </div>
         </div>
 
-        {/* Acordeones de Selección */}
+        {/* Acordeones de Selección Asistida */}
         <Accordion 
           type="multiple" 
           value={openSections} 
@@ -276,7 +192,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         </Accordion>
       </div>
 
-      {/* Estado de Carga Sutil */}
+      {/* Estado de Carga Sutil (isPending de useTransition) */}
       {isPending && (
         <div className="px-6 py-2 bg-secondary/10 flex items-center justify-center gap-2">
           <div className="w-1 h-1 bg-secondary rounded-full animate-bounce [animation-delay:-0.3s]" />
