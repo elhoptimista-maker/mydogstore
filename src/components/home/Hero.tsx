@@ -6,30 +6,34 @@ import { ArrowRight, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
+// Importamos la imagen local para que Next.js la procese correctamente desde src/img
+// Nota: Si la imagen no existiera físicamente en la ruta durante el build, esto lanzaría un error, 
+// lo cual es preferible a una imagen rota en producción.
+import HeroDogImage from '@/img/golden-retriever-gato-calico-juntos.png';
+
 /**
- * @fileOverview Componente Hero optimizado para máxima eficiencia responsiva.
- * Implementa una arquitectura de capas aislada y un diseño adaptativo (Mobile-First).
- * La imagen se prioriza visualmente en móviles y se integra armónicamente en escritorio.
+ * @fileOverview Componente Hero de alta ingeniería.
+ * Implementa una arquitectura de capas (layering) optimizada para rendimiento y SEO.
+ * Utiliza importación de assets locales para optimización de imagen de Next.js.
  */
 
 export default function Hero() {
-  // Obtenemos la referencia de la imagen desde nuestra fuente de verdad centralizada
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-dog');
+  const heroData = PlaceHolderImages.find(img => img.id === 'hero-dog');
 
   return (
     <section className="relative w-full bg-[#FEF9F3] overflow-hidden border-b border-black/5 flex items-center min-h-[calc(100dvh-176px)]">
       
-      {/* 1. Capa de Decoración: Blobs ambientales para profundidad visual */}
+      {/* 1. Capa de Decoración Ambiental */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-primary/5 rounded-full blur-[80px] md:blur-[120px] animate-pulse duration-[4000ms]" />
         <div className="absolute bottom-[-10%] left-[-5%] w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-secondary/10 rounded-full blur-[60px] md:blur-[100px]" />
       </div>
 
-      {/* 2. Contenedor de Contenido: Estructura Grid responsiva */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-12 lg:gap-16 items-center py-12 lg:py-0">
+      {/* 2. Contenedor Principal */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-12 lg:py-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* 3. Columna de Texto: Información jerárquica y llamadas a la acción */}
+          {/* 3. Columna de Texto: Jerarquía Visual */}
           <div className="flex flex-col space-y-8 text-center lg:text-left items-center lg:items-start max-w-2xl mx-auto lg:mx-0 order-2 lg:order-1">
             <div className="space-y-6">
               <Badge className="bg-primary/10 text-primary border-none rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -46,7 +50,7 @@ export default function Hero() {
               </p>
             </div>
 
-            {/* CTAs y Prueba Social (Social Proof) */}
+            {/* CTAs y Social Proof */}
             <div className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto pt-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
               <Link href="/catalogo" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3">
@@ -78,20 +82,20 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* 4. Columna Visual: Imagen Hero con composición de profundidad */}
+          {/* 4. Columna Visual: Imagen Hero con Optimización Local */}
           <div className="relative w-full h-[320px] sm:h-[450px] lg:h-[600px] flex items-end justify-center order-1 lg:order-2 animate-in fade-in zoom-in duration-1000">
-            {/* Aura de luz decorativa para resaltar la mascota */}
+            {/* Aura de luz decorativa */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] aspect-square bg-white/40 rounded-full border border-white/60 blur-md -z-10" />
             
             <div className="relative w-full h-full lg:h-[115%] lg:-mb-20">
               <Image
-                src={heroImage?.imageUrl || "https://picsum.photos/seed/hero/800/1000"}
-                alt={heroImage?.description || "Mascota Feliz MyDog"}
+                src={HeroDogImage}
+                alt="Golden Retriever y Gato MyDog"
                 fill
                 className="object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)] scale-110"
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"
-                data-ai-hint={heroImage?.imageHint || "golden retriever"}
+                placeholder="blur" // Next.js crea un blur automático para imágenes importadas
               />
             </div>
           </div>
