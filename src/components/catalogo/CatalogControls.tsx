@@ -20,10 +20,12 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import FilterSidebar from './FilterSidebar';
 import { CATEGORIES, PET_TYPES, BRANDS } from '@/lib/mock-db';
+import { cn } from '@/lib/utils';
 
 export default function CatalogControls({ totalCount }: { totalCount: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const currentView = searchParams.get('view') || 'grid';
 
   const updateParam = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -52,10 +54,26 @@ export default function CatalogControls({ totalCount }: { totalCount: number }) 
         </Sheet>
 
         <div className="hidden md:flex items-center gap-2 bg-muted/30 p-1 rounded-xl">
-          <Button variant="ghost" size="icon" className="rounded-lg bg-white shadow-sm text-primary w-9 h-9">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => updateParam('view', 'grid')}
+            className={cn(
+              "rounded-lg w-9 h-9 transition-all",
+              currentView === 'grid' ? "bg-white shadow-sm text-primary" : "text-muted-foreground hover:text-primary"
+            )}
+          >
             <LayoutGrid className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-lg text-muted-foreground hover:text-primary w-9 h-9">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => updateParam('view', 'list')}
+            className={cn(
+              "rounded-lg w-9 h-9 transition-all",
+              currentView === 'list' ? "bg-white shadow-sm text-primary" : "text-muted-foreground hover:text-primary"
+            )}
+          >
             <List className="w-4 h-4" />
           </Button>
         </div>

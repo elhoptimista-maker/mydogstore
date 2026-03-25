@@ -1,3 +1,4 @@
+
 import { getSanitizedProducts } from '@/lib/services/catalog.service';
 import ProductCard from '@/components/ProductCard';
 import { LayoutGrid } from 'lucide-react';
@@ -28,6 +29,7 @@ export default async function CatalogoPage(props: PageProps) {
   const marca = typeof searchParams.marca === 'string' ? searchParams.marca : undefined;
   const especie = typeof searchParams.especie === 'string' ? searchParams.especie : undefined;
   const sort = typeof searchParams.sort === 'string' ? searchParams.sort : undefined;
+  const view = typeof searchParams.view === 'string' ? searchParams.view : 'grid';
   const minPrice = typeof searchParams.minPrice === 'string' ? searchParams.minPrice : undefined;
   const maxPrice = typeof searchParams.maxPrice === 'string' ? searchParams.maxPrice : undefined;
   const page = typeof searchParams.page === 'string' ? searchParams.page : '1';
@@ -88,6 +90,7 @@ export default async function CatalogoPage(props: PageProps) {
     if (marca) params.set('marca', marca);
     if (especie) params.set('especie', especie);
     if (sort) params.set('sort', sort);
+    if (view) params.set('view', view);
     if (q) params.set('q', q);
     return `/catalogo?${params.toString()}`;
   };
@@ -120,9 +123,16 @@ export default async function CatalogoPage(props: PageProps) {
           <main className="lg:col-span-3 space-y-6">
             <CatalogControls totalCount={totalProducts} />
             {paginatedProducts.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              <div className={cn(
+                "grid gap-6 md:gap-8",
+                view === 'list' ? "grid-cols-1" : "grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
+              )}>
                 {paginatedProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard 
+                    key={product.id} 
+                    product={product} 
+                    variant={view as 'grid' | 'list'} 
+                  />
                 ))}
               </div>
             ) : (
@@ -133,6 +143,8 @@ export default async function CatalogoPage(props: PageProps) {
                 </Link>
               </div>
             )}
+            
+            {/* Paginación */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 pt-12">
                 <Button 
