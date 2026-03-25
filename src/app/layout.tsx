@@ -3,6 +3,7 @@ import Script from 'next/script';
 import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Newsletter from '@/components/layout/Newsletter';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/CartContext';
 import { ChatProvider } from '@/context/ChatContext';
@@ -47,13 +48,14 @@ export default function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <ChatProvider>
-              <div className="flex flex-col">
+              <div className="flex flex-col min-h-screen">
                 <div id="global-header">
                   <Header />
                 </div>
-                <main id="global-main" className="pt-44 pb-0">
+                <main id="global-main" className="pt-44 flex-1">
                   {children}
                 </main>
+                <Newsletter />
                 <Footer />
               </div>
               <ProductAssistantWrapper />
