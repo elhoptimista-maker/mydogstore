@@ -22,7 +22,7 @@ interface FilterSidebarProps {
 
 /**
  * @fileOverview Sidebar de filtros puramente presentacional.
- * Delega toda la lógica de estado y enrutamiento al hook useAssistedFilters.
+ * Delega toda la lógica de estado y enrutamiento al hook useAssistedFilters (SRP).
  */
 export default function FilterSidebar({ categories, brands, petTypes }: FilterSidebarProps) {
   const {
@@ -61,7 +61,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         )}
       </div>
 
-      {/* Tags de Filtros Activos (Optimistic Feedback) */}
+      {/* Tags de Filtros Activos (Feedback instantáneo) */}
       {activeFilters.length > 0 && (
         <div className="px-6 py-4 bg-white border-b border-black/[0.03] flex flex-wrap gap-2 shrink-0 max-h-32 overflow-y-auto no-scrollbar">
           {activeFilters.map((filter) => (
@@ -192,7 +192,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         </Accordion>
       </div>
 
-      {/* Estado de Carga Sutil (isPending de useTransition) */}
+      {/* Estado de Carga Sutil */}
       {isPending && (
         <div className="px-6 py-2 bg-secondary/10 flex items-center justify-center gap-2">
           <div className="w-1 h-1 bg-secondary rounded-full animate-bounce [animation-delay:-0.3s]" />

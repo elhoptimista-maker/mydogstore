@@ -1,6 +1,6 @@
 /**
  * @fileOverview Servicio de Catálogo para la lectura y sanitización de productos del ERP.
- * Adaptado a la arquitectura v2 del ERP.
+ * Centraliza la lógica de negocio del catálogo siguiendo el principio de SRP.
  */
 
 import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
@@ -46,16 +46,11 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
 
         const netCost = data.financials?.cost || 0;
 
-        // DEBUG: Verificar presencia de slug en logs del servidor
-        if (!data.slug) {
-           console.warn(`⚠️ Producto ${doc.id} (${data.name}) no tiene SLUG en la raíz.`);
-        }
-
         return {
           id: doc.id,
           name: data.name || "Producto sin nombre",
           sku: data.sku || "N/A",
-          slug: data.slug || data.metadata?.slug || doc.id, // Intentamos raíz, luego metadata, luego ID
+          slug: data.slug || data.metadata?.slug || doc.id,
           brand: data.attributes?.brand || "Genérico",
           category: data.attributes?.category || "Varios",
           species: data.attributes?.species || "Mascotas",
@@ -85,7 +80,6 @@ export async function getSanitizedProductBySlug(slugOrId: string): Promise<Sanit
   try {
     const db = getErpDbAdmin();
     
-    // 1. Intentar buscar por el campo slug (raíz)
     const querySnap = await db.collection("products")
       .where("slug", "==", slugOrId)
       .limit(1)
@@ -95,7 +89,6 @@ export async function getSanitizedProductBySlug(slugOrId: string): Promise<Sanit
     if (!querySnap.empty) {
       doc = querySnap.docs[0];
     } else {
-      // 2. Fallback: Intentar buscar por slug dentro de metadata (arquitectura antigua)
       const queryLegacySnap = await db.collection("products")
         .where("metadata.slug", "==", slugOrId)
         .limit(1)
@@ -104,7 +97,6 @@ export async function getSanitizedProductBySlug(slugOrId: string): Promise<Sanit
       if (!queryLegacySnap.empty) {
         doc = queryLegacySnap.docs[0];
       } else {
-        // 3. Fallback: Intentar buscar por ID directo
         const directDoc = await db.collection("products").doc(slugOrId).get();
         if (directDoc.exists) {
           doc = directDoc;
@@ -117,7 +109,6 @@ export async function getSanitizedProductBySlug(slugOrId: string): Promise<Sanit
     const data = doc.data()!;
     const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
     const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
-
     const netCost = data.financials?.cost || 0;
 
     return {
@@ -138,14 +129,47 @@ export async function getSanitizedProductBySlug(slugOrId: string): Promise<Sanit
       wholesalePrice: calculateWholesalePrice(netCost)
     } as SanitizedProduct;
   } catch (error: any) {
-    console.error(`[CatalogService] Error fetching product slug ${slugOrId}:`, error.message);
     return null;
   }
 }
 
 /**
- * Mantenemos getSanitizedProductById para procesos internos.
+ * Lógica de negocio para encontrar productos similares basada en atributos técnicos estrictos.
+ * Cumple con SRP al extraer esta lógica de los componentes de UI.
  */
+export async function getRelatedProducts(baseProduct: SanitizedProduct, limit: number = 15): Promise<SanitizedProduct[]> {
+  const allProducts = await getSanitizedProducts();
+  
+  return allProducts
+    .filter(p => p.id !== baseProduct.id && p.currentStock > 0)
+    .filter(p => p.species === baseProduct.species) // Regla de Oro: Misma especie
+    .map(p => {
+      let score = 0;
+      const pLifeStage = p.life_stage.toLowerCase();
+      const currentLifeStage = baseProduct.life_stage.toLowerCase();
+
+      // Regla de Exclusión: Cachorros vs Adultos/Senior
+      const isCachorro = currentLifeStage.includes('cachorro');
+      const isAdultoSenior = currentLifeStage.includes('adulto') || currentLifeStage.includes('senior');
+
+      if (isCachorro && (pLifeStage.includes('adulto') || pLifeStage.includes('senior'))) {
+        score -= 100;
+      } else if (isAdultoSenior && pLifeStage.includes('cachorro')) {
+        score -= 100;
+      } else if (pLifeStage === currentLifeStage) {
+        score += 20; // Bonus por misma etapa
+      }
+
+      if (p.category === baseProduct.category) score += 10;
+      if (p.brand === baseProduct.brand) score += 5;
+
+      return { ...p, similarityScore: score };
+    })
+    .filter(p => (p as any).similarityScore > 0)
+    .sort((a, b) => (b as any).similarityScore - (a as any).similarityScore)
+    .slice(0, limit);
+}
+
 export async function getSanitizedProductById(id: string): Promise<SanitizedProduct | null> {
   return await getSanitizedProductBySlug(id);
 }

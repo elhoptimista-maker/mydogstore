@@ -1,9 +1,9 @@
 import { fetchProductBySlug, fetchAllProducts } from '@/actions/products';
+import { getRelatedProducts } from '@/lib/services/catalog.service';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Star, Scale, Dog, Briefcase, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import ProductClientControls from '@/components/catalogo/ProductClientControls';
 import ProductHeaderActions from '@/components/catalogo/ProductHeaderActions';
 import RelatedProductsSlider from '@/components/catalogo/RelatedProductsSlider';
@@ -28,47 +28,14 @@ export async function generateMetadata(props: PageProps) {
 
 export default async function ProductoDetallePage(props: PageProps) {
   const params = await props.params;
-  const slug = params.slug;
-  const product = await fetchProductBySlug(slug);
+  const product = await fetchProductBySlug(params.slug);
 
   if (!product) {
     notFound();
   }
 
-  // Lógica de Atributos Estricta para Productos Similares
-  const allProducts = await fetchAllProducts();
-  const similarProducts = allProducts
-    .filter(p => p.id !== product.id && p.currentStock > 0)
-    .filter(p => p.species === product.species) // REGLA 1: Nunca mostrar otra especie
-    .map(p => {
-      let score = 0;
-      
-      const pLifeStage = p.life_stage.toLowerCase();
-      const currentLifeStage = product.life_stage.toLowerCase();
-
-      // REGLA 2: Exclusión por etapa de vida (Cachorro vs Adulto/Senior)
-      const isCachorro = currentLifeStage.includes('cachorro');
-      const isAdultoSenior = currentLifeStage.includes('adulto') || currentLifeStage.includes('senior');
-
-      if (isCachorro && (pLifeStage.includes('adulto') || pLifeStage.includes('senior'))) {
-        score -= 100; // Penalización máxima para no mostrar
-      } else if (isAdultoSenior && pLifeStage.includes('cachorro')) {
-        score -= 100; // Penalización máxima para no mostrar
-      } else if (pLifeStage === currentLifeStage) {
-        score += 20; // Puntuación máxima por misma etapa
-      }
-
-      // REGLA 3: Misma categoría dentro de la misma especie
-      if (p.category === product.category) score += 10;
-      
-      // REGLA 4: Misma marca
-      if (p.brand === product.brand) score += 5;
-
-      return { ...p, similarityScore: score };
-    })
-    .filter(p => p.similarityScore > 0) // Solo los que cumplen la lógica de afinidad
-    .sort((a, b) => b.similarityScore - a.similarityScore)
-    .slice(0, 15);
+  // Ahora la lógica de similitud es responsabilidad del servicio (SRP)
+  const similarProducts = await getRelatedProducts(product);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -107,7 +74,6 @@ export default async function ProductoDetallePage(props: PageProps) {
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          {/* Galería de Imágenes */}
           <div className="space-y-6">
             <div className="aspect-square relative rounded-[3rem] overflow-hidden bg-white shadow-xl shadow-black/5 border border-border/50 group">
               {product.currentStock <= 0 && (
@@ -125,7 +91,6 @@ export default async function ProductoDetallePage(props: PageProps) {
             </div>
           </div>
 
-          {/* Información Técnica y Venta */}
           <div className="flex flex-col justify-center space-y-8">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -146,22 +111,19 @@ export default async function ProductoDetallePage(props: PageProps) {
                   ))}
                   <span className="ml-2 font-bold text-foreground">4.8</span>
                 </div>
-                <Separator orientation="vertical" className="h-4" />
                 <span className="text-sm font-medium text-muted-foreground tracking-tight">SKU: {product.sku}</span>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="text-5xl font-black text-primary tracking-tighter flex items-baseline gap-4">
-                ${product.sellingPrice.toLocaleString('es-CL')}
-                {product.currentStock > 0 ? (
-                  <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full uppercase tracking-widest border border-green-200 block sm:inline-block relative -top-3">
-                     En Stock
-                  </span>
-                ) : (
-                   <span className="text-xs font-bold text-red-500 uppercase tracking-widest block sm:inline-block relative -top-3">Sin inventario</span>
-                )}
-              </div>
+            <div className="text-5xl font-black text-primary tracking-tighter flex items-baseline gap-4">
+              ${product.sellingPrice.toLocaleString('es-CL')}
+              {product.currentStock > 0 ? (
+                <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full uppercase tracking-widest border border-green-200 block sm:inline-block relative -top-3">
+                   En Stock
+                </span>
+              ) : (
+                 <span className="text-xs font-bold text-red-500 uppercase tracking-widest block sm:inline-block relative -top-3">Sin inventario</span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -176,7 +138,7 @@ export default async function ProductoDetallePage(props: PageProps) {
                       {attr.icon}
                       <span className="text-[10px] font-bold uppercase tracking-widest">{attr.label}</span>
                    </div>
-                   <p className="font-bold text-sm truncate" title={attr.val}>{attr.val}</p>
+                   <p className="font-bold text-sm truncate">{attr.val}</p>
                  </div>
                ))}
             </div>

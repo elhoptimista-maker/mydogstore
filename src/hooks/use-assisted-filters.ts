@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 /**
  * @fileOverview Custom hook que gestiona la lógica de filtrado asistido, 
  * sincronización con la URL y estados optimistas para el catálogo.
+ * Aplica el principio de Responsabilidad Única (SRP) al separar el estado de la UI.
  */
 export function useAssistedFilters() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export function useAssistedFilters() {
   const [localBrands, setLocalBrands] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 200000]);
 
-  // Sincronizar estados locales con la URL (útil para navegación atrás/adelante)
+  // Sincronizar estados locales con la URL (para navegación atrás/adelante)
   useEffect(() => {
     setLocalPets(searchParams.get('especie')?.split(',').filter(Boolean) || []);
     setLocalCats(searchParams.get('categoria')?.split(',').filter(Boolean) || []);
@@ -27,7 +28,7 @@ export function useAssistedFilters() {
     setPriceRange([min, max]);
   }, [searchParams]);
 
-  // Lógica de apertura de secciones del acordeón
+  // Lógica de apertura de secciones del acordeón (UX asistida)
   const [openSections, setOpenSections] = useState<string[]>(() => {
     if (!searchParams.get('especie')) return ["especies"];
     if (!searchParams.get('categoria')) return ["categoria"];
@@ -42,21 +43,23 @@ export function useAssistedFilters() {
     let nextCats = localCats;
     let nextBrands = localBrands;
 
-    // Actualización inmediata de la UI y lógica asistida
+    // Actualización inmediata de la UI y lógica de transición asistida
     if (key === 'especie') {
       nextPets = updateList(localPets);
       setLocalPets(nextPets);
+      // UX: Si selecciona especie y no hay categoría, sugerimos categorías
       if (nextPets.length > 0 && localCats.length === 0) setOpenSections(["categoria"]);
     } else if (key === 'categoria') {
       nextCats = updateList(localCats);
       setLocalCats(nextCats);
+      // UX: Si selecciona categoría y no hay marca, sugerimos marcas
       if (nextCats.length > 0 && localBrands.length === 0) setOpenSections(["marca"]);
     } else if (key === 'marca') {
       nextBrands = updateList(localBrands);
       setLocalBrands(nextBrands);
     }
 
-    // Sincronización diferida con la URL
+    // Sincronización diferida con la URL sin bloquear el hilo principal (useTransition)
     startTransition(() => {
       const params = new URLSearchParams(searchParams.toString());
       
