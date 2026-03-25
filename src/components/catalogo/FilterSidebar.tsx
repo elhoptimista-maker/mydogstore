@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
 import { X, Filter, Sparkles } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface FilterSidebarProps {
   categories: string[];
@@ -22,6 +21,10 @@ interface FilterSidebarProps {
   petTypes: string[];
 }
 
+/**
+ * @fileOverview Sidebar de filtros con lógica asistida.
+ * Al seleccionar una opción, guía al usuario automáticamente a la siguiente categoría de filtro.
+ */
 export default function FilterSidebar({ categories, brands, petTypes }: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,6 +33,9 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedPets, setSelectedPets] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 200000]);
+  
+  // Estado para controlar qué acordeones están abiertos (Filtros Asistidos)
+  const [openSections, setOpenSections] = useState<string[]>(["especies"]);
 
   useEffect(() => {
     const cats = searchParams.get('categoria')?.split(',') || [];
@@ -42,6 +48,10 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
     setSelectedBrands(marcas);
     setSelectedPets(pets);
     setPriceRange([min, max]);
+
+    // Si ya hay filtros aplicados al cargar, intentamos abrir la sección más relevante
+    if (pets.length > 0 && cats.length === 0) setOpenSections(["categoria"]);
+    else if (cats.length > 0 && marcas.length === 0) setOpenSections(["marca"]);
   }, [searchParams]);
 
   const updateUrl = (key: string, values: string[] | number[]) => {
@@ -61,15 +71,24 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
   };
 
   const handleToggle = (list: string[], setList: (l: string[]) => void, key: string, value: string) => {
-    const newList = list.includes(value) 
-      ? list.filter(item => item !== value) 
-      : [...list, value];
+    const isAdding = !list.includes(value);
+    const newList = isAdding 
+      ? [...list, value]
+      : list.filter(item => item !== value);
+    
     setList(newList);
     updateUrl(key, newList);
+
+    // Lógica Asistida: Saltar a la siguiente sección al seleccionar (solo al añadir)
+    if (isAdding) {
+      if (key === 'especie') setOpenSections(["categoria"]);
+      else if (key === 'categoria') setOpenSections(["marca"]);
+    }
   };
 
   const clearAll = () => {
     router.push('/catalogo');
+    setOpenSections(["especies"]);
   };
 
   const hasActiveFilters = selectedCats.length > 0 || selectedBrands.length > 0 || selectedPets.length > 0 || priceRange[0] > 0 || priceRange[1] < 200000;
@@ -80,7 +99,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
       <div className="p-6 border-b border-black/[0.03] flex items-center justify-between bg-primary/5 shrink-0">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-primary" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-primary">Filtros Avanzados</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-primary">Filtros Asistidos</span>
         </div>
         {hasActiveFilters && (
           <Button 
@@ -96,7 +115,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
 
       {/* 2. Área Scrolleable */}
       <div className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-8">
-        {/* Rango de Precio */}
+        {/* Rango de Precio - Siempre visible */}
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rango de Precio</h4>
@@ -122,8 +141,13 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
           </div>
         </div>
 
-        {/* Acordeones */}
-        <Accordion type="multiple" defaultValue={["especies", "categoria"]} className="w-full">
+        {/* Acordeones Dinámicos */}
+        <Accordion 
+          type="multiple" 
+          value={openSections} 
+          onValueChange={setOpenSections} 
+          className="w-full"
+        >
           <AccordionItem value="especies" className="border-none mb-2">
             <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-2xl hover:bg-muted/30 transition-all group">
               <div className="flex items-center gap-3">
@@ -209,7 +233,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         <div className="flex items-center gap-2 text-primary/40">
           <Sparkles className="w-3 h-3" />
           <p className="text-[8px] font-black uppercase tracking-widest leading-tight">
-            Los resultados se actualizan <br /> automáticamente
+            Navegación asistida para una <br /> búsqueda técnica eficaz
           </p>
         </div>
       </div>
