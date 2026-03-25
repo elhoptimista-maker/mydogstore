@@ -81,17 +81,49 @@ export default async function CatalogoPage(props: PageProps) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
+  /**
+   * Genera la URL de paginación clonando todos los parámetros actuales.
+   * Esto asegura que filtros como minPrice, maxPrice, q, etc., persistan al cambiar de página.
+   */
   const getPaginationUrl = (p: number) => {
     const params = new URLSearchParams();
+    
+    // Iteramos sobre los parámetros actuales para clonarlos de forma segura
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        params.set(key, value.join(','));
+      } else if (value !== undefined) {
+        params.set(key, value);
+      }
+    });
+
     params.set('page', p.toString());
     params.set('limit', itemsPerPage.toString());
-    if (categoria) params.set('categoria', categoria);
-    if (marca) params.set('marca', marca);
-    if (especie) params.set('especie', especie);
-    if (sort) params.set('sort', sort);
-    if (view) params.set('view', view);
-    if (q) params.set('q', q);
     return `/catalogo?${params.toString()}`;
+  };
+
+  /**
+   * Lógica para determinar qué números de página mostrar
+   */
+  const getVisiblePages = () => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    
+    const pages: (number | string)[] = [1];
+    
+    if (currentPage > 3) pages.push('...');
+    
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+    
+    for (let i = start; i <= end; i++) {
+      if (!pages.includes(i)) pages.push(i);
+    }
+    
+    if (currentPage < totalPages - 2) pages.push('...');
+    
+    if (!pages.includes(totalPages)) pages.push(totalPages);
+    
+    return pages;
   };
 
   return (
@@ -120,7 +152,6 @@ export default async function CatalogoPage(props: PageProps) {
             />
           </aside>
           <main className="lg:col-span-3 space-y-6">
-            {/* CatalogControls ahora es el orquestador de filtros para móvil y ordenamiento */}
             <CatalogControls 
               totalCount={totalProducts} 
               categories={CATEGORIES}
@@ -150,7 +181,7 @@ export default async function CatalogoPage(props: PageProps) {
               </div>
             )}
             
-            {/* Paginación */}
+            {/* Paginación Mejorada */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 pt-12">
                 <Button 
@@ -167,34 +198,37 @@ export default async function CatalogoPage(props: PageProps) {
                     <ChevronLeft className="w-5 h-5" />
                   )}
                 </Button>
+                
                 <div className="flex items-center gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
-                    if (totalPages > 5 && p > 3 && p < totalPages) {
-                      if (p === 4) return <span key={p} className="px-2 text-muted-foreground">...</span>;
-                      return null;
+                  {getVisiblePages().map((p, i) => {
+                    if (p === '...') {
+                      return <span key={`dots-${i}`} className="px-2 text-muted-foreground font-black">...</span>;
                     }
+                    
+                    const pageNum = p as number;
                     return (
                       <Button 
-                        key={p}
-                        asChild={currentPage !== p}
+                        key={pageNum}
+                        asChild={currentPage !== pageNum}
                         className={cn(
                           "w-12 h-12 rounded-full font-black transition-all",
-                          currentPage === p 
+                          currentPage === pageNum 
                             ? "bg-secondary text-primary shadow-xl shadow-secondary/20 scale-110 pointer-events-none" 
                             : "bg-white text-foreground shadow-sm border border-black/5 hover:bg-primary/5 hover:text-primary"
                         )}
                       >
-                        {currentPage !== p ? (
-                          <Link href={getPaginationUrl(p)}>
-                            {p.toString().padStart(2, '0')}
+                        {currentPage !== pageNum ? (
+                          <Link href={getPaginationUrl(pageNum)}>
+                            {pageNum.toString().padStart(2, '0')}
                           </Link>
                         ) : (
-                          <span>{p.toString().padStart(2, '0')}</span>
+                          <span>{pageNum.toString().padStart(2, '0')}</span>
                         )}
                       </Button>
                     );
                   })}
                 </div>
+
                 <Button 
                   variant="ghost" 
                   disabled={currentPage >= totalPages}
