@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
 import { X, Filter, Sparkles } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface FilterSidebarProps {
   categories: string[];
@@ -30,7 +30,6 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
   const [selectedPets, setSelectedPets] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 200000]);
 
-  // Sincronizar estado local con URL
   useEffect(() => {
     const cats = searchParams.get('categoria')?.split(',') || [];
     const marcas = searchParams.get('marca')?.split(',') || [];
@@ -46,7 +45,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
 
   const updateUrl = (key: string, values: string[] | number[]) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set('page', '1'); // Resetear a pag 1 al filtrar
+    params.set('page', '1');
 
     if (key === 'price' && Array.isArray(values) && typeof values[0] === 'number') {
       params.set('minPrice', values[0].toString());
@@ -75,9 +74,9 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
   const hasActiveFilters = selectedCats.length > 0 || selectedBrands.length > 0 || selectedPets.length > 0 || priceRange[0] > 0 || priceRange[1] < 200000;
 
   return (
-    <div className="bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-black/[0.03] overflow-hidden sticky top-44">
-      {/* Header del Sidebar */}
-      <div className="p-6 border-b border-black/[0.03] flex items-center justify-between bg-primary/5">
+    <div className="bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-black/[0.03] overflow-hidden sticky top-44 flex flex-col max-h-[calc(100vh-200px)]">
+      {/* 1. Header Fijo */}
+      <div className="p-6 border-b border-black/[0.03] flex items-center justify-between bg-primary/5 shrink-0">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-primary" />
           <span className="text-[10px] font-black uppercase tracking-widest text-primary">Filtros Avanzados</span>
@@ -94,14 +93,13 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         )}
       </div>
 
-      <div className="p-6 space-y-8">
-        {/* Rango de Precio - Siempre visible */}
+      {/* 2. Área Scrolleable */}
+      <div className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-8">
+        {/* Rango de Precio */}
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rango de Precio</h4>
-            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-              CLP
-            </span>
+            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">CLP</span>
           </div>
           <Slider 
             value={priceRange} 
@@ -123,9 +121,8 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
           </div>
         </div>
 
-        {/* Acordeón Unificado Hierárquico */}
+        {/* Acordeones */}
         <Accordion type="multiple" defaultValue={["especies", "categoria"]} className="w-full">
-          {/* 1. Especies */}
           <AccordionItem value="especies" className="border-none mb-2">
             <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-2xl hover:bg-muted/30 transition-all group">
               <div className="flex items-center gap-3">
@@ -152,7 +149,6 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
             </AccordionContent>
           </AccordionItem>
 
-          {/* 2. Categorías */}
           <AccordionItem value="categoria" className="border-none mb-2">
             <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-2xl hover:bg-muted/30 transition-all group">
               <div className="flex items-center gap-3">
@@ -179,7 +175,6 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
             </AccordionContent>
           </AccordionItem>
 
-          {/* 3. Marcas */}
           <AccordionItem value="marca" className="border-none">
             <AccordionTrigger className="hover:no-underline py-3 px-4 rounded-2xl hover:bg-muted/30 transition-all group">
               <div className="flex items-center gap-3">
@@ -188,7 +183,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
               </div>
             </AccordionTrigger>
             <AccordionContent className="pt-4 px-4 pb-2">
-              <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto pr-2 no-scrollbar">
+              <div className="grid grid-cols-1 gap-3">
                 {brands.map((brand) => (
                   <div key={brand} className="flex items-center space-x-3 group cursor-pointer">
                     <Checkbox 
@@ -208,8 +203,8 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         </Accordion>
       </div>
 
-      {/* Footer del Sidebar */}
-      <div className="p-6 bg-muted/30 border-t border-black/[0.03] space-y-4">
+      {/* 3. Footer Fijo */}
+      <div className="p-6 bg-muted/30 border-t border-black/[0.03] space-y-4 shrink-0">
         <div className="flex items-center gap-2 text-primary/40">
           <Sparkles className="w-3 h-3" />
           <p className="text-[8px] font-black uppercase tracking-widest leading-tight">
