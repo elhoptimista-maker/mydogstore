@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -18,27 +17,48 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTransition } from 'react';
 import FilterSidebar from './FilterSidebar';
-import { CATEGORIES, PET_TYPES, BRANDS } from '@/lib/mock-db';
 import { cn } from '@/lib/utils';
 
-export default function CatalogControls({ totalCount }: { totalCount: number }) {
+interface CatalogControlsProps {
+  totalCount: number;
+  categories: string[];
+  brands: string[];
+  petTypes: string[];
+}
+
+/**
+ * @fileOverview Componente de controles del catálogo refactorizado.
+ * Implementa selects controlados por URL, transiciones optimistas y desacoplamiento de datos.
+ */
+export default function CatalogControls({ totalCount, categories, brands, petTypes }: CatalogControlsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentView = searchParams.get('view') || 'grid';
+  
+  // Feedback optimista para evitar congelamiento de UI durante la navegación
+  const [isPending, startTransition] = useTransition();
 
   const updateParam = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value);
-    if (key !== 'page') params.set('page', '1');
-    router.push(`/catalogo?${params.toString()}`, { scroll: false });
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(key, value);
+      // Al cambiar orden o límite, siempre reseteamos a la página 1
+      if (key !== 'page') params.set('page', '1');
+      router.push(`/catalogo?${params.toString()}`, { scroll: false });
+    });
   };
 
   return (
-    <div className="bg-white p-4 md:p-5 rounded-[2rem] shadow-sm border border-black/[0.03] flex flex-col lg:flex-row items-center justify-between gap-4">
+    <div className={cn(
+      "bg-white p-4 md:p-5 rounded-[2rem] shadow-sm border border-black/[0.03] flex flex-col lg:flex-row items-center justify-between gap-4 transition-all duration-300",
+      isPending ? "opacity-60 pointer-events-none scale-[0.99]" : "opacity-100"
+    )}>
       {/* Sección Izquierda: Filtros, Vista y Contador */}
       <div className="flex items-center justify-between lg:justify-start gap-4 w-full lg:w-auto">
         <div className="flex items-center gap-3">
+          
           {/* Trigger de Filtros (Solo Móvil) */}
           <Sheet>
             <SheetTrigger asChild>
@@ -47,16 +67,16 @@ export default function CatalogControls({ totalCount }: { totalCount: number }) 
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[85%] sm:max-w-md p-0 overflow-y-auto bg-[#F6F6F6]">
-              <SheetHeader className="p-8 bg-primary text-white sticky top-0 z-10">
+              <SheetHeader className="p-8 bg-primary text-white sticky top-0 z-10 shadow-sm">
                 <SheetTitle className="text-white font-black text-2xl tracking-tighter leading-none">FILTRAR</SheetTitle>
               </SheetHeader>
               <div className="p-8 pb-20">
-                <FilterSidebar categories={CATEGORIES} brands={BRANDS} petTypes={PET_TYPES} />
+                <FilterSidebar categories={categories} brands={brands} petTypes={petTypes} />
               </div>
             </SheetContent>
           </Sheet>
 
-          {/* Switcher de Vista (Visible siempre) */}
+          {/* Switcher de Vista */}
           <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-xl">
             <Button 
               variant="ghost" 
@@ -89,11 +109,11 @@ export default function CatalogControls({ totalCount }: { totalCount: number }) 
         </span>
       </div>
       
-      {/* Sección Derecha: Selectores de Orden y Cantidad */}
+      {/* Sección Derecha: Selectores Controlados */}
       <div className="flex items-center gap-2 w-full lg:w-auto">
         <div className="flex-1 lg:flex-none">
           <Select 
-            defaultValue={searchParams.get('limit') || "25"} 
+            value={searchParams.get('limit') || "25"} 
             onValueChange={(val) => updateParam('limit', val)}
           >
             <SelectTrigger className="w-full lg:w-24 rounded-xl border-none bg-muted/30 focus:ring-primary/20 h-10 font-black text-[10px] uppercase">
@@ -110,7 +130,7 @@ export default function CatalogControls({ totalCount }: { totalCount: number }) 
 
         <div className="flex-[2] lg:flex-none">
           <Select 
-            defaultValue={searchParams.get('sort') || "default"}
+            value={searchParams.get('sort') || "default"}
             onValueChange={(val) => updateParam('sort', val)}
           >
             <SelectTrigger className="w-full lg:w-48 rounded-xl border-none bg-muted/30 focus:ring-primary/20 h-10 font-black text-[10px] uppercase tracking-widest text-left">

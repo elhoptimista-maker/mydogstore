@@ -1,4 +1,3 @@
-
 import { getSanitizedProducts } from '@/lib/services/catalog.service';
 import ProductCard from '@/components/ProductCard';
 import { LayoutGrid } from 'lucide-react';
@@ -121,10 +120,17 @@ export default async function CatalogoPage(props: PageProps) {
             />
           </aside>
           <main className="lg:col-span-3 space-y-6">
-            <CatalogControls totalCount={totalProducts} />
+            {/* CatalogControls ahora es el orquestador de filtros para móvil y ordenamiento */}
+            <CatalogControls 
+              totalCount={totalProducts} 
+              categories={CATEGORIES}
+              brands={BRANDS}
+              petTypes={PET_TYPES}
+            />
+            
             {paginatedProducts.length > 0 ? (
               <div className={cn(
-                "grid gap-6 md:gap-8",
+                "grid gap-6 md:gap-8 transition-all duration-500",
                 view === 'list' ? "grid-cols-1" : "grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
               )}>
                 {paginatedProducts.map((product) => (
