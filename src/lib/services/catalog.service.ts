@@ -1,10 +1,11 @@
 /**
  * @fileOverview Servicio de Catálogo para la lectura y sanitización de productos del ERP.
- * Centraliza la lógica de negocio del catálogo siguiendo el principio de SRP.
+ * Implementa 'unstable_cache' para optimizar lecturas y permitir filtrado complejo en el servidor.
  */
 
 import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
+import { unstable_cache } from 'next/cache';
 
 /**
  * Calcula un precio de venta comercial basado en el costo bruto.
@@ -25,9 +26,10 @@ function calculateWholesalePrice(netCost: number): number {
 }
 
 /**
- * Obtiene la lista de productos activos del ERP.
+ * Función cruda de obtención de datos desde Firestore (ERP).
+ * No debe usarse directamente en componentes para evitar costos excesivos.
  */
-export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
+async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
   try {
     const db = getErpDbAdmin();
     const productsSnap = await db.collection("products")
@@ -36,35 +38,34 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
 
     if (!productsSnap || productsSnap.empty) return [];
 
-    const sanitizedProducts = await Promise.all(
-      productsSnap.docs.map(async (doc: any) => {
-        const data = doc.data();
-        
-        // Consultar inventario
-        const inventoryDoc = await db.collection("inventory").doc(doc.id).get();
-        const currentStock = inventoryDoc.exists ? (inventoryDoc.data()?.physical_qty || 0) : 0;
+    // Obtenemos todo el inventario de una vez para evitar N+1 queries
+    const inventorySnap = await db.collection("inventory").get();
+    const inventoryMap = new Map();
+    inventorySnap.forEach(doc => inventoryMap.set(doc.id, doc.data().physical_qty || 0));
 
-        const netCost = data.financials?.cost || 0;
+    const sanitizedProducts = productsSnap.docs.map((doc: any) => {
+      const data = doc.data();
+      const currentStock = inventoryMap.get(doc.id) || 0;
+      const netCost = data.financials?.cost || 0;
 
-        return {
-          id: doc.id,
-          name: data.name || "Producto sin nombre",
-          sku: data.sku || "N/A",
-          slug: data.slug || data.metadata?.slug || doc.id,
-          brand: data.attributes?.brand || "Genérico",
-          category: data.attributes?.category || "Varios",
-          species: data.attributes?.species || "Mascotas",
-          life_stage: data.attributes?.life_stage || "Adulto",
-          flavor: data.attributes?.flavor,
-          weight_kg: data.attributes?.weight_kg || 0,
-          short_description: data.content?.short_description || "",
-          main_image: data.media?.main_image || "https://picsum.photos/seed/placeholder/600/600",
-          currentStock,
-          sellingPrice: calculateCommercialPrice(netCost),
-          wholesalePrice: calculateWholesalePrice(netCost)
-        } as SanitizedProduct;
-      })
-    );
+      return {
+        id: doc.id,
+        name: data.name || "Producto sin nombre",
+        sku: data.sku || "N/A",
+        slug: data.slug || data.metadata?.slug || doc.id,
+        brand: data.attributes?.brand || "Genérico",
+        category: data.attributes?.category || "Varios",
+        species: data.attributes?.species || "Mascotas",
+        life_stage: data.attributes?.life_stage || "Adulto",
+        flavor: data.attributes?.flavor,
+        weight_kg: data.attributes?.weight_kg || 0,
+        short_description: data.content?.short_description || "",
+        main_image: data.media?.main_image || "https://picsum.photos/seed/placeholder/600/600",
+        currentStock,
+        sellingPrice: calculateCommercialPrice(netCost),
+        wholesalePrice: calculateWholesalePrice(netCost)
+      } as SanitizedProduct;
+    });
 
     return sanitizedProducts;
   } catch (error: any) {
@@ -72,6 +73,16 @@ export async function getSanitizedProducts(): Promise<SanitizedProduct[]> {
     return [];
   }
 }
+
+/**
+ * VERSIÓN CACHEADA DEL CATÁLOGO.
+ * Revalida cada 1 hora. Esta es la base para el filtrado en el servidor.
+ */
+export const getSanitizedProducts = unstable_cache(
+  async () => getSanitizedProductsRaw(),
+  ['all-products-catalog'],
+  { revalidate: 3600, tags: ['catalog'] }
+);
 
 /**
  * Obtiene un único producto buscando por SLUG o ID.
@@ -135,20 +146,18 @@ export async function getSanitizedProductBySlug(slugOrId: string): Promise<Sanit
 
 /**
  * Lógica de negocio para encontrar productos similares basada en atributos técnicos estrictos.
- * Cumple con SRP al extraer esta lógica de los componentes de UI.
  */
 export async function getRelatedProducts(baseProduct: SanitizedProduct, limit: number = 15): Promise<SanitizedProduct[]> {
   const allProducts = await getSanitizedProducts();
   
   return allProducts
     .filter(p => p.id !== baseProduct.id && p.currentStock > 0)
-    .filter(p => p.species === baseProduct.species) // Regla de Oro: Misma especie
+    .filter(p => p.species === baseProduct.species) 
     .map(p => {
       let score = 0;
       const pLifeStage = p.life_stage.toLowerCase();
       const currentLifeStage = baseProduct.life_stage.toLowerCase();
 
-      // Regla de Exclusión: Cachorros vs Adultos/Senior
       const isCachorro = currentLifeStage.includes('cachorro');
       const isAdultoSenior = currentLifeStage.includes('adulto') || currentLifeStage.includes('senior');
 
@@ -157,7 +166,7 @@ export async function getRelatedProducts(baseProduct: SanitizedProduct, limit: n
       } else if (isAdultoSenior && pLifeStage.includes('cachorro')) {
         score -= 100;
       } else if (pLifeStage === currentLifeStage) {
-        score += 20; // Bonus por misma etapa
+        score += 20; 
       }
 
       if (p.category === baseProduct.category) score += 10;
