@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -22,80 +22,82 @@ interface FilterSidebarProps {
 }
 
 /**
- * @fileOverview Sidebar de filtros con lógica asistida.
- * Al seleccionar una opción, guía al usuario automáticamente a la siguiente categoría de filtro.
+ * @fileOverview Sidebar de filtros con lógica asistida y persistencia robusta.
+ * Utiliza la URL como fuente de verdad absoluta para evitar pérdida de datos durante la navegación.
  */
 export default function FilterSidebar({ categories, brands, petTypes }: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [selectedCats, setSelectedCats] = useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedPets, setSelectedPets] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 200000]);
+  // 1. Fuente de Verdad: Derivamos los filtros directamente de la URL
+  const selectedCats = useMemo(() => searchParams.get('categoria')?.split(',') || [], [searchParams]);
+  const selectedBrands = useMemo(() => searchParams.get('marca')?.split(',') || [], [searchParams]);
+  const selectedPets = useMemo(() => searchParams.get('especie')?.split(',') || [], [searchParams]);
   
-  // Estado para controlar qué acordeones están abiertos (Filtros Asistidos)
-  const [openSections, setOpenSections] = useState<string[]>(["especies"]);
+  // El rango de precio lo mantenemos en estado local para que el slider sea fluido, 
+  // pero se sincroniza con la URL al soltar el mouse (onValueCommit)
+  const [priceRange, setPriceRange] = useState([
+    parseInt(searchParams.get('minPrice') || '0'),
+    parseInt(searchParams.get('maxPrice') || '200000')
+  ]);
+  
+  // Estado para controlar qué acordeones están abiertos (Lógica Visual Asistida)
+  const [openSections, setOpenSections] = useState<string[]>(() => {
+    // Si no hay nada seleccionado, empezamos por especies
+    if (selectedPets.length === 0) return ["especies"];
+    // Si hay especies pero no categorías, sugerimos categorías
+    if (selectedCats.length === 0) return ["categoria"];
+    // Si hay categorías pero no marcas, sugerimos marcas
+    return ["marca"];
+  });
 
-  useEffect(() => {
-    const cats = searchParams.get('categoria')?.split(',') || [];
-    const marcas = searchParams.get('marca')?.split(',') || [];
-    const pets = searchParams.get('especie')?.split(',') || [];
-    const min = parseInt(searchParams.get('minPrice') || '0');
-    const max = parseInt(searchParams.get('maxPrice') || '200000');
-
-    setSelectedCats(cats);
-    setSelectedBrands(marcas);
-    setSelectedPets(pets);
-    setPriceRange([min, max]);
-
-    // Si ya hay filtros aplicados al cargar, intentamos abrir la sección más relevante
-    if (pets.length > 0 && cats.length === 0) setOpenSections(["categoria"]);
-    else if (cats.length > 0 && marcas.length === 0) setOpenSections(["marca"]);
-  }, [searchParams]);
-
-  const updateUrl = (key: string, values: string[] | number[]) => {
+  const handleToggle = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set('page', '1');
+    const currentValues = params.get(key)?.split(',') || [];
+    
+    const isAdding = !currentValues.includes(value);
+    let nextValues: string[];
 
-    if (key === 'price' && Array.isArray(values) && typeof values[0] === 'number') {
-      params.set('minPrice', values[0].toString());
-      params.set('maxPrice', values[1].toString());
-    } else if (values.length > 0) {
-      params.set(key, (values as string[]).join(','));
+    if (isAdding) {
+      nextValues = [...currentValues, value];
+      params.set(key, nextValues.join(','));
+      
+      // Lógica Asistida: Saltar a la siguiente sección al seleccionar
+      if (key === 'especie') setOpenSections(["categoria"]);
+      else if (key === 'categoria') setOpenSections(["marca"]);
     } else {
-      params.delete(key);
+      nextValues = currentValues.filter(v => v !== value);
+      if (nextValues.length > 0) {
+        params.set(key, nextValues.join(','));
+      } else {
+        params.delete(key);
+      }
     }
 
+    // Siempre reseteamos a la página 1 al filtrar
+    params.set('page', '1');
     router.push(`/catalogo?${params.toString()}`, { scroll: false });
   };
 
-  const handleToggle = (list: string[], setList: (l: string[]) => void, key: string, value: string) => {
-    const isAdding = !list.includes(value);
-    const newList = isAdding 
-      ? [...list, value]
-      : list.filter(item => item !== value);
-    
-    setList(newList);
-    updateUrl(key, newList);
-
-    // Lógica Asistida: Saltar a la siguiente sección al seleccionar (solo al añadir)
-    if (isAdding) {
-      if (key === 'especie') setOpenSections(["categoria"]);
-      else if (key === 'categoria') setOpenSections(["marca"]);
-    }
+  const updatePriceUrl = (values: number[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('minPrice', values[0].toString());
+    params.set('maxPrice', values[1].toString());
+    params.set('page', '1');
+    router.push(`/catalogo?${params.toString()}`, { scroll: false });
   };
 
   const clearAll = () => {
     router.push('/catalogo');
     setOpenSections(["especies"]);
+    setPriceRange([0, 200000]);
   };
 
-  const hasActiveFilters = selectedCats.length > 0 || selectedBrands.length > 0 || selectedPets.length > 0 || priceRange[0] > 0 || priceRange[1] < 200000;
+  const hasActiveFilters = selectedCats.length > 0 || selectedBrands.length > 0 || selectedPets.length > 0 || searchParams.has('minPrice') || searchParams.has('maxPrice');
 
   return (
     <div className="bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-black/[0.03] overflow-hidden sticky top-48 flex flex-col max-h-[calc(100vh-200px)]">
-      {/* 1. Header Fijo */}
+      {/* Header Fijo */}
       <div className="p-6 border-b border-black/[0.03] flex items-center justify-between bg-primary/5 shrink-0">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-primary" />
@@ -113,9 +115,9 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         )}
       </div>
 
-      {/* 2. Área Scrolleable */}
+      {/* Área Scrolleable */}
       <div className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-8">
-        {/* Rango de Precio - Siempre visible */}
+        {/* Rango de Precio */}
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rango de Precio</h4>
@@ -127,7 +129,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
             max={200000} 
             step={5000} 
             onValueChange={setPriceRange}
-            onValueCommit={(val) => updateUrl('price', val)}
+            onValueCommit={updatePriceUrl}
           />
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1 bg-muted/30 p-2.5 rounded-xl border border-black/[0.02]">
@@ -162,7 +164,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
                     <Checkbox 
                       id={`pet-${pet}`} 
                       checked={selectedPets.includes(pet)}
-                      onCheckedChange={() => handleToggle(selectedPets, setSelectedPets, 'especie', pet)}
+                      onCheckedChange={() => handleToggle('especie', pet)}
                       className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
                     />
                     <Label htmlFor={`pet-${pet}`} className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
@@ -188,7 +190,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
                     <Checkbox 
                       id={`cat-${cat}`} 
                       checked={selectedCats.includes(cat)}
-                      onCheckedChange={() => handleToggle(selectedCats, setSelectedCats, 'categoria', cat)}
+                      onCheckedChange={() => handleToggle('categoria', cat)}
                       className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
                     />
                     <Label htmlFor={`cat-${cat}`} className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
@@ -214,7 +216,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
                     <Checkbox 
                       id={`brand-${brand}`} 
                       checked={selectedBrands.includes(brand)}
-                      onCheckedChange={() => handleToggle(selectedBrands, setSelectedBrands, 'marca', brand)}
+                      onCheckedChange={() => handleToggle('marca', brand)}
                       className="rounded-md border-primary/20 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary" 
                     />
                     <Label htmlFor={`brand-${brand}`} className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors cursor-pointer tracking-tight">
@@ -228,7 +230,7 @@ export default function FilterSidebar({ categories, brands, petTypes }: FilterSi
         </Accordion>
       </div>
 
-      {/* 3. Footer Fijo */}
+      {/* Footer Fijo */}
       <div className="p-6 bg-muted/30 border-t border-black/[0.03] space-y-4 shrink-0">
         <div className="flex items-center gap-2 text-primary/40">
           <Sparkles className="w-3 h-3" />
