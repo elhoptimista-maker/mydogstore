@@ -114,11 +114,15 @@ export default function CheckoutPage() {
   const isFreeShipping = cartType === 'retail' && cartTotal >= 50000;
   const baseShippingCost = getRateForComuna(communeSearch);
   
-  const shippingCost = shipping.method === 'despacho' 
+  // Costo para visualización en el resumen (puede ser null si no hay comuna y no es gratis)
+  const shippingCostForSummary = isFreeShipping ? 0 : baseShippingCost;
+
+  // Valor numérico real para el cálculo del total y el envío al servidor
+  const actualShippingCost = shipping.method === 'despacho' 
     ? (isFreeShipping ? 0 : (baseShippingCost ?? 0)) 
     : 0;
 
-  const finalTotal = cartTotal + shippingCost;
+  const finalTotal = cartTotal + actualShippingCost;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,7 +152,7 @@ export default function CheckoutPage() {
         idToken: user ? await user.getIdToken() : undefined,
         customer,
         items: mappedItems,
-        shipping: { ...shipping, commune: communeSearch, cost: shippingCost },
+        shipping: { ...shipping, commune: communeSearch, cost: actualShippingCost },
         billing: finalBillingInfo,
         paymentMethod,
         total: finalTotal,
@@ -397,7 +401,7 @@ export default function CheckoutPage() {
                          checked={saveNewAddress || createAccount} 
                          onChange={(e) => setSaveNewAddress(e.target.checked)}
                          disabled={createAccount}
-                         className="w-5 h-5 rounded-md text-primary focus:ring-primary accent-primary"
+                         className="w-5 h-5 rounded-md text-primary focus:ring-primary"
                        />
                        <span className="text-sm font-bold group-hover:text-primary transition-colors">Guardar esta dirección como:</span>
                     </Label>
@@ -460,7 +464,7 @@ export default function CheckoutPage() {
           </div>
 
           <aside className="lg:col-span-4 mt-8 lg:mt-0 relative z-30">
-            <OrderSummary shippingCost={shippingCost} />
+            <OrderSummary shippingCost={shippingCostForSummary} />
           </aside>
         </form>
       </div>
