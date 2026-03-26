@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -6,12 +5,10 @@ import {
   ShoppingCart, 
   Menu, 
   Dog, 
-  Search, 
   Heart, 
   ChevronDown, 
   User, 
   Instagram,
-  X,
   MessageCircle,
   Building2
 } from 'lucide-react';
@@ -19,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import CartDrawer from '@/components/cart/CartDrawer';
+import SmartSearch from './SmartSearch';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,115 +31,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CATEGORIES } from '@/lib/mock-db';
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { fetchAllProducts } from '@/actions/products';
-import { SanitizedProduct } from '@/types/product';
-import { Badge } from '@/components/ui/badge';
-
-const SEARCH_PLACEHOLDERS = [
-  "Buscando 'el juguete indestructible' 🦴...",
-  "Buscando 'catnip para un viernes' 🌿...",
-  "Buscando 'comida para perros mañosos' 🐕...",
-  "Buscando 'el mejor rascador del mundo' 🌿...",
-  "Buscando 'arena que no huela a arena' ✨...",
-];
 
 export default function Header() {
   const { cartCount, cartType } = useCart();
   const { wishlist } = useWishlist();
-  const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [currentPlaceholder, setCurrentPlaceholder] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [typingSpeed, setTypingSpeed] = useState(100);
-  
-  const [allProducts, setAllProducts] = useState<SanitizedProduct[]>([]);
-  const [searchResults, setSearchResults] = useState<SanitizedProduct[]>([]);
-  const [showResults, setShowResults] = useState(false);
-  const [activeInputId, setActiveInputId] = useState<string | null>(null);
-  
-  const searchRefDesktop = useRef<HTMLDivElement>(null);
-  const searchRefMobile = useRef<HTMLDivElement>(null);
 
   const whatsappNumber = "56912345678";
   const whatsappUrl = `https://wa.me/${whatsappNumber}`;
-
-  // Cargar productos para la búsqueda instantánea
-  useEffect(() => {
-    fetchAllProducts().then(products => {
-      setAllProducts(products.filter(p => p.currentStock > 0));
-    });
-  }, []);
-
-  // Efecto de escritura para el buscador
-  useEffect(() => {
-    const handleTyping = () => {
-      const fullText = SEARCH_PLACEHOLDERS[placeholderIndex];
-      
-      if (!isDeleting) {
-        setCurrentPlaceholder(fullText.substring(0, currentPlaceholder.length + 1));
-        setTypingSpeed(100);
-        
-        if (currentPlaceholder === fullText) {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
-      } else {
-        setCurrentPlaceholder(fullText.substring(0, currentPlaceholder.length - 1));
-        setTypingSpeed(50);
-        
-        if (currentPlaceholder === "") {
-          setIsDeleting(false);
-          setPlaceholderIndex((prev) => (prev + 1) % SEARCH_PLACEHOLDERS.length);
-        }
-      }
-    };
-
-    const timer = setTimeout(handleTyping, typingSpeed);
-    return () => clearTimeout(timer);
-  }, [currentPlaceholder, isDeleting, placeholderIndex, typingSpeed]);
-
-  // Filtrado de resultados en tiempo real
-  useEffect(() => {
-    if (searchTerm.trim().length > 1) {
-      const query = searchTerm.toLowerCase();
-      const filtered = allProducts.filter(p => 
-        p.name.toLowerCase().includes(query) || 
-        p.brand.toLowerCase().includes(query) ||
-        p.sku.toLowerCase().includes(query)
-      ).slice(0, 6);
-      
-      setSearchResults(filtered);
-      setShowResults(filtered.length > 0);
-    } else {
-      setSearchResults([]);
-      setShowResults(false);
-    }
-  }, [searchTerm, allProducts]);
-
-  // Cerrar resultados al hacer click fuera
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        (searchRefDesktop.current && !searchRefDesktop.current.contains(event.target as Node)) &&
-        (searchRefMobile.current && !searchRefMobile.current.contains(event.target as Node))
-      ) {
-        setShowResults(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      router.push(`/catalogo?q=${encodeURIComponent(searchTerm.trim())}`);
-      setShowResults(false);
-    }
-  };
 
   const mainNav = [
     { label: 'Home', href: '/' },
@@ -150,56 +46,6 @@ export default function Header() {
     { label: 'Blog', href: '#' },
     { label: 'Mayoristas', href: '/b2b' },
   ];
-
-  const SearchResultsDropdown = () => (
-    <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
-      <div className="p-4 bg-primary/5 border-b border-black/[0.03] flex justify-between items-center">
-        <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">Sugerencias MyDog</span>
-        {cartType === 'wholesale' && (
-          <Badge className="bg-primary text-white text-[8px] border-none font-black uppercase">Modo B2B</Badge>
-        )}
-      </div>
-      <div className="max-h-[420px] overflow-y-auto">
-        {searchResults.map((product) => (
-          <Link 
-            key={product.id} 
-            href={`/catalogo/${product.slug || product.id}`}
-            onClick={() => setShowResults(false)}
-            className="flex items-center gap-4 p-5 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
-          >
-            <div className="relative w-14 h-14 rounded-2xl bg-muted/30 overflow-hidden shrink-0 border border-black/[0.05]">
-              <Image 
-                src={product.main_image} 
-                alt={product.name} 
-                fill 
-                className="object-contain p-2 transition-transform group-hover:scale-110"
-                sizes="56px"
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-col">
-                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">{product.brand}</span>
-                <h4 className="font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors leading-tight">{product.name}</h4>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="block text-sm font-black text-primary tracking-tighter">
-                ${(cartType === 'wholesale' ? product.wholesalePrice : product.sellingPrice).toLocaleString('es-CL')}
-              </span>
-              <span className="text-[8px] font-bold text-muted-foreground uppercase">Stock: {product.currentStock}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
-      <Link 
-        href={`/catalogo?q=${encodeURIComponent(searchTerm)}`}
-        onClick={() => setShowResults(false)}
-        className="flex items-center justify-center p-5 bg-primary text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
-      >
-        Ver todos los resultados para "{searchTerm}"
-      </Link>
-    </div>
-  );
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
@@ -227,7 +73,7 @@ export default function Header() {
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-6 md:gap-12">
           
-          {/* Logo Corporativo (Ahora visible y alineado a la izquierda en Mobile) */}
+          {/* Logo Corporativo (Visibilidad completa en todos los dispositivos) */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
             <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-110 transition-transform">
               <Dog className="w-6 h-6 md:w-8 md:h-8 text-white" />
@@ -238,30 +84,9 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Search (Desktop Only) */}
-          <div className="flex-1 hidden md:flex max-w-2xl relative" ref={searchRefDesktop}>
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
-              <input 
-                type="text" 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => {
-                  setActiveInputId('desktop');
-                  if (searchTerm.length > 1 && searchResults.length > 0) setShowResults(true);
-                }}
-                placeholder={currentPlaceholder}
-                className="flex-1 h-full px-8 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
-              />
-              {searchTerm && (
-                <button type="button" onClick={() => setSearchTerm("")} className="p-2 text-muted-foreground/40 hover:text-primary transition-colors">
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-              <button type="submit" className="h-10 w-10 bg-primary rounded-full mr-1 flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md">
-                <Search className="w-4 h-4" />
-              </button>
-            </form>
-            {showResults && activeInputId === 'desktop' && <SearchResultsDropdown />}
+          {/* Buscador Inteligente (Escritorio) */}
+          <div className="flex-1 hidden md:flex max-w-2xl">
+            <SmartSearch variant="desktop" />
           </div>
 
           {/* Acciones de Usuario y Carrito */}
@@ -330,7 +155,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Menu Bar - Navegación Pro y Mobile Search Unificado */}
+      {/* 3. Menu Bar - Navegación Pro y Buscador Móvil */}
       <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           
@@ -376,30 +201,9 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Mobile Search Unificado (Ahora con las mismas funciones que Desktop) */}
-          <div className="flex md:hidden flex-1 relative w-full h-10" ref={searchRefMobile}>
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-full overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
-              <input 
-                type="text" 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => {
-                  setActiveInputId('mobile');
-                  if (searchTerm.length > 1 && searchResults.length > 0) setShowResults(true);
-                }}
-                placeholder={currentPlaceholder}
-                className="flex-1 h-full px-5 text-xs font-bold text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
-              />
-              {searchTerm && (
-                <button type="button" onClick={() => setSearchTerm("")} className="p-1.5 text-muted-foreground/40 hover:text-primary transition-colors">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-              <button type="submit" className="h-8 w-8 bg-primary rounded-full mr-1 flex items-center justify-center text-white hover:bg-primary/90 transition-all shadow-md shrink-0">
-                <Search className="w-3.5 h-3.5" />
-              </button>
-            </form>
-            {showResults && activeInputId === 'mobile' && <SearchResultsDropdown />}
+          {/* Buscador Inteligente (Móvil) - Ahora con la misma lógica que desktop */}
+          <div className="flex md:hidden flex-1">
+            <SmartSearch variant="mobile" />
           </div>
 
         </div>
