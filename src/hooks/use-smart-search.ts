@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -60,14 +61,24 @@ export function useSmartSearch() {
 
   // Resultados filtrados (Memoizados para rendimiento)
   const searchResults = useMemo(() => {
-    if (searchTerm.trim().length < 2) return [];
-    const query = searchTerm.toLowerCase();
+    const query = searchTerm.trim().toLowerCase();
+    if (query.length < 2) return [];
+    
     return allProducts.filter(p => 
       p.name.toLowerCase().includes(query) || 
       p.brand.toLowerCase().includes(query) ||
       p.sku.toLowerCase().includes(query)
     ).slice(0, 6);
   }, [searchTerm, allProducts]);
+
+  // EFECTO CRÍTICO: Mostrar resultados automáticamente al escribir
+  useEffect(() => {
+    if (searchTerm.trim().length >= 2 && searchResults.length > 0) {
+      setShowResults(true);
+    } else if (searchTerm.trim().length < 2) {
+      setShowResults(false);
+    }
+  }, [searchTerm, searchResults.length]);
 
   const handleSearchSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Search, X } from 'lucide-react';
@@ -32,7 +33,7 @@ export default function SmartSearch({ variant }: SmartSearchProps) {
     clearSearch
   } = useSmartSearch();
 
-  // Click outside para cerrar
+  // Click outside para cerrar el panel de forma segura
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -75,7 +76,7 @@ export default function SmartSearch({ variant }: SmartSearchProps) {
         </button>
       </form>
 
-      {/* Panel de Resultados */}
+      {/* Panel de Resultados Flotante */}
       {showResults && searchResults.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
           <div className="p-4 bg-primary/5 border-b border-black/[0.03] flex justify-between items-center">
@@ -93,7 +94,13 @@ export default function SmartSearch({ variant }: SmartSearchProps) {
                 className="flex items-center gap-4 p-4 md:p-5 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
               >
                 <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-muted/30 overflow-hidden shrink-0 border border-black/[0.05]">
-                  <Image src={product.main_image} alt={product.name} fill className="object-contain p-2 transition-transform group-hover:scale-110" sizes="56px" />
+                  <Image 
+                    src={product.main_image} 
+                    alt={product.name} 
+                    fill 
+                    className="object-contain p-2 transition-transform group-hover:scale-110" 
+                    sizes="56px" 
+                  />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
                   <span className="text-[8px] md:text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5 block">{product.brand}</span>
@@ -108,7 +115,10 @@ export default function SmartSearch({ variant }: SmartSearchProps) {
               </Link>
             ))}
           </div>
-          <button onClick={handleSearchSubmit} className="w-full flex items-center justify-center p-4 md:p-5 bg-primary text-white font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors">
+          <button 
+            onClick={handleSearchSubmit} 
+            className="w-full flex items-center justify-center p-4 md:p-5 bg-primary text-white font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
+          >
             Ver todos los resultados
           </button>
         </div>
