@@ -21,10 +21,6 @@ import { auth } from '@/lib/firebase/client';
 import { getUserData } from '@/lib/services/user.service';
 import { User as FirebaseUser } from 'firebase/auth';
 
-/**
- * UTILIDAD UX: Formateador de RUT Chileno en tiempo real.
- * Asegura consistencia para facturación electrónica y validación del SII.
- */
 const formatRUT = (value: string) => {
   const clean = value.replace(/[^0-9kK]/g, '').toUpperCase();
   if (clean.length === 0) return '';
@@ -46,7 +42,6 @@ export default function CheckoutPage() {
   const [showCommuneResults, setShowCommuneResults] = useState(false);
   const communeSearchRef = useRef<HTMLDivElement>(null);
 
-  // Consumimos las tarifas reales del ERP (Inyectado con normalización NFD)
   const { getRateForComuna } = useShippingRates();
 
   const [customer, setCustomer] = useState({ name: '', email: '', phone: '' });
@@ -119,18 +114,21 @@ export default function CheckoutPage() {
 
   const isFreeShipping = cartType === 'retail' && cartTotal >= 50000;
   const baseShippingCost = getRateForComuna(communeSearch);
-  const actualShippingCost = shipping.method === 'despacho' ? (isFreeShipping ? 0 : (baseShippingCost ?? 0)) : 0;
-  const finalTotal = cartTotal + actualShippingCost;
+  
+  const actualShippingCost = shipping.method === 'despacho' 
+    ? (isFreeShipping ? 0 : baseShippingCost) 
+    : 0;
+
+  const finalTotal = cartTotal + (actualShippingCost || 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validación de negocio para campos críticos
     if (!customer.email || !customer.name || !shipping.streetAndNumber || !communeSearch) {
       toast({ 
         variant: "destructive", 
         title: "Revisa tus datos 🐾", 
-        description: "Por favor, completa los campos marcados con asterisco (*) para continuar." 
+        description: "Por favor, completa los campos obligatorios (*) para continuar." 
       });
       return;
     }
@@ -139,7 +137,7 @@ export default function CheckoutPage() {
       toast({ 
         variant: "destructive", 
         title: "Datos de Facturación incompletos", 
-        description: "Necesitamos el RUT, Razón Social y Giro para emitir tu factura electrónica." 
+        description: "Necesitamos tu RUT, Razón Social y Giro para emitir la factura." 
       });
       return;
     }
@@ -149,7 +147,6 @@ export default function CheckoutPage() {
     try {
       const finalBillingInfo = {
          ...billing,
-         // Limpiamos el RUT para el backend
          rut: billing.type === 'factura' ? billing.rut.replace(/[^0-9kK]/g, '') : '',
          address: sameAddress ? `${shipping.streetAndNumber} ${shipping.apartmentOrLocal}`.trim() : billing.address
       };
@@ -167,7 +164,7 @@ export default function CheckoutPage() {
         idToken: user ? await user.getIdToken() : undefined,
         customer,
         items: mappedItems,
-        shipping: { ...shipping, commune: communeSearch, cost: actualShippingCost },
+        shipping: { ...shipping, commune: communeSearch, cost: actualShippingCost || 0 },
         billing: finalBillingInfo,
         paymentMethod,
         total: finalTotal,
@@ -205,10 +202,8 @@ export default function CheckoutPage() {
         </Link>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* EL FIELDSET DISABLE BLOQUEA TODOS LOS INPUTS DURANTE EL LOADING */}
           <fieldset disabled={loading} className="lg:col-span-8 space-y-10 disabled:opacity-70 transition-opacity outline-none border-none p-0 m-0">
             
-            {/* --- SECCIÓN 1: CONTACTO --- */}
             <section className="space-y-6 bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-black/5 relative z-10 focus-within:border-primary/30 transition-colors">
               <div className="flex items-center justify-between mb-8">
                  <div className="flex items-center gap-4">
@@ -281,7 +276,6 @@ export default function CheckoutPage() {
               )}
             </section>
 
-            {/* --- SECCIÓN 2: DESPACHO --- */}
             <section className="space-y-6 bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-black/5 relative z-20 focus-within:border-primary/30 transition-colors">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-md shrink-0">2</div>
@@ -450,7 +444,6 @@ export default function CheckoutPage() {
               </div>
             </section>
 
-            {/* --- SECCIÓN 3: FACTURACIÓN --- */}
             <section className="space-y-6 bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-black/5 relative z-10 focus-within:border-primary/30 transition-colors">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-md shrink-0">3</div>
@@ -531,10 +524,8 @@ export default function CheckoutPage() {
               </div>
             </section>
 
-            {/* --- SECCIÓN 4: PAGO --- */}
             <PaymentSelector selectedMethod={paymentMethod} onSelect={setPaymentMethod} cartType={cartType} />
 
-            {/* BOTÓN FINAL */}
             <div className="pt-6 pb-12">
               <Button 
                 type="submit" 
