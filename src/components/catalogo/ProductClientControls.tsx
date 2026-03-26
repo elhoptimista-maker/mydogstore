@@ -7,9 +7,10 @@ import { useCart } from '@/context/CartContext';
 import { SanitizedProduct } from '@/types/product';
 import { toast } from '@/hooks/use-toast';
 
-/**
- * @fileOverview Controles de compra optimizados para CRO con micro-copy de confianza.
- */
+interface ProductClientControlsProps {
+  product: SanitizedProduct;
+}
+
 export default function ProductClientControls({ product }: ProductClientControlsProps) {
   const { addToCart, cartType } = useCart();
   const [isAdding, setIsAdding] = useState(false);
@@ -25,11 +26,10 @@ export default function ProductClientControls({ product }: ProductClientControls
 
     setTimeout(() => {
       addToCart(product, false, quantity);
-      const cartTypeName = cartType === 'wholesale' ? 'mayorista' : '';
       
       toast({ 
         title: "¡Listo! 🐾", 
-        description: `${quantity}x ${product.name} ya está en tu carrito.`.trim() 
+        description: `${quantity}x ${product.name} ya está en tu carrito.`
       });
       
       setIsAdding(false);
@@ -39,7 +39,6 @@ export default function ProductClientControls({ product }: ProductClientControls
 
   return (
     <div className="space-y-6 pt-4">
-      {/* Controles de Cantidad */}
       <div className="flex items-center justify-between bg-muted/30 p-3 rounded-2xl border border-black/[0.03]">
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-4">Seleccionar Cantidad</span>
         <div className="flex items-center gap-2 bg-white rounded-xl p-1 shadow-sm">
@@ -67,7 +66,6 @@ export default function ProductClientControls({ product }: ProductClientControls
         </div>
       </div>
 
-      {/* Botón de Añadir y Micro-copy de Confianza */}
       <div className="space-y-4">
         <Button 
           onClick={handleAddToCart}

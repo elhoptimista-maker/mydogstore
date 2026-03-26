@@ -1,21 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PaymentFactory } from '@/lib/services/payments/payment.factory';
 
-export async function POST(request: NextRequest, { params }: { params: { provider: string } }) {
-  const providerName = params.provider; 
+export async function POST(request: NextRequest, { params }: { params: Promise<{ provider: string }> }) {
+  const { provider: providerName } = await params; 
 
   try {
-    // 1. Instanciar el proveedor correcto (Ej: 'khipu', 'webpay')
     const paymentProvider = PaymentFactory.getProvider(providerName);
 
-    // 2. Procesar validación criptográfica y estado
     const { isValid, orderId, isPaid, paymentMethod } = await paymentProvider.processWebhook(request);
 
     if (!isValid || !orderId) {
       return NextResponse.json({ error: 'Firma inválida o datos faltantes' }, { status: 400 });
     }
 
-    // 3. Avisar al ERP si el pago fue exitoso
     if (isPaid) {
       const erpApiUrl = process.env.ERP_API_URL || "http://localhost:3000";
       const erpSecret = process.env.ECOMMERCE_API_SECRET;
@@ -29,7 +26,7 @@ export async function POST(request: NextRequest, { params }: { params: { provide
         body: JSON.stringify({
           orderId: orderId,
           paymentMethod: paymentMethod || 'TRANSFER',
-          documentType: 'BOLETA' // TODO: El ERP puede leer la intención desde el DRAFT o podemos enviar esto dinámicamente.
+          documentType: 'BOLETA'
         })
       });
 
