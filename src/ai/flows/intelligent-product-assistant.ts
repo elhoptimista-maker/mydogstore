@@ -1,8 +1,8 @@
 'use server';
 /**
  * @fileOverview Un asistente de ventas consultivas experto en bienestar animal.
- * Los guías MyDog proporcionan consejos técnicos con un tono cálido y cercano.
- * Utiliza un algoritmo de ranking previo optimizado para marcas y stock.
+ * Los asesores MyDog proporcionan soluciones técnicas con un tono empático pero profesional.
+ * Enfocado 100% en resolver problemas nutricionales y de bienestar para maximizar la conversión.
  */
 
 import {ai} from '@/ai/genkit';
@@ -24,13 +24,13 @@ const ProductChatInputSchema = z.object({
 export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
 
 const ProductChatOutputSchema = z.object({
-  response: z.string().describe('La respuesta del asistente. Sé cálido y empático. NO menciones nombres de productos ni IDs aquí.'),
+  response: z.string().describe('La respuesta del asistente. Sé empático, experto y transaccional. NO menciones nombres de productos ni IDs aquí.'),
   suggestedProducts: z.array(z.object({
     id: z.string(),
     name: z.string(),
     image: z.string().describe('URL de la imagen del producto.'),
-    reason: z.string().describe('Razón técnica amigable de la recomendación.'),
-  })).optional().describe('Selecciona estrictamente los 5 productos más relevantes del catálogo que mejor se ajusten a la necesidad del usuario.'),
+    reason: z.string().describe('Razón técnica profesional de la recomendación (ej: ideal para digestión sensible).'),
+  })).optional().describe('Selecciona estrictamente los 5 productos más relevantes del catálogo que resuelvan el problema del usuario.'),
 });
 
 export type ProductChatOutput = z.infer<typeof ProductChatOutputSchema>;
@@ -41,25 +41,23 @@ const productChatPrompt = ai.definePrompt({
     catalog: z.array(z.any()).describe('Productos disponibles para esta especie.'),
   })},
   output: {schema: ProductChatOutputSchema},
-  prompt: `Eres un guía experto de MyDog, apasionado y gran conocedor de los {{{species}}}.
+  prompt: `Eres un Asesor Experto de Distribuidora MyDog, con 15 años de experiencia en bienestar para {{{species}}}.
+
+  TU MISIÓN:
+  Realizar una venta consultiva empática. El usuario busca soluciones, no solo productos. Ayúdale a elegir basándote en tu autoridad técnica.
 
   TU PERSONALIDAD:
-  1. EMPATÍA: Hablas con cariño. Entiendes lo que siente el animal y lo que su dueño busca.
-  2. CÁLIDO Y HUMILDE: Eres un amigo experto.
-  3. CONOCIMIENTO TÉCNICO: Sabes mucho de nutrición, pero lo explicas de forma sencilla.
-  4. CONCISO: No te extiendas.
+  1. AUTORIDAD EMPÁTICA: Hablas con la seguridad de quien conoce los ingredientes y el comportamiento animal.
+  2. RESOLUTIVO: Identificas el problema (mañas, alergias, peso) y ofreces la solución del catálogo.
+  3. CERCANO PERO PROFESIONAL: Eres el vecino experto en el que todos confían.
+  4. DIRECTO Y TRANSACCIONAL: No divagues. Guía al usuario a la mejor opción.
 
   REGLAS DE BÚSQUEDA Y CURADURÍA (CRÍTICO):
-  - NO REPITAS productos que ya hayas recomendado en el historial. El usuario quiere VARIEDAD.
-  - Si el usuario menciona una MARCA (ej: Master Dog, Pedigree, Champion), busca prioritariamente esa marca en el catálogo.
-  - El usuario puede mencionar ATRIBUTOS (ej: Senior, Cachorro, Light).
-  - DEBES buscar exhaustivamente en el CATÁLOGO proporcionado. 
-  - Si el usuario pide algo "más económico", busca los 5 con el precio (sellingPrice) más bajo que cumplan la necesidad.
-  - Usa SOLO productos del catálogo proporcionado. Todos los productos en el catálogo TIENEN STOCK.
-  - CRÍTICO: Selecciona únicamente los 5 productos que mejor resuelvan la necesidad planteada.
-  - PROHIBIDO: No escribas los nombres de los productos ni sus IDs dentro del texto principal de "response". No pongas listas numeradas con nombres. 
-  - Usa el campo "reason" para justificar brevemente por qué ese producto es ideal.
-  - CIERRE: Termina con una pregunta abierta amigable.
+  - NO REPITAS productos recomendados anteriormente. Queremos variedad útil.
+  - Prioriza MARCAS mencionadas, pero si hay una mejor opción técnica, recomiéndala con fundamentos.
+  - Selecciona estrictamente 5 productos con stock real del catálogo.
+  - PROHIBIDO: No escribas nombres de productos ni IDs en el campo "response". La lista se genera automáticamente.
+  - CIERRE: Termina con una pregunta que invite a profundizar en la necesidad (ej: "¿Cómo es su nivel de actividad diaria?").
 
   CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
@@ -74,7 +72,7 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde de forma fluida y amigable.`,
+  Responde como el asesor de confianza que somos hace 15 años en Santiago.`,
 });
 
 const productChatFlow = ai.defineFlow(
@@ -107,7 +105,7 @@ const productChatFlow = ai.defineFlow(
              input.species.toLowerCase().includes(p.species.toLowerCase());
     });
 
-    // 4. Algoritmo de Ranking Mejorado para marcas compuestas (ej: Master Dog)
+    // 4. Algoritmo de Ranking para necesidades específicas
     const userMessageLower = input.message.toLowerCase();
     const isAskingForVariety = userMessageLower.includes('otras marcas') || userMessageLower.includes('otros productos');
     const searchTerms = userMessageLower.split(' ').filter(t => t.length > 2);
@@ -117,24 +115,20 @@ const productChatFlow = ai.defineFlow(
       const brandLower = p.brand.toLowerCase();
       const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description} ${p.life_stage}`.toLowerCase();
       
-      // REFUERZO DE MARCA CRÍTICO: Si el mensaje contiene la marca completa (ej: "master dog")
       if (userMessageLower.includes(brandLower) && brandLower.length > 3) {
-        score += 300; // Aumentado para asegurar que aparezcan
+        score += 300;
       }
 
-      // Coincidencia de términos de búsqueda
       searchTerms.forEach(term => {
         if (productText.includes(term)) score += 10;
-        if (brandLower.includes(term)) score += 50; // Más peso a marca por término
+        if (brandLower.includes(term)) score += 50; 
         if (p.life_stage.toLowerCase().includes(term)) score += 20;
       });
 
-      // Lógica de Variedad: Penalización severa por repetición
       if (previouslyRecommendedIds.has(p.id)) {
         score -= 1000; 
       }
 
-      // Lógica de Diversidad de Marca: Si pide "otras marcas", penalizamos las ya vistas
       if (isAskingForVariety && previouslyRecommendedBrands.has(brandLower)) {
         score -= 200; 
       }
@@ -142,7 +136,7 @@ const productChatFlow = ai.defineFlow(
       return { ...p, score };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 60); // Enviamos un catálogo más amplio al LLM para mejor curaduría
+    .slice(0, 60);
 
     const {output} = await productChatPrompt({
       ...input,
@@ -150,7 +144,7 @@ const productChatFlow = ai.defineFlow(
     });
 
     if (!output) {
-      throw new Error('Error al generar respuesta del chat.');
+      throw new Error('Error al generar respuesta del asesor.');
     }
 
     return output;

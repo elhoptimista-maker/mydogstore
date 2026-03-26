@@ -1,26 +1,22 @@
-
 # 🦴 Radiografía del Storytelling: MyDog 2.0
 
-Esta es la esencia verbal y emocional de nuestra marca. Cada comunicación debe pasar por este filtro para asegurar que no somos una "tienda técnica", sino un "hogar para mascotas".
+Esta es la esencia verbal, emocional y comercial de nuestra marca. Cada comunicación debe pasar por este filtro para asegurar que somos un "hogar experto para mascotas" que genera confianza, cercanía y, sobre todo, conversión.
 
 ## 1. El ADN de MyDog
-- **Propósito:** Cuidar a los que más amamos con la responsabilidad de un experto y el cariño de un vecino.
-- **Origen:** Negocio familiar nacido en un pequeño pet shop, evolucionado a una distribuidora con corazón.
-- **Territorio:** Santiago, Región Metropolitana (Chile). Somos locales, somos de aquí.
+- **Propósito:** Cuidar a los que más amamos con la autoridad de 15 años de experiencia y el cariño de un vecino. Resolvemos problemas reales de nutrición animal.
+- **Origen:** Negocio familiar nacido en un pequeño pet shop, evolucionado a una distribuidora sólida y confiable.
+- **Territorio:** Santiago, Región Metropolitana (Chile). Nuestra logística local es nuestra mayor ventaja competitiva.
 
-## 2. El Tono de Voz
+## 2. El Tono de Voz (Empatía que Convierte)
 | Atributo | Qué significa para nosotros | Lo que NO somos |
 | :--- | :--- | :--- |
-| **Amable** | Saludamos con una sonrisa, usamos emojis de huellitas y lenguaje cercano. | Fríos, distantes o puramente comerciales. |
-| **Empático** | Entendemos que tu mascota es parte de tu familia porque las nuestras también lo son. | Corporativos o indiferentes. |
-| **Responsable** | Nos tomamos en serio la nutrición y el despacho. Cumplimos porque sabemos que ellos esperan. | Informales o descuidados. |
-| **Familiar** | Tratamos a los clientes como amigos de toda la vida. | Una multinacional sin rostro. |
+| **Cercano pero Experto** | Asesoramos desde la experiencia. Sabemos qué alimento necesita un perro alérgico o un gato mañoso. | Una enciclopedia veterinaria aburrida o una caricatura infantil. |
+| **Claro y Transaccional** | Hacemos que comprar sea fácil. Los botones dicen exactamente qué va a pasar ("Comprar su alimento", "Ir a pagar"). | Confusos con llamados a la acción (CTAs) "demasiado tiernos" que no venden. |
+| **Responsable y Logístico** | Nos tomamos en serio el despacho. Prometemos fechas reales para la RM y cumplimos. | Informales, vagos con los tiempos de entrega. |
+| **Comunitario (La Manada)** | Tratamos a los clientes como socios de largo plazo. Premiamos su lealtad. | Una plataforma que solo busca una transacción única. |
 
-## 3. Conceptos Clave (Keywords)
-- **La Manada:** Nuestra comunidad de clientes y sus mascotas.
-- **Regalonear:** La acción principal. No solo vendemos comida, ayudamos a regalonear.
-- **Mucho más que comida, ¡puro amor!:** Nuestro eslogan principal.
-- **Distribuidora MyDog 2.0:** Nuestra identidad digital moderna pero con raíces.
-
-## 4. El Cliente en el Storytelling
-No es un "minorista" ni un "consumidor". Es una **persona que ama a su mascota**, un **compañero de vida animal** que busca lo mejor para su hogar.
+## 3. Conceptos Clave (Keywords Comerciales)
+- **La Manada:** Nuestra comunidad. (Usado para fidelización y newsletter).
+- **Regalonear:** El beneficio emocional de la compra.
+- **Confianza de 15 años:** Nuestro respaldo de autoridad.
+- **Despacho seguro en la RM:** Nuestro gancho logístico (Trust element).

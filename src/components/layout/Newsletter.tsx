@@ -22,10 +22,10 @@ export default function Newsletter() {
               <Sparkles className="w-3 h-3" /> Hagamos Manada
             </div>
             <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground leading-none">
-              Únete a la <span className="text-primary">Familia MyDog</span>
+              Únete y recibe <span className="text-primary">Beneficios</span>
             </h2>
             <p className="text-muted-foreground text-base md:text-lg font-medium max-w-xl mx-auto leading-relaxed">
-              Recibe consejos con todo nuestro cariño, ofertas exclusivas y entérate antes que nadie cuando lleguen cositas nuevas.
+              Déjanos tu correo y recibe un regalo sorpresa en tu primera compra, además de consejos de nutrición de nuestros expertos.
             </p>
           </div>
 
@@ -47,12 +47,12 @@ export default function Newsletter() {
                 type="submit"
                 className="rounded-full bg-primary text-white font-black px-8 h-14 text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
               >
-                Ser parte
+                Quiero mis beneficios
               </Button>
             </div>
             
             <p className="mt-4 text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
-              🔒 Prometemos no molestarte, solo enviarte puro amor animal.
+              🔒 Prometemos cuidar tus datos tanto como a tu mascota.
             </p>
           </form>
         </div>

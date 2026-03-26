@@ -38,7 +38,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               </div>
               <div className="flex flex-col items-start text-left">
                 <SheetTitle className="text-white text-lg font-black tracking-tight leading-none flex items-center gap-2">
-                  Mi Carrito
+                  Mi Pedido
                   {cartType === 'wholesale' && (
                     <Badge className="bg-secondary text-primary border-none text-[8px] uppercase font-black px-1.5 py-0">B2B</Badge>
                   )}
@@ -57,13 +57,18 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
             <div className="flex justify-between items-center mb-2">
               <span className="text-[9px] font-black uppercase tracking-widest text-primary leading-tight">
                 {progress < 100 
-                  ? `Faltan $${remaining.toLocaleString('es-CL')} para envío gratis`
-                  : "¡ENVÍO GRATIS! 🚚"
+                  ? `Estás a solo $${remaining.toLocaleString('es-CL')} del envío gratis`
+                  : "¡ENVÍO GRATIS GANADO! 🚚"
                 }
               </span>
               <span className="text-[9px] font-bold text-muted-foreground">{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="h-2 bg-white/50 border border-white" />
+            {progress < 100 && (
+              <p className="text-[8px] font-bold text-primary/60 mt-2 uppercase tracking-wide">
+                Agrega unos snacks y te lo llevamos sin costo en la RM.
+              </p>
+            )}
           </div>
         )}
 
@@ -77,9 +82,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     <Package className="w-6 h-6 text-muted-foreground/40" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="font-bold text-sm text-foreground">Carrito vacío</h3>
+                    <h3 className="font-bold text-sm text-foreground">Tu pedido está vacío</h3>
                     <p className="text-[10px] text-muted-foreground max-w-[150px] mx-auto leading-relaxed">
-                      Explora nuestro catálogo y añade productos aquí.
+                      Explora nuestro catálogo y regalonea a tu mascota.
                     </p>
                   </div>
                 </div>
@@ -154,7 +159,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           <div className="px-6 py-6 bg-white shrink-0 shadow-[0_-15px_40px_rgba(0,0,0,0.08)] relative z-10">
             <div className="space-y-3 mb-4">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground font-medium">Subtotal ({cartCount} items)</span>
+                <span className="text-muted-foreground font-medium">Subtotal ({cartCount} ítems)</span>
                 <span className="font-bold text-foreground">
                   ${cartTotal.toLocaleString('es-CL')}
                 </span>
@@ -163,7 +168,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               {cartType === 'retail' && (
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground font-medium text-xs">Despacho estimado</span>
+                    <span className="text-muted-foreground font-medium text-xs">Despacho en RM</span>
                     <Badge variant="outline" className="text-[8px] font-black bg-primary/5 text-primary border-primary/10 uppercase tracking-tighter px-1.5 h-4">
                       <Truck className="w-2.5 h-2.5 mr-1" /> {progress >= 100 ? "Gratis" : "Por calcular"}
                     </Badge>
@@ -198,7 +203,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 onClick={() => router.push('/checkout')}
                 className="w-full h-14 rounded-2xl bg-primary text-white font-black text-base shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
-                Ir a Pagar <ArrowRight className="w-5 h-5" />
+                Ir a Pagar Seguro <ArrowRight className="w-5 h-5" />
               </Button>
             </SheetTrigger>
           </div>

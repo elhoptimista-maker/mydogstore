@@ -1,31 +1,21 @@
+# 🎨 Radiografía de UI: Componentes y Secciones Orientados a la Conversión
 
-# 🎨 Radiografía de UI: Componentes y Secciones
-
-Desglose de la interfaz de usuario bajo principios de SRP (Responsabilidad Única) y Diseño Orgánico.
+Desglose de la interfaz de usuario bajo principios de SRP (Responsabilidad Única), Diseño Orgánico y Optimización de Tasa de Conversión (CRO).
 
 ## 1. La Navegación (Header de 3 Capas)
-- **Capa 1: TopBar (Utilidad):** Mensajes de despacho y confianza.
-- **Capa 2: MainHeader (Identidad):** Logo alineado a la izquierda, SmartSearch centralizado y acciones de conversión (Favoritos/Carrito).
-- **Capa 3: MenuBar (Exploración):** Acceso a categorías y distinción entre Mundo Retail y Portal B2B.
+- **Capa 1: TopBar (Incentivo):** Mensaje transaccional directo ("Despacho gratis sobre $50.000 en la RM 🚚").
+- **Capa 2: MainHeader (Conversión):** Logo, SmartSearch centralizado y acceso ultra-rápido al Carrito con indicador visual de ítems.
+- **Capa 3: MenuBar (Exploración):** Acceso a categorías claras y botón destacado para "Ofertas de Bodega".
 
-## 2. La Home (Embudo de Conversión)
-1. **Hero Section:** Impacto visual y declaración de amor familiar.
-2. **Pet Navigation:** Navegación por especie mediante "Amigos que te escuchan" (Guías conversacionales).
-3. **Promotional Banners:** Super-Cards bicolores para destacar colecciones.
-4. **Featured Products:** Grilla densa de productos con stock asegurado.
-5. **Flash Deal:** Bloque de urgencia con contador dinámico.
-6. **Social Proof:** Carrusel de testimonios de "La Manada".
-7. **Blog & News:** Educación y consejos de nutrición.
-8. **Trust Bar:** Beneficios logísticos (Envío gratis, Entrega Flash).
-9. **Instagram Gallery:** Integración social y vida diaria en la bodega.
+## 2. La Home (Embudo de Ventas)
+1. **Hero Section:** Promesa de valor clara (15 años de experiencia) + CTA transaccional ("Explorar la tienda").
+2. **Pet Navigation:** Navegación por especie guiada por IA consultiva (resolución de problemas).
+3. **Featured Products:** Grilla de alta rotación. Botones de "Agregar al Carrito" con micro-copy de confianza ("🔒 Compra segura").
+4. **Flash Deal:** Bloque de urgencia ética. Ofertas reales de bodega por tiempo limitado. CTA: "Ver ofertas de hoy".
+5. **Social Proof:** Testimonios reales que validan nuestra trayectoria y cumplimiento logístico.
+6. **Trust Bar:** Íconos de garantía (Pago seguro, Despacho RM, Soporte experto).
 
-## 3. Áreas Funcionales
-- **SmartSearch:** Motor de búsqueda predictivo con panel de resultados flotante.
-- **CartDrawer:** Gestión lateral del pedido sin abandonar la navegación.
-- **ProductCard:** Tarjeta atómica con badges de stock, precio dinámico y acciones en hover.
-- **ProductAssistant:** Asistente de IA (Genkit) con personalidad cálida integrado en la interfaz.
-
-## 4. Identidad Visual
-- **Colores:** Primario (#008080 - Verde Esmeralda), Secundario (#FFD600 - Mango).
-- **Geometría:** `rounded-[2.5rem]` para una sensación orgánica y segura.
-- **Sombras:** `shadow-xl` con baja opacidad para profundidad sutil.
+## 3. Áreas Funcionales Clave
+- **SmartSearch:** Motor de búsqueda predictivo. Autocompleta marcas y necesidades (ej: "comida hipoalergénica").
+- **CartDrawer (Motor de Upselling):** Gestión lateral del pedido. Incluye barra de progreso de gamificación ("¡Estás a $X del envío gratis!").
+- **ProductCard:** Tarjeta optimizada. Badges de urgencia de stock, precio B2B/B2C dinámico y CTA descriptivo.

@@ -18,22 +18,22 @@ export default function Hero() {
           <div className="flex flex-col space-y-8 text-center lg:text-left items-center lg:items-start max-w-2xl mx-auto lg:mx-0 order-2 lg:order-1">
             <div className="space-y-6">
               <Badge className="bg-primary/10 text-primary border-none rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] animate-in fade-in slide-in-from-bottom-4 duration-500">
-                🐾 Un negocio familiar que ama a los animales
+                🐾 15 años de experiencia cuidando a tu mascota
               </Badge>
               
               <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-black text-foreground leading-[0.92] tracking-tighter animate-in fade-in slide-in-from-left-6 duration-700">
-                Lo mejor para tu <br className="hidden sm:block" /> mejor <span className="text-primary">Amigo</span>
+                Todo lo que tu regalón <br className="hidden sm:block" /> necesita, <span className="text-primary">a tu puerta</span>
               </h1>
               
               <p className="text-muted-foreground text-lg md:text-xl font-medium max-w-lg leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000">
-                Llevamos más de 15 años cuidando a las mascotas de Santiago. En nuestra bodega te atendemos con cariño, y aquí en nuestra tienda virtual, te lo llevamos a casa con la misma responsabilidad de siempre.
+                Llevamos más de una década siendo el hogar de las mascotas de Santiago. En nuestra bodega te atendemos con cariño, y aquí en nuestra tienda virtual, te lo llevamos a casa con responsabilidad y rapidez.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto pt-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
               <Link href="/catalogo" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3">
-                  Ver cositas ricas <ArrowRight className="w-5 h-5" />
+                  Explorar la tienda <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               
@@ -53,7 +53,7 @@ export default function Hero() {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">Historias felices</span>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Cientos de familias confían en nosotros</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Más de 10.000 familias confían en nuestra bodega</span>
                 </div>
               </div>
             </div>

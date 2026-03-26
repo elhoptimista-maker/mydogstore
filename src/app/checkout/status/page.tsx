@@ -110,11 +110,11 @@ function StatusContent() {
       
       <div className="space-y-3">
          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
-            ¡Recibimos tu pedido!
+            ¡Choca esos cinco! 🐾
          </div>
-         <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-none">Compra Exitosa</h2>
+         <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-none">¡Recibimos tu pedido!</h2>
          <p className="text-muted-foreground font-medium max-w-md mx-auto text-sm md:text-base leading-relaxed">
-            Tu pago está siendo procesado por Khipu. Te hemos enviado un correo con el comprobante y el detalle del despacho.
+            Ya estamos en la bodega preparando el paquete para tu mascota. Revisa tu correo, ahí te dejamos el comprobante y los detalles del despacho en la Región Metropolitana.
          </p>
       </div>
 

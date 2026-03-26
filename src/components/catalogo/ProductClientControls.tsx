@@ -1,12 +1,12 @@
 /**
  * @fileOverview Componente cliente para los controles de compra del detalle del producto.
- * Maneja la lógica de añadir al carrito con selección de cantidad.
+ * Maneja la lógica de añadir al carrito con selección de cantidad y micro-copy de confianza (CRO).
  */
 "use client";
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Loader2, Minus, Plus } from 'lucide-react';
+import { ShoppingCart, Loader2, Minus, Plus, ShieldCheck, Truck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { SanitizedProduct } from '@/types/product';
 import { toast } from '@/hooks/use-toast';
@@ -29,7 +29,6 @@ export default function ProductClientControls({ product }: ProductClientControls
     setIsAdding(true);
 
     setTimeout(() => {
-      // Siempre añadimos como compra normal (isSubscription = false)
       addToCart(product, false, quantity);
       const cartTypeName = cartType === 'wholesale' ? 'mayorista' : '';
       
@@ -39,7 +38,7 @@ export default function ProductClientControls({ product }: ProductClientControls
       });
       
       setIsAdding(false);
-      setQuantity(1); // Resetear cantidad después de añadir
+      setQuantity(1); 
     }, 400);
   };
 
@@ -73,23 +72,37 @@ export default function ProductClientControls({ product }: ProductClientControls
         </div>
       </div>
 
-      {/* Botón de Añadir */}
-      <Button 
-        onClick={handleAddToCart}
-        disabled={product.currentStock <= 0 || isAdding}
-        className="w-full h-16 rounded-3xl bg-primary text-white font-black text-lg gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-      >
-        {isAdding ? (
-          <Loader2 className="w-6 h-6 animate-spin" />
-        ) : (
-          <ShoppingCart className="w-6 h-6" />
-        )}
-        {product.currentStock > 0 ? (
-          quantity > 1 ? `Añadir ${quantity} al Carrito` : 'Añadir al Carrito'
-        ) : (
-          'Agotado'
-        )}
-      </Button>
+      {/* Botón de Añadir y Micro-copy de Confianza */}
+      <div className="space-y-4">
+        <Button 
+          onClick={handleAddToCart}
+          disabled={product.currentStock <= 0 || isAdding}
+          className="w-full h-16 rounded-3xl bg-primary text-white font-black text-lg gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+        >
+          {isAdding ? (
+            <Loader2 className="w-6 h-6 animate-spin" />
+          ) : (
+            <ShoppingCart className="w-6 h-6" />
+          )}
+          {product.currentStock > 0 ? (
+            quantity > 1 ? `Añadir ${quantity} al Carrito` : 'Añadir al Carrito'
+          ) : (
+            'Agotado temporalmente'
+          )}
+        </Button>
+
+        <div className="flex items-center justify-center gap-6 text-[9px] font-black text-muted-foreground uppercase tracking-widest">
+           <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
+              <span>Compra Segura</span>
+           </div>
+           <div className="w-px h-3 bg-black/10" />
+           <div className="flex items-center gap-1.5">
+              <Truck className="w-3.5 h-3.5 text-primary" />
+              <span>Despacho rápido RM</span>
+           </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
@@ -11,9 +10,10 @@ import { ChatProvider } from '@/context/ChatContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import ProductAssistantWrapper from '@/components/ProductAssistantWrapper';
 
+// Metadata optimizada para SEO local y CTR (Click-Through Rate)
 export const metadata: Metadata = {
-  title: 'MyDog Distribuidora | Mucho más que comida, ¡puro amor! 🐾',
-  description: 'Un negocio familiar con 15 años de experiencia cuidando a los peluditos de Santiago. Despacho responsable en toda la Región Metropolitana.',
+  title: 'MyDog Distribuidora | Expertos en nutrición para tu mascota 🐾',
+  description: '15 años de experiencia cuidando a las mascotas de Santiago. Compra el mejor alimento y accesorios con despacho rápido y seguro en toda la Región Metropolitana.',
 };
 
 export const viewport: Viewport = {

@@ -19,55 +19,54 @@ const EXPERTS = [
     emoji: '🐶', 
     color: 'bg-primary', 
     description: 'Dogtor Firulais',
-    greeting: "¡Guau! 🐾 Soy el Dogtor Firulais, experto en bienestar perruno. ¿Tu mejor amigo es cachorro, adulto o ya está en su etapa dorada?",
-    initialActions: ["Cachorro", "Adulto", "Senior"],
-    categories: ["Alimento Húmedo", "Snacks", "Accesorios", "Salud Dental"]
+    greeting: "¡Guau! Soy el Dogtor Firulais. ¿Tu perrito tiene el estómago sensible o es un poco mañoso con la comida? Cuéntame qué le pasa y te buscaré el alimento perfecto para él entre nuestras más de 70 marcas.",
+    initialActions: ["Estómago Sensible", "Sobrepeso", "Cachorro"],
+    categories: ["Alimento Hipoalergénico", "Snacks Saludables", "Control de Peso", "Salud Dental"]
   },
   { 
     name: 'Gato', 
     emoji: '🐱', 
     color: 'bg-orange-500', 
     description: 'Michi Sommelier',
-    greeting: "¡Miau! 🐱 Soy el Michi Sommelier, catador de las texturas más finas. ¿Buscamos algo para un gatito, un rey de la casa adulto o un felino esterilizado?",
-    initialActions: ["Gatito", "Adulto", "Esterilizado"],
-    categories: ["Alimento Húmedo", "Arena Sanitaria", "Snacks", "Juguetes"]
+    greeting: "¡Miau! Soy el Michi Sommelier. Si tu gato sufre de bolas de pelo o necesita cuidar su peso, pregúntame. Conozco todo el catálogo y buscaré la mejor textura para su paladar exigente.",
+    initialActions: ["Bolas de Pelo", "Esterilizado", "Paladar Exigente"],
+    categories: ["Alimento Húmedo", "Arena Sanitaria", "Snacks Gourmet", "Rascadores"]
   },
   { 
     name: 'Aves', 
     emoji: '🦜', 
     color: 'bg-green-500', 
     description: 'Capitán Pico',
-    greeting: "¡Hola! 🦜 Soy el Capitán Pico. Un plumaje brillante requiere la mejor mixtura. ¿Buscas para canarios, loros o etapa de cría?",
-    initialActions: ["Canarios", "Loros/Cacatúas", "Etapa Cría"],
-    categories: ["Mixturas", "Vitaminas", "Accesorios", "Higiene"]
+    greeting: "¡Hola! Soy el Capitán Pico. Un plumaje brillante requiere la mejor mixtura del mercado. ¿Buscas nutrición específica para canarios, loros o etapa de cría? Te ayudo a elegir lo más fresco.",
+    initialActions: ["Plumaje Brillante", "Loros", "Etapa Cría"],
+    categories: ["Mixturas Premium", "Vitaminas", "Accesorios", "Higiene"]
   },
   { 
     name: 'Conejo y Roedor', 
     emoji: '🐰', 
     color: 'bg-blue-500', 
     description: 'Profesor Orejas',
-    greeting: "¡Hola! 🐰 Soy el Profesor Orejas. La fibra es el secreto de una vida feliz. ¿Tienes un conejo saltarín, una cobaya o un hámster?",
-    initialActions: ["Conejos", "Cobayas", "Hámster"],
-    categories: ["Heno Premium", "Snacks Naturales", "Sustratos", "Juguetes madera"]
+    greeting: "¡Hola! Soy el Profesor Orejas. La fibra es el secreto de una vida feliz y longeva. ¿Tienes un conejo, una cobaya o un hámster? Buscaré el heno más fresco y el sustrato ideal para su hogar.",
+    initialActions: ["Heno Premium", "Cobayas", "Sustratos"],
+    categories: ["Alimento Natural", "Snacks de Madera", "Sustratos", "Juguetes madera"]
   },
   { 
     name: 'Peces y Tortugas', 
     emoji: '🐠', 
     color: 'bg-cyan-500', 
     description: 'Almirante Burbujas',
-    greeting: "¡Glup! 🐠 Soy el Almirante Burbujas. El equilibrio del agua es mi especialidad. ¿Tu acuario es tropical, de agua fría o buscas para tortugas?",
-    initialActions: ["Agua Fría", "Tropicales", "Tortugas"],
-    categories: ["Hojuelas", "Granulados", "Acondicionadores", "Filtración"]
+    greeting: "¡Glup! Soy el Almirante Burbujas. El equilibrio del agua es mi especialidad. ¿Tu acuario es tropical, de agua fría o buscas para tortugas? Te recomendaré la dieta y acondicionadores que mantienen su ecosistema perfecto.",
+    initialActions: ["Agua Fría", "Acondicionadores", "Tortugas"],
+    categories: ["Hojuelas", "Granulados Pro", "Acondicionadores", "Filtración"]
   },
 ];
 
 const LOADING_MESSAGES = [
-  "Buscando en nuestro almacén con olfato de sabueso...",
-  "Revolviendo el gallinero para encontrar lo mejor...",
-  "Limpiando las algas del acuario para ver mejor...",
-  "Olfateando las croquetas más frescas...",
-  "Revisando el rincón secreto de las golosinas...",
-  "Sincronizando ronroneos con nuestra base de datos...",
+  "Buscando la mejor opción en nuestra bodega...",
+  "Revisando ingredientes y stock con olfato de experto...",
+  "Consultando nuestra red de distribución...",
+  "Analizando las necesidades nutricionales...",
+  "Revisando el rincón secreto de las mejores marcas...",
 ];
 
 export default function ProductAssistant() {
@@ -112,7 +111,7 @@ export default function ProductAssistant() {
         if (!loading) {
           addMessage(activeSpecies!, {
             role: 'assistant',
-            content: "¿Qué te han parecido estas opciones? Si prefieres ver otras marcas o algo más específico como snacks, dime con toda confianza."
+            content: "¿Qué te han parecido estas soluciones? Si necesitas ver otras marcas o algo más específico, cuéntame con confianza. Estoy aquí para asesorarte."
           });
         }
       }, 15000);
@@ -173,14 +172,13 @@ export default function ProductAssistant() {
     } catch (error) {
       addMessage(activeSpecies, { 
         role: 'assistant', 
-        content: "Lo siento, tuve un pequeño problema al revisar la bodega. ¿Podrías repetirme eso?" 
+        content: "Lo siento, tuve un pequeño problema al revisar el inventario. ¿Podrías repetirme eso?" 
       });
     } finally {
       setLoading(false);
     }
   };
 
-  // Ocultar asistente en páginas de cuenta o configuración
   const isExcludedPage = pathname === '/cuenta' || pathname?.startsWith('/settings');
   if (isExcludedPage) return null;
 
@@ -216,7 +214,7 @@ export default function ProductAssistant() {
             <h3 className="text-xl font-black leading-none tracking-tight">
               {activeExpert ? `${activeExpert.description}` : 'Asesor MyDog'}
             </h3>
-            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">En línea para ayudarte</p>
+            <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mt-1">Asesoría Experta en línea</p>
           </div>
         </div>
         <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-all">
@@ -229,8 +227,8 @@ export default function ProductAssistant() {
         <ScrollArea className="flex-1 bg-[#F9FAFB]">
           <div className="flex flex-col p-8 space-y-8 min-h-full">
             <div className="text-center space-y-2">
-              <h4 className="text-lg font-black text-foreground tracking-tight">¿Con quién deseas hablar?</h4>
-              <p className="text-xs font-medium text-muted-foreground">Selecciona un experto especializado.</p>
+              <h4 className="text-lg font-black text-foreground tracking-tight">¿Con qué experto deseas hablar?</h4>
+              <p className="text-xs font-medium text-muted-foreground">Selecciona un asesor especializado por especie.</p>
             </div>
             <div className="grid grid-cols-1 gap-3 pb-8">
               {EXPERTS.map((expert) => (
@@ -302,7 +300,7 @@ export default function ProductAssistant() {
                         href={`/catalogo?especie=${encodeURIComponent(activeSpecies)}`}
                         className="flex items-center justify-center gap-2 py-3 bg-primary/5 rounded-2xl border border-dashed border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest hover:bg-primary/10 transition-colors mt-2"
                       >
-                        <ExternalLink className="w-3 h-3" /> Ver más en el catálogo de {activeSpecies}
+                        <ExternalLink className="w-3 h-3" /> Ver catálogo completo de {activeSpecies}
                       </Link>
                     </div>
                   )}
@@ -326,7 +324,7 @@ export default function ProductAssistant() {
                       {activeExpert.categories.map(cat => (
                         <button
                           key={cat}
-                          onClick={() => handleSend(`Muéstrame ${cat}`)}
+                          onClick={() => handleSend(`Necesito ${cat}`)}
                           className="px-4 py-2 bg-white border border-secondary/40 text-[10px] font-black text-primary uppercase tracking-widest rounded-full hover:bg-secondary hover:text-white transition-all flex items-center gap-2 shadow-sm"
                         >
                           <ShoppingBag className="w-3 h-3" /> {cat}
@@ -374,16 +372,16 @@ export default function ProductAssistant() {
                  onClick={() => { setActiveSpecies(null); setLastRecommendedAt(null); }}
                  className="text-[9px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1"
                >
-                 Cambiar mascota
+                 Cambiar asesor
                </button>
                <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Experto en línea</span>
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Consultor Experto en línea</span>
                </div>
             </div>
             <form onSubmit={(e) => handleSend(input, e)} className="flex gap-2">
               <input 
-                placeholder="Pregúntame lo que necesites..." 
+                placeholder="Cuéntame qué necesita tu mascota..." 
                 className="flex-1 h-12 rounded-2xl border-none bg-muted/30 focus-visible:ring-primary/20 font-bold text-sm px-4 outline-none"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

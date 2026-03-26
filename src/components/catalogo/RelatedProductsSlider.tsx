@@ -22,9 +22,9 @@ interface RelatedProductsSliderProps {
 
 export default function RelatedProductsSlider({ 
   products, 
-  title = "Productos Similares", 
-  subtitle = "Alternativas técnicas seleccionadas por expertos para tu mascota.",
-  badge = "Selección basada en atributos",
+  title = "La Manada también lleva esto", 
+  subtitle = "Soluciones nutricionales y accesorios elegidos por familias de la RM.",
+  badge = "Recomendaciones MyDog",
   viewAllHref
 }: RelatedProductsSliderProps) {
   if (!products || products.length === 0) return null;
@@ -45,7 +45,7 @@ export default function RelatedProductsSlider({
         {viewAllHref && (
           <Link href={viewAllHref} className="hidden md:inline-block">
             <button className="h-12 px-8 rounded-full border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all bg-white whitespace-nowrap">
-              Ver más productos
+              Ver catálogo completo
             </button>
           </Link>
         )}
@@ -81,7 +81,7 @@ export default function RelatedProductsSlider({
         <div className="mt-8 flex md:hidden">
           <Link href={viewAllHref} className="w-full">
             <button className="w-full h-14 rounded-2xl border-2 border-primary/10 font-black text-[10px] uppercase tracking-widest text-primary bg-white shadow-sm active:scale-95 transition-all">
-              Ver más productos similares
+              Ver más recomendaciones
             </button>
           </Link>
         </div>
