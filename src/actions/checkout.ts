@@ -4,7 +4,48 @@ import { getStorefrontAuthAdmin, getStorefrontDbAdmin } from "@/lib/firebase/sto
 import { Timestamp } from "firebase-admin/firestore";
 import { PaymentFactory } from "@/lib/services/payments/payment.factory";
 
-export async function processCheckout(params: any) {
+interface CheckoutItem {
+  id: string;
+  sku?: string;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+interface ShippingInfo {
+  streetAndNumber: string;
+  apartmentOrLocal?: string;
+  commune: string;
+  region: string;
+  method: string;
+  cost: number;
+}
+
+interface BillingInfo {
+  type: 'boleta' | 'factura';
+  rut?: string;
+  companyName?: string;
+  businessLine?: string;
+  address?: string;
+}
+
+interface CheckoutParams {
+  idToken?: string;
+  customer: {
+    name: string;
+    phone: string;
+    email: string;
+  };
+  items: CheckoutItem[];
+  shipping: ShippingInfo;
+  billing: BillingInfo;
+  paymentMethod: string;
+  total: number;
+  createAccount?: boolean;
+  saveAddressName?: string;
+}
+
+export async function processCheckout(params: CheckoutParams) {
   const { idToken, customer, items, shipping, billing, paymentMethod, total, createAccount, saveAddressName } = params;
 
   try {
@@ -74,11 +115,10 @@ export async function processCheckout(params: any) {
         quantity: item.quantity,
         price: item.price,
       })),
-      // Enviamos la intención tributaria en la nota para que el ERP la procese luego
       paymentNote: `REQ_DOC:${billing.type.toUpperCase()}`,
     };
 
-    // 3. CREACIÓN DE ORDEN VÍA API DEL ERP (DRAFT)
+    // 3. CREACIÓN DE ORDEN VÍA API DEL ERP
     const erpApiUrl = process.env.ERP_API_URL || "http://localhost:3000";
     const erpSecret = process.env.ECOMMERCE_API_SECRET;
 
@@ -94,7 +134,7 @@ export async function processCheckout(params: any) {
     }
 
     const erpData = await erpResponse.json();
-    const orderId = erpData.orderId; // El ERP nos devuelve el ID oficial
+    const orderId = erpData.orderId; 
 
     // 4. PASARELA DE PAGO AGNÓSTICA
     let paymentUrl = null;
@@ -111,7 +151,7 @@ export async function processCheckout(params: any) {
           name: userName,
           returnUrl: `${baseUrl}/checkout/status?order=${orderId}`,
           cancelUrl: `${baseUrl}/checkout/status?order=${orderId}&canceled=true`,
-          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}` // Ruta dinámica agnóstica
+          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}` 
         });
         
       } catch (paymentError: any) {
