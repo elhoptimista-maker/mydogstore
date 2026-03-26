@@ -12,18 +12,41 @@ import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { useRouter } from 'next/navigation';
 
+// Diccionario de tarifas de ejemplo para la RM
+const SHIPPING_RATES_RM: Record<string, number> = {
+  'Maipú': 2500,
+  'La Florida': 3000,
+  'Providencia': 2000,
+  'Las Condes': 3500,
+  'Santiago Centro': 2000,
+  'La Cisterna': 2000,
+  'San Miguel': 2000,
+  'Ñuñoa': 2500,
+  'default': 3500
+};
+
 /**
- * @fileOverview Carrito lateral blindado con validación de stock y gamificación de envío gratis.
- * Optimizado para maximizar la dopamina del usuario y eliminar quiebres de stock.
+ * @fileOverview Carrito lateral blindado con validación de stock, gamificación de envío gratis
+ * y transparencia total de precios. Optimizado para maximizar la conversión (CRO).
  */
 export default function CartDrawer({ children }: { children: React.ReactNode }) {
-  const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, cartType } = useCart();
+  const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, cartType, userData } = useCart();
   const router = useRouter();
   
+  // Lógica de Gamificación (Envío Gratis)
   const FREE_SHIPPING_THRESHOLD = 50000;
   const progress = Math.min((cartTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - cartTotal, 0);
   const isFreeShipping = progress >= 100;
+
+  // Lógica de Costo de Despacho Dinámico
+  const userComuna = userData?.addresses?.find((a: any) => a.isDefault)?.commune || userData?.addresses?.[0]?.commune; 
+  const baseShippingCost = userComuna 
+    ? (SHIPPING_RATES_RM[userComuna] || SHIPPING_RATES_RM['default']) 
+    : null; // Si no está logueado o no tiene dirección, es null
+
+  const actualShippingCost = isFreeShipping ? 0 : baseShippingCost;
+  const finalTotal = cartTotal + (actualShippingCost || 0);
 
   return (
     <Sheet>
@@ -120,9 +143,10 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                   </SheetTrigger>
                 </div>
               ) : (
-                // Lista de Items con Validación de Stock
+                // Lista de Items con Validación de Stock y Transparencia de Precios
                 cart.map((item) => {
                   const isMaxStockReached = item.quantity >= (item.currentStock || 99);
+                  const itemTotal = item.priceAtAddition * item.quantity;
 
                   return (
                     <div key={item.id} className="flex gap-3 items-center py-4 border-b border-black/[0.03] last:border-0 group">
@@ -160,9 +184,18 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                               <Plus className="w-2.5 h-2.5" />
                             </button>
                           </div>
-                          <span className="font-black text-primary text-sm tracking-tighter">
-                            ${(item.priceAtAddition * item.quantity).toLocaleString('es-CL')}
-                          </span>
+                          
+                          {/* Transparencia de Precio Unitario y Total */}
+                          <div className="flex flex-col items-end">
+                            <span className="font-black text-primary text-sm tracking-tighter">
+                              ${itemTotal.toLocaleString('es-CL')}
+                            </span>
+                            {item.quantity > 1 && (
+                              <span className="text-[9px] font-bold text-muted-foreground/80 tracking-widest uppercase mt-0.5">
+                                ${item.priceAtAddition.toLocaleString('es-CL')} c/u
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -185,19 +218,21 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
               {cartType === 'retail' && (
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground font-medium text-xs">Despacho en RM</span>
+                    <span className="text-muted-foreground font-medium text-xs">
+                      Despacho {userComuna ? `a ${userComuna}` : 'en RM'}
+                    </span>
                     <Badge variant="outline" className={cn(
                       "text-[8px] font-black uppercase px-1.5 h-4",
-                      isFreeShipping ? "bg-green-50" : "bg-primary/5 text-primary border-primary/10"
+                      isFreeShipping ? "bg-green-50 text-green-600 border-green-200" : "bg-primary/5 text-primary border-primary/10"
                     )}>
-                      <Truck className="w-2.5 h-2.5 mr-1" /> {isFreeShipping ? "Gratis" : "Por calcular"}
+                      <Truck className="w-2.5 h-2.5 mr-1" /> {isFreeShipping ? "Gratis" : (actualShippingCost !== null ? "Calculado" : "Por calcular")}
                     </Badge>
                   </div>
                   <span className={cn(
                     "font-black text-[10px] tracking-widest",
                     isFreeShipping ? "text-green-600" : "text-primary"
                   )}>
-                    {isFreeShipping ? "GRATIS" : "-"}
+                    {isFreeShipping ? "GRATIS" : (actualShippingCost !== null ? `$${actualShippingCost.toLocaleString('es-CL')}` : "-")}
                   </span>
                 </div>
               )}
@@ -208,11 +243,11 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 <div className="flex flex-col">
                   <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.15em] mb-0.5">Total a Pagar</span>
                   <span className="text-2xl font-black text-primary tracking-tighter leading-none">
-                    ${cartTotal.toLocaleString('es-CL')}
+                    ${finalTotal.toLocaleString('es-CL')}
                   </span>
                 </div>
                 <div className="text-[8px] font-bold text-primary/60 bg-primary/5 px-2 py-1 rounded-md border border-primary/10 uppercase">
-                  IVA INCLUIDO
+                  {cartType === 'wholesale' ? '+ IVA' : 'IVA INCLUIDO'}
                 </div>
               </div>
             </div>

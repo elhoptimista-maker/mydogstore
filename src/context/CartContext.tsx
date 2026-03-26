@@ -28,6 +28,7 @@ interface CartContextType {
   cartCount: number;
   cartTotal: number;
   cartType: 'retail' | 'wholesale';
+  userData: any;
   // Lógica de descuentos
   coupon: DiscountCoupon | null;
   applyCoupon: (code: string) => Promise<boolean>;
@@ -40,15 +41,18 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [userRole, setUserRole] = useState<'customer' | 'wholesale' | 'admin'>('customer');
+  const [userData, setUserData] = useState<any>(null);
   const [coupon, setCoupon] = useState<DiscountCoupon | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userData = await getUserData(user.uid);
-        setUserRole(userData?.role || 'customer');
+        const data = await getUserData(user.uid);
+        setUserRole(data?.role || 'customer');
+        setUserData(data);
       } else {
         setUserRole('customer');
+        setUserData(null);
       }
     });
     return () => unsubscribe();
@@ -98,11 +102,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCoupon(null);
   };
 
-  // Lógica de cupones (Simulada por ahora, debería venir del ERP)
   const applyCoupon = async (code: string): Promise<boolean> => {
     const normalizedCode = code.toUpperCase().trim();
-    
-    // Simulación de cupones válidos
     if (normalizedCode === 'BIENVENIDA') {
       setCoupon({ code: 'BIENVENIDA', type: 'percentage', value: 10 });
       return true;
@@ -111,7 +112,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setCoupon({ code: 'MYDOG5000', type: 'fixed', value: 5000 });
       return true;
     }
-    
     return false;
   };
 
@@ -139,7 +139,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   return (
     <CartContext.Provider value={{ 
       cart, addToCart, removeFromCart, updateQuantity, clearCart, 
-      cartCount, cartTotal, cartType,
+      cartCount, cartTotal, cartType, userData,
       coupon, applyCoupon, removeCoupon, discountAmount
     }}>
       {children}
