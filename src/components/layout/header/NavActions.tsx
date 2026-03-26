@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Heart, ShoppingCart, Menu, Dog, ChevronRight } from 'lucide-react';
+import { Heart, ShoppingCart, Menu, Dog, ChevronRight, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -127,13 +127,13 @@ export default function NavActions() {
             </div>
           </div>
 
-          {/* Footer del Menú (Opcional: B2B Quick Access) */}
+          {/* Footer del Menú: Acceso Clientes / Minoristas */}
           <div className="p-6 bg-white border-t border-black/5">
             <Link 
-              href="/b2b/portal" 
-              className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-secondary text-primary font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all"
+              href="/cuenta" 
+              className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
             >
-              <Dog className="w-4 h-4" /> Acceso Mayoristas
+              <User className="w-4 h-4" /> Acceso Minoristas
             </Link>
           </div>
         </SheetContent>
