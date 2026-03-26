@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -9,7 +10,6 @@ import {
   Heart, 
   ChevronDown, 
   User, 
-  Package,
   Instagram,
   X,
   MessageCircle,
@@ -61,7 +61,10 @@ export default function Header() {
   const [allProducts, setAllProducts] = useState<SanitizedProduct[]>([]);
   const [searchResults, setSearchResults] = useState<SanitizedProduct[]>([]);
   const [showResults, setShowResults] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
+  const [activeInputId, setActiveInputId] = useState<string | null>(null);
+  
+  const searchRefDesktop = useRef<HTMLDivElement>(null);
+  const searchRefMobile = useRef<HTMLDivElement>(null);
 
   const whatsappNumber = "56912345678";
   const whatsappUrl = `https://wa.me/${whatsappNumber}`;
@@ -121,7 +124,10 @@ export default function Header() {
   // Cerrar resultados al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        (searchRefDesktop.current && !searchRefDesktop.current.contains(event.target as Node)) &&
+        (searchRefMobile.current && !searchRefMobile.current.contains(event.target as Node))
+      ) {
         setShowResults(false);
       }
     };
@@ -145,6 +151,56 @@ export default function Header() {
     { label: 'Mayoristas', href: '/b2b' },
   ];
 
+  const SearchResultsDropdown = () => (
+    <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
+      <div className="p-4 bg-primary/5 border-b border-black/[0.03] flex justify-between items-center">
+        <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">Sugerencias MyDog</span>
+        {cartType === 'wholesale' && (
+          <Badge className="bg-primary text-white text-[8px] border-none font-black uppercase">Modo B2B</Badge>
+        )}
+      </div>
+      <div className="max-h-[420px] overflow-y-auto">
+        {searchResults.map((product) => (
+          <Link 
+            key={product.id} 
+            href={`/catalogo/${product.slug || product.id}`}
+            onClick={() => setShowResults(false)}
+            className="flex items-center gap-4 p-5 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
+          >
+            <div className="relative w-14 h-14 rounded-2xl bg-muted/30 overflow-hidden shrink-0 border border-black/[0.05]">
+              <Image 
+                src={product.main_image} 
+                alt={product.name} 
+                fill 
+                className="object-contain p-2 transition-transform group-hover:scale-110"
+                sizes="56px"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">{product.brand}</span>
+                <h4 className="font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors leading-tight">{product.name}</h4>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="block text-sm font-black text-primary tracking-tighter">
+                ${(cartType === 'wholesale' ? product.wholesalePrice : product.sellingPrice).toLocaleString('es-CL')}
+              </span>
+              <span className="text-[8px] font-bold text-muted-foreground uppercase">Stock: {product.currentStock}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <Link 
+        href={`/catalogo?q=${encodeURIComponent(searchTerm)}`}
+        onClick={() => setShowResults(false)}
+        className="flex items-center justify-center p-5 bg-primary text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
+      >
+        Ver todos los resultados para "{searchTerm}"
+      </Link>
+    </div>
+  );
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
       {/* 1. Top Bar - Utilidad y Contacto */}
@@ -155,21 +211,11 @@ export default function Header() {
           </div>
           
           <div className="absolute right-0 flex items-center gap-4">
-            <a 
-              href={whatsappUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity flex items-center gap-1.5"
-            >
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity flex items-center gap-1.5">
               <MessageCircle className="w-4 h-4" />
               <span className="hidden sm:inline">WhatsApp</span>
             </a>
-            <a 
-              href="https://www.instagram.com/mydog_distribuidora" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity flex items-center gap-1.5"
-            >
+            <a href="https://www.instagram.com/mydog_distribuidora" target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity flex items-center gap-1.5">
               <Instagram className="w-4 h-4" />
               <span className="hidden sm:inline">Instagram</span>
             </a>
@@ -177,82 +223,37 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2. Main Header - Búsqueda y Acciones */}
+      {/* 2. Main Header - Identidad y Acciones */}
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-6 md:gap-12">
-          {/* Burger Menu (Mobile Only) */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <button className="md:hidden text-white hover:bg-white/10 p-2 rounded-xl transition-colors">
-                <Menu className="w-7 h-7" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[85%] sm:max-w-md p-0 border-none bg-background overflow-hidden flex flex-col">
-              <SheetHeader className="p-8 bg-primary text-white shrink-0">
-                <div className="flex items-center gap-3 mb-2">
-                  <Dog className="w-8 h-8 text-secondary" />
-                  <SheetTitle className="text-white font-black text-2xl tracking-tighter text-left uppercase">Menú Principal</SheetTitle>
-                </div>
-              </SheetHeader>
-              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#F6F6F6]">
-                <div className="space-y-3">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Navegación</span>
-                  {mainNav.map((item) => (
-                    <Link 
-                      key={item.label}
-                      href={item.href}
-                      className="flex items-center p-4 bg-white rounded-2xl border border-black/5 shadow-sm font-black text-xs uppercase tracking-widest text-foreground"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-
-                <div className="space-y-3">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Categorías</span>
-                  {CATEGORIES.map((category) => (
-                    <Link 
-                      key={category} 
-                      href={`/catalogo?categoria=${encodeURIComponent(category)}`}
-                      className="flex items-center justify-between p-4 bg-white rounded-2xl border border-black/5 shadow-sm hover:border-primary/20 transition-all group"
-                    >
-                      <span className="font-black text-xs uppercase tracking-widest text-foreground group-hover:text-primary">{category}</span>
-                      <ChevronDown className="w-4 h-4 text-muted-foreground -rotate-90 group-hover:text-primary transition-colors" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-
-          {/* Logo */}
+          
+          {/* Logo Corporativo (Ahora visible y alineado a la izquierda en Mobile) */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-110 transition-transform">
-              <Dog className="w-8 h-8 text-white" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-110 transition-transform">
+              <Dog className="w-6 h-6 md:w-8 md:h-8 text-white" />
             </div>
-            <div className="flex flex-col -space-y-1 hidden sm:flex">
-              <span className="font-black text-2xl tracking-tighter leading-none uppercase">MyDog</span>
-              <span className="text-[9px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
+            <div className="flex flex-col -space-y-1">
+              <span className="font-black text-lg md:text-2xl tracking-tighter leading-none uppercase">MyDog</span>
+              <span className="text-[7px] md:text-[9px] font-bold text-white/60 uppercase tracking-[0.2em]">Distribuidora</span>
             </div>
           </Link>
 
-          {/* Search (Desktop) */}
-          <div className="flex-1 hidden md:flex max-w-2xl relative" ref={searchRef}>
+          {/* Search (Desktop Only) */}
+          <div className="flex-1 hidden md:flex max-w-2xl relative" ref={searchRefDesktop}>
             <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
               <input 
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => searchTerm.length > 1 && searchResults.length > 0 && setShowResults(true)}
+                onFocus={() => {
+                  setActiveInputId('desktop');
+                  if (searchTerm.length > 1 && searchResults.length > 0) setShowResults(true);
+                }}
                 placeholder={currentPlaceholder}
                 className="flex-1 h-full px-8 text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
               />
               {searchTerm && (
-                <button 
-                  type="button" 
-                  onClick={() => setSearchTerm("")}
-                  className="p-2 text-muted-foreground/40 hover:text-primary transition-colors"
-                >
+                <button type="button" onClick={() => setSearchTerm("")} className="p-2 text-muted-foreground/40 hover:text-primary transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               )}
@@ -260,67 +261,12 @@ export default function Header() {
                 <Search className="w-4 h-4" />
               </button>
             </form>
-
-            {/* Resultados de búsqueda instantánea */}
-            {showResults && (
-              <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
-                <div className="p-4 bg-primary/5 border-b border-black/[0.03] flex justify-between items-center">
-                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">Encontramos estos productos</span>
-                  {cartType === 'wholesale' && (
-                    <Badge className="bg-primary text-white text-[8px] border-none font-black uppercase">Modo Mayorista</Badge>
-                  )}
-                </div>
-                <div className="max-h-[420px] overflow-y-auto">
-                  {searchResults.map((product) => (
-                    <Link 
-                      key={product.id} 
-                      href={`/catalogo/${product.slug || product.id}`}
-                      onClick={() => setShowResults(false)}
-                      className="flex items-center gap-4 p-5 hover:bg-primary/5 transition-colors group border-b border-black/[0.02] last:border-0"
-                    >
-                      <div className="relative w-14 h-14 rounded-2xl bg-muted/30 overflow-hidden shrink-0 border border-black/[0.05]">
-                        <Image 
-                          src={product.main_image} 
-                          alt={product.name} 
-                          fill 
-                          className="object-contain p-2 transition-transform group-hover:scale-110"
-                          sizes="56px"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-col">
-                          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">{product.brand}</span>
-                          <h4 className="font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors leading-tight">{product.name}</h4>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="block text-sm font-black text-primary tracking-tighter">
-                          ${(cartType === 'wholesale' ? product.wholesalePrice : product.sellingPrice).toLocaleString('es-CL')}
-                        </span>
-                        <span className="text-[8px] font-bold text-muted-foreground uppercase">Stock: {product.currentStock}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-                <Link 
-                  href={`/catalogo?q=${encodeURIComponent(searchTerm)}`}
-                  onClick={() => setShowResults(false)}
-                  className="flex items-center justify-center p-5 bg-primary text-white font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
-                >
-                  Ver todos los resultados para "{searchTerm}"
-                </Link>
-              </div>
-            )}
+            {showResults && activeInputId === 'desktop' && <SearchResultsDropdown />}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-6 shrink-0">
-            {/* User Icon Mobile */}
-            <Link href="/cuenta" className="md:hidden relative w-10 h-10 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
-               <User className="w-4 h-4" />
-            </Link>
-
-            {/* Wishlist Icon */}
+          {/* Acciones de Usuario y Carrito */}
+          <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
+            {/* Wishlist */}
             <Link href="/wishlist" className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
               <Heart className={cn("w-4 h-4 sm:w-5 sm:h-5", wishlist.length > 0 && "fill-current text-secondary")} />
               {wishlist.length > 0 && (
@@ -330,7 +276,7 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Cart Icon */}
+            {/* Carrito */}
             <CartDrawer>
               <button className={cn(
                 "relative w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all",
@@ -344,15 +290,51 @@ export default function Header() {
                 )}
               </button>
             </CartDrawer>
+
+            {/* Menú Burger (Mobile Only) */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="md:hidden text-white hover:bg-white/10 p-2 rounded-xl transition-colors">
+                  <Menu className="w-7 h-7" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[85%] sm:max-w-md p-0 border-none bg-background overflow-hidden flex flex-col">
+                <SheetHeader className="p-8 bg-primary text-white shrink-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Dog className="w-8 h-8 text-secondary" />
+                    <SheetTitle className="text-white font-black text-2xl tracking-tighter text-left uppercase leading-none">Menú MyDog</SheetTitle>
+                  </div>
+                </SheetHeader>
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#F6F6F6]">
+                  <div className="space-y-3">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Explorar</span>
+                    {mainNav.map((item) => (
+                      <Link key={item.label} href={item.href} className="flex items-center p-4 bg-white rounded-2xl border border-black/5 shadow-sm font-black text-xs uppercase tracking-widest text-foreground">
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="space-y-3">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Categorías Técnicas</span>
+                    {CATEGORIES.map((category) => (
+                      <Link key={category} href={`/catalogo?categoria=${encodeURIComponent(category)}`} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-black/5 shadow-sm hover:border-primary/20 transition-all group">
+                        <span className="font-black text-xs uppercase tracking-widest text-foreground group-hover:text-primary">{category}</span>
+                        <ChevronDown className="w-4 h-4 text-muted-foreground -rotate-90 group-hover:text-primary transition-colors" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
 
-      {/* 3. Menu Bar - Navegación y Mobile Search */}
+      {/* 3. Menu Bar - Navegación Pro y Mobile Search Unificado */}
       <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           
-          {/* Desktop Navigation */}
+          {/* Desktop Links */}
           <div className="hidden md:flex items-center justify-between w-full h-full">
             <div className="flex items-center gap-8 h-full">
               <DropdownMenu>
@@ -394,23 +376,22 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Mobile Search Bar (Solo se ve en móviles) */}
-          <div className="flex md:hidden flex-1 relative w-full h-10">
+          {/* Mobile Search Unificado (Ahora con las mismas funciones que Desktop) */}
+          <div className="flex md:hidden flex-1 relative w-full h-10" ref={searchRefMobile}>
             <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-full overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
               <input 
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => searchTerm.length > 1 && searchResults.length > 0 && setShowResults(true)}
+                onFocus={() => {
+                  setActiveInputId('mobile');
+                  if (searchTerm.length > 1 && searchResults.length > 0) setShowResults(true);
+                }}
                 placeholder={currentPlaceholder}
                 className="flex-1 h-full px-5 text-xs font-bold text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
               />
               {searchTerm && (
-                <button 
-                  type="button" 
-                  onClick={() => setSearchTerm("")}
-                  className="p-1.5 text-muted-foreground/40 hover:text-primary transition-colors"
-                >
+                <button type="button" onClick={() => setSearchTerm("")} className="p-1.5 text-muted-foreground/40 hover:text-primary transition-colors">
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
@@ -418,6 +399,7 @@ export default function Header() {
                 <Search className="w-3.5 h-3.5" />
               </button>
             </form>
+            {showResults && activeInputId === 'mobile' && <SearchResultsDropdown />}
           </div>
 
         </div>
