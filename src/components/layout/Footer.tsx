@@ -5,8 +5,8 @@ import { Instagram, Dog, MessageCircle, MapPin, Phone, Mail, ArrowRight } from '
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Footer Principal rediseñado siguiendo la línea estética premium.
- * Implementa una arquitectura de columnas densas y una base de marca sólida.
+ * @fileOverview Footer Principal Masivo.
+ * Implementa una arquitectura de columnas densas y una base de marca sólida con Verde Esmeralda.
  */
 export default function Footer() {
   const whatsappNumber = "56912345678";
@@ -125,6 +125,7 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Medios de Pago en escala de grises para elegancia */}
           <div className="flex flex-wrap justify-center gap-4 grayscale opacity-20 hover:opacity-100 hover:grayscale-0 transition-all duration-500">
             <div className="bg-white px-3 py-1.5 rounded-lg text-black font-sans font-black text-[10px] tracking-tighter">VISA</div>
             <div className="bg-white px-3 py-1.5 rounded-lg text-black font-sans font-black text-[10px] tracking-tighter">MASTERCARD</div>

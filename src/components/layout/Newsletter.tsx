@@ -6,7 +6,7 @@ import { Mail, Sparkles } from 'lucide-react';
 
 /**
  * @fileOverview Componente de Suscripción (Newsletter) rediseñado.
- * Implementa el patrón de input "pill" con botón integrado.
+ * Implementa el patrón de input "pill" con botón integrado para máxima conversión.
  */
 export default function Newsletter() {
   const pathname = usePathname();
@@ -20,7 +20,7 @@ export default function Newsletter() {
   return (
     <section className="w-full bg-[#FEF9F3] py-16 md:py-24 border-t border-black/5 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative">
-        {/* Decoración ambiental */}
+        {/* Decoración ambiental coherente con el Hero */}
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         
         <div className="max-w-3xl mx-auto text-center space-y-8 relative z-10">
@@ -59,7 +59,7 @@ export default function Newsletter() {
             </div>
             
             <p className="mt-4 text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
-              🔒 Privacidad garantizada. Sin spam, solo calidad.
+              🔒 Privacidad garantizada. Sin spam, solo calidad técnica.
             </p>
           </form>
         </div>
