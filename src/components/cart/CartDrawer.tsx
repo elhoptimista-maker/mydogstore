@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from '@/context/CartContext';
+import { useShippingRates } from '@/hooks/use-shipping-rates';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Trash2, Plus, Minus, Package, Truck, ArrowRight, Store } from 'lucide-react';
@@ -12,25 +13,13 @@ import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { useRouter } from 'next/navigation';
 
-// Diccionario de tarifas de ejemplo para la RM
-const SHIPPING_RATES_RM: Record<string, number> = {
-  'Maipú': 2500,
-  'La Florida': 3000,
-  'Providencia': 2000,
-  'Las Condes': 3500,
-  'Santiago Centro': 2000,
-  'La Cisterna': 2000,
-  'San Miguel': 2000,
-  'Ñuñoa': 2500,
-  'default': 3500
-};
-
 /**
  * @fileOverview Carrito lateral blindado con validación de stock, gamificación de envío gratis
- * y transparencia total de precios. Optimizado para maximizar la conversión (CRO).
+ * y transparencia total de precios mediante tarifas dinámicas del ERP.
  */
 export default function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, cartType, userData } = useCart();
+  const { getRateForComuna, isLoading: loadingRates } = useShippingRates();
   const router = useRouter();
   
   // Lógica de Gamificación (Envío Gratis)
@@ -39,13 +28,14 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - cartTotal, 0);
   const isFreeShipping = progress >= 100;
 
-  // Lógica de Costo de Despacho Dinámico
+  // Resolución de Comuna del usuario
   const userComuna = userData?.addresses?.find((a: any) => a.isDefault)?.commune || userData?.addresses?.[0]?.commune; 
-  const baseShippingCost = userComuna 
-    ? (SHIPPING_RATES_RM[userComuna] || SHIPPING_RATES_RM['default']) 
-    : null; // Si no está logueado o no tiene dirección, es null
-
+  
+  // Cálculo dinámico de despacho basado en datos del ERP
+  const baseShippingCost = getRateForComuna(userComuna);
   const actualShippingCost = isFreeShipping ? 0 : baseShippingCost;
+  
+  // El total final solo se muestra si tenemos el costo calculado o si es envío gratis
   const finalTotal = cartTotal + (actualShippingCost || 0);
 
   return (
@@ -122,7 +112,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           <ScrollArea className="h-full w-full">
             <div className="px-6 py-2">
               {cart.length === 0 ? (
-                // Estado Vacío Optimizado para Reconversión
                 <div className="flex flex-col items-center justify-center text-center py-32 space-y-6">
                   <div className="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center border border-border/50">
                     <Package className="w-8 h-8 text-muted-foreground/30" />
@@ -143,7 +132,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                   </SheetTrigger>
                 </div>
               ) : (
-                // Lista de Items con Validación de Stock y Transparencia de Precios
                 cart.map((item) => {
                   const isMaxStockReached = item.quantity >= (item.currentStock || 99);
                   const itemTotal = item.priceAtAddition * item.quantity;
@@ -179,13 +167,11 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                               onClick={() => updateQuantity(item.id, item.quantity + 1)} 
                               className="w-6 h-6 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-30"
                               disabled={isMaxStockReached}
-                              title={isMaxStockReached ? "Stock máximo alcanzado" : "Aumentar cantidad"}
                             >
                               <Plus className="w-2.5 h-2.5" />
                             </button>
                           </div>
                           
-                          {/* Transparencia de Precio Unitario y Total */}
                           <div className="flex flex-col items-end">
                             <span className="font-black text-primary text-sm tracking-tighter">
                               ${itemTotal.toLocaleString('es-CL')}
@@ -223,9 +209,11 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                     </span>
                     <Badge variant="outline" className={cn(
                       "text-[8px] font-black uppercase px-1.5 h-4",
-                      isFreeShipping ? "bg-green-50 text-green-600 border-green-200" : "bg-primary/5 text-primary border-primary/10"
+                      isFreeShipping ? "bg-green-50" : "bg-primary/5 text-primary",
+                      loadingRates && "animate-pulse"
                     )}>
-                      <Truck className="w-2.5 h-2.5 mr-1" /> {isFreeShipping ? "Gratis" : (actualShippingCost !== null ? "Calculado" : "Por calcular")}
+                      <Truck className="w-2.5 h-2.5 mr-1" /> 
+                      {isFreeShipping ? "Gratis" : (actualShippingCost !== null ? "Calculado" : "Por calcular")}
                     </Badge>
                   </div>
                   <span className={cn(
