@@ -1,8 +1,8 @@
 'use server';
 /**
- * @fileOverview Un asistente de ventas consultivas experto en bienestar animal.
- * Los asesores MyDog proporcionan soluciones técnicas con un tono empático pero profesional.
- * Enfocado 100% en resolver problemas nutricionales y de bienestar para maximizar la conversión.
+ * @fileOverview Un asesor de ventas familiar experto en bienestar animal.
+ * Los asesores MyDog proporcionan soluciones empáticas, cercanas y responsables.
+ * Enfocado 100% en resolver problemas nutricionales y de bienestar con autoridad familiar.
  */
 
 import {ai} from '@/ai/genkit';
@@ -24,12 +24,12 @@ const ProductChatInputSchema = z.object({
 export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
 
 const ProductChatOutputSchema = z.object({
-  response: z.string().describe('La respuesta del asistente. Sé empático, experto y transaccional. NO menciones nombres de productos ni IDs aquí.'),
+  response: z.string().describe('La respuesta del asistente. Sé empático, cercano y resolutivo. NO menciones nombres de productos ni IDs aquí.'),
   suggestedProducts: z.array(z.object({
     id: z.string(),
     name: z.string(),
     image: z.string().describe('URL de la imagen del producto.'),
-    reason: z.string().describe('Razón técnica profesional de la recomendación (ej: ideal para digestión sensible).'),
+    reason: z.string().describe('Razón técnica y empática de la recomendación (ej: ideal para digestión sensible en perros adultos).'),
   })).optional().describe('Selecciona estrictamente los 5 productos más relevantes del catálogo que resuelvan el problema del usuario.'),
 });
 
@@ -41,23 +41,23 @@ const productChatPrompt = ai.definePrompt({
     catalog: z.array(z.any()).describe('Productos disponibles para esta especie.'),
   })},
   output: {schema: ProductChatOutputSchema},
-  prompt: `Eres un Asesor Experto de Distribuidora MyDog, con 15 años de experiencia en bienestar para {{{species}}}.
+  prompt: `Eres un Asesor Experto de Distribuidora MyDog, un negocio familiar con 15 años de trayectoria cuidando a mascotas en Santiago.
 
   TU MISIÓN:
-  Realizar una venta consultiva empática. El usuario busca soluciones, no solo productos. Ayúdale a elegir basándote en tu autoridad técnica.
+  Realizar una asesoría empática y responsable. El usuario busca bienestar para un miembro de su familia. Ayúdale a elegir basándote en tu experiencia y amor por los animales.
 
   TU PERSONALIDAD:
-  1. AUTORIDAD EMPÁTICA: Hablas con la seguridad de quien conoce los ingredientes y el comportamiento animal.
-  2. RESOLUTIVO: Identificas el problema (mañas, alergias, peso) y ofreces la solución del catálogo.
-  3. CERCANO PERO PROFESIONAL: Eres el vecino experto en el que todos confían.
-  4. DIRECTO Y TRANSACCIONAL: No divagues. Guía al usuario a la mejor opción.
+  1. CERCANO PERO EXPERTO: Hablas como el vecino de confianza que conoce los mejores ingredientes y trucos.
+  2. RESOLUTIVO: Identificas el problema (alergias, mañas, peso) y ofreces la solución real de nuestra bodega.
+  3. RESPONSABLE: Te tomas en serio la salud de la mascota. Si algo es fundamental para su etapa de vida, lo resaltas.
+  4. AMABLE Y DIRECTO: Evitas el lenguaje corporativo frío. Eres parte de la familia MyDog.
 
   REGLAS DE BÚSQUEDA Y CURADURÍA (CRÍTICO):
   - NO REPITAS productos recomendados anteriormente. Queremos variedad útil.
-  - Prioriza MARCAS mencionadas, pero si hay una mejor opción técnica, recomiéndala con fundamentos.
+  - Prioriza MARCAS que el usuario mencione, pero si hay una mejor opción por salud, recomiéndala con fundamentos.
   - Selecciona estrictamente 5 productos con stock real del catálogo.
   - PROHIBIDO: No escribas nombres de productos ni IDs en el campo "response". La lista se genera automáticamente.
-  - CIERRE: Termina con una pregunta que invite a profundizar en la necesidad (ej: "¿Cómo es su nivel de actividad diaria?").
+  - CIERRE: Termina siempre con una pregunta que demuestre interés genuino (ej: "¿Cómo es su nivel de actividad diaria en el hogar?").
 
   CATÁLOGO DISPONIBLE PARA {{{species}}}:
   {{#each catalog}}
@@ -72,7 +72,7 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde como el asesor de confianza que somos hace 15 años en Santiago.`,
+  Responde como el asesor de confianza que somos hace 15 años en Santiago de Chile.`,
 });
 
 const productChatFlow = ai.defineFlow(
@@ -82,10 +82,10 @@ const productChatFlow = ai.defineFlow(
     outputSchema: ProductChatOutputSchema,
   },
   async (input) => {
-    // 1. Obtener productos y filtrar por stock inmediatamente (Regla de oro: Solo productos con stock)
+    // 1. Obtener productos y filtrar por stock inmediatamente
     const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
     
-    // 2. Identificar productos ya recomendados para excluirlos
+    // 2. Identificar productos ya recomendados
     const previouslyRecommendedIds = new Set<string>();
     const previouslyRecommendedBrands = new Set<string>();
     
@@ -105,7 +105,7 @@ const productChatFlow = ai.defineFlow(
              input.species.toLowerCase().includes(p.species.toLowerCase());
     });
 
-    // 4. Algoritmo de Ranking para necesidades específicas
+    // 4. Algoritmo de Ranking
     const userMessageLower = input.message.toLowerCase();
     const isAskingForVariety = userMessageLower.includes('otras marcas') || userMessageLower.includes('otros productos');
     const searchTerms = userMessageLower.split(' ').filter(t => t.length > 2);

@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/sheet";
 import { CATEGORIES } from '@/lib/mock-db';
 
+/**
+ * @fileOverview Acciones de navegación unificadas con storytelling MyDog 2.0.
+ */
 export default function NavActions() {
   const { cartCount, cartType } = useCart();
   const { wishlist } = useWishlist();
@@ -22,14 +25,14 @@ export default function NavActions() {
   const mainNav = [
     { label: 'Inicio', href: '/' },
     { label: 'La Tiendita', href: '/catalogo' },
-    { label: 'Oportunidades', href: '/catalogo?sort=price-asc' },
-    { label: 'Blog Mascotas', href: '#' },
-    { label: 'Mayoristas', href: '/b2b' },
+    { label: 'Ofertas de Bodega', href: '/catalogo?sort=price-asc' },
+    { label: 'Blog Nutricional', href: '#' },
+    { label: 'Zona Mayorista', href: '/b2b' },
   ];
 
   return (
     <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
-      <Link href="/wishlist" className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
+      <Link href="/wishlist" title="Tus Favoritos" className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
         <Heart className={cn("w-4 h-4 sm:w-5 sm:h-5", wishlist.length > 0 && "fill-current text-secondary")} />
         {wishlist.length > 0 && (
           <span className="absolute -top-1 -right-1 bg-secondary text-primary font-black text-[8px] sm:text-[10px] w-4 border-2 h-4 sm:w-5 sm:h-5 flex items-center justify-center border-primary rounded-full animate-in zoom-in">
@@ -39,7 +42,7 @@ export default function NavActions() {
       </Link>
 
       <CartDrawer>
-        <button className={cn(
+        <button title="Ir a la Caja" className={cn(
           "relative w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all",
           cartType === 'wholesale' ? "bg-secondary text-primary" : "bg-white text-primary"
         )}>
@@ -67,14 +70,14 @@ export default function NavActions() {
               </div>
               <div className="flex flex-col -space-y-1 text-left">
                 <SheetTitle className="text-white font-black text-2xl tracking-tighter uppercase leading-none">Mi MyDog</SheetTitle>
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em]">¡Qué alegría verte!</span>
+                <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em]">¡Hola! Qué gusto verte</span>
               </div>
             </div>
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-[#F6F6F6]">
             <div className="space-y-4">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Explorar</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Explorar Catálogo</span>
               <div className="grid grid-cols-1 gap-2">
                 {mainNav.map((item) => (
                   <Link 
@@ -91,7 +94,7 @@ export default function NavActions() {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between ml-2">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">La Tiendita</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Oportunidades</span>
                 <Link href="/catalogo" className="text-[9px] font-bold text-primary uppercase tracking-widest hover:underline">Ver Todo</Link>
               </div>
               <div className="grid grid-cols-1 gap-2 pb-10">
@@ -119,7 +122,7 @@ export default function NavActions() {
               href="/cuenta" 
               className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
             >
-              <User className="w-4 h-4" /> Mi Espacio MyDog
+              <User className="w-4 h-4" /> Entrar a Mi Cuenta
             </Link>
           </div>
         </SheetContent>

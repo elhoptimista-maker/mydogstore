@@ -5,6 +5,9 @@ import { ArrowRight, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import HeroDogImage from '@/img/golden-retriever-gato-calico-juntos.png';
 
+/**
+ * @fileOverview Hero Section optimizado para CRO y Storytelling MyDog 2.0.
+ */
 export default function Hero() {
   return (
     <section className="relative w-full bg-[#FEF9F3] overflow-hidden border-b border-black/5 flex items-center min-h-[calc(100dvh-176px)]">
@@ -22,18 +25,18 @@ export default function Hero() {
               </Badge>
               
               <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-black text-foreground leading-[0.92] tracking-tighter animate-in fade-in slide-in-from-left-6 duration-700">
-                Todo lo que tu regalón <br className="hidden sm:block" /> necesita, <span className="text-primary">a tu puerta</span>
+                Todo lo que tu regalón <br className="hidden sm:block" /> necesita, <span className="text-primary">directo a tu puerta</span>
               </h1>
               
               <p className="text-muted-foreground text-lg md:text-xl font-medium max-w-lg leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000">
-                Llevamos más de una década siendo el hogar de las mascotas de Santiago. En nuestra bodega te atendemos con cariño, y aquí en nuestra tienda virtual, te lo llevamos a casa con responsabilidad y rapidez.
+                El mejor alimento, accesorios y cuidados con el respaldo de verdaderos expertos y despacho responsable en toda la Región Metropolitana.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto pt-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
               <Link href="/catalogo" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto h-16 rounded-full bg-primary text-white font-black px-10 text-lg shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3">
-                  Explorar la tienda <ArrowRight className="w-5 h-5" />
+                  Comprar su alimento <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               
@@ -43,7 +46,7 @@ export default function Hero() {
                     <div key={i} className="w-10 h-10 rounded-full border-2 border-[#FEF9F3] overflow-hidden bg-muted shadow-sm ring-1 ring-black/5">
                       <Image 
                         src={`https://picsum.photos/seed/user-${i + 100}/80/80`} 
-                        alt="Cliente MyDog" 
+                        alt="Miembro de la Manada" 
                         width={40} 
                         height={40} 
                         className="object-cover"
@@ -52,8 +55,8 @@ export default function Hero() {
                   ))}
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">Historias felices</span>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Más de 10.000 familias confían en nuestra bodega</span>
+                  <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">Confianza Real</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Más de 10.000 familias confían en nosotros en la RM</span>
                 </div>
               </div>
             </div>
@@ -64,7 +67,7 @@ export default function Hero() {
             <div className="relative w-full h-full lg:h-[115%] lg:-mb-20">
               <Image
                 src={HeroDogImage}
-                alt="Familia MyDog"
+                alt="La Familia MyDog"
                 fill
                 className="object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)] scale-110"
                 priority

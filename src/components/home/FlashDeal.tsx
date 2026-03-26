@@ -7,6 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Zap } from 'lucide-react';
 import Link from 'next/link';
 
+/**
+ * @fileOverview Bloque de urgencia ética con precios de bodega.
+ */
 export default function FlashDeal() {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -37,7 +40,7 @@ export default function FlashDeal() {
           <div className="relative aspect-square lg:aspect-[4/5] rounded-[2rem] overflow-hidden group">
             <Image 
               src="https://picsum.photos/seed/flash-dog/800/1000" 
-              alt="Oportunidades MyDog" 
+              alt="Oportunidades de Bodega" 
               fill 
               className="object-cover transition-transform duration-700 group-hover:scale-110"
               data-ai-hint="happy dog"
@@ -45,7 +48,7 @@ export default function FlashDeal() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute bottom-6 left-6">
               <Badge className="bg-secondary text-primary border-none rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-lg">
-                PRECIOS DE BODEGA
+                PRECIOS DE BODEGA 📦
               </Badge>
             </div>
           </div>
@@ -53,13 +56,13 @@ export default function FlashDeal() {
           <div className="text-center space-y-8 lg:space-y-10 z-10">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">
-                <Zap className="w-3 h-3 fill-current" /> Las ofertas vuelan
+                <Zap className="w-3 h-3 fill-current" /> Oportunidades que vuelan
               </div>
               <h2 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tighter leading-none text-foreground">
-                Oportunidades <span className="text-primary">de hoy</span>
+                Liberamos Stock <br /><span className="text-primary">Solo por hoy</span>
               </h2>
               <p className="text-muted-foreground font-medium text-sm md:text-base max-w-xs mx-auto">
-                Precios especiales por tiempo limitado directo desde nuestro centro de distribución.
+                Precios especiales por tiempo limitado directo desde nuestro centro de distribución en Santiago.
               </p>
             </div>
 
@@ -81,7 +84,7 @@ export default function FlashDeal() {
 
             <Link href="/catalogo" className="inline-block w-full sm:w-auto">
               <Button className="w-full sm:w-auto rounded-full bg-primary text-white font-black px-12 h-16 text-lg shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all gap-3">
-                Ver ofertas de hoy <ArrowRight className="w-5 h-5" />
+                Aprovechar ofertas de hoy <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
           </div>
@@ -97,7 +100,7 @@ export default function FlashDeal() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute bottom-6 left-6">
               <Badge className="bg-white text-primary border-none rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-lg">
-                STOCK ASEGURADO 🐱
+                TIEMPO LIMITADO ⏳
               </Badge>
             </div>
           </div>

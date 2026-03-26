@@ -19,10 +19,9 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐶', 
     filter: 'Perro', 
     messages: [
-      '¿Jugamos un ratito?\n¡Te ayudo a buscar lo más rico! 🎾',
-      'Pensando:\n¿Ya llegó mi pedido MyDog? 🚚',
-      'Viendo:\nEsa carita de hambre... ¡yo sé qué darle! 🦴',
-      'Comiendo:\n¡Nada como mis croquetas favoritas! 😋'
+      '¿Alergias o estómago sensible?\nTe guío al alimento ideal. 🐕',
+      '¿Cachorro en casa?\n¡Necesita nutrición de primera! 🦴',
+      '¿Mañoso con la comida?\n¡Tengo el secreto infalible! 😋'
     ]
   },
   { 
@@ -30,10 +29,9 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐱', 
     filter: 'Gato', 
     messages: [
-      'Miau...\n¿Buscamos algo elegante para el hogar? 🏰',
-      'Pensando:\nDueño de mi casa y de mi cama 🌍',
-      'Viendo:\nEse pajarito por la ventana... 🦜',
-      'Comiendo:\nAtún del bueno, como me gusta 🐟'
+      'Miau... ¿Felino exigente?\nConozco los sabores que aman. 🐈',
+      '¿Bolas de pelo?\nTe ayudo con la dieta justa. 🏰',
+      'Atún del bueno y fresquito,\ncomo les gusta a ellos. 🐟'
     ]
   },
   { 
@@ -41,9 +39,8 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🦜', 
     filter: 'Aves', 
     messages: [
-      '¡Hola, hola!\n¿Unas semillas para brillar? ✨🕊️',
-      'Cantando:\nLa alegría de la casa soy yo 🎶',
-      'Comiendo:\nMi mixtura favorita está aquí 🌻'
+      '¡Hola! ¿Plumaje brillante?\nLa mixtura correcta es clave. ✨',
+      'Cantando de alegría con\nsemillas frescas y sanas. 🌻'
     ]
   },
   { 
@@ -51,9 +48,8 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐰', 
     filter: 'Conejo y Roedor', 
     messages: [
-      '¿Tienes una zanahoria?\n¡Soy el más tierno del mundo! 🥕🐰',
-      'Saltando:\n¡Llegó la hora de regalonear! ✨',
-      'Comiendo:\nHeno fresco para una pancita feliz 🌾'
+      'La fibra es vida.\nTe ayudo con el mejor heno. 🥕',
+      'Saltando felices con\nnutrición natural y pura. 🌾'
     ]
   },
   { 
@@ -61,9 +57,8 @@ const SPECIES_DATA: SpeciesData[] = [
     emoji: '🐠', 
     filter: 'Peces y Tortugas', 
     messages: [
-      '¡Glup, glup!\nBajo el mar todo es más rico 🫧🎵',
-      'Nadando:\nMi acuario es un paraíso 🏰',
-      'Pensando:\n¿Me das un poquito de comida? 🐠'
+      '¡Glup! Equilibrio del agua\ny salud para tus peces. 🫧',
+      'Un acuario sano es un\nacuario feliz y cristalino. 🏰'
     ]
   },
 ];
@@ -96,13 +91,13 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
     <section id="navegacion-mascota" className="py-8 md:py-16 max-w-7xl mx-auto px-4 md:px-8 overflow-hidden">
       <div className="text-center space-y-3 max-w-2xl mx-auto mb-6 md:mb-10">
         <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-1">
-          ❤️ Estamos para ayudarte
+          ❤️ Selecciona a tu compañero
         </div>
         <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground leading-tight">
-          Conversemos como <span className="text-primary">Amigos</span>
+          Asesoría experta para <span className="text-primary">cada mascota</span>
         </h2>
         <p className="text-sm md:text-base font-medium text-muted-foreground/80 leading-relaxed">
-          Nacimos amando a los animales y sabemos lo que tu mascota necesita. Selecciona una especie para que hablemos sobre cómo regalonearlos.
+          Nacimos amando a los animales y sabemos lo que tu mascota necesita. Selecciona una especie para que hablemos sobre cómo regalonearlos con responsabilidad.
         </p>
       </div>
 
@@ -127,7 +122,7 @@ export default function PetNavigation({ products }: { products: SanitizedProduct
               <button 
                 onClick={() => toggleChat(species.filter)}
                 className="relative outline-none focus-visible:ring-4 focus-visible:ring-primary/20 rounded-full transition-all"
-                aria-label={`Hablar sobre ${species.name}`}
+                aria-label={`Asesoría para ${species.name}`}
               >
                 <div className="w-[145px] h-[145px] lg:w-[170px] lg:h-[170px] rounded-full bg-white shadow-xl shadow-black/[0.02] border border-black/5 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-primary/20 relative z-10 overflow-hidden">
                   <span className="text-6xl md:text-7xl lg:text-8xl drop-shadow-sm select-none">{species.emoji}</span>

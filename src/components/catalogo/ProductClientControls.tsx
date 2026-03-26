@@ -1,7 +1,3 @@
-/**
- * @fileOverview Componente cliente para los controles de compra del detalle del producto.
- * Maneja la lógica de añadir al carrito con selección de cantidad y micro-copy de confianza (CRO).
- */
 "use client";
 
 import { useState } from 'react';
@@ -11,10 +7,9 @@ import { useCart } from '@/context/CartContext';
 import { SanitizedProduct } from '@/types/product';
 import { toast } from '@/hooks/use-toast';
 
-interface ProductClientControlsProps {
-  product: SanitizedProduct;
-}
-
+/**
+ * @fileOverview Controles de compra optimizados para CRO con micro-copy de confianza.
+ */
 export default function ProductClientControls({ product }: ProductClientControlsProps) {
   const { addToCart, cartType } = useCart();
   const [isAdding, setIsAdding] = useState(false);
@@ -33,8 +28,8 @@ export default function ProductClientControls({ product }: ProductClientControls
       const cartTypeName = cartType === 'wholesale' ? 'mayorista' : '';
       
       toast({ 
-        title: "¡Al carrito! 🛒", 
-        description: `${quantity}x ${product.name} fue añadido a tu pedido ${cartTypeName}.`.trim() 
+        title: "¡Listo! 🐾", 
+        description: `${quantity}x ${product.name} ya está en tu carrito.`.trim() 
       });
       
       setIsAdding(false);
@@ -85,7 +80,7 @@ export default function ProductClientControls({ product }: ProductClientControls
             <ShoppingCart className="w-6 h-6" />
           )}
           {product.currentStock > 0 ? (
-            quantity > 1 ? `Añadir ${quantity} al Carrito` : 'Añadir al Carrito'
+            'Agregar al Carrito'
           ) : (
             'Agotado temporalmente'
           )}
@@ -94,7 +89,7 @@ export default function ProductClientControls({ product }: ProductClientControls
         <div className="flex items-center justify-center gap-6 text-[9px] font-black text-muted-foreground uppercase tracking-widest">
            <div className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
-              <span>Compra Segura</span>
+              <span>Compra 100% Segura</span>
            </div>
            <div className="w-px h-3 bg-black/10" />
            <div className="flex items-center gap-1.5">

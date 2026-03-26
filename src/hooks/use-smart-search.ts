@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -7,11 +6,11 @@ import { SanitizedProduct } from '@/types/product';
 import { fetchAllProducts } from '@/actions/products';
 
 const SEARCH_PLACEHOLDERS = [
-  "¿Buscas 'el juguete indestructible'? 🦴",
-  "¿Catnip para un viernes? 🌿",
-  "¿Comida para perros mañosos? 🐕",
-  "¿El mejor rascador del mundo? 🐈",
-  "¿Arena que no huela a arena? ✨",
+  "¿Buscas alimento hipoalergénico? 🐕",
+  "¿Arena aglutinante sin olor? ✨",
+  "¿Snacks para premiar a tu cachorro? 🦴",
+  "¿Comida para gatos mañosos? 🐈",
+  "¿Buscas una marca en específico? 🔎",
 ];
 
 /**

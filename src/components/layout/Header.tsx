@@ -16,15 +16,15 @@ import {
 
 /**
  * @fileOverview Orquestador del Header Global.
- * Divide responsabilidades en TopBar, MainHeader y MenuBar siguiendo SRP.
+ * Divide responsabilidades en TopBar, MainHeader y MenuBar siguiendo SRP y CRO.
  */
 export default function Header() {
   const mainNav = [
-    { label: 'Home', href: '/' },
-    { label: 'Tienda', href: '/catalogo' },
-    { label: 'Ofertas', href: '/catalogo' },
-    { label: 'Blog', href: '#' },
-    { label: 'Mayoristas', href: '/b2b' },
+    { label: 'Inicio', href: '/' },
+    { label: 'La Tiendita', href: '/catalogo' },
+    { label: 'Ofertas de Bodega', href: '/catalogo?sort=price-asc' },
+    { label: 'Blog Nutricional', href: '#' },
+    { label: 'Zona Mayorista', href: '/b2b' },
   ];
 
   return (
@@ -55,7 +55,7 @@ export default function Header() {
                 <DropdownMenuTrigger asChild>
                   <div className="bg-secondary text-primary h-10 px-6 items-center gap-3 cursor-pointer hover:bg-secondary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
                     <Menu className="w-4 h-4" />
-                    Todas las Categorías
+                    Catálogo Completo
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-64 rounded-2xl border-none shadow-2xl p-2 mt-2 bg-white animate-in slide-in-from-top-2 duration-300">
@@ -82,7 +82,7 @@ export default function Header() {
 
             <div className="flex items-center gap-8">
               <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
-                <User className="w-4 h-4" /> Mi Cuenta
+                <User className="w-4 h-4" /> Mi Espacio MyDog
               </Link>
               <Link href="/b2b/portal" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
                 <Building2 className="w-4 h-4" /> Portal B2B
