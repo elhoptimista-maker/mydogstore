@@ -291,6 +291,7 @@ export default function CuentaPage() {
         </div>
       ) : (
         <>
+          {/* Dashboard Header - Hero Refinado e independiente */}
           <section className="bg-[#FEF9F3] pt-12 pb-20 border-b border-black/5 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
@@ -312,8 +313,10 @@ export default function CuentaPage() {
             </div>
           </section>
 
+          {/* Dashboard Content - Layout de Rejilla perfectamente alineado */}
           <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-10 relative z-20">
             <Tabs defaultValue="compras" className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Sidebar de Navegación */}
               <aside className="lg:col-span-1">
                 <Card className="rounded-[2.5rem] border-none shadow-xl bg-white overflow-hidden lg:sticky lg:top-48">
                   <TabsList className="flex flex-col h-auto bg-transparent p-4 gap-2">
@@ -333,6 +336,7 @@ export default function CuentaPage() {
                 </Card>
               </aside>
 
+              {/* Área de Visualización */}
               <div className="lg:col-span-3">
                 <TabsContent value="compras" className="space-y-6 mt-0 animate-in fade-in slide-in-from-bottom-4">
                   <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground mb-6">Mis Compras Realizadas</h2>
@@ -383,6 +387,7 @@ export default function CuentaPage() {
 
                 <TabsContent value="perfil" className="space-y-8 mt-0 animate-in fade-in slide-in-from-bottom-4">
                   <form onSubmit={handleUpdateProfile} className="space-y-8">
+                    {/* Sección 1: Identidad */}
                     <Card className="rounded-[3rem] border-none shadow-sm bg-white overflow-hidden">
                       <CardContent className="p-10 space-y-8">
                         <div className="flex items-center gap-4 border-b border-black/5 pb-6">
@@ -407,6 +412,7 @@ export default function CuentaPage() {
                       </CardContent>
                     </Card>
 
+                    {/* Sección 2: Facturación */}
                     <Card className="rounded-[3rem] border-none shadow-sm bg-white overflow-hidden">
                       <CardContent className="p-10 space-y-8">
                         <div className="flex items-center gap-4 border-b border-black/5 pb-6">
