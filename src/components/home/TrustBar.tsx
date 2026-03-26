@@ -1,35 +1,30 @@
 import { Clock, Truck, ShieldCheck, Headphones } from 'lucide-react';
 
-/**
- * @fileOverview Barra de beneficios y confianza (Trust Bar) refinada por el Arquitecto de Frontend.
- * Implementa una cuadrícula técnica con micro-ilustraciones y tipografía balanceada.
- */
-
 export default function TrustBar() {
   const items = [
     { 
       icon: <Clock className="w-7 h-7" />, 
       t: 'Entrega Flash', 
       s: 'Comprando antes de las 14:00',
-      badge: 'Hoy mismo'
+      badge: '¡Llega hoy!'
     },
     { 
       icon: <Truck className="w-7 h-7" />, 
       t: 'Envío Gratis', 
       s: 'En compras sobre $50.000',
-      badge: 'Región Metr.'
+      badge: 'En toda la RM'
     },
     { 
       icon: <ShieldCheck className="w-7 h-7" />, 
-      t: 'Garantía MyDog', 
-      s: 'Productos 100% certificados',
-      badge: 'Calidad'
+      t: 'Compromiso Real', 
+      s: 'Productos elegidos con amor',
+      badge: 'Confianza'
     },
     { 
       icon: <Headphones className="w-7 h-7" />, 
-      t: 'Soporte 24/7', 
-      s: 'Asesoría técnica inmediata',
-      badge: 'Vía WhatsApp'
+      t: 'Hablemos 24/7', 
+      s: 'Estamos para escucharte',
+      badge: 'WhatsApp'
     }
   ];
 

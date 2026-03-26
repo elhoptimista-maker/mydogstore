@@ -9,43 +9,35 @@ import {
 } from "@/components/ui/carousel";
 import { Quote } from 'lucide-react';
 
-/**
- * @fileOverview Sección de testimonios y prueba social refinada.
- * Implementa la estética de "Overlapping Avatars" y carrusel de tipografía fluida.
- */
-
 const TESTIMONIALS = [
   {
-    text: "Excelente servicio de distribución. Los productos siempre llegan frescos y en el tiempo acordado. Mi tienda ha crecido un 40% gracias a su soporte técnico.",
+    text: "Llevo años comprándole a la familia MyDog. Siempre me atienden con una sonrisa y se nota que aman lo que hacen. Mi perro salta de alegría cada vez que llega el despacho.",
     author: "Carolina Méndez",
-    role: "Dueña de PetShop 'El Refugio'",
+    role: "Vecina de La Cisterna",
     avatar: "https://picsum.photos/seed/testi-1/120/120"
   },
   {
-    text: "Como veterinario, solo confío en marcas certificadas. MyDog me ofrece el mix perfecto entre calidad médica y precios competitivos para mis pacientes.",
-    author: "Dr. Ricardo Lagos",
-    role: "Director Clínica 'Vida Animal'",
-    avatar: "https://picsum.photos/seed/testi-2/120/120"
+    text: "Encontré a MyDog buscando precios y me quedé por el cariño. Me asesoraron súper bien para el cambio de comida de mi gatita viejita. ¡Son un amor!",
+    author: "Andrea Valdés",
+    role: "Amiga de la casa desde 2019",
+    avatar: "https://picsum.photos/seed/testi-3/120/120"
   },
   {
-    text: "El despacho es increíblemente rápido. Compro para mi perro y mi gato y siempre encuentro ofertas que no están en el supermercado.",
-    author: "Andrea Valdés",
-    role: "Cliente desde 2019",
-    avatar: "https://picsum.photos/seed/testi-3/120/120"
+    text: "Rapidez y responsabilidad. Como feriante, valoro mucho que cumplan con los tiempos, pero como dueño de mascota, valoro más el cuidado que ponen en los productos.",
+    author: "Juan Pablo Soto",
+    role: "Feriante y amante de los quiltros",
+    avatar: "https://picsum.photos/seed/testi-2/120/120"
   }
 ];
 
 export default function SocialProof() {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
-      {/* Elementos decorativos */}
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none">
         <svg width="100%" height="100%"><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1"/></pattern><rect width="100%" height="100%" fill="url(#grid)" /></svg>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 text-center space-y-16 relative z-10">
-        
-        {/* Overlapping Avatars Group */}
         <div className="flex flex-col items-center gap-6">
           <div className="flex justify-center -space-x-4">
             {[1, 2, 3, 4, 5].map(i => (
@@ -55,7 +47,7 @@ export default function SocialProof() {
               )}>
                 <Image 
                   src={`https://picsum.photos/seed/user-${i+50}/120/120`} 
-                  alt="user" 
+                  alt="Familia MyDog" 
                   width={80} 
                   height={80} 
                   className="object-cover"
@@ -64,11 +56,10 @@ export default function SocialProof() {
             ))}
           </div>
           <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
-            ⭐ 100K+ Clientes Felices en Chile
+            ❤️ Historias de nuestra gran familia
           </div>
         </div>
 
-        {/* Carrusel de Testimonios */}
         <Carousel 
           opts={{ loop: true }}
           className="w-full"

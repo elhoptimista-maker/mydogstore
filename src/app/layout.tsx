@@ -11,8 +11,8 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import ProductAssistantWrapper from '@/components/ProductAssistantWrapper';
 
 export const metadata: Metadata = {
-  title: 'MyDog Distribuidora | Expertos en Nutrición Mascotas 🐾',
-  description: 'Distribución mayorista y venta al detalle de las mejores marcas para perros y gatos. Más de 15 años de experiencia.',
+  title: 'MyDog Distribuidora | Mucho más que comida, ¡puro amor! 🐾',
+  description: 'Un negocio familiar con 15 años de experiencia cuidando a los peluditos de Santiago. Despacho responsable en toda la Región Metropolitana.',
 };
 
 export const viewport: Viewport = {

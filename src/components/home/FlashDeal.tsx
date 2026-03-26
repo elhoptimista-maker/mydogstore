@@ -7,11 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Zap } from 'lucide-react';
 import Link from 'next/link';
 
-/**
- * @fileOverview Sección de Oferta Relámpago rediseñada para máxima conversión.
- * Implementa una jerarquía visual de alto impacto y una cuenta regresiva técnica.
- */
-
 export default function FlashDeal() {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -36,16 +31,13 @@ export default function FlashDeal() {
     <section className="py-12 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="bg-white rounded-[3rem] shadow-2xl shadow-black/5 border border-black/5 p-8 md:p-16 relative overflow-hidden grid grid-cols-1 lg:grid-cols-3 items-center gap-12">
-          
-          {/* Decoración de fondo */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full -ml-32 -mb-32 blur-3xl pointer-events-none" />
 
-          {/* Columna 1: Imagen de Impacto */}
           <div className="relative aspect-square lg:aspect-[4/5] rounded-[2rem] overflow-hidden group">
             <Image 
               src="https://picsum.photos/seed/flash-dog/800/1000" 
-              alt="Oferta Especial" 
+              alt="Regaloneo MyDog" 
               fill 
               className="object-cover transition-transform duration-700 group-hover:scale-110"
               data-ai-hint="happy dog"
@@ -53,26 +45,24 @@ export default function FlashDeal() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute bottom-6 left-6">
               <Badge className="bg-secondary text-primary border-none rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-lg">
-                STOCK LIMITADO
+                PARA QUE NUNCA LES FALTE
               </Badge>
             </div>
           </div>
 
-          {/* Columna 2: El Controlador (Centro) */}
           <div className="text-center space-y-8 lg:space-y-10 z-10">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">
-                <Zap className="w-3 h-3 fill-current" /> Oferta Relámpago
+                <Zap className="w-3 h-3 fill-current" /> Oportunidades del Día
               </div>
               <h2 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tighter leading-none text-foreground">
                 Hasta <span className="text-primary">50%</span> <br /> OFF
               </h2>
               <p className="text-muted-foreground font-medium text-sm md:text-base max-w-xs mx-auto">
-                Selección exclusiva de nutrición premium solo por las próximas horas.
+                Elegimos productos especiales para regalonear a los de la casa con los mejores precios.
               </p>
             </div>
 
-            {/* Cuenta Regresiva Profesional */}
             <div className="flex justify-center gap-3 md:gap-4">
               {[
                 { label: 'Días', val: timeLeft.days },
@@ -91,16 +81,15 @@ export default function FlashDeal() {
 
             <Link href="/catalogo" className="inline-block w-full sm:w-auto">
               <Button className="w-full sm:w-auto rounded-full bg-primary text-white font-black px-12 h-16 text-lg shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all gap-3">
-                ¡Aprovechar Ahora! <ArrowRight className="w-5 h-5" />
+                ¡Aprovechar el cariño! <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
           </div>
 
-          {/* Columna 3: Imagen Secundaria / Grid Móvil */}
           <div className="hidden lg:block relative aspect-[4/5] rounded-[2rem] overflow-hidden group">
             <Image 
               src="https://picsum.photos/seed/flash-cat/800/1000" 
-              alt="Oferta Especial Gatos" 
+              alt="Gatitos felices MyDog" 
               fill 
               className="object-cover transition-transform duration-700 group-hover:scale-110"
               data-ai-hint="happy cat"
@@ -108,7 +97,7 @@ export default function FlashDeal() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute bottom-6 left-6">
               <Badge className="bg-white text-primary border-none rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-lg">
-                PARA ELLOS TAMBIÉN 🐱
+                FELICIDAD GARANTIZADA 🐱
               </Badge>
             </div>
           </div>

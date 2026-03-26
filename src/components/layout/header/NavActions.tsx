@@ -15,25 +15,20 @@ import {
 } from "@/components/ui/sheet";
 import { CATEGORIES } from '@/lib/mock-db';
 
-/**
- * @fileOverview Componente que agrupa las acciones de conversión del usuario y la navegación móvil.
- * Rediseñado para ofrecer una experiencia de usuario premium y coherente.
- */
 export default function NavActions() {
   const { cartCount, cartType } = useCart();
   const { wishlist } = useWishlist();
 
   const mainNav = [
-    { label: 'Home', href: '/' },
-    { label: 'Tienda', href: '/catalogo' },
-    { label: 'Ofertas', href: '/catalogo?sort=price-asc' },
-    { label: 'Blog', href: '#' },
+    { label: 'Inicio', href: '/' },
+    { label: 'La Tiendita', href: '/catalogo' },
+    { label: 'Oportunidades', href: '/catalogo?sort=price-asc' },
+    { label: 'Blog Mascotas', href: '#' },
     { label: 'Mayoristas', href: '/b2b' },
   ];
 
   return (
     <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
-      {/* Wishlist - Visible en todos los dispositivos */}
       <Link href="/wishlist" className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
         <Heart className={cn("w-4 h-4 sm:w-5 sm:h-5", wishlist.length > 0 && "fill-current text-secondary")} />
         {wishlist.length > 0 && (
@@ -43,7 +38,6 @@ export default function NavActions() {
         )}
       </Link>
 
-      {/* Carrito - Visible en todos los dispositivos */}
       <CartDrawer>
         <button className={cn(
           "relative w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all",
@@ -58,7 +52,6 @@ export default function NavActions() {
         </button>
       </CartDrawer>
 
-      {/* Menú Burger (Mobile Only) */}
       <Sheet>
         <SheetTrigger asChild>
           <button className="md:hidden text-white hover:bg-white/10 p-2 rounded-xl transition-colors">
@@ -66,25 +59,20 @@ export default function NavActions() {
           </button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[85%] sm:max-w-md p-0 border-none bg-background overflow-hidden flex flex-col">
-          {/* Header del Menú con Branding */}
           <SheetHeader className="p-8 bg-primary text-white shrink-0 relative overflow-hidden">
-            {/* Decoración sutil */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
-            
             <div className="flex items-center gap-4 relative z-10">
               <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-xl backdrop-blur-md">
                 <Dog className="w-8 h-8 text-secondary" />
               </div>
               <div className="flex flex-col -space-y-1 text-left">
-                <SheetTitle className="text-white font-black text-2xl tracking-tighter uppercase leading-none">Menú MyDog</SheetTitle>
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em]">Experiencia Móvil</span>
+                <SheetTitle className="text-white font-black text-2xl tracking-tighter uppercase leading-none">Mi MyDog</SheetTitle>
+                <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em]">¡Qué alegría verte!</span>
               </div>
             </div>
           </SheetHeader>
 
-          {/* Cuerpo del Menú */}
           <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-[#F6F6F6]">
-            {/* Sección 1: Exploración */}
             <div className="space-y-4">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Explorar</span>
               <div className="grid grid-cols-1 gap-2">
@@ -101,10 +89,9 @@ export default function NavActions() {
               </div>
             </div>
 
-            {/* Sección 2: Categorías Técnicas */}
             <div className="space-y-4">
               <div className="flex items-center justify-between ml-2">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Categorías</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">La Tiendita</span>
                 <Link href="/catalogo" className="text-[9px] font-bold text-primary uppercase tracking-widest hover:underline">Ver Todo</Link>
               </div>
               <div className="grid grid-cols-1 gap-2 pb-10">
@@ -127,13 +114,12 @@ export default function NavActions() {
             </div>
           </div>
 
-          {/* Footer del Menú: Acceso Clientes / Minoristas */}
           <div className="p-6 bg-white border-t border-black/5">
             <Link 
               href="/cuenta" 
               className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
             >
-              <User className="w-4 h-4" /> Acceso Minoristas
+              <User className="w-4 h-4" /> Mi Espacio MyDog
             </Link>
           </div>
         </SheetContent>
