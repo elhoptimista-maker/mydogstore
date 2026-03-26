@@ -20,6 +20,14 @@ interface PaymentSelectorProps {
 export default function PaymentSelector({ selectedMethod, onSelect, cartType }: PaymentSelectorProps) {
   const paymentMethods = [
     {
+      id: 'mock',
+      title: '🧪 MODO PRUEBAS (Sandbox)',
+      description: 'Simula un pago sin usar dinero real. Solo visible en desarrollo.',
+      icon: <CreditCard className="w-5 h-5" />,
+      allowedFor: ['retail', 'wholesale'],
+      logo: null
+    },
+    {
       id: 'khipu',
       title: 'Transferencia Bancaria',
       description: 'Paga de forma segura desde tu banco (vía Khipu).',
