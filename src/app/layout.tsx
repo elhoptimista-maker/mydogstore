@@ -10,17 +10,27 @@ import { ChatProvider } from '@/context/ChatContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import ProductAssistantWrapper from '@/components/ProductAssistantWrapper';
 
-// Metadata optimizada para SEO local y CTR (Click-Through Rate)
+// Metadata optimizada para SEO local, Autoridad y CTR (Click-Through Rate)
 export const metadata: Metadata = {
   title: 'MyDog Distribuidora | Expertos en nutrición para tu mascota 🐾',
   description: '15 años de experiencia cuidando a las mascotas de Santiago. Compra el mejor alimento y accesorios con despacho rápido y seguro en toda la Región Metropolitana.',
+  keywords: ['alimento para mascotas', 'distribuidora de mascotas santiago', 'comida para perros rm', 'accesorios mascotas', 'mydog distribuidora'],
+  authors: [{ name: 'MyDog Distribuidora' }],
+  openGraph: {
+    title: 'MyDog Distribuidora | Expertos en nutrición para tu mascota',
+    description: '15 años de experiencia cuidando a las mascotas de Santiago. Despacho rápido y seguro en toda la Región Metropolitana.',
+    url: 'https://www.mydogdistribuidora.cl',
+    siteName: 'MyDog Distribuidora',
+    locale: 'es_CL',
+    type: 'website',
+  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false,
+  userScalable: false, // Previene el zoom en inputs móviles, mejorando la experiencia de UI nativa
 };
 
 export default function RootLayout({
@@ -31,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        {/* Google Tag Manager - Crítico para medir el embudo de conversión y CRO */}
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -42,10 +53,13 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="font-sans antialiased selection:bg-primary/20 bg-background text-foreground">
+        {/* Noscript fallback para GTM */}
         <noscript>
           <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHZB5RHC"
           height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe>
         </noscript>
+        
+        {/* Árbol de Providers - Gestión de Estado Global */}
         <CartProvider>
           <WishlistProvider>
             <ChatProvider>
@@ -53,12 +67,18 @@ export default function RootLayout({
                 <div id="global-header">
                   <Header />
                 </div>
+                
+                {/* Contenedor principal de la aplicación */}
                 <main id="global-main" className="pt-44 flex-1">
                   {children}
                 </main>
+                
+                {/* Elementos globales de cierre y conversión */}
                 <Newsletter />
                 <Footer />
               </div>
+              
+              {/* Utilidades flotantes y notificaciones */}
               <ProductAssistantWrapper />
               <Toaster />
             </ChatProvider>
