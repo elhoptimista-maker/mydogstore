@@ -66,12 +66,14 @@ export default function Header() {
   const whatsappNumber = "56912345678";
   const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
+  // Cargar productos para la búsqueda instantánea
   useEffect(() => {
     fetchAllProducts().then(products => {
       setAllProducts(products.filter(p => p.currentStock > 0));
     });
   }, []);
 
+  // Efecto de escritura para el buscador
   useEffect(() => {
     const handleTyping = () => {
       const fullText = SEARCH_PLACEHOLDERS[placeholderIndex];
@@ -98,6 +100,7 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [currentPlaceholder, isDeleting, placeholderIndex, typingSpeed]);
 
+  // Filtrado de resultados en tiempo real
   useEffect(() => {
     if (searchTerm.trim().length > 1) {
       const query = searchTerm.toLowerCase();
@@ -115,6 +118,7 @@ export default function Header() {
     }
   }, [searchTerm, allProducts]);
 
+  // Cerrar resultados al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -143,7 +147,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full shadow-sm">
-      {/* 1. Top Bar */}
+      {/* 1. Top Bar - Utilidad y Contacto */}
       <div className="h-10 bg-accent text-accent-foreground flex items-center px-4 md:px-8 text-[10px] font-bold uppercase tracking-widest border-b border-black/5">
         <div className="max-w-7xl mx-auto w-full flex justify-center items-center relative">
           <div className="flex items-center gap-2">
@@ -173,9 +177,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2. Main Header */}
+      {/* 2. Main Header - Búsqueda y Acciones */}
       <div className="h-20 bg-primary text-white flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-6 md:gap-12">
+          {/* Burger Menu (Mobile Only) */}
           <Sheet>
             <SheetTrigger asChild>
               <button className="md:hidden text-white hover:bg-white/10 p-2 rounded-xl transition-colors">
@@ -220,6 +225,7 @@ export default function Header() {
             </SheetContent>
           </Sheet>
 
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-110 transition-transform">
               <Dog className="w-8 h-8 text-white" />
@@ -230,6 +236,7 @@ export default function Header() {
             </div>
           </Link>
 
+          {/* Search (Desktop) */}
           <div className="flex-1 hidden md:flex max-w-2xl relative" ref={searchRef}>
             <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-12 overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
               <input 
@@ -254,6 +261,7 @@ export default function Header() {
               </button>
             </form>
 
+            {/* Resultados de búsqueda instantánea */}
             {showResults && (
               <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-[2.5rem] shadow-2xl border border-black/[0.03] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[120]">
                 <div className="p-4 bg-primary/5 border-b border-black/[0.03] flex justify-between items-center">
@@ -305,6 +313,7 @@ export default function Header() {
             )}
           </div>
 
+          {/* Actions */}
           <div className="flex items-center gap-3 sm:gap-4 md:gap-6 shrink-0">
             {/* User Icon Mobile */}
             <Link href="/cuenta" className="md:hidden relative w-10 h-10 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all group">
@@ -321,6 +330,7 @@ export default function Header() {
               )}
             </Link>
 
+            {/* Cart Icon */}
             <CartDrawer>
               <button className={cn(
                 "relative w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all",
@@ -338,7 +348,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. Menu Bar & Mobile Search */}
+      {/* 3. Menu Bar - Navegación y Mobile Search */}
       <div className="h-14 bg-primary border-t border-white/10 flex items-center px-4 md:px-8">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between h-full">
           
@@ -384,7 +394,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Mobile Search Bar */}
+          {/* Mobile Search Bar (Solo se ve en móviles) */}
           <div className="flex md:hidden flex-1 relative w-full h-10">
             <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full w-full h-full overflow-hidden shadow-inner border border-transparent focus-within:border-secondary/30 transition-all">
               <input 
@@ -393,7 +403,7 @@ export default function Header() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => searchTerm.length > 1 && searchResults.length > 0 && setShowResults(true)}
                 placeholder={currentPlaceholder}
-                className="flex-1 h-full px-5 text-xs font-bold text-foreground bg-transparent outline-none placeholder:text-muted-foreground/60"
+                className="flex-1 h-full px-5 text-xs font-bold text-foreground bg-transparent outline-none placeholder:text-muted-foreground/40"
               />
               {searchTerm && (
                 <button 
