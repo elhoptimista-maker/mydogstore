@@ -26,7 +26,6 @@ export default function NavActions() {
     { label: 'Inicio', href: '/' },
     { label: 'La Tiendita', href: '/catalogo' },
     { label: 'Ofertas de Bodega', href: '/catalogo?sort=price-asc' },
-    { label: 'Blog Nutricional', href: '#' },
     { label: 'Zona Mayorista', href: '/b2b' },
   ];
 
