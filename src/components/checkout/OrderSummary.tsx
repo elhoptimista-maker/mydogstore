@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function OrderSummary({ shippingCost }: { shippingCost: number | null }) {
   const { cart, cartTotal, cartType, coupon, applyCoupon, removeCoupon, discountAmount } = useCart();
