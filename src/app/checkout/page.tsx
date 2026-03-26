@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -6,6 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import { processCheckout } from '@/actions/checkout';
 import { fetchCommunes } from '@/actions/communes';
+import { useShippingRates } from '@/hooks/use-shipping-rates';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,6 +32,9 @@ export default function CheckoutPage() {
   const [communeSearch, setCommuneSearch] = useState("");
   const [showCommuneResults, setShowCommuneResults] = useState(false);
   const communeSearchRef = useRef<HTMLDivElement>(null);
+
+  // Consumimos las tarifas reales del ERP para evitar discrepancias con el carrito
+  const { getRateForComuna } = useShippingRates();
 
   const [customer, setCustomer] = useState({ name: '', email: '', phone: '' });
   const [shipping, setShipping] = useState({ streetAndNumber: '', apartmentOrLocal: '', commune: '', region: 'Metropolitana', method: 'despacho' });
@@ -107,13 +110,20 @@ export default function CheckoutPage() {
     return null; 
   }
 
-  const shippingCost = shipping.method === 'despacho' ? (cartTotal > 50000 ? 0 : 3500) : 0;
+  // Lógica de costo de envío 100% dinámica basada en el ERP
+  const isFreeShipping = cartType === 'retail' && cartTotal >= 50000;
+  const baseShippingCost = getRateForComuna(communeSearch);
+  
+  const shippingCost = shipping.method === 'despacho' 
+    ? (isFreeShipping ? 0 : (baseShippingCost ?? 0)) 
+    : 0;
+
   const finalTotal = cartTotal + shippingCost;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customer.email || !customer.name || !shipping.streetAndNumber || !communeSearch) {
-      toast({ variant: "destructive", title: "Faltan datos" });
+      toast({ variant: "destructive", title: "¡Faltan algunos datos!", description: "Por favor revisa los campos marcados para continuar." });
       return;
     }
 
@@ -125,7 +135,6 @@ export default function CheckoutPage() {
          address: sameAddress ? `${shipping.streetAndNumber} ${shipping.apartmentOrLocal}`.trim() : billing.address
       };
 
-      // Mapeo correcto de items para cumplir con el tipo CheckoutItem
       const mappedItems = cart.map(item => ({
         id: item.id,
         name: item.name,
@@ -157,7 +166,7 @@ export default function CheckoutPage() {
       }
 
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Error en Checkout", description: error.message });
+      toast({ variant: "destructive", title: "Tuvimos un problema", description: error.message });
       setLoading(false);
     }
   };
