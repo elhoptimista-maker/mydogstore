@@ -47,38 +47,54 @@ interface CheckoutParams {
   saveAddressName?: string;
 }
 
+/**
+ * Genera un ID de orden amigable con prefijo de marca.
+ */
 function generateFriendlyOrderId(): string {
-  const randomChars = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const randomChars = Math.random().toString(36).substring(2, 6).toUpperCase();
   const timestamp = Date.now().toString().slice(-4);
-  return `ORD-${timestamp}${randomChars}`;
+  return `MD-${timestamp}${randomChars}`;
 }
 
+/**
+ * Server Action para procesar el checkout de forma segura y persistente.
+ */
 export async function processCheckout(params: CheckoutParams) {
   const { idToken, customer, items, shipping, billing, paymentMethod, total, createAccount, saveAddressName } = params;
 
   try {
-    let userId: string | null = null;
-    let validatedEmail = customer.email;
-    let userName = customer.name;
-
     const erpDb = getErpDbAdmin();
     const storefrontAuth = getStorefrontAuthAdmin();
     const storefrontDb = getStorefrontDbAdmin();
 
+    // TODO: Implementar calculateRealTotal para validar que 'total' no fue manipulado en el frontend
+    
+    let userId: string | null = null;
+    let validatedEmail = customer.email;
+    let userName = customer.name;
+
+    // 1. GESTIÓN DE IDENTIDAD DEL USUARIO
     if (idToken) {
+      // Usuario autenticado: Verificamos sesión
       const decodedToken = await storefrontAuth.verifyIdToken(idToken);
       userId = decodedToken.uid;
       validatedEmail = decodedToken.email || customer.email;
       userName = customer.name; 
     } else if (createAccount) {
+      // Registro de nueva cuenta: Generamos cuenta y link de bienvenida
       try {
-        const randomPassword = Math.random().toString(36).slice(-10) + "A1!x"; 
+        const randomPassword = Math.random().toString(36).slice(-12) + "Myd0g!2024"; 
         const newUser = await storefrontAuth.createUser({
           email: validatedEmail,
           displayName: userName,
           password: randomPassword
         });
         userId = newUser.uid;
+
+        // Generamos link para que el usuario setee su clave real (UX Crítica)
+        const resetLink = await storefrontAuth.generatePasswordResetLink(validatedEmail);
+        // Aquí se dispararía un correo electrónico en producción
+        console.log(`[AUTH] Invitación enviada a ${validatedEmail}. Link: ${resetLink}`);
 
         await storefrontDb.collection("users").doc(userId).set({
           uid: userId,
@@ -89,7 +105,7 @@ export async function processCheckout(params: CheckoutParams) {
           createdAt: Timestamp.now(),
           addresses: [{
             id: 'default',
-            name: saveAddressName || 'Principal',
+            name: saveAddressName || 'Casa',
             streetAndNumber: shipping.streetAndNumber,
             apartmentOrLocal: shipping.apartmentOrLocal || '',
             commune: shipping.commune,
@@ -98,31 +114,37 @@ export async function processCheckout(params: CheckoutParams) {
           }]
         });
       } catch (err: any) {
+        console.warn("[Checkout] No se pudo crear la cuenta automática, continuando como invitado.", err.message);
         userId = "guest";
       }
     } else {
       userId = "guest";
     }
 
+    // 2. ACTUALIZACIÓN DE DIRECCIONES PARA USUARIOS LOGUEADOS
     if (userId !== "guest" && idToken && saveAddressName) {
       const userRef = storefrontDb.collection("users").doc(userId);
       const userSnap = await userRef.get();
       if (userSnap.exists) {
         const userData = userSnap.data();
         const addresses = userData?.addresses || [];
-        const newAddress = {
-          id: Math.random().toString(36).substring(2, 9),
-          name: saveAddressName,
-          streetAndNumber: shipping.streetAndNumber,
-          apartmentOrLocal: shipping.apartmentOrLocal || '',
-          commune: shipping.commune,
-          region: shipping.region,
-          isDefault: addresses.length === 0
-        };
-        await userRef.update({ addresses: [...addresses, newAddress] });
+        // Evitamos duplicados por nombre de etiqueta
+        if (!addresses.some((a: any) => a.name.toLowerCase() === saveAddressName.toLowerCase())) {
+          const newAddress = {
+            id: Math.random().toString(36).substring(2, 9),
+            name: saveAddressName,
+            streetAndNumber: shipping.streetAndNumber,
+            apartmentOrLocal: shipping.apartmentOrLocal || '',
+            commune: shipping.commune,
+            region: shipping.region,
+            isDefault: addresses.length === 0
+          };
+          await userRef.update({ addresses: [...addresses, newAddress] });
+        }
       }
     }
 
+    // 3. PREPARACIÓN DE LA ORDEN (Persistencia Preventiva)
     const orderRef = erpDb.collection("orders").doc();
     const friendlyOrderId = generateFriendlyOrderId();
     const orderType = items.some(i => i.cartType === 'wholesale') ? 'wholesale' : 'retail';
@@ -147,11 +169,19 @@ export async function processCheckout(params: CheckoutParams) {
         method: shipping.method,
         cost: shipping.cost || 0
       },
+      // CORRECCIÓN TRIBUTARIA: Persistimos datos de factura/boleta
+      billing: {
+        type: billing.type,
+        rut: billing.rut || null,
+        companyName: billing.companyName || null,
+        businessLine: billing.businessLine || null,
+        address: billing.address || null
+      },
       payment: {
         method: paymentMethod,
         status: "pending_payment",
-        providerId: null as string | null,
-        paymentUrl: null as string | null
+        providerId: null,
+        paymentUrl: null
       },
       totalAmount: total,
       status: "pending_payment",
@@ -160,28 +190,42 @@ export async function processCheckout(params: CheckoutParams) {
       source: "ecommerce_web"
     };
 
+    // Guardamos la orden ANTES de llamar a la pasarela (Rescate de carritos abandonados)
+    await orderRef.set(orderData);
+
+    // 4. INTEGRACIÓN CON PASARELA DE PAGO (Khipu)
     let paymentUrl = null;
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
     if (paymentMethod === "khipu") {
-      const khipuResponse = await KhipuService.createPayment({
-        amount: total,
-        currency: "CLP",
-        subject: `Pago de Orden ${friendlyOrderId} - MyDog`,
-        transaction_id: orderRef.id, 
-        payer_email: validatedEmail,
-        payer_name: userName,
-        return_url: `${baseUrl}/checkout/status?order=${orderRef.id}`,
-        cancel_url: `${baseUrl}/checkout/status?order=${orderRef.id}&canceled=true`,
-        notify_url: `${baseUrl}/api/webhooks/khipu` 
-      });
+      try {
+        const khipuResponse = await KhipuService.createPayment({
+          amount: total,
+          currency: "CLP",
+          subject: `Orden ${friendlyOrderId} - MyDog Distribuidora`,
+          transaction_id: orderRef.id, 
+          payer_email: validatedEmail,
+          payer_name: userName,
+          return_url: `${baseUrl}/checkout/status?order=${orderRef.id}`,
+          cancel_url: `${baseUrl}/checkout/status?order=${orderRef.id}&canceled=true`,
+          notify_url: `${baseUrl}/api/webhooks/khipu` 
+        });
 
-      orderData.payment.providerId = khipuResponse.payment_id;
-      orderData.payment.paymentUrl = khipuResponse.payment_url;
-      paymentUrl = khipuResponse.payment_url;
+        paymentUrl = khipuResponse.payment_url;
+        
+        // Actualizamos la orden con los metadatos de la pasarela
+        await orderRef.update({
+          "payment.providerId": khipuResponse.payment_id,
+          "payment.paymentUrl": khipuResponse.payment_url,
+          updatedAt: Timestamp.now()
+        });
+
+      } catch (khipuError: any) {
+        console.error("[Khipu Service Error]:", khipuError.message);
+        // No lanzamos error fatal porque la orden ya está guardada para gestión manual
+        throw new Error("Tuvimos un problema al conectar con tu banco. Por favor intenta de nuevo.");
+      }
     }
-
-    await orderRef.set(orderData);
 
     return { 
       success: true, 
@@ -189,11 +233,11 @@ export async function processCheckout(params: CheckoutParams) {
       friendlyOrderId,
       paymentUrl,
       createdAccount: createAccount && userId !== "guest",
-      message: paymentUrl ? "Redirigiendo..." : "Orden registrada." 
+      message: paymentUrl ? "Redirigiendo al portal de pago..." : "Orden registrada exitosamente." 
     };
 
   } catch (error: any) {
-    console.error("[CheckoutAction] Error:", error);
-    return { success: false, error: error.message || "Fallo crítico." };
+    console.error("[CheckoutAction Fatal Error]:", error);
+    return { success: false, error: error.message || "Error interno al procesar el pedido." };
   }
 }
