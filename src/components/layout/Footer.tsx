@@ -86,7 +86,7 @@ export default function Footer() {
                 <MapPin className="w-5 h-5 text-secondary shrink-0" />
                 <div className="space-y-1">
                   <p className="text-xs font-black uppercase tracking-widest">Nuestra Bodega</p>
-                  <p className="text-xs text-white/60 font-medium">La Cisterna, RM. Santiago de Chile.</p>
+                  <p className="text-xs text-white/60 font-medium">Presidente Arturo Alessandri palma 9243 bodega 9, San Bernardo, Santiago, Chile</p>
                 </div>
               </div>
               
