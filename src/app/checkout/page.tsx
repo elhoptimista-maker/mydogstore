@@ -162,9 +162,9 @@ export default function CheckoutPage() {
           finalUserId = newUserCred.user.uid;
           
           const userRef = doc(db, "users", finalUserId);
-          // Actualizamos también el RUT en la creación de la cuenta
+          // Guardamos el RUT tal cual viene (ya formateado)
           await updateDoc(userRef, {
-            rut: customer.rut.replace(/[^0-9kK\-]/g, ''), 
+            rut: customer.rut, 
             addresses: arrayUnion({
               id: 'default', name: newAddressName || 'Casa', streetAndNumber: shipping.streetAndNumber, apartmentOrLocal: shipping.apartmentOrLocal || '', commune: communeSearch, region: shipping.region, isDefault: true
             })
@@ -183,7 +183,8 @@ export default function CheckoutPage() {
 
       const finalBillingInfo = {
          ...billing,
-         rut: billing.type === 'factura' ? billing.rut.replace(/[^0-9kK\-]/g, '') : '',
+         // Enviamos el RUT tal cual viene para que el Server Action lo procese
+         rut: billing.type === 'factura' ? billing.rut : '',
          address: sameAddress ? `${shipping.streetAndNumber} ${shipping.apartmentOrLocal}`.trim() : billing.address
       };
 
@@ -196,13 +197,10 @@ export default function CheckoutPage() {
         cartType: item.cartType
       }));
 
-      // Enviamos el RUT personal limpio
+      // Pasamos los datos al Server Action
       const response = await processCheckout({
         userId: finalUserId,
-        customer: {
-          ...customer,
-          rut: customer.rut.replace(/[^0-9kK\-]/g, '') 
-        },
+        customer: customer,
         items: mappedItems,
         shipping: { ...shipping, commune: communeSearch, cost: actualShippingCost },
         billing: finalBillingInfo,

@@ -7,6 +7,17 @@ import { PaymentFactory } from "@/lib/services/payments/payment.factory";
  * Implementa la regla tributaria obligatoria: usa RUT Empresa para Facturas 
  * y RUT Personal para Boletas. Nunca envía valores vacíos al ERP.
  */
+
+// Función interna para asegurar el formato que el ERP espera (XX.XXX.XXX-X)
+function formatRutErp(rut: string): string {
+  if (!rut) return "";
+  const clean = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+  if (clean.length <= 1) return clean;
+  const body = clean.slice(0, -1);
+  const dv = clean.slice(-1);
+  return `${body.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}-${dv}`;
+}
+
 export async function processCheckout(params: any) {
   const { userId, customer, items, shipping, billing, paymentMethod, total } = params;
 
@@ -15,15 +26,18 @@ export async function processCheckout(params: any) {
     // Si piden BOLETA, usamos el RUT Personal y Nombre Personal obligatorios.
     const finalDocumentType = billing.type === 'factura' ? 'FACTURA' : 'COMPROBANTE_VENTA';
     
-    const finalRut = billing.type === 'factura' && billing.rut 
+    const rawRut = billing.type === 'factura' && billing.rut 
       ? billing.rut 
       : customer.rut; // Obligatorio desde el frontend
+
+    // ASEGURAMOS FORMATO CON PUNTOS PARA EL ERP (Ej: 76.198.835-2)
+    const finalRut = formatRutErp(rawRut);
 
     const finalName = billing.type === 'factura' && billing.companyName 
       ? billing.companyName 
       : customer.name;
 
-    if (!finalRut) {
+    if (!finalRut || finalRut.length < 7) {
       throw new Error("Se requiere un RUT válido para procesar el pedido. Por favor revisa los datos de contacto.");
     }
 
