@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { ShieldCheck, Mail, User, Phone, MapPin, Truck, ChevronRight, Loader2, Search, Check, X, MapPinIcon, Map, Plus, Building, IdCard } from 'lucide-react';
+import { ShieldCheck, Mail, User, Phone, MapPin, Truck, ChevronRight, Loader2, Search, Check, X, MapPinIcon, Map, Plus, Building, IdCard, ShoppingBag, ArrowRight } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import OrderSummary from '@/components/checkout/OrderSummary';
@@ -121,7 +121,27 @@ export default function CheckoutPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (cart.length === 0 && !loading) return null; 
+  // Manejo de estado vacío: Evita página en blanco
+  if (cart.length === 0 && !loading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center space-y-8 bg-[#F6F6F6]">
+        <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
+          <ShoppingBag className="w-12 h-12 text-primary/20" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-black text-foreground">Tu carrito está vacío</h2>
+          <p className="text-muted-foreground font-medium max-w-sm mx-auto leading-relaxed">
+            Parece que aún no has elegido nada para regalonear a tu mascota. ¿Vamos a la bodega a buscar algo?
+          </p>
+        </div>
+        <Link href="/catalogo">
+          <Button className="h-16 px-12 rounded-full bg-primary text-white font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3">
+            Explorar la tiendita <ArrowRight className="ml-2 w-4 h-4" />
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   const isFreeShipping = cartType === 'retail' && cartTotal >= 50000;
   const baseShippingCost = getRateForComuna(communeSearch);
