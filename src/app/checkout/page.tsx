@@ -80,7 +80,8 @@ export default function CheckoutPage() {
               type: dbData.billingType,
               rut: dbData.billingRut ? formatRUT(dbData.billingRut) : prev.rut,
               companyName: dbData.companyName || prev.companyName,
-              businessLine: dbData.businessLine || prev.businessLine
+              businessLine: dbData.businessLine || prev.businessLine,
+              address: dbData.billingAddress || prev.address
             }));
           }
           
@@ -444,15 +445,26 @@ export default function CheckoutPage() {
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Giro Comercial *</Label>
-                      <Input 
-                        required
-                        placeholder="Ej: Veterinaria, Pet Shop..." 
-                        value={billing.businessLine} 
-                        onChange={(e) => setBilling({...billing, businessLine: e.target.value})} 
-                        className="h-14 rounded-2xl bg-muted/30 focus:bg-white font-bold transition-colors" 
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Giro Comercial *</Label>
+                        <Input 
+                          required
+                          placeholder="Ej: Veterinaria, Pet Shop..." 
+                          value={billing.businessLine} 
+                          onChange={(e) => setBilling({...billing, businessLine: e.target.value})} 
+                          className="h-14 rounded-2xl bg-muted/30 focus:bg-white font-bold transition-colors" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Dirección Facturación (Opcional)</Label>
+                        <Input 
+                          placeholder="Dirección legal si es distinta" 
+                          value={billing.address} 
+                          onChange={(e) => setBilling({...billing, address: e.target.value})} 
+                          className="h-14 rounded-2xl bg-muted/30 focus:bg-white font-bold px-6 transition-colors" 
+                        />
+                      </div>
                     </div>
                   </div>
                 )}

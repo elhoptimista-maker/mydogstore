@@ -205,7 +205,6 @@ export default function CuentaPage() {
     e.preventDefault();
     setUpdatingProfile(true);
     try {
-      // Mapeo inverso para persistir en Firestore según el nuevo modelo
       const dataToSave = {
         displayName: profileData.displayName,
         phone: profileData.phone,
@@ -512,9 +511,15 @@ export default function CuentaPage() {
                                   <Input placeholder="Ej: Veterinaria SPA" value={profileData.companyName} onChange={(e) => setProfileData({...profileData, companyName: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold" />
                                 </div>
                               </div>
-                              <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Giro Comercial</Label>
-                                <Input placeholder="Ej: Venta de alimentos..." value={profileData.businessLine} onChange={(e) => setProfileData({...profileData, businessLine: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold" />
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Giro Comercial</Label>
+                                  <Input placeholder="Ej: Venta de alimentos..." value={profileData.businessLine} onChange={(e) => setProfileData({...profileData, businessLine: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold" />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Dirección Facturación (Opcional)</Label>
+                                  <Input placeholder="Ej: Av. Principal 123, Of 402" value={profileData.billingAddress} onChange={(e) => setProfileData({...profileData, billingAddress: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold px-6" />
+                                </div>
                               </div>
                             </div>
                           )}
