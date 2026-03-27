@@ -1,14 +1,11 @@
 "use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Instagram, MessageCircle, MapPin, Phone, Mail, ArrowRight, ShieldCheck, Facebook } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import LogoImg from '@/img/imagotipo.png';
+import BrandLogo from './BrandLogo';
 
 /**
  * @fileOverview Pie de página con autoridad de 15 años y tono familiar.
- * Contenedor del logo actualizado a circular (rounded-full).
  */
 export default function Footer() {
   const whatsappUrl = `https://wa.me/+56957889012?text=Hola,%20buenos%20días!`;
@@ -23,21 +20,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-20">
           
           <div className="lg:col-span-4 space-y-8">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center shadow-lg backdrop-blur-md group-hover:scale-110 transition-transform relative overflow-hidden">
-                <Image 
-                  src={LogoImg} 
-                  alt="MyDog" 
-                  fill 
-                  className="object-contain p-2"
-                  sizes="56px"
-                />
-              </div>
-              <div className="flex flex-col -space-y-1">
-                <span className="font-black text-2xl tracking-tighter leading-none uppercase">MyDog Distribuidora</span>
-                <span className="text-[9px] font-bold text-secondary uppercase tracking-[0.2em]">15 años cuidando a tu mascota</span>
-              </div>
-            </Link>
+            <BrandLogo variant="footer" size="lg" />
             
             <p className="text-white/60 text-sm font-medium leading-relaxed max-sm:max-w-sm">
               Nacimos como un pequeño pet shop familiar. Hoy somos una distribuidora sólida con la misma vocación: darte la mejor asesoría nutricional y despachar rápido a la puerta de tu casa.

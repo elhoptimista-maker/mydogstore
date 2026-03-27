@@ -40,7 +40,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import CartDrawer from '@/components/cart/CartDrawer';
 import Link from 'next/link';
-import LogoImg from '@/img/imagotipo.png';
+import BrandLogo from '@/components/layout/BrandLogo';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -180,20 +180,8 @@ export default function B2BPortalPage() {
         <Card className="w-full max-w-lg rounded-[3rem] border-none shadow-2xl bg-white overflow-hidden relative z-10 transition-all duration-500">
           <div className="bg-primary p-12 text-white text-center space-y-6 relative overflow-hidden">
              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
-             <div className="relative z-10">
-                <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-xl border border-white/10 relative overflow-hidden">
-                  <Image 
-                    src={LogoImg} 
-                    alt="MyDog" 
-                    fill 
-                    className="object-contain p-3"
-                    sizes="80px"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-black tracking-tighter uppercase leading-none">Central de Abastecimiento</h1>
-                  <p className="text-white/60 text-xs font-bold uppercase tracking-[0.2em]">Acceso Exclusivo para Socios</p>
-                </div>
+             <div className="relative z-10 flex flex-col items-center">
+                <BrandLogo variant="b2b" size="xl" title="Portal Socios" subtext="Acceso Exclusivo" />
              </div>
           </div>
           <CardContent className="p-12 space-y-10">
@@ -241,28 +229,15 @@ export default function B2BPortalPage() {
     <div className="bg-[#F6F6F6] min-h-screen">
       <header className="fixed top-0 left-0 right-0 h-20 bg-primary z-50 px-4 md:px-8 shadow-md">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-4 md:gap-8">
-          <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0 group">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-full flex items-center justify-center relative overflow-hidden">
-              <Image 
-                src={LogoImg} 
-                alt="MyDog" 
-                fill 
-                className="object-contain p-1.5"
-                sizes="48px"
-              />
-            </div>
-            <div className="flex flex-col -space-y-0.5 md:-space-y-1">
-              <span className="font-black text-lg md:text-2xl tracking-tighter text-white leading-none uppercase">MyDog</span>
-              <span className="text-[7px] md:text-[9px] font-bold text-secondary uppercase tracking-[0.2em]">B2B Portal</span>
-            </div>
-          </Link>
+          <BrandLogo variant="b2b" size="md" />
+          
           <div className="flex-1 max-w-2xl relative">
             <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input placeholder="Buscar SKU, marca o producto..." className="h-10 md:h-12 rounded-full bg-white pl-10 md:pl-12 w-full border-none shadow-inner font-medium" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
           <div className="flex items-center gap-3 md:gap-4 shrink-0">
              <CartDrawer>
-                <button className="relative w-10 h-10 md:w-12 md:h-12 bg-secondary text-primary rounded-xl md:rounded-2xl flex items-center justify-center hover:scale-105 transition-all shadow-lg">
+                <button className="relative w-10 h-10 md:w-12 md:h-12 bg-secondary text-primary rounded-full flex items-center justify-center hover:scale-105 transition-all shadow-lg">
                   <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1.5 -right-1.5 md:-top-2 md:-right-2 bg-white text-primary font-black text-[9px] md:text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-secondary">
@@ -271,7 +246,7 @@ export default function B2BPortalPage() {
                   )}
                 </button>
              </CartDrawer>
-             <Button variant="ghost" onClick={handleLogout} className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/10 text-white hover:bg-red-500 transition-colors">
+             <Button variant="ghost" onClick={handleLogout} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 text-white hover:bg-red-500 transition-colors">
                 <LogOut className="w-4 h-4 md:w-5 md:h-5" />
              </Button>
           </div>
@@ -311,7 +286,7 @@ export default function B2BPortalPage() {
                         <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Precio Mayorista</span>
                         <span className="text-xl md:text-2xl font-black tracking-tighter text-primary">${product.wholesalePrice.toLocaleString('es-CL')}</span>
                       </div>
-                      <Button size="icon" className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl shadow-lg active:scale-90 transition-all" onClick={() => addToCart(product, false, 1, true)}>
+                      <Button size="icon" className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg active:scale-90 transition-all" onClick={() => addToCart(product, false, 1, true)}>
                         <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                       </Button>
                     </div>

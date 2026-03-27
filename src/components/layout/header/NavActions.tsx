@@ -1,8 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Heart, ShoppingCart, Menu, ChevronRight, User } from 'lucide-react';
+import { Heart, ShoppingCart, Menu, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -15,7 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CATEGORIES } from '@/lib/mock-db';
-import LogoImg from '@/img/imagotipo.png';
+import BrandLogo from '../BrandLogo';
 
 /**
  * @fileOverview Acciones de navegación unificadas con contenedor circular para el logo.
@@ -65,20 +64,8 @@ export default function NavActions() {
         <SheetContent side="right" className="w-[85%] sm:max-w-md p-0 border-none bg-background overflow-hidden flex flex-col">
           <SheetHeader className="p-8 bg-primary text-white shrink-0 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center shadow-xl backdrop-blur-md relative overflow-hidden">
-                <Image 
-                  src={LogoImg} 
-                  alt="MyDog" 
-                  fill 
-                  className="object-contain p-2"
-                  sizes="56px"
-                />
-              </div>
-              <div className="flex flex-col -space-y-1 text-left">
-                <SheetTitle className="text-white font-black text-2xl tracking-tighter uppercase leading-none">Mi MyDog</SheetTitle>
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em]">¡Hola! Qué gusto verte</span>
-              </div>
+            <div className="relative z-10 text-left">
+              <BrandLogo variant="mobile" size="lg" />
             </div>
           </SheetHeader>
 
@@ -129,7 +116,7 @@ export default function NavActions() {
               href="/cuenta" 
               className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
             >
-              <User className="w-4 h-4" /> Entrar a Mi Cuenta
+              Entrar a Mi Cuenta
             </Link>
           </div>
         </SheetContent>
