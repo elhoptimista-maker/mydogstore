@@ -5,6 +5,10 @@ import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, ShieldAlert } from 'lucide-react';
 
+/**
+ * @fileOverview Pantalla de simulación de portal bancario.
+ * Oculta el header y footer global para simular una redirección externa.
+ */
 function MockPaymentContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -47,7 +51,17 @@ function MockPaymentContent() {
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 font-sans text-slate-100">
-      <div className="bg-slate-800 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center space-y-6 border border-slate-700">
+      {/* 
+        Inyectamos estilos para limpiar la UI de elementos del ecommerce 
+        y dar sensación de portal bancario independiente.
+      */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        #global-header { display: none !important; }
+        #global-main { padding-top: 0 !important; }
+        footer { display: none !important; }
+      `}} />
+
+      <div className="bg-slate-800 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center space-y-6 border border-slate-700 animate-in fade-in zoom-in duration-500">
         <div className="mx-auto w-16 h-16 bg-blue-500/20 text-blue-400 flex items-center justify-center rounded-2xl mb-4">
           <ShieldAlert className="w-8 h-8" />
         </div>
@@ -64,7 +78,7 @@ function MockPaymentContent() {
           <Button 
             onClick={() => simulatePayment(true)} 
             disabled={loading}
-            className="h-14 bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest"
+            className="h-14 bg-green-600 hover:bg-green-500 text-white font-black uppercase tracking-widest shadow-lg shadow-green-900/20 transition-all"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Simular Pago Exitoso'}
           </Button>
