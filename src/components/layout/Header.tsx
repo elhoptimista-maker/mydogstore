@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Menu, ChevronDown, User, Building2 } from 'lucide-react';
+import { Menu, ChevronDown, User } from 'lucide-react';
 import { CATEGORIES } from '@/lib/mock-db';
 import TopBar from './header/TopBar';
 import HeaderLogo from './header/HeaderLogo';
@@ -83,9 +83,11 @@ export default function Header() {
               <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
                 <User className="w-4 h-4" /> Mi Espacio MyDog
               </Link>
+              {/* Portal B2B oculto temporalmente
               <Link href="/b2b/portal" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
                 <Building2 className="w-4 h-4" /> Portal B2B
               </Link>
+              */}
             </div>
           </div>
 
