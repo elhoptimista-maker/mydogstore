@@ -6,12 +6,14 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Pie de página con autoridad de 15 años y tono familiar.
- * Actualizado con nuevos enlaces de redes sociales y contacto.
+ * Actualizado con nuevos enlaces de redes sociales y contacto interactivo.
  */
 export default function Footer() {
   const whatsappUrl = `https://wa.me/+56957889012?text=Hola,%20buenos%20días!`;
   const facebookUrl = "https://web.facebook.com/DistribuidoraMyDog";
   const instagramUrl = "https://www.instagram.com/distribuidoramydog2.0";
+  const mapsUrl = "https://www.google.com/maps/search/?api=1&query=Presidente+Arturo+Alessandri+palma+9243+bodega+9,+San+Bernardo,+Santiago,+Chile";
+  const emailUrl = "mailto:hola@mydog.cl";
 
   return (
     <footer className="w-full bg-primary text-white overflow-hidden">
@@ -95,29 +97,42 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-6">
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Ayuda</h4>
             <div className="space-y-6">
-              <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <MapPin className="w-5 h-5 text-secondary shrink-0" />
+              <a 
+                href={mapsUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors group"
+              >
+                <MapPin className="w-5 h-5 text-secondary shrink-0 group-hover:scale-110 transition-transform" />
                 <div className="space-y-1">
                   <p className="text-xs font-black uppercase tracking-widest">Nuestra Bodega</p>
                   <p className="text-xs text-white/60 font-medium">Presidente Arturo Alessandri palma 9243 bodega 9, San Bernardo, Santiago, Chile</p>
                 </div>
-              </div>
+              </a>
               
-              <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <MessageCircle className="w-5 h-5 text-secondary shrink-0" />
+              <a 
+                href={whatsappUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors group"
+              >
+                <MessageCircle className="w-5 h-5 text-secondary shrink-0 group-hover:scale-110 transition-transform" />
                 <div className="space-y-1">
                   <p className="text-xs font-black uppercase tracking-widest">Escríbenos con confianza</p>
                   <p className="text-xs text-white/60 font-medium">+569 5788 9012</p>
                 </div>
-              </div>
+              </a>
 
-              <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <Mail className="w-5 h-5 text-secondary shrink-0" />
+              <a 
+                href={emailUrl}
+                className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors group"
+              >
+                <Mail className="w-5 h-5 text-secondary shrink-0 group-hover:scale-110 transition-transform" />
                 <div className="space-y-1">
                   <p className="text-xs font-black uppercase tracking-widest">Correo del Hogar</p>
                   <p className="text-xs text-white/60 font-medium">hola@mydog.cl</p>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </div>
