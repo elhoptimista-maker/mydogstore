@@ -14,7 +14,6 @@ import { ShieldCheck, Mail, User, Phone, MapPin, Truck, ChevronRight, Loader2, S
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import OrderSummary from '@/components/checkout/OrderSummary';
-import PaymentSelector from '@/components/checkout/PaymentSelector';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { auth, db } from '@/lib/firebase/client';
@@ -22,6 +21,7 @@ import { getUserData } from '@/lib/services/user.service';
 import { registerUser } from '@/lib/services/auth.service';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { User as FirebaseUser } from 'firebase/auth';
+import PaymentSelector from '@/components/checkout/PaymentSelector';
 
 // Utilidad UX: Formateador de RUT Chileno en tiempo real
 const formatRUT = (value: string) => {
@@ -47,9 +47,7 @@ export default function CheckoutPage() {
 
   const { getRateForComuna } = useShippingRates();
 
-  // 1. ESTADO DEL CLIENTE INCLUYENDO RUT
   const [customer, setCustomer] = useState({ name: '', email: '', phone: '', rut: '' });
-  
   const [shipping, setShipping] = useState({ streetAndNumber: '', apartmentOrLocal: '', commune: '', region: 'Metropolitana', method: 'despacho' });
   const [billing, setBilling] = useState<{type: 'boleta' | 'factura', rut: string, companyName: string, businessLine: string, address: string}>({ 
     type: 'boleta', rut: '', companyName: '', businessLine: '', address: '' 
@@ -69,12 +67,22 @@ export default function CheckoutPage() {
         setCustomer(prev => ({ ...prev, email: currentUser.email || '', name: currentUser.displayName || prev.name }));
         const dbData = await getUserData(currentUser.uid);
         if (dbData) {
-          // 2. CARGAMOS EL RUT DEL PERFIL SI EXISTE
+          // CARGAMOS EL PERFIL COMPLETO (Personal + Facturación)
           setCustomer(prev => ({ 
             ...prev, 
             phone: dbData.phone || prev.phone,
             rut: dbData.rut ? formatRUT(dbData.rut) : prev.rut 
           }));
+
+          if (dbData.billingType) {
+            setBilling(prev => ({
+              ...prev,
+              type: dbData.billingType,
+              rut: dbData.billingRut ? formatRUT(dbData.billingRut) : prev.rut,
+              companyName: dbData.companyName || prev.companyName,
+              businessLine: dbData.businessLine || prev.businessLine
+            }));
+          }
           
           if (dbData.addresses && dbData.addresses.length > 0) {
              setSavedAddresses(dbData.addresses);
@@ -121,7 +129,6 @@ export default function CheckoutPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Manejo de estado vacío: Evita página en blanco
   if (cart.length === 0 && !loading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center space-y-8 bg-[#F6F6F6]">
@@ -131,7 +138,7 @@ export default function CheckoutPage() {
         <div className="space-y-2">
           <h2 className="text-2xl font-black text-foreground">Tu carrito está vacío</h2>
           <p className="text-muted-foreground font-medium max-w-sm mx-auto leading-relaxed">
-            Parece que aún no has elegido nada para regalonear a tu mascota. ¿Vamos a la bodega a buscar algo?
+            Parece que aún no has elegido nada para regalonear a tu mascota.
           </p>
         </div>
         <Link href="/catalogo">
@@ -151,7 +158,6 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // 3. VALIDACIÓN ESTRICTA
     if (!customer.email || !customer.name || !customer.phone || !customer.rut || !shipping.streetAndNumber || !communeSearch) {
       toast({ 
         variant: "destructive", 
@@ -182,9 +188,8 @@ export default function CheckoutPage() {
           finalUserId = newUserCred.user.uid;
           
           const userRef = doc(db, "users", finalUserId);
-          // Guardamos el RUT tal cual viene (ya formateado)
           await updateDoc(userRef, {
-            rut: customer.rut, 
+            rut: customer.rut.replace(/[^0-9kK\-]/g, ''), 
             addresses: arrayUnion({
               id: 'default', name: newAddressName || 'Casa', streetAndNumber: shipping.streetAndNumber, apartmentOrLocal: shipping.apartmentOrLocal || '', commune: communeSearch, region: shipping.region, isDefault: true
             })
@@ -203,8 +208,7 @@ export default function CheckoutPage() {
 
       const finalBillingInfo = {
          ...billing,
-         // Enviamos el RUT tal cual viene para que el Server Action lo procese
-         rut: billing.type === 'factura' ? billing.rut : '',
+         rut: billing.type === 'factura' ? billing.rut.replace(/[^0-9kK\-]/g, '') : '',
          address: sameAddress ? `${shipping.streetAndNumber} ${shipping.apartmentOrLocal}`.trim() : billing.address
       };
 
@@ -217,10 +221,12 @@ export default function CheckoutPage() {
         cartType: item.cartType
       }));
 
-      // Pasamos los datos al Server Action
       const response = await processCheckout({
         userId: finalUserId,
-        customer: customer,
+        customer: {
+          ...customer,
+          rut: customer.rut.replace(/[^0-9kK\-]/g, '')
+        },
         items: mappedItems,
         shipping: { ...shipping, commune: communeSearch, cost: actualShippingCost },
         billing: finalBillingInfo,

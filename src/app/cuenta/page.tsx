@@ -39,12 +39,24 @@ import {
   Trash2,
   LogOut,
   MapPinIcon,
-  Download
+  Download,
+  IdCard,
+  Building
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+
+// Utilidad UX: Formateador de RUT Chileno
+const formatRUT = (value: string) => {
+  const clean = value.replace(/[^0-9kK]/g, '').toUpperCase();
+  if (clean.length === 0) return '';
+  if (clean.length <= 1) return clean;
+  const body = clean.slice(0, -1);
+  const dv = clean.slice(-1);
+  return `${body.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}-${dv}`;
+};
 
 export default function CuentaPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -68,8 +80,9 @@ export default function CuentaPage() {
   const [profileData, setProfileData] = useState({
     displayName: '',
     phone: '',
+    personalRut: '',
     billingType: 'boleta',
-    rut: '',
+    billingRut: '',
     companyName: '',
     businessLine: '',
     billingAddress: '',
@@ -138,8 +151,9 @@ export default function CuentaPage() {
             setProfileData({
               displayName: currentUser.displayName || dbData.displayName || '',
               phone: dbData.phone || '',
+              personalRut: dbData.rut ? formatRUT(dbData.rut) : '',
               billingType: dbData.billingType || 'boleta',
-              rut: dbData.rut || '',
+              billingRut: dbData.billingRut ? formatRUT(dbData.billingRut) : '',
               companyName: dbData.companyName || '',
               businessLine: dbData.businessLine || '',
               billingAddress: dbData.billingAddress || '',
@@ -191,7 +205,18 @@ export default function CuentaPage() {
     e.preventDefault();
     setUpdatingProfile(true);
     try {
-      await updateUserProfile(profileData);
+      // Mapeo inverso para persistir en Firestore según el nuevo modelo
+      const dataToSave = {
+        displayName: profileData.displayName,
+        phone: profileData.phone,
+        rut: profileData.personalRut.replace(/[^0-9kK\-]/g, ''),
+        billingType: profileData.billingType,
+        billingRut: profileData.billingRut.replace(/[^0-9kK\-]/g, ''),
+        companyName: profileData.companyName,
+        businessLine: profileData.businessLine,
+        billingAddress: profileData.billingAddress
+      };
+      await updateUserProfile(dataToSave);
       toast({ title: "Perfil actualizado ✨", description: "Tus datos se guardaron correctamente." });
     } catch (error) {
       toast({ variant: "destructive", title: "Error al actualizar" });
@@ -428,6 +453,18 @@ export default function CuentaPage() {
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Teléfono de contacto</Label>
                             <Input value={profileData.phone} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} placeholder="+56 9 XXXX XXXX" className="h-14 rounded-2xl border-black/5 bg-muted/30 font-bold px-6 focus-visible:ring-primary/20" />
                           </div>
+                          <div className="space-y-2 relative group md:col-span-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">RUT Personal *</Label>
+                            <div className="relative">
+                              <IdCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                              <Input 
+                                placeholder="Ej: 12.345.678-9"
+                                value={profileData.personalRut} 
+                                onChange={(e) => setProfileData({...profileData, personalRut: formatRUT(e.target.value)})} 
+                                className="h-14 rounded-2xl border-black/5 bg-muted/30 font-bold pl-12 focus-visible:ring-primary/20" 
+                              />
+                            </div>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -456,14 +493,28 @@ export default function CuentaPage() {
                             </Select>
                           </div>
                           {profileData.billingType === 'factura' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2">
-                              <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">RUT Empresa</Label>
-                                <Input placeholder="12.345.678-9" value={profileData.rut} onChange={(e) => setProfileData({...profileData, rut: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold" />
+                            <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">RUT Empresa</Label>
+                                  <div className="relative">
+                                    <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                                    <Input 
+                                      placeholder="12.345.678-9" 
+                                      value={profileData.billingRut} 
+                                      onChange={(e) => setProfileData({...profileData, billingRut: formatRUT(e.target.value)})} 
+                                      className="h-14 rounded-2xl bg-muted/10 font-bold pl-12" 
+                                    />
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Razón Social</Label>
+                                  <Input placeholder="Ej: Veterinaria SPA" value={profileData.companyName} onChange={(e) => setProfileData({...profileData, companyName: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold" />
+                                </div>
                               </div>
                               <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Razón Social</Label>
-                                <Input placeholder="Ej: Veterinaria SPA" value={profileData.companyName} onChange={(e) => setProfileData({...profileData, companyName: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold" />
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Giro Comercial</Label>
+                                <Input placeholder="Ej: Venta de alimentos..." value={profileData.businessLine} onChange={(e) => setProfileData({...profileData, businessLine: e.target.value})} className="h-14 rounded-2xl bg-muted/10 font-bold" />
                               </div>
                             </div>
                           )}
