@@ -1,106 +1,19 @@
 "use server";
 
-import { getStorefrontAuthAdmin, getStorefrontDbAdmin } from "@/lib/firebase/storefront-admin";
-import { Timestamp } from "firebase-admin/firestore";
 import { PaymentFactory } from "@/lib/services/payments/payment.factory";
 
-interface CheckoutItem {
-  id: string;
-  sku?: string;
-  name: string;
-  quantity: number;
-  price: number;
-}
-
-interface ShippingInfo {
-  streetAndNumber: string;
-  apartmentOrLocal?: string;
-  commune: string;
-  region: string;
-  method: string;
-  cost: number;
-}
-
-interface BillingInfo {
-  type: 'boleta' | 'factura';
-  rut?: string;
-  companyName?: string;
-  businessLine?: string;
-  address?: string;
-}
-
-interface CheckoutParams {
-  idToken?: string;
-  customer: {
-    name: string;
-    phone: string;
-    email: string;
-  };
-  items: CheckoutItem[];
-  shipping: ShippingInfo;
-  billing: BillingInfo;
-  paymentMethod: string;
-  total: number;
-  createAccount?: boolean;
-  saveAddressName?: string;
-}
-
-export async function processCheckout(params: CheckoutParams) {
-  const { idToken, customer, items, shipping, billing, paymentMethod, total, createAccount, saveAddressName } = params;
+/**
+ * @fileOverview Server Action ultraligero para el procesamiento de pedidos.
+ * Actúa como puente entre el Storefront, el Gateway del ERP y las pasarelas de pago.
+ */
+export async function processCheckout(params: any) {
+  const { userId, customer, items, shipping, billing, paymentMethod, total } = params;
 
   try {
-    const storefrontAuth = getStorefrontAuthAdmin();
-    const storefrontDb = getStorefrontDbAdmin();
-
-    let userId = "guest";
-    let validatedEmail = customer.email;
-    let userName = customer.name;
-
-    // 1. GESTIÓN DE USUARIO LOCAL (Storefront)
-    if (idToken) {
-      const decodedToken = await storefrontAuth.verifyIdToken(idToken);
-      userId = decodedToken.uid;
-      validatedEmail = decodedToken.email || customer.email;
-      userName = customer.name; 
-    } else if (createAccount) {
-      try {
-        const randomPassword = Math.random().toString(36).slice(-12) + "Myd0g!"; 
-        const newUser = await storefrontAuth.createUser({ email: validatedEmail, displayName: userName, password: randomPassword });
-        userId = newUser.uid;
-
-        await storefrontDb.collection("users").doc(userId).set({
-          uid: userId, email: validatedEmail, displayName: userName, role: 'customer', phone: customer.phone, createdAt: Timestamp.now(),
-          addresses: [{
-            id: 'default', name: saveAddressName || 'Casa', streetAndNumber: shipping.streetAndNumber, apartmentOrLocal: shipping.apartmentOrLocal || '', commune: shipping.commune, region: shipping.region, isDefault: true
-          }]
-        });
-      } catch (err) {
-        userId = "guest";
-      }
-    } else {
-      userId = "guest";
-    }
-
-    // Guardar dirección adicional si es usuario logueado
-    if (userId !== "guest" && idToken && saveAddressName) {
-      const userRef = storefrontDb.collection("users").doc(userId);
-      const userSnap = await userRef.get();
-      if (userSnap.exists) {
-        const userData = userSnap.data();
-        const addresses = userData?.addresses || [];
-        if (!addresses.some((a: any) => a.name.toLowerCase() === saveAddressName.toLowerCase())) {
-          const newAddress = {
-            id: Math.random().toString(36).substring(2, 9), name: saveAddressName, streetAndNumber: shipping.streetAndNumber, apartmentOrLocal: shipping.apartmentOrLocal || '', commune: shipping.commune, region: shipping.region, isDefault: addresses.length === 0
-          };
-          await userRef.update({ addresses: [...addresses, newAddress] });
-        }
-      }
-    }
-
-    // 2. PAYLOAD PARA EL GATEWAY DEL ERP
+    // 1. PAYLOAD PARA EL GATEWAY DEL ERP
     const erpPayload = {
-      customerId: userId,
-      customerName: billing.type === 'factura' && billing.companyName ? billing.companyName : userName,
+      customerId: userId || "guest",
+      customerName: billing.type === 'factura' && billing.companyName ? billing.companyName : customer.name,
       customerRut: billing.rut || "N/A",
       customerAddress: `${shipping.streetAndNumber} ${shipping.apartmentOrLocal || ''}, ${shipping.commune}, ${shipping.region}`.trim(),
       customerPhone: customer.phone,
@@ -115,16 +28,20 @@ export async function processCheckout(params: CheckoutParams) {
         quantity: item.quantity,
         price: item.price,
       })),
+      // Enviamos la intención tributaria en la nota para que el ERP la procese luego
       paymentNote: `REQ_DOC:${billing.type.toUpperCase()}`,
     };
 
-    // 3. CREACIÓN DE ORDEN VÍA API DEL ERP
+    // 2. CREACIÓN DE ORDEN VÍA API DEL ERP (DRAFT)
     const erpApiUrl = process.env.ERP_API_URL || "http://localhost:3000";
     const erpSecret = process.env.ECOMMERCE_API_SECRET;
 
     const erpResponse = await fetch(`${erpApiUrl}/api/webhooks/order-created`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${erpSecret}` },
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${erpSecret}` 
+      },
       body: JSON.stringify(erpPayload)
     });
 
@@ -134,12 +51,13 @@ export async function processCheckout(params: CheckoutParams) {
     }
 
     const erpData = await erpResponse.json();
-    const orderId = erpData.orderId; 
+    const orderId = erpData.orderId; // El ERP nos devuelve el ID oficial
 
-    // 4. PASARELA DE PAGO AGNÓSTICA
+    // 3. PASARELA DE PAGO AGNÓSTICA (PATRÓN ADAPTER)
     let paymentUrl = null;
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
+    // Solo procesamos pasarelas externas (excluyendo métodos internos como línea de crédito)
     if (paymentMethod !== 'credit_line' && paymentMethod !== 'efectivo') {
       try {
         const paymentProvider = PaymentFactory.getProvider(paymentMethod);
@@ -147,11 +65,11 @@ export async function processCheckout(params: CheckoutParams) {
         paymentUrl = await paymentProvider.createTransaction({
           orderId: orderId,
           amount: total,
-          email: validatedEmail,
-          name: userName,
+          email: customer.email,
+          name: customer.name,
           returnUrl: `${baseUrl}/checkout/status?order=${orderId}`,
           cancelUrl: `${baseUrl}/checkout/status?order=${orderId}&canceled=true`,
-          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}` 
+          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}` // Ruta dinámica agnóstica
         });
         
       } catch (paymentError: any) {

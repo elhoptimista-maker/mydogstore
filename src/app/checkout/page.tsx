@@ -17,8 +17,9 @@ import OrderSummary from '@/components/checkout/OrderSummary';
 import PaymentSelector from '@/components/checkout/PaymentSelector';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { auth } from '@/lib/firebase/client';
-import { getUserData } from '@/lib/services/user.service';
+import { auth, db } from '@/lib/firebase/client';
+import { getUserData, registerUser } from '@/lib/services/user.service';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { User as FirebaseUser } from 'firebase/auth';
 
 const formatRUT = (value: string) => {
@@ -116,7 +117,7 @@ export default function CheckoutPage() {
   const baseShippingCost = getRateForComuna(communeSearch);
   
   const actualShippingCost = shipping.method === 'despacho' 
-    ? (isFreeShipping ? 0 : baseShippingCost) 
+    ? (isFreeShipping ? 0 : (baseShippingCost ?? null)) 
     : 0;
 
   const finalTotal = cartTotal + (actualShippingCost || 0);
@@ -128,7 +129,7 @@ export default function CheckoutPage() {
       toast({ 
         variant: "destructive", 
         title: "Revisa tus datos 🐾", 
-        description: "Por favor, completa los campos obligatorios (*) para continuar." 
+        description: "Faltan campos obligatorios (*)." 
       });
       return;
     }
@@ -136,8 +137,8 @@ export default function CheckoutPage() {
     if (billing.type === 'factura' && (!billing.rut || !billing.companyName || !billing.businessLine)) {
       toast({ 
         variant: "destructive", 
-        title: "Datos de Facturación incompletos", 
-        description: "Necesitamos tu RUT, Razón Social y Giro para emitir la factura." 
+        title: "Datos incompletos", 
+        description: "Necesitamos tu RUT, Razón Social y Giro." 
       });
       return;
     }
@@ -145,6 +146,52 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
+      let finalUserId = user ? user.uid : "guest";
+
+      // LÓGICA CON SDK DEL CLIENTE: Creación de cuenta y guardado de direcciones
+      if (!user && createAccount) {
+        try {
+          const randomPassword = Math.random().toString(36).slice(-12) + "Myd0g!";
+          const newUserCred = await registerUser({
+            email: customer.email,
+            password: randomPassword,
+            displayName: customer.name
+          });
+          finalUserId = newUserCred.user.uid;
+          
+          // Guardamos su primera dirección usando Firestore Client SDK
+          const userRef = doc(db, "users", finalUserId);
+          await updateDoc(userRef, {
+            addresses: arrayUnion({
+              id: 'default',
+              name: newAddressName || 'Casa',
+              streetAndNumber: shipping.streetAndNumber,
+              apartmentOrLocal: shipping.apartmentOrLocal || '',
+              commune: communeSearch,
+              region: shipping.region,
+              isDefault: true
+            })
+          });
+        } catch (err) {
+          console.warn("No se pudo crear la cuenta localmente", err);
+        }
+      } else if (user && saveNewAddress && newAddressName) {
+         // Guardar nueva dirección para un usuario ya logueado
+         const userRef = doc(db, "users", finalUserId);
+         await updateDoc(userRef, {
+           addresses: arrayUnion({
+             id: Math.random().toString(36).substring(2, 9),
+             name: newAddressName,
+             streetAndNumber: shipping.streetAndNumber,
+             apartmentOrLocal: shipping.apartmentOrLocal || '',
+             commune: communeSearch,
+             region: shipping.region,
+             isDefault: false
+           })
+         });
+      }
+
+      // Preparar datos finales para el Server Action
       const finalBillingInfo = {
          ...billing,
          rut: billing.type === 'factura' ? billing.rut.replace(/[^0-9kK]/g, '') : '',
@@ -156,20 +203,19 @@ export default function CheckoutPage() {
         name: item.name,
         quantity: item.quantity,
         price: item.priceAtAddition,
-        subtotal: item.priceAtAddition * item.quantity,
+        sku: item.sku || "N/A", // Aseguramos el SKU
         cartType: item.cartType
       }));
 
+      // Llamada limpia al Server Action (Solo como puente de comunicación)
       const response = await processCheckout({
-        idToken: user ? await user.getIdToken() : undefined,
+        userId: finalUserId,
         customer,
         items: mappedItems,
-        shipping: { ...shipping, commune: communeSearch, cost: actualShippingCost || 0 },
+        shipping: { ...shipping, commune: communeSearch, cost: actualShippingCost },
         billing: finalBillingInfo,
         paymentMethod,
-        total: finalTotal,
-        createAccount: createAccount,
-        saveAddressName: (createAccount || (user && saveNewAddress)) ? newAddressName : undefined
+        total: finalTotal
       });
 
       if (!response.success) throw new Error(response.error);
