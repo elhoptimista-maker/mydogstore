@@ -38,7 +38,7 @@ export async function getUserOrderHistory(userId: string): Promise<UserOrder[]> 
 
     if (snapshot.empty) return [];
 
-    return snapshot.docs.map(doc => {
+    return snapshot.docs.map((doc: any) => {
       const data = doc.data();
       const orderId = doc.id;
       
