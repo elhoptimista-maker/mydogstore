@@ -18,7 +18,8 @@ import PaymentSelector from '@/components/checkout/PaymentSelector';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { auth, db } from '@/lib/firebase/client';
-import { getUserData, registerUser } from '@/lib/services/user.service';
+import { getUserData } from '@/lib/services/user.service';
+import { registerUser } from '@/lib/services/auth.service';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { User as FirebaseUser } from 'firebase/auth';
 
@@ -116,6 +117,7 @@ export default function CheckoutPage() {
   const isFreeShipping = cartType === 'retail' && cartTotal >= 50000;
   const baseShippingCost = getRateForComuna(communeSearch);
   
+  // CORRECCIÓN: Si no es envío gratis y no hay comuna válida, el costo es null (Por calcular)
   const actualShippingCost = shipping.method === 'despacho' 
     ? (isFreeShipping ? 0 : (baseShippingCost ?? null)) 
     : 0;
@@ -152,11 +154,7 @@ export default function CheckoutPage() {
       if (!user && createAccount) {
         try {
           const randomPassword = Math.random().toString(36).slice(-12) + "Myd0g!";
-          const newUserCred = await registerUser({
-            email: customer.email,
-            password: randomPassword,
-            displayName: customer.name
-          });
+          const newUserCred = await registerUser(customer.email, randomPassword, customer.name);
           finalUserId = newUserCred.user.uid;
           
           // Guardamos su primera dirección usando Firestore Client SDK
