@@ -24,6 +24,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const erpApiUrl = process.env.ERP_API_URL || "http://localhost:3000";
       const erpSecret = process.env.ECOMMERCE_API_SECRET;
 
+      // EXTRACCIÓN DEL TIPO DE DOCUMENTO DESDE LA URL (INYECTADO EN EL CHECKOUT)
+      const searchParams = request.nextUrl.searchParams;
+      const docType = searchParams.get('docType') || 'COMPROBANTE_VENTA';
+
       const confirmResponse = await fetch(`${erpApiUrl}/api/webhooks/order-paid`, {
         method: 'POST',
         headers: {
@@ -33,12 +37,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         body: JSON.stringify({
           orderId: orderId,
           paymentMethod: paymentMethod || 'TRANSFER',
-          documentType: 'BOLETA'
+          documentType: docType
         })
       });
 
       if (!confirmResponse.ok) {
-        console.error(`[Webhook] El ERP falló al confirmar la orden ${orderId}`);
+        const errData = await confirmResponse.json().catch(() => ({}));
+        console.error(`[Webhook] El ERP falló al confirmar la orden ${orderId}:`, errData);
         return NextResponse.json({ error: 'Fallo al sincronizar con ERP' }, { status: 502 });
       }
     }

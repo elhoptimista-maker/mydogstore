@@ -62,6 +62,9 @@ export async function processCheckout(params: any) {
       try {
         const paymentProvider = PaymentFactory.getProvider(paymentMethod);
         
+        // APLICAMOS LA REGLA DE NEGOCIO PARA EL TIPO DE DOCUMENTO
+        const mappedDocType = billing.type === 'factura' ? 'FACTURA' : 'COMPROBANTE_VENTA';
+        
         paymentUrl = await paymentProvider.createTransaction({
           orderId: orderId,
           amount: total,
@@ -69,7 +72,8 @@ export async function processCheckout(params: any) {
           name: customer.name,
           returnUrl: `${baseUrl}/checkout/status?order=${orderId}`,
           cancelUrl: `${baseUrl}/checkout/status?order=${orderId}&canceled=true`,
-          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}` // Ruta dinámica agnóstica
+          // LE INYECTAMOS EL TIPO DE DOCUMENTO A LA URL DE NOTIFICACIÓN
+          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}?docType=${mappedDocType}` 
         });
         
       } catch (paymentError: any) {
