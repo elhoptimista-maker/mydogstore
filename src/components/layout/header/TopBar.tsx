@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { MessageCircle, Instagram } from 'lucide-react';
+import { MessageCircle, Instagram, Facebook } from 'lucide-react';
 
 /**
  * @fileOverview Franja superior del Header.
@@ -10,8 +10,9 @@ import { MessageCircle, Instagram } from 'lucide-react';
  */
 export default function TopBar() {
   const [mounted, setMounted] = useState(false);
-  const whatsappUrl = `https://wa.me/+56957889012?text=Hola,%20buenos%20días!`;
+  const whatsappUrl = "https://wa.me/+56957889012?text=Hola,%20buenos%20días!";
   const instagramUrl = "https://www.instagram.com/distribuidoramydog2.0";
+  const facebookUrl = "https://web.facebook.com/DistribuidoraMyDog";
 
   useEffect(() => {
     setMounted(true);
@@ -30,24 +31,33 @@ export default function TopBar() {
         </div>
         
         {mounted && (
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0 animate-in fade-in duration-500">
+          <div className="flex items-center gap-4 sm:gap-5 shrink-0 animate-in fade-in duration-500">
             <a 
-              href={whatsappUrl} 
+              href={facebookUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:opacity-70 transition-opacity flex items-center gap-1.5"
+              className="hover:opacity-70 hover:scale-110 transition-all flex items-center"
+              title="Facebook"
             >
-              <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Asesoría por WhatsApp</span>
+              <Facebook className="w-4 h-4" />
             </a>
             <a 
               href={instagramUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:opacity-70 transition-opacity flex items-center gap-1.5"
+              className="hover:opacity-70 hover:scale-110 transition-all flex items-center"
+              title="Instagram"
             >
-              <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Nuestra comunidad</span>
+              <Instagram className="w-4 h-4" />
+            </a>
+            <a 
+              href={whatsappUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:opacity-70 hover:scale-110 transition-all flex items-center"
+              title="WhatsApp"
+            >
+              <MessageCircle className="w-4 h-4" />
             </a>
           </div>
         )}
