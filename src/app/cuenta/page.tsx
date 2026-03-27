@@ -39,7 +39,6 @@ import {
   Trash2,
   LogOut,
   MapPinIcon,
-  CreditCard,
   Download
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -367,7 +366,7 @@ export default function CuentaPage() {
                                 <div className="flex flex-col items-center gap-2">
                                   <Badge className={cn(
                                     "rounded-full px-4 py-1.5 text-[9px] font-black uppercase tracking-widest border-none grow text-center md:grow-0",
-                                    order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                    order.status === 'completed' || order.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                                   )}>
                                     {order.status === 'completed' ? 'Entregado' : (order.status === 'paid' ? 'Pagado / En Preparación' : 'Pendiente')}
                                   </Badge>

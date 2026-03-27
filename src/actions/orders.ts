@@ -29,6 +29,7 @@ export async function getUserOrderHistory(userId: string): Promise<UserOrder[]> 
     const db = getErpDbAdmin();
     
     // Consultamos directamente al ERP filtrando por el UID del cliente web (customerId)
+    // Eliminamos filtros restrictivos de 'origin' para asegurar que aparezcan todos los pedidos
     const snapshot = await db.collection("orders")
       .where("customerId", "==", userId)
       .orderBy("createdAt", "desc") // Los más recientes primero
@@ -40,16 +41,24 @@ export async function getUserOrderHistory(userId: string): Promise<UserOrder[]> 
     return snapshot.docs.map(doc => {
       const data = doc.data();
       const orderId = doc.id;
+      
+      // Lógica de detección de tipo de documento solicitado
+      let docType = 'BOLETA';
+      if (data.billing?.type === 'factura' || data.paymentNote?.includes('REQ_DOC:FACTURA')) {
+        docType = 'FACTURA';
+      }
+
       return {
         id: orderId,
-        friendlyOrderId: data.friendlyOrderId || orderId.slice(-6).toUpperCase(),
+        friendlyOrderId: data.friendlyOrderId || data.orderId || orderId.slice(-6).toUpperCase(),
         status: data.status || 'pending_payment',
-        total: data.total || data.totalAmount || 0,
-        documentRequested: data.paymentNote?.includes('REQ_DOC:FACTURA') ? 'FACTURA' : 'BOLETA',
-        // Si el ERP generó el PDF en bsaleDocument, lo pasamos al frontend
-        urlPdf: data.bsaleDocument?.urlPdf || null, 
+        // El ERP puede usar total o totalAmount dependiendo del estado de la orden
+        total: data.totalAmount || data.total || 0,
+        documentRequested: docType,
+        // Si el ERP generó el PDF en bsaleDocument o similar, lo pasamos al frontend
+        urlPdf: data.bsaleDocument?.urlPdf || data.urlPdf || null, 
         items: data.items || [],
-        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
+        createdAt: data.createdAt ? (typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate().toISOString() : data.createdAt) : null
       };
     });
     
