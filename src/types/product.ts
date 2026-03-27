@@ -19,4 +19,8 @@ export interface SanitizedProduct {
   currentStock: number;
   sellingPrice: number;
   wholesalePrice: number;
+  // Inteligencia de Mercado
+  strategicScore: number;
+  tags: string[];
+  crossSellSuggestion?: string | null;
 }
