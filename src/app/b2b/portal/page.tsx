@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -6,7 +5,7 @@ import { auth } from '@/lib/firebase/client';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { loginUser, logoutUser } from '@/lib/services/auth.service';
 import { getUserData } from '@/lib/services/user.service';
-import { fetchUserOrders, UserOrder } from '@/actions/orders';
+import { getUserOrderHistory, UserOrder } from '@/actions/orders';
 import { fetchAllProducts } from '@/actions/products';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,7 +31,8 @@ import {
   ChevronRight,
   Clock,
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Download
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -76,7 +76,7 @@ export default function B2BPortalPage() {
         
         const [allProducts, userOrders] = await Promise.all([
           fetchAllProducts(),
-          fetchUserOrders(currentUser.uid)
+          getUserOrderHistory(currentUser.uid)
         ]);
         setProducts(allProducts);
         setOrders(userOrders);
@@ -176,15 +176,12 @@ export default function B2BPortalPage() {
   if (!user || !isWholesale) {
     return (
       <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Decoración de fondo */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full -mr-64 -mt-64 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 rounded-full -ml-64 -mb-64 blur-3xl pointer-events-none" />
 
         <Card className="w-full max-w-lg rounded-[3rem] border-none shadow-2xl bg-white overflow-hidden relative z-10 transition-all duration-500">
           <div className="bg-primary p-12 text-white text-center space-y-6 relative overflow-hidden">
-             {/* Elemento decorativo interno */}
              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
-             
              <div className="relative z-10">
                 <div className="w-20 h-20 bg-white/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-xl border border-white/10">
                   <Dog className="w-10 h-10 text-secondary" />
@@ -195,7 +192,6 @@ export default function B2BPortalPage() {
                 </div>
              </div>
           </div>
-          
           <CardContent className="p-12 space-y-10">
             <div className="space-y-2 text-center">
                <h2 className="text-2xl font-black tracking-tight text-foreground">¡Hola! Qué gusto verte</h2>
@@ -203,48 +199,30 @@ export default function B2BPortalPage() {
                  Ingresa para gestionar tus pedidos mayoristas con la rapidez y responsabilidad de siempre.
                </p>
             </div>
-
             <form onSubmit={handleAuth} className="space-y-6">
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Email Corporativo</Label>
                 <div className="relative">
                   <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-                  <Input 
-                    type="email" 
-                    placeholder="socio@tuempresa.cl"
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    required 
-                    className="h-14 rounded-2xl border-black/5 bg-muted/30 pl-14 font-bold focus-visible:ring-primary/20"
-                  />
+                  <Input type="email" placeholder="socio@tuempresa.cl" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-14 rounded-2xl border-black/5 bg-muted/30 pl-14 font-bold" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Contraseña Segura</Label>
                 <div className="relative">
                   <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-                  <Input 
-                    type="password" 
-                    placeholder="••••••••"
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
-                    className="h-14 rounded-2xl border-black/5 bg-muted/30 pl-14 font-bold focus-visible:ring-primary/20"
-                  />
+                  <Input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required className="h-14 rounded-2xl border-black/5 bg-muted/30 pl-14 font-bold" />
                 </div>
               </div>
-              
               <Button type="submit" className="w-full h-16 rounded-[2rem] bg-primary text-white font-black text-lg gap-3 shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
                 Entrar al Portal <ArrowRight className="w-5 h-5" />
               </Button>
             </form>
-
             <div className="pt-6 border-t border-black/5 space-y-6 text-center">
                <div className="flex items-center justify-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                   <ShieldCheck className="w-4 h-4 text-green-500" />
                   <span>Conexión Segura MyDog</span>
                </div>
-               
                <Link href="/" className="inline-flex items-center text-[10px] font-black text-primary uppercase tracking-[0.2em] hover:underline">
                   Volver a la tienda para familias
                </Link>
@@ -268,23 +246,16 @@ export default function B2BPortalPage() {
               <span className="text-[7px] md:text-[9px] font-bold text-secondary uppercase tracking-[0.2em]">B2B Portal</span>
             </div>
           </Link>
-
           <div className="flex-1 max-w-2xl relative">
             <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar SKU, marca o producto..." 
-              className="h-10 md:h-12 rounded-full bg-white pl-10 md:pl-12 w-full border-none shadow-inner font-medium"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <Input placeholder="Buscar SKU, marca o producto..." className="h-10 md:h-12 rounded-full bg-white pl-10 md:pl-12 w-full border-none shadow-inner font-medium" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
-
           <div className="flex items-center gap-3 md:gap-4 shrink-0">
              <CartDrawer>
                 <button className="relative w-10 h-10 md:w-12 md:h-12 bg-secondary text-primary rounded-xl md:rounded-2xl flex items-center justify-center hover:scale-105 transition-all shadow-lg">
                   <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 md:-top-2 md:-right-2 bg-white text-primary font-black text-[9px] md:text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-secondary animate-in zoom-in">
+                    <span className="absolute -top-1.5 -right-1.5 md:-top-2 md:-right-2 bg-white text-primary font-black text-[9px] md:text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-secondary">
                       {cartCount}
                     </span>
                   )}
@@ -301,22 +272,16 @@ export default function B2BPortalPage() {
         <Tabs defaultValue="catalogo" className="space-y-6 md:space-y-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-2 md:p-4 rounded-2xl md:rounded-[2rem] border shadow-sm">
             <TabsList className="bg-muted/50 p-1 md:p-1.5 rounded-xl h-auto flex gap-1 w-full md:w-auto overflow-x-auto no-scrollbar">
-              <TabsTrigger value="catalogo" className="rounded-lg font-black text-[9px] md:text-[10px] uppercase tracking-widest py-2.5 md:py-3 px-4 md:px-6 data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap transition-all">
+              <TabsTrigger value="catalogo" className="rounded-lg font-black text-[9px] md:text-[10px] uppercase tracking-widest py-2.5 md:py-3 px-4 md:px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
                 <ShoppingCart className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" /> Catálogo
               </TabsTrigger>
-              <TabsTrigger value="pedidos" className="rounded-lg font-black text-[9px] md:text-[10px] uppercase tracking-widest py-2.5 md:py-3 px-4 md:px-6 data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap transition-all">
+              <TabsTrigger value="pedidos" className="rounded-lg font-black text-[9px] md:text-[10px] uppercase tracking-widest py-2.5 md:py-3 px-4 md:px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
                 <Package className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" /> Pedidos
               </TabsTrigger>
-              <TabsTrigger value="perfil" className="rounded-lg font-black text-[9px] md:text-[10px] uppercase tracking-widest py-2.5 md:py-3 px-4 md:px-6 data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap transition-all">
+              <TabsTrigger value="perfil" className="rounded-lg font-black text-[9px] md:text-[10px] uppercase tracking-widest py-2.5 md:py-3 px-4 md:px-6 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
                 <Building2 className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" /> Empresa
               </TabsTrigger>
             </TabsList>
-            <div className="flex items-center gap-3 px-2 md:px-0">
-               <Filter className="w-4 h-4 text-primary shrink-0" />
-               <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="h-10 bg-transparent font-black text-[10px] md:text-xs uppercase tracking-widest outline-none border-none cursor-pointer w-full md:w-auto">
-                 {categories.map(cat => ( <option key={cat} value={cat}>{cat}</option> ))}
-               </select>
-            </div>
           </div>
 
           <TabsContent value="catalogo" className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -364,16 +329,30 @@ export default function B2BPortalPage() {
                          </div>
                          <div>
                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Orden #{order.id.slice(-6)}</span>
-                              <Badge className="bg-green-50 text-green-700 border-none rounded-full px-2 py-0 text-[8px] font-black uppercase">Procesado</Badge>
+                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Orden #{order.friendlyOrderId}</span>
+                              <Badge className={cn(
+                                "rounded-full px-2 py-0 text-[8px] font-black uppercase border-none",
+                                order.status === 'completed' || order.status === 'paid' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+                              )}>
+                                {order.status === 'completed' ? 'Entregado' : (order.status === 'paid' ? 'Pagado' : 'Pendiente')}
+                              </Badge>
                            </div>
-                           <p className="font-black text-xl tracking-tighter">${order.totalAmount.toLocaleString('es-CL')}</p>
+                           <p className="font-black text-xl tracking-tighter">${order.total.toLocaleString('es-CL')}</p>
                            <span className="text-[10px] font-bold uppercase flex items-center gap-1 mt-1 text-muted-foreground">
-                              <Clock className="w-3 h-3" /> {new Date(order.createdAt).toLocaleDateString('es-CL')}
+                              <Clock className="w-3 h-3" /> {order.createdAt ? new Date(order.createdAt).toLocaleDateString('es-CL') : 'Pendiente'}
                            </span>
                          </div>
                        </div>
-                       <Button variant="outline" className="rounded-xl h-12 px-8 w-full md:w-auto font-black text-[10px] uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Repetir Pedido</Button>
+                       <div className="flex gap-3 w-full md:w-auto">
+                         {order.urlPdf && (
+                           <Button asChild variant="outline" className="rounded-xl h-12 px-6 font-black text-[10px] uppercase tracking-widest">
+                             <a href={order.urlPdf} target="_blank" rel="noopener noreferrer">
+                               <Download className="w-4 h-4 mr-2" /> PDF
+                             </a>
+                           </Button>
+                         )}
+                         <Button variant="outline" className="rounded-xl h-12 px-8 flex-1 md:flex-none font-black text-[10px] uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Ver Detalle</Button>
+                       </div>
                      </div>
                    </Card>
               )) : (
@@ -419,7 +398,6 @@ export default function B2BPortalPage() {
                   </div>
                 </CardContent>
               </Card>
-
               <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-hidden">
                 <CardContent className="p-8 md:p-10 space-y-8">
                    <div className="flex items-center gap-4">

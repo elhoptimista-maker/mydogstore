@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -6,7 +5,7 @@ import { auth } from '@/lib/firebase/client';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { loginUser, registerUser, logoutUser } from '@/lib/services/auth.service';
 import { updateUserProfile, getUserData } from '@/lib/services/user.service';
-import { fetchUserOrders, UserOrder } from '@/actions/orders';
+import { getUserOrderHistory, UserOrder } from '@/actions/orders';
 import { fetchCommunes } from '@/actions/communes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,7 +39,8 @@ import {
   Trash2,
   LogOut,
   MapPinIcon,
-  CreditCard
+  CreditCard,
+  Download
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -58,17 +58,14 @@ export default function CuentaPage() {
   const { clearWishlist } = useWishlist();
   const { clearCart } = useCart();
 
-  // Search state for communes
   const [communeSearch, setCommuneSearch] = useState("");
   const [showCommuneResults, setShowCommuneResults] = useState(false);
   const communeSearchRef = useRef<HTMLDivElement>(null);
 
-  // Auth Form
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
 
-  // Profile Form Data
   const [profileData, setProfileData] = useState({
     displayName: '',
     phone: '',
@@ -135,7 +132,7 @@ export default function CuentaPage() {
         setUser(currentUser);
         
         try {
-          const userOrders = await fetchUserOrders(currentUser.uid);
+          const userOrders = await getUserOrderHistory(currentUser.uid);
           setOrders(userOrders);
 
           if (dbData) {
@@ -301,7 +298,6 @@ export default function CuentaPage() {
         </div>
       ) : (
         <>
-          {/* Dashboard Header - Hero Refinado */}
           <section className="bg-[#FEF9F3] pt-12 pb-20 border-b border-black/5 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
@@ -323,10 +319,8 @@ export default function CuentaPage() {
             </div>
           </section>
 
-          {/* Dashboard Content - Layout de Rejilla Profesional */}
           <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-10 relative z-20">
             <Tabs defaultValue="compras" className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-              {/* Sidebar de Navegación (3 col) */}
               <aside className="lg:col-span-3">
                 <Card className="rounded-[2.5rem] border-none shadow-xl bg-white overflow-hidden sticky top-48">
                   <TabsList className="flex flex-col h-auto bg-transparent p-4 gap-2">
@@ -346,9 +340,7 @@ export default function CuentaPage() {
                 </Card>
               </aside>
 
-              {/* Área de Visualización (9 col) */}
               <div className="lg:col-span-9">
-                {/* Mis Compras */}
                 <TabsContent value="compras" className="space-y-8 mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Mis Compras Realizadas</h2>
                   
@@ -363,23 +355,30 @@ export default function CuentaPage() {
                                   <Package className="w-8 h-8" />
                                 </div>
                                 <div className="space-y-1">
-                                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Orden #{order.id.slice(-6).toUpperCase()}</span>
-                                  <h4 className="text-2xl font-black text-foreground">${order.totalAmount.toLocaleString('es-CL')}</h4>
+                                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Orden #{order.friendlyOrderId}</span>
+                                  <h4 className="text-2xl font-black text-foreground">${order.total.toLocaleString('es-CL')}</h4>
                                   <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                                    <Clock className="w-3.5 h-3.5" /> {new Date(order.createdAt).toLocaleDateString('es-CL')}
+                                    <Clock className="w-3.5 h-3.5" /> {order.createdAt ? new Date(order.createdAt).toLocaleDateString('es-CL') : 'Fecha pendiente'}
                                   </div>
                                 </div>
                               </div>
                               
                               <div className="flex items-center gap-4 w-full md:w-auto">
-                                <Badge className={cn(
-                                  "rounded-full px-4 py-1.5 text-[9px] font-black uppercase tracking-widest border-none grow text-center md:grow-0",
-                                  order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                                )}>
-                                  {order.status === 'completed' ? 'Entregado' : 'En proceso'}
-                                </Badge>
+                                <div className="flex flex-col items-center gap-2">
+                                  <Badge className={cn(
+                                    "rounded-full px-4 py-1.5 text-[9px] font-black uppercase tracking-widest border-none grow text-center md:grow-0",
+                                    order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                  )}>
+                                    {order.status === 'completed' ? 'Entregado' : (order.status === 'paid' ? 'Pagado / En Preparación' : 'Pendiente')}
+                                  </Badge>
+                                  {order.urlPdf && (
+                                    <a href={order.urlPdf} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[9px] font-black text-primary uppercase hover:underline">
+                                      <Download className="w-3 h-3" /> Descargar {order.documentRequested}
+                                    </a>
+                                  )}
+                                </div>
                                 <Button variant="outline" className="rounded-xl h-12 font-black text-[10px] uppercase tracking-widest hover:bg-primary hover:text-white transition-all grow md:grow-0 border-primary/10">
-                                  Repetir Pedido
+                                  Ver Detalle
                                 </Button>
                               </div>
                             </div>
@@ -399,7 +398,7 @@ export default function CuentaPage() {
                         </p>
                       </div>
                       <Link href="/catalogo">
-                        <Button className="h-16 px-12 rounded-full bg-primary text-white font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                        <Button className="h-16 px-12 rounded-full bg-primary text-white font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all gap-3">
                           Ir a la tiendita <ArrowRight className="ml-2 w-4 h-4" />
                         </Button>
                       </Link>
@@ -407,12 +406,9 @@ export default function CuentaPage() {
                   )}
                 </TabsContent>
 
-                {/* Perfil e Identidad */}
                 <TabsContent value="perfil" className="space-y-8 mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Configuración de Perfil</h2>
-                  
                   <form onSubmit={handleUpdateProfile} className="space-y-8">
-                    {/* Identidad MyDog */}
                     <Card className="rounded-[3rem] border-none shadow-sm bg-white overflow-hidden">
                       <CardContent className="p-10 space-y-8">
                         <div className="flex items-center gap-4 border-b border-black/5 pb-6">
@@ -424,7 +420,6 @@ export default function CuentaPage() {
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Tus datos básicos de contacto</p>
                           </div>
                         </div>
-                        
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                           <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Nombre Visible</Label>
@@ -437,8 +432,6 @@ export default function CuentaPage() {
                         </div>
                       </CardContent>
                     </Card>
-
-                    {/* Datos de Facturación */}
                     <Card className="rounded-[3rem] border-none shadow-sm bg-white overflow-hidden">
                       <CardContent className="p-10 space-y-8">
                         <div className="flex items-center gap-4 border-b border-black/5 pb-6">
@@ -450,7 +443,6 @@ export default function CuentaPage() {
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Información legal para tus compras</p>
                           </div>
                         </div>
-                        
                         <div className="space-y-6">
                           <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Tipo de Documento</Label>
@@ -464,7 +456,6 @@ export default function CuentaPage() {
                               </SelectContent>
                             </Select>
                           </div>
-                          
                           {profileData.billingType === 'factura' && (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2">
                               <div className="space-y-2">
@@ -480,7 +471,6 @@ export default function CuentaPage() {
                         </div>
                       </CardContent>
                     </Card>
-
                     <div className="flex justify-end pt-4">
                       <Button disabled={updatingProfile} className="h-16 px-12 rounded-full bg-primary text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all gap-3">
                         {updatingProfile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
@@ -490,7 +480,6 @@ export default function CuentaPage() {
                   </form>
                 </TabsContent>
 
-                {/* Direcciones */}
                 <TabsContent value="direcciones" className="space-y-8 mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Mis Puntos de Despacho</h2>
@@ -498,7 +487,6 @@ export default function CuentaPage() {
                       <Plus className="w-4 h-4" /> Agregar Nueva Dirección
                     </Button>
                   </div>
-
                   {editingAddressId ? (
                     <Card className="rounded-[3rem] border-none shadow-2xl bg-white p-10 animate-in zoom-in-95 duration-300">
                       <div className="flex justify-between items-center mb-10 border-b border-black/5 pb-6">
@@ -512,7 +500,6 @@ export default function CuentaPage() {
                           <X className="w-6 h-6" />
                         </button>
                       </div>
-                      
                       <div className="space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                           <div className="space-y-2">
@@ -524,7 +511,6 @@ export default function CuentaPage() {
                             <Input value={currentAddress.streetAndNumber} onChange={(e) => setCurrentAddress({...currentAddress, streetAndNumber: e.target.value})} className="h-14 rounded-2xl bg-muted/30 font-bold px-6 border-none focus-visible:ring-primary/20" />
                           </div>
                         </div>
-                        
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                           <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Depto/Local</Label>
@@ -555,7 +541,6 @@ export default function CuentaPage() {
                             <Input value="Metropolitana" readOnly className="h-14 rounded-2xl bg-muted/10 font-bold px-6 opacity-50 cursor-not-allowed border-none" />
                           </div>
                         </div>
-                        
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-black/5">
                           <Label className="flex items-center gap-3 cursor-pointer group">
                             <input type="checkbox" checked={currentAddress.isDefault} onChange={(e) => setCurrentAddress({...currentAddress, isDefault: e.target.checked})} className="w-6 h-6 rounded-lg accent-primary cursor-pointer" />
@@ -609,10 +594,8 @@ export default function CuentaPage() {
                   )}
                 </TabsContent>
 
-                {/* Seguridad */}
                 <TabsContent value="seguridad" className="space-y-8 mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Protección de Cuenta</h2>
-                  
                   <Card className="rounded-[3rem] border-none shadow-sm bg-white overflow-hidden">
                     <CardContent className="p-10 space-y-10">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 p-8 bg-muted/30 rounded-[2rem] border border-black/5 group hover:border-primary/20 transition-colors">
@@ -628,19 +611,6 @@ export default function CuentaPage() {
                         <Button variant="outline" className="h-14 rounded-2xl font-black text-[10px] uppercase tracking-widest border-primary/20 hover:bg-primary hover:text-white transition-all px-8">
                           Cambiar mi Clave
                         </Button>
-                      </div>
-                      
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 p-8 bg-muted/30 rounded-[2rem] border border-black/5 group">
-                        <div className="flex items-center gap-6 opacity-60">
-                          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm">
-                            <ShieldCheck className="w-7 h-7" />
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-base font-black uppercase tracking-widest">Doble factor (2FA)</p>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Seguridad nivel experto</p>
-                          </div>
-                        </div>
-                        <Badge className="bg-white text-muted-foreground border border-black/5 rounded-full px-6 h-10 text-[9px] font-black uppercase tracking-widest">Próximamente</Badge>
                       </div>
                     </CardContent>
                   </Card>
