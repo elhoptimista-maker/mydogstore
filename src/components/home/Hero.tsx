@@ -56,7 +56,7 @@ export default function Hero() {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">Confianza Real</span>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Más de 10.000 familias confían en nosotros en la RM</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Más de 1.000 familias confían en nosotros en la RM</span>
                 </div>
               </div>
             </div>
