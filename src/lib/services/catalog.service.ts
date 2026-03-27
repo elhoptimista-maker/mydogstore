@@ -6,7 +6,7 @@
 import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
 import { unstable_cache } from 'next/cache';
-import { getStrategicScore, getDynamicTags, getIntelligentCrossSell } from "./market-intelligence.service";
+import { getStrategicScore, getDynamicTags, getUpgradeSuggestion, getBundleRecommendations, getStrategicPriority } from "./market-intelligence.service";
 
 /**
  * Calcula un precio de venta comercial basado en el costo bruto.
@@ -47,6 +47,7 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
       const currentStock = inventoryMap.get(doc.id) || 0;
       const netCost = data.financials?.cost || 0;
       const brand = data.attributes?.brand || "Genérico";
+      const species = data.attributes?.species || "Mascotas";
 
       return {
         id: doc.id,
@@ -55,7 +56,7 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
         slug: data.slug || data.metadata?.slug || doc.id,
         brand,
         category: data.attributes?.category || "Varios",
-        species: data.attributes?.species || "Mascotas",
+        species,
         life_stage: data.attributes?.life_stage || "Adulto",
         flavor: data.attributes?.flavor,
         weight_kg: data.attributes?.weight_kg || 0,
@@ -64,14 +65,15 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
         currentStock,
         sellingPrice: calculateCommercialPrice(netCost),
         wholesalePrice: calculateWholesalePrice(netCost),
-        // Integración de Inteligencia
+        // Integración de Inteligencia Estratégica
         strategicScore: getStrategicScore(brand),
         tags: getDynamicTags(brand),
-        crossSellSuggestion: getIntelligentCrossSell(brand)
+        upgradeSuggestion: getUpgradeSuggestion(brand, species),
+        bundleRecommendations: getBundleRecommendations(brand)
       } as SanitizedProduct;
     });
 
-    // Ordenar por Puntaje Estratégico por defecto
+    // ORDENAMIENTO SMART SORT: Por puntaje estratégico descendente
     return sanitizedProducts.sort((a, b) => b.strategicScore - a.strategicScore);
   } catch (error: any) {
     console.error("[CatalogService] Error fetching products:", error.message);
@@ -108,9 +110,9 @@ export async function getRelatedProducts(baseProduct: SanitizedProduct, limit: n
       if (p.category === baseProduct.category) score += 10;
       if (p.brand === baseProduct.brand) score += 5;
 
-      // CROSS-SELL INTELIGENTE: Si hay una sugerencia estratégica para la marca actual, darle bonus masivo
-      if (baseProduct.crossSellSuggestion && p.brand.toUpperCase() === baseProduct.crossSellSuggestion.toUpperCase()) {
-        score += 100;
+      // Bundle predictivo: Bonus si es una recomendación para la marca base
+      if (baseProduct.bundleRecommendations?.includes(p.brand)) {
+        score += 50;
       }
 
       return { ...p, similarityScore: score };

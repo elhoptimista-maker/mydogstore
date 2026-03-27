@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { SanitizedProduct } from '@/types/product';
 import { fetchAllProducts } from '@/actions/products';
+import { getStrategicPriority } from '@/lib/services/market-intelligence.service';
 
 const SEARCH_PLACEHOLDERS = [
   "¿Buscas alimento hipoalergénico? 🐕",
@@ -15,7 +16,7 @@ const SEARCH_PLACEHOLDERS = [
 
 /**
  * @fileOverview Hook que encapsula toda la inteligencia del motor de búsqueda.
- * Gestiona el estado de escritura, el filtrado y la navegación.
+ * Implementa prioridad estratégica en los resultados.
  */
 export function useSmartSearch() {
   const router = useRouter();
@@ -58,16 +59,31 @@ export function useSmartSearch() {
     return () => clearTimeout(timer);
   }, [placeholder, isDeleting, placeholderIndex]);
 
-  // Resultados filtrados (Memoizados para rendimiento)
+  // Resultados filtrados con PRIORIDAD ESTRATÉGICA
   const searchResults = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
     if (query.length < 2) return [];
     
-    return allProducts.filter(p => 
-      p.name.toLowerCase().includes(query) || 
-      p.brand.toLowerCase().includes(query) ||
-      p.sku.toLowerCase().includes(query)
-    ).slice(0, 6);
+    return allProducts
+      .filter(p => 
+        p.name.toLowerCase().includes(query) || 
+        p.brand.toLowerCase().includes(query) ||
+        p.sku.toLowerCase().includes(query)
+      )
+      .map(p => {
+        // Inyectamos prioridad estratégica para el ordenamiento del buscador
+        const priority = getStrategicPriority(p.brand);
+        let boost = priority.score;
+        
+        // Boost extra para términos genéricos si la marca es de alta confianza
+        if ((query === 'alimento' || query === 'perro' || query === 'gato') && priority.isHighTrust) {
+          boost += 5;
+        }
+        
+        return { ...p, searchBoost: boost };
+      })
+      .sort((a, b) => (b as any).searchBoost - (a as any).searchBoost)
+      .slice(0, 6);
   }, [searchTerm, allProducts]);
 
   // EFECTO CRÍTICO: Mostrar resultados automáticamente al escribir

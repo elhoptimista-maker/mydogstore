@@ -19,8 +19,9 @@ export interface SanitizedProduct {
   currentStock: number;
   sellingPrice: number;
   wholesalePrice: number;
-  // Inteligencia de Mercado
+  // Inteligencia de Mercado (The Strategic Pivot Logic)
   strategicScore: number;
   tags: string[];
-  crossSellSuggestion?: string | null;
+  upgradeSuggestion?: string | null;
+  bundleRecommendations?: string[];
 }

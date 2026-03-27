@@ -4,7 +4,7 @@ import { useCart } from '@/context/CartContext';
 import { useShippingRates } from '@/hooks/use-shipping-rates';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2, Plus, Minus, Package, Truck, ArrowRight, Store } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Package, Truck, ArrowRight, Store, Sparkles, HeartPulse } from 'lucide-react';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -12,10 +12,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
 /**
  * @fileOverview Carrito lateral blindado con validación de stock, gamificación de envío gratis
- * y transparencia total de precios mediante tarifas dinámicas del ERP.
+ * e INNOVACIÓN: "The Healthy Switch" (Nudge Marketing).
  */
 export default function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, cartType, userData } = useCart();
@@ -27,6 +28,11 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
   const progress = Math.min((cartTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - cartTotal, 0);
   const isFreeShipping = progress >= 100;
+
+  // Lógica "The Healthy Switch": Detectar productos de baja calidad
+  const lowQualityProduct = useMemo(() => {
+    return cart.find(item => item.upgradeSuggestion !== null);
+  }, [cart]);
 
   // Resolución de Comuna del usuario
   const userComuna = userData?.addresses?.find((a: any) => a.isDefault)?.commune || userData?.addresses?.[0]?.commune; 
@@ -99,11 +105,31 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                 isFreeShipping ? "bg-green-200 border-green-300 [&>div]:bg-green-500" : "bg-white/50 border-white [&>div]:bg-primary"
               )} 
             />
-            {!isFreeShipping && (
-              <p className="text-[8px] font-bold text-primary/60 mt-2 uppercase tracking-wide">
-                Agrega unos snacks y te lo llevamos sin costo en la RM.
-              </p>
-            )}
+          </div>
+        )}
+
+        {/* INNOVACIÓN: Healthy Switch Nudge */}
+        {cart.length > 0 && lowQualityProduct && (
+          <div className="mx-6 mt-4 p-4 bg-primary text-white rounded-2xl shadow-xl shadow-primary/10 border border-white/10 animate-in slide-in-from-right-4 duration-500">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center shrink-0">
+                <HeartPulse className="w-4 h-4 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-widest">Upgrade de Bienestar</p>
+                <p className="text-[11px] font-medium leading-relaxed opacity-90">
+                  Mejora la nutrición de tu mascota cambiando a <span className="font-black text-secondary">{lowQualityProduct.upgradeSuggestion}</span> por una pequeña diferencia.
+                </p>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => router.push(`/catalogo?marca=${lowQualityProduct.upgradeSuggestion}`)}
+                  className="h-8 rounded-full border-secondary text-secondary hover:bg-secondary hover:text-primary font-black text-[9px] uppercase px-4"
+                >
+                  Ver Alternativa Saludable <Sparkles className="w-3 h-3 ml-1.5" />
+                </Button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -176,11 +202,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                             <span className="font-black text-primary text-sm tracking-tighter">
                               ${itemTotal.toLocaleString('es-CL')}
                             </span>
-                            {item.quantity > 1 && (
-                              <span className="text-[9px] font-bold text-muted-foreground/80 tracking-widest uppercase mt-0.5">
-                                ${item.priceAtAddition.toLocaleString('es-CL')} c/u
-                              </span>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -243,7 +264,7 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
             <SheetTrigger asChild>
               <Button 
                 onClick={() => router.push('/checkout')} 
-                className="w-full h-14 rounded-2xl bg-primary text-white font-black text-base shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="w-full h-14 rounded-2xl bg-primary text-white font-black text-base shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-0.98 transition-all flex items-center justify-center gap-2"
               >
                 Ir a Pagar Seguro <ArrowRight className="w-5 h-5" />
               </Button>
