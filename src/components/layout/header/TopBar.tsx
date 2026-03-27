@@ -10,7 +10,7 @@ import { MessageCircle, Instagram } from 'lucide-react';
  */
 export default function TopBar() {
   const [mounted, setMounted] = useState(false);
-  const whatsappUrl = `https://wa.me/56912345678`;
+  const whatsappUrl = `https://wa.me/56957889012`;
 
   useEffect(() => {
     setMounted(true);

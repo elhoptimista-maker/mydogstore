@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
  */
 
 export default function WhatsAppButton() {
-  const whatsappNumber = "56912345678"; // Reemplazar con el número real
+  const whatsappNumber = "56957889012"; // Número actualizado
   const message = encodeURIComponent("¡Hola MyDog! 🐾 Me gustaría realizar una consulta sobre sus productos.");
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 

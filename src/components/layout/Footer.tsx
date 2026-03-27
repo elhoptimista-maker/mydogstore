@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
  * @fileOverview Pie de página con autoridad de 15 años y tono familiar.
  */
 export default function Footer() {
-  const whatsappNumber = "56912345678";
+  const whatsappNumber = "56957889012";
   const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
   return (
@@ -94,7 +94,7 @@ export default function Footer() {
                 <MessageCircle className="w-5 h-5 text-secondary shrink-0" />
                 <div className="space-y-1">
                   <p className="text-xs font-black uppercase tracking-widest">Escríbenos con confianza</p>
-                  <p className="text-xs text-white/60 font-medium">Soporte y asesoría vía WhatsApp</p>
+                  <p className="text-xs text-white/60 font-medium">+569 5788 9012</p>
                 </div>
               </div>
 
