@@ -17,6 +17,7 @@ interface BrandLogoProps {
 /**
  * @fileOverview Componente central de Identidad de Marca MyDog.
  * Centraliza el imagotipo circular y la tipografía corporativa.
+ * Corregido para evitar errores de hidratación sincronizando el gap.
  */
 export default function BrandLogo({ 
   className, 
@@ -27,7 +28,6 @@ export default function BrandLogo({
   href = "/"
 }: BrandLogoProps) {
   
-  // Mapeo de dimensiones para el contenedor circular
   const containerSizes = {
     sm: "w-8 h-8",
     md: "w-10 h-10 md:w-12 md:h-12",
@@ -49,7 +49,6 @@ export default function BrandLogo({
     xl: "text-[10px]"
   };
 
-  // Configuración por defecto según variante
   const config = {
     light: {
       title: title || "MyDog",

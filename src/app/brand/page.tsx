@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Brand Playground para visualización y descomposición del componente de marca.
- * Esta página permite testear escalas y variantes en entornos controlados.
+ * Ajustado con contraste del color principal para apreciar la anatomía.
  */
 export default function BrandPage() {
   const sizes: ('sm' | 'md' | 'lg' | 'xl')[] = ['sm', 'md', 'lg', 'xl'];
@@ -81,7 +81,7 @@ export default function BrandPage() {
               <div className="space-y-10">
                 <div className="space-y-4">
                   <h2 className="text-4xl font-black tracking-tighter">Descomposición <br /><span className="text-primary">Atómica</span></h2>
-                  <p className="text-muted-foreground font-medium leading-relaxed">El logo MyDog no es una imagen estática, es un sistema de tres capas diseñado para ser accesible, responsivo y dinámico.</p>
+                  <p className="text-muted-foreground font-medium leading-relaxed">El logo MyDog no es una imagen estática, es un sistema diseñado para ser accesible, responsivo y dinámico.</p>
                 </div>
                 
                 <div className="space-y-6">
