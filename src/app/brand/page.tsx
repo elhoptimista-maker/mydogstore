@@ -27,7 +27,7 @@ export default function BrandPage() {
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-10 space-y-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-10 space-y-12 relative z-10">
         <Tabs defaultValue="variants" className="space-y-8">
           <div className="flex justify-center">
             <TabsList className="bg-white p-1.5 rounded-full shadow-xl border border-black/5 h-auto">
