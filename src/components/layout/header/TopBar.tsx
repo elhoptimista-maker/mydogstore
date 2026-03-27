@@ -10,7 +10,8 @@ import { MessageCircle, Instagram } from 'lucide-react';
  */
 export default function TopBar() {
   const [mounted, setMounted] = useState(false);
-  const whatsappUrl = `https://wa.me/56957889012`;
+  const whatsappUrl = `https://wa.me/+56957889012?text=Hola,%20buenos%20días!`;
+  const instagramUrl = "https://www.instagram.com/distribuidoramydog2.0";
 
   useEffect(() => {
     setMounted(true);
@@ -40,7 +41,7 @@ export default function TopBar() {
               <span className="hidden sm:inline">Asesoría por WhatsApp</span>
             </a>
             <a 
-              href="https://www.instagram.com/mydog_distribuidora" 
+              href={instagramUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="hover:opacity-70 transition-opacity flex items-center gap-1.5"

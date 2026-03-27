@@ -7,6 +7,8 @@ import { Instagram, Sparkles } from 'lucide-react';
  */
 
 export default function InstagramGallery() {
+  const instagramUrl = "https://www.instagram.com/distribuidoramydog2.0";
+
   return (
     <section className="w-full pt-16 md:pt-24 border-t border-black/[0.03]">
       <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
@@ -17,10 +19,10 @@ export default function InstagramGallery() {
           <h2 className="text-3xl md:text-5xl font-black tracking-tighter leading-none">
             Únete a nuestra <span className="text-primary">Manada Online</span>
           </h2>
-          <p className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-widest">Sigue nuestro día a día en @MyDog_Distribuidora</p>
+          <p className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-widest">Sigue nuestro día a día en @distribuidoramydog2.0</p>
         </div>
         <a 
-          href="https://www.instagram.com/mydog_distribuidora" 
+          href={instagramUrl} 
           target="_blank" 
           rel="noopener noreferrer"
           className="h-14 px-10 rounded-full bg-black text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"

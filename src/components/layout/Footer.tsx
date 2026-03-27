@@ -1,15 +1,17 @@
 "use client";
 
 import Link from 'next/link';
-import { Instagram, Dog, MessageCircle, MapPin, Phone, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Instagram, Dog, MessageCircle, MapPin, Phone, Mail, ArrowRight, ShieldCheck, Facebook } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Pie de página con autoridad de 15 años y tono familiar.
+ * Actualizado con nuevos enlaces de redes sociales y contacto.
  */
 export default function Footer() {
-  const whatsappNumber = "56957889012";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
+  const whatsappUrl = `https://wa.me/+56957889012?text=Hola,%20buenos%20días!`;
+  const facebookUrl = "https://web.facebook.com/DistribuidoraMyDog";
+  const instagramUrl = "https://www.instagram.com/distribuidoramydog2.0";
 
   return (
     <footer className="w-full bg-primary text-white overflow-hidden">
@@ -33,8 +35,18 @@ export default function Footer() {
 
             <div className="flex items-center gap-4">
               <a 
-                href="https://www.instagram.com/mydog_distribuidora" 
+                href={facebookUrl} 
                 target="_blank" 
+                rel="noopener noreferrer"
+                className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-all group"
+              >
+                <span className="sr-only">Facebook</span>
+                <Facebook className="w-5 h-5 transition-transform group-hover:scale-110" />
+              </a>
+              <a 
+                href={instagramUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
                 className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-all group"
               >
                 <span className="sr-only">Instagram</span>
@@ -43,6 +55,7 @@ export default function Footer() {
               <a 
                 href={whatsappUrl} 
                 target="_blank" 
+                rel="noopener noreferrer"
                 className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#25D366]/20 hover:border-[#25D366]/40 transition-all group"
               >
                 <span className="sr-only">WhatsApp</span>

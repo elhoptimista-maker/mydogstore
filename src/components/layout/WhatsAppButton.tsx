@@ -5,11 +5,12 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Botón flotante de WhatsApp con estilo MyDog.
+ * Actualizado con el mensaje personalizado solicitado.
  */
 
 export default function WhatsAppButton() {
-  const whatsappNumber = "56957889012"; // Número actualizado
-  const message = encodeURIComponent("¡Hola MyDog! 🐾 Me gustaría realizar una consulta sobre sus productos.");
+  const whatsappNumber = "+56957889012";
+  const message = encodeURIComponent("Hola, buenos días!");
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
   return (
