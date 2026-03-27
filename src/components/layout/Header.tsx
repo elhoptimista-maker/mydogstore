@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -64,7 +65,7 @@ export default function Header() {
             <div className="flex items-center gap-8 h-full">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="bg-secondary text-primary h-10 px-6 items-center gap-3 cursor-pointer hover:bg-secondary/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
+                  <div className="bg-white text-primary h-10 px-6 items-center gap-3 cursor-pointer hover:bg-white/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
                     <Menu className="w-4 h-4" />
                     Catálogo Completo
                   </div>
@@ -85,22 +86,17 @@ export default function Header() {
                 {mainNav.map((item) => (
                   <Link key={item.label} href={item.href} className="text-[11px] font-bold text-white/80 hover:text-white uppercase tracking-widest transition-all relative group">
                     {item.label}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary transition-all group-hover:w-full"></span>
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all group-hover:w-full"></span>
                   </Link>
                 ))}
               </nav>
             </div>
 
             <div className="flex items-center gap-8">
-              <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
+              <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-white/80 uppercase tracking-widest transition-all">
                 <UserIcon className="w-4 h-4" /> 
                 {currentUser ? (currentUser.displayName || 'Mi Perfil') : 'Mi Espacio MyDog'}
               </Link>
-              {/* Portal B2B oculto temporalmente
-              <Link href="/b2b/portal" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
-                <Building2 className="w-4 h-4" /> Portal B2B
-              </Link>
-              */}
             </div>
           </div>
 

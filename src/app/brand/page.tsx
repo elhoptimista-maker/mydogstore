@@ -1,3 +1,4 @@
+
 "use client";
 
 import BrandLogo from '@/components/layout/BrandLogo';
@@ -22,12 +23,12 @@ export default function BrandPage() {
           <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">
             🎨 Brand Assets Lab
           </div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter">Guía de Estilo <span className="text-secondary">MyDog</span></h1>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter">Guía de Estilo <span className="text-white/40">MyDog</span></h1>
           <p className="text-white/60 max-w-2xl font-medium">Laboratorio de componentes visuales. Aquí puedes descomponer y trabajar en la consistencia de la identidad corporativa de la distribuidora.</p>
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-8 space-y-12 relative z-10">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 space-y-12 relative z-10 mt-12">
         <Tabs defaultValue="variants" className="space-y-8">
           <div className="flex justify-center">
             <TabsList className="bg-white p-1.5 rounded-full shadow-xl border border-black/5 h-auto">
@@ -69,7 +70,7 @@ export default function BrandPage() {
                     <div className="p-4 rounded-3xl group-hover:bg-white/5 transition-colors">
                       <BrandLogo size={size} variant="light" />
                     </div>
-                    <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">{size.toUpperCase()} Scale</span>
+                    <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">{size.toUpperCase()} Scale</span>
                   </div>
                 ))}
               </div>
@@ -88,7 +89,7 @@ export default function BrandPage() {
                   {[
                     { t: "Imagotipo Circular", d: "Contenedor circular limpio para el imagotipo oficial de la distribuidora." },
                     { t: "Tipografía Black", d: "Fuente Inter Black con tracking-tighter para máxima autoridad." },
-                    { t: "Subtexto Dorado", d: "Color secundario para descriptor de negocio y trayectoria." }
+                    { t: "Subtexto Unificado", d: "Uso de blanco/transparencias para descriptor de negocio, eliminando el amarillo." }
                   ].map((item, i) => (
                     <div key={i} className="flex gap-4">
                       <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center font-black text-primary shrink-0">{i+1}</div>

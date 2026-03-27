@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -17,7 +18,7 @@ interface BrandLogoProps {
 /**
  * @fileOverview Componente central de Identidad de Marca MyDog.
  * Centraliza el imagotipo circular y la tipografía corporativa.
- * Sincronizado con la versión oficial de /brand.
+ * Actualizado para evitar el uso de amarillo en la marca principal.
  */
 export default function BrandLogo({ 
   className, 
@@ -54,25 +55,25 @@ export default function BrandLogo({
       title: title || "MyDog",
       subtext: subtext || "Distribuidora",
       titleColor: "text-white",
-      subtextColor: "text-secondary"
+      subtextColor: "text-white/70"
     },
     footer: {
       title: title || "MyDog Distribuidora",
       subtext: subtext || "15 años cuidando a tu mascota",
       titleColor: "text-white",
-      subtextColor: "text-secondary"
+      subtextColor: "text-white/60"
     },
     b2b: {
       title: title || "MyDog",
       subtext: subtext || "B2B Portal",
       titleColor: "text-white",
-      subtextColor: "text-secondary"
+      subtextColor: "text-white/70"
     },
     mobile: {
       title: title || "Mi MyDog",
       subtext: subtext || "¡Hola! Qué gusto verte",
       titleColor: "text-white",
-      subtextColor: "text-secondary"
+      subtextColor: "text-white/70"
     }
   }[variant];
 
