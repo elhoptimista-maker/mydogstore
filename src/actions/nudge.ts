@@ -6,16 +6,15 @@ import { SanitizedProduct } from "@/types/product";
 
 /**
  * @fileOverview Server Action refinado para encontrar recomendaciones de mejora nutricional.
- * Implementa un "Upsell Progresivo" buscando el producto premium más cercano al presupuesto del cliente.
+ * Implementa un "Upsell Progresivo" con conciencia de formato (peso).
  */
 export async function getUpgradeRecommendation(cartItems: any[]): Promise<{ originalItem: any, upgradeProduct: SanitizedProduct } | null> {
   // 1. ANTI-SPAM: Buscamos UN SOLO producto en el carrito que necesite un "Upgrade".
-  // Al usar .find(), toma el primero y no agobia al cliente con múltiples banners.
   const itemToUpgrade = cartItems.find(item => qualifiesForHealthySwitch(item.brand));
   
   if (!itemToUpgrade) return null;
 
-  // Extraemos los IDs que ya están en el carrito para no sugerirlos de nuevo (ANTI-DUPLICIDAD)
+  // Extraemos los IDs que ya están en el carrito para no sugerirlos de nuevo
   const cartProductIds = cartItems.map(item => item.id);
 
   // 2. Traemos todo el catálogo cacheado
@@ -29,24 +28,31 @@ export async function getUpgradeRecommendation(cartItems: any[]): Promise<{ orig
     p.species === itemToUpgrade.species && 
     p.life_stage === itemToUpgrade.life_stage && 
     p.category === itemToUpgrade.category && 
-    !qualifiesForHealthySwitch(p.brand) && // Que NO sea otra marca de baja calidad
-    (MARKET_INTELLIGENCE[p.brand?.toLowerCase()]?.quality || 0) >= 3 // Que sea calidad Premium o superior
+    !qualifiesForHealthySwitch(p.brand) && 
+    (MARKET_INTELLIGENCE[p.brand?.toLowerCase()]?.quality || 0) >= 3
   );
 
   if (candidates.length === 0) return null;
 
-  // 4. EL SALTO LÓGICO (Upsell Progresivo)
-  // En lugar de tomar el de mayor puntaje absoluto, tomamos el producto de mejor 
-  // calidad que tenga el precio MÁS CERCANO al presupuesto actual del cliente.
   const originalPrice = itemToUpgrade.priceAtAddition || itemToUpgrade.price || 0;
+  const originalWeight = itemToUpgrade.weight_kg || 1;
 
+  // 4. ORDENAMIENTO DE PRECISIÓN: Formato (Peso) primero, Precio después.
   const bestUpgrade = candidates.sort((a, b) => {
-    // Calculamos la distancia en pesos entre el original y el candidato
-    const diffA = Math.abs(a.sellingPrice - originalPrice);
-    const diffB = Math.abs(b.sellingPrice - originalPrice);
-    
-    // El candidato con la menor diferencia de precio queda en la posición [0]
-    return diffA - diffB;
+    const weightA = a.weight_kg || 1;
+    const weightB = b.weight_kg || 1;
+
+    // Diferencia absoluta en Kilos (Ej: 25kg vs 18kg = 7. 25kg vs 3kg = 22)
+    const weightDiffA = Math.abs(weightA - originalWeight);
+    const weightDiffB = Math.abs(weightB - originalWeight);
+
+    // Diferencia absoluta en Precio
+    const priceDiffA = Math.abs(a.sellingPrice - originalPrice);
+    const priceDiffB = Math.abs(b.sellingPrice - originalPrice);
+
+    // Penalizamos fuertemente las diferencias de peso (factor 10.000).
+    // Esto asegura que el algoritmo siempre prefiera formatos similares.
+    return (weightDiffA * 10000 + priceDiffA) - (weightDiffB * 10000 + priceDiffB);
   })[0]; 
 
   return {

@@ -11,7 +11,7 @@ import { toast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Componente de "Nudge Marketing" para el carrito.
- * Invita al usuario a mejorar la nutrición de su mascota con un solo clic.
+ * Implementa el "Frontend Honesto": evalúa peso, precio absoluto y precio por kilo.
  */
 export default function HealthySwitch() {
   const { cart, removeFromCart, addToCart } = useCart();
@@ -43,7 +43,26 @@ export default function HealthySwitch() {
   if (loading || !recommendation) return null;
 
   const { originalItem, upgradeProduct } = recommendation;
+  
+  // CÁLCULOS DE TRANSPARENCIA: Diferencia absoluta vs Precio por Kilo
   const priceDifference = upgradeProduct.sellingPrice - originalItem.priceAtAddition;
+  
+  const originalWeight = originalItem.weight_kg || 1;
+  const upgradeWeight = upgradeProduct.weight_kg || 1;
+  const originalPPKG = originalItem.priceAtAddition / originalWeight;
+  const upgradePPKG = upgradeProduct.sellingPrice / upgradeWeight;
+
+  // Lógica inteligente para el descriptor comercial
+  let tagText = "";
+  if (priceDifference > 0) {
+    tagText = `POR SOLO $${priceDifference.toLocaleString('es-CL')} MÁS EN EL TOTAL`;
+  } else {
+    if (upgradePPKG <= originalPPKG) {
+      tagText = "¡MEJOR PRECIO Y CALIDAD!";
+    } else {
+      tagText = "¡EXCELENTE ALTERNATIVA PREMIUM!";
+    }
+  }
 
   const handleSwitch = () => {
     setIsSwitching(true);
@@ -53,7 +72,7 @@ export default function HealthySwitch() {
       // Removemos el producto de baja calidad
       removeFromCart(originalItem.id);
       
-      // Añadimos el producto premium manteniendo la cantidad
+      // Añadimos el producto premium manteniendo los atributos originales
       addToCart(
         upgradeProduct, 
         originalItem.isSubscription, 
@@ -101,9 +120,7 @@ export default function HealthySwitch() {
             <div className="flex flex-col min-w-0">
               <span className="text-[11px] font-bold text-slate-800 truncate">{upgradeProduct.name}</span>
               <span className="text-[9px] font-black text-green-600 uppercase tracking-tight">
-                {priceDifference > 0 
-                  ? `Diferencia de $${priceDifference.toLocaleString('es-CL')}` 
-                  : '¡Mejor precio hoy!'}
+                {tagText}
               </span>
             </div>
           </div>
