@@ -1,12 +1,13 @@
 /**
  * @fileOverview Servicio de Catálogo para la lectura y sanitización de productos del ERP.
- * Implementa 'unstable_cache' e integra la inteligencia de mercado.
+ * Implementa 'unstable_cache' e integra el motor de ranking inteligente.
  */
 
 import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
 import { unstable_cache } from 'next/cache';
-import { getStrategicScore, getDynamicTags, getUpgradeSuggestion, getBundleRecommendations, getStrategicPriority } from "./market-intelligence.service";
+import { calculateSmartScore } from "@/lib/services/ranking.engine";
+import { getDynamicTags, getUpgradeSuggestion, getBundleRecommendations } from "./market-intelligence.service";
 
 /**
  * Calcula un precio de venta comercial basado en el costo bruto.
@@ -49,6 +50,9 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
       const brand = data.attributes?.brand || "Genérico";
       const species = data.attributes?.species || "Mascotas";
 
+      // Calculamos el Smart Score dinámicamente usando nuestra matriz
+      const smartScore = calculateSmartScore(brand);
+
       return {
         id: doc.id,
         name: data.name || "Producto sin nombre",
@@ -65,16 +69,24 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
         currentStock,
         sellingPrice: calculateCommercialPrice(netCost),
         wholesalePrice: calculateWholesalePrice(netCost),
-        // Integración de Inteligencia Estratégica
-        strategicScore: getStrategicScore(brand),
+        smartScore,
         tags: getDynamicTags(brand),
         upgradeSuggestion: getUpgradeSuggestion(brand, species),
         bundleRecommendations: getBundleRecommendations(brand)
       } as SanitizedProduct;
     });
 
-    // ORDENAMIENTO SMART SORT: Por puntaje estratégico descendente
-    return sanitizedProducts.sort((a, b) => b.strategicScore - a.strategicScore);
+    // ORDENAMIENTO MAGISTRAL:
+    // 1. Productos con mayor Smart Score van primero (Visibilidad estratégica).
+    // 2. Si tienen el mismo score, el que tiene stock físico gana.
+    return sanitizedProducts.sort((a, b) => {
+       const scoreDiff = (b.smartScore || 0) - (a.smartScore || 0);
+       if (scoreDiff !== 0) return scoreDiff;
+       
+       const aInStock = a.currentStock > 0 ? 1 : 0;
+       const bInStock = b.currentStock > 0 ? 1 : 0;
+       return bInStock - aInStock;
+    });
   } catch (error: any) {
     console.error("[CatalogService] Error fetching products:", error.message);
     return [];
@@ -101,7 +113,7 @@ export async function getRelatedProducts(baseProduct: SanitizedProduct, limit: n
     .map(p => {
       let score = 0;
       // Bonus por puntaje estratégico
-      score += p.strategicScore;
+      score += p.smartScore * 10;
 
       const pLifeStage = p.life_stage.toLowerCase();
       const currentLifeStage = baseProduct.life_stage.toLowerCase();
