@@ -6,20 +6,22 @@
 import { getErpDbAdmin } from "@/lib/firebase/erp-admin";
 import { SanitizedProduct } from "@/types/product";
 import { unstable_cache } from 'next/cache';
-import { calculateSmartScore } from "@/lib/services/ranking.engine";
-import { getDynamicTags, getUpgradeSuggestion, getBundleRecommendations } from "./market-intelligence.service";
+import { calculateSmartScore, getStrategicTags } from "@/lib/services/ranking.engine";
 
 /**
  * Calcula un precio de venta comercial basado en el costo bruto.
+ * Margen objetivo: ~30% sobre el costo.
  */
 function calculateCommercialPrice(netCost: number): number {
   if (!netCost || netCost <= 0) return 0;
   const basePrice = netCost / (1 - 0.30);
+  // Redondeo psicológico a los $90 o $00 finales
   return Math.round(basePrice / 100) * 100 - 10;
 }
 
 /**
  * Calcula el precio mayorista basado en el costo bruto.
+ * Margen objetivo: ~15% sobre el costo.
  */
 function calculateWholesalePrice(netCost: number): number {
   if (!netCost || netCost <= 0) return 0;
@@ -29,6 +31,7 @@ function calculateWholesalePrice(netCost: number): number {
 
 /**
  * Función cruda de obtención de datos desde Firestore (ERP).
+ * Cruza la colección 'products' con el stock de 'inventory'.
  */
 async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
   try {
@@ -39,6 +42,7 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
 
     if (!productsSnap || productsSnap.empty) return [];
 
+    // Obtenemos el inventario actual para el cruce de stock
     const inventorySnap = await db.collection("inventory").get();
     const inventoryMap = new Map();
     inventorySnap.forEach((doc: any) => inventoryMap.set(doc.id, doc.data().physical_qty || 0));
@@ -48,10 +52,10 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
       const currentStock = inventoryMap.get(doc.id) || 0;
       const netCost = data.financials?.cost || 0;
       const brand = data.attributes?.brand || "Genérico";
-      const species = data.attributes?.species || "Mascotas";
 
       // Calculamos el Smart Score dinámicamente usando nuestra matriz
       const smartScore = calculateSmartScore(brand);
+      const tags = getStrategicTags(brand);
 
       return {
         id: doc.id,
@@ -60,7 +64,7 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
         slug: data.slug || data.metadata?.slug || doc.id,
         brand,
         category: data.attributes?.category || "Varios",
-        species,
+        species: data.attributes?.species || "Mascotas",
         life_stage: data.attributes?.life_stage || "Adulto",
         flavor: data.attributes?.flavor,
         weight_kg: data.attributes?.weight_kg || 0,
@@ -70,9 +74,7 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
         sellingPrice: calculateCommercialPrice(netCost),
         wholesalePrice: calculateWholesalePrice(netCost),
         smartScore,
-        tags: getDynamicTags(brand),
-        upgradeSuggestion: getUpgradeSuggestion(brand, species),
-        bundleRecommendations: getBundleRecommendations(brand)
+        tags
       } as SanitizedProduct;
     });
 
@@ -93,43 +95,39 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
   }
 }
 
+/**
+ * Caché de catálogo con TTL de 1 hora y revalidación por tags.
+ */
 export const getSanitizedProducts = unstable_cache(
   async () => getSanitizedProductsRaw(),
   ['all-products-catalog'],
   { revalidate: 3600, tags: ['catalog'] }
 );
 
+/**
+ * Recupera un producto individual por su slug o ID desde el catálogo sanitizado.
+ */
 export async function getSanitizedProductBySlug(slugOrId: string): Promise<SanitizedProduct | null> {
   const allProducts = await getSanitizedProducts();
   return allProducts.find(p => p.slug === slugOrId || p.id === slugOrId) || null;
 }
 
-export async function getRelatedProducts(baseProduct: SanitizedProduct, limit: number = 15): Promise<SanitizedProduct[]> {
+/**
+ * Obtiene productos similares basados en especie y etapa de vida.
+ */
+export async function getRelatedProducts(baseProduct: SanitizedProduct, limit: number = 10): Promise<SanitizedProduct[]> {
   const allProducts = await getSanitizedProducts();
   
   return allProducts
     .filter(p => p.id !== baseProduct.id && p.currentStock > 0)
-    .filter(p => p.species === baseProduct.species) 
+    .filter(p => p.species === baseProduct.species)
     .map(p => {
       let score = 0;
-      // Bonus por puntaje estratégico
-      score += p.smartScore * 10;
-
-      const pLifeStage = p.life_stage.toLowerCase();
-      const currentLifeStage = baseProduct.life_stage.toLowerCase();
-
-      if (pLifeStage === currentLifeStage) score += 20; 
-      if (p.category === baseProduct.category) score += 10;
-      if (p.brand === baseProduct.brand) score += 5;
-
-      // Bundle predictivo: Bonus si es una recomendación para la marca base
-      if (baseProduct.bundleRecommendations?.includes(p.brand)) {
-        score += 50;
-      }
-
+      if (p.life_stage === baseProduct.life_stage) score += 10;
+      if (p.category === baseProduct.category) score += 5;
+      if (p.brand === baseProduct.brand) score += 2;
       return { ...p, similarityScore: score };
     })
-    .filter(p => (p as any).similarityScore > 0)
     .sort((a, b) => (b as any).similarityScore - (a as any).similarityScore)
     .slice(0, limit);
 }

@@ -7,31 +7,49 @@ export interface BrandMetrics {
   traction: number;   // Volumen de búsqueda/compra (1-10)
   sentiment: number;  // Lealtad y percepción del cliente (1-10)
   quality: number;    // Calidad nutricional objetiva (1-5)
+  tier: string;
 }
 
-// Base de Datos Maestra de Marcas en Chile
+// Base de Datos Maestra de Marcas en Chile 2026
 export const MARKET_INTELLIGENCE: Record<string, BrandMetrics> = {
-  "purina one": { traction: 9, sentiment: 10, quality: 5 },
-  "nomade": { traction: 10, sentiment: 9, quality: 4 },
-  "natural food": { traction: 8, sentiment: 9, quality: 4 },
-  "fit formula": { traction: 9, sentiment: 7, quality: 3.5 },
-  "champion dog": { traction: 10, sentiment: 8, quality: 3 },
-  "champion cat": { traction: 10, sentiment: 8, quality: 3 },
-  "master dog": { traction: 10, sentiment: 8, quality: 3 },
-  "master cat": { traction: 10, sentiment: 8, quality: 3 },
-  "churu": { traction: 10, sentiment: 10, quality: 5 },
-  "felix": { traction: 10, sentiment: 9, quality: 3 },
-  "simparica": { traction: 10, sentiment: 10, quality: 5 },
-  "easy clean": { traction: 9, sentiment: 8, quality: 4 },
-  "dog chow": { traction: 9, sentiment: 7, quality: 3 },
-  "cat chow": { traction: 9, sentiment: 7, quality: 3 },
-  "whiskas": { traction: 9, sentiment: 8, quality: 3 },
-  "cannes": { traction: 8, sentiment: 6, quality: 2.5 },
-  "doko": { traction: 8, sentiment: 5, quality: 1.5 },
-  "sabrokan": { traction: 8, sentiment: 6, quality: 1.5 },
-  "bio stones": { traction: 6, sentiment: 9, quality: 5 },
-  "raza": { traction: 7, sentiment: 5, quality: 1 },
-  "tyson": { traction: 7, sentiment: 5, quality: 1 },
+  // PERROS
+  "purina one": { traction: 9, sentiment: 10, quality: 5, tier: "Super Premium" },
+  "nomade": { traction: 10, sentiment: 9, quality: 4, tier: "Premium" },
+  "natural food": { traction: 8, sentiment: 9, quality: 4, tier: "Premium" },
+  "appetit": { traction: 6, sentiment: 8, quality: 4, tier: "Premium" },
+  "fit formula": { traction: 9, sentiment: 7, quality: 3.5, tier: "Premium" },
+  "champion dog": { traction: 10, sentiment: 8, quality: 3, tier: "Comercial" },
+  "master dog": { traction: 10, sentiment: 8, quality: 3, tier: "Comercial" },
+  "dog chow": { traction: 9, sentiment: 7, quality: 3, tier: "Comercial" },
+  "pedigree": { traction: 9, sentiment: 7, quality: 3, tier: "Comercial" },
+  "cannes": { traction: 8, sentiment: 6, quality: 2.5, tier: "Comercial" },
+  "my dog": { traction: 7, sentiment: 6, quality: 2.5, tier: "Comercial" },
+  "doko": { traction: 8, sentiment: 5, quality: 1.5, tier: "Económico" },
+  "sabrokan": { traction: 8, sentiment: 6, quality: 1.5, tier: "Económico" },
+  "raza": { traction: 7, sentiment: 5, quality: 1, tier: "Económico" },
+  "tyson": { traction: 7, sentiment: 5, quality: 1, tier: "Económico" },
+  "cacique": { traction: 5, sentiment: 4, quality: 1, tier: "Económico" },
+  "roquita": { traction: 5, sentiment: 4, quality: 1, tier: "Económico" },
+  "can": { traction: 5, sentiment: 5, quality: 1, tier: "Económico" },
+  "knino": { traction: 5, sentiment: 5, quality: 1, tier: "Económico" },
+  "leroy": { traction: 5, sentiment: 5, quality: 1, tier: "Económico" },
+
+  // GATOS
+  "purina one (cat)": { traction: 9, sentiment: 10, quality: 5, tier: "Super Premium" },
+  "fit formula (cat)": { traction: 8, sentiment: 8, quality: 4, tier: "Premium" },
+  "felix": { traction: 10, sentiment: 9, quality: 3, tier: "Comercial" },
+  "whiskas": { traction: 9, sentiment: 8, quality: 3, tier: "Comercial" },
+  "champion cat": { traction: 10, sentiment: 9, quality: 3, tier: "Comercial" },
+  "master cat": { traction: 10, sentiment: 8, quality: 3, tier: "Comercial" },
+  "cat chow": { traction: 9, sentiment: 7, quality: 3, tier: "Comercial" },
+  "gati": { traction: 9, sentiment: 7, quality: 2, tier: "Comercial" },
+  "cuchito": { traction: 7, sentiment: 6, quality: 2, tier: "Comercial" },
+  "easy clean": { traction: 9, sentiment: 8, quality: 4, tier: "Premium" },
+  "bio stones": { traction: 6, sentiment: 9, quality: 5, tier: "Premium" },
+  "churu": { traction: 10, sentiment: 10, quality: 5, tier: "Super Premium" },
+  "simparica": { traction: 10, sentiment: 10, quality: 5, tier: "Super Premium" },
+  "dentastix": { traction: 9, sentiment: 9, quality: 4, tier: "Premium" },
+  "dentalife": { traction: 9, sentiment: 9, quality: 4, tier: "Premium" }
 };
 
 /**
@@ -49,7 +67,8 @@ export function calculateSmartScore(brandName?: string): number {
     return (5 * 0.4) + (5 * 0.4) + (2.5 * 0.2); // Score por defecto: 4.5
   }
 
-  return (metrics.traction * 0.4) + (metrics.sentiment * 0.4) + (metrics.quality * 0.2);
+  // Normalizamos calidad de 1-5 a 1-10 para la fórmula
+  return (metrics.traction * 0.4) + (metrics.sentiment * 0.4) + ((metrics.quality * 2) * 0.2);
 }
 
 /**
@@ -62,4 +81,21 @@ export function qualifiesForHealthySwitch(brandName?: string): boolean {
   const metrics = MARKET_INTELLIGENCE[normalizedBrand];
   
   return metrics ? metrics.quality < 2 : false;
+}
+
+/**
+ * Genera etiquetas dinámicas basadas en el rendimiento de mercado.
+ */
+export function getStrategicTags(brandName?: string): string[] {
+  if (!brandName) return [];
+  const normalizedBrand = brandName.toLowerCase().trim();
+  const metrics = MARKET_INTELLIGENCE[normalizedBrand];
+  if (!metrics) return [];
+
+  const tags: string[] = [];
+  if (metrics.traction >= 9) tags.push("Líder en ventas");
+  if (metrics.sentiment >= 9) tags.push("El más querido");
+  if (metrics.quality >= 4.5) tags.push("Nutrición Pro");
+  
+  return tags;
 }

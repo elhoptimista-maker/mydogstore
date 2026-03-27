@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { SanitizedProduct } from '@/types/product';
 import { fetchAllProducts } from '@/actions/products';
-import { getStrategicPriority } from '@/lib/services/market-intelligence.service';
+import { MARKET_INTELLIGENCE, calculateSmartScore } from '@/lib/services/ranking.engine';
 
 const SEARCH_PLACEHOLDERS = [
   "¿Buscas alimento hipoalergénico? 🐕",
@@ -16,7 +16,7 @@ const SEARCH_PLACEHOLDERS = [
 
 /**
  * @fileOverview Hook que encapsula toda la inteligencia del motor de búsqueda.
- * Implementa prioridad estratégica en los resultados.
+ * Implementa prioridad estratégica en los resultados basada en Smart Score.
  */
 export function useSmartSearch() {
   const router = useRouter();
@@ -72,11 +72,12 @@ export function useSmartSearch() {
       )
       .map(p => {
         // Inyectamos prioridad estratégica para el ordenamiento del buscador
-        const priority = getStrategicPriority(p.brand);
-        let boost = priority.score;
+        // Priorizamos marcas con alto Smart Score para términos genéricos
+        const metrics = MARKET_INTELLIGENCE[p.brand.toLowerCase()];
+        let boost = p.smartScore;
         
-        // Boost extra para términos genéricos si la marca es de alta confianza
-        if ((query === 'alimento' || query === 'perro' || query === 'gato') && priority.isHighTrust) {
+        // Boost extra para términos genéricos si la marca es de alta confianza (Sentimiento > 8)
+        if ((query === 'alimento' || query === 'perro' || query === 'gato') && (metrics?.sentiment || 0) > 8) {
           boost += 5;
         }
         

@@ -4,7 +4,7 @@ import { useCart } from '@/context/CartContext';
 import { useShippingRates } from '@/hooks/use-shipping-rates';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2, Plus, Minus, Package, Truck, ArrowRight, Store, Sparkles, HeartPulse } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Package, Truck, ArrowRight, Store } from 'lucide-react';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +12,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
 import HealthySwitch from './HealthySwitch';
 
 /**
