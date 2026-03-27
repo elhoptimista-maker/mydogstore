@@ -80,7 +80,7 @@ export default function BrandLogo({
   return (
     <Link href={href} className={cn("flex items-center gap-3 shrink-0 group", className)}>
       <div className={cn(
-        "bg-white/5 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform relative overflow-hidden",
+        "rounded-full flex items-center justify-center group-hover:scale-110 transition-transform relative overflow-hidden",
         containerSizes[size]
       )}>
         <Image 

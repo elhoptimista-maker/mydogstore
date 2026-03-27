@@ -27,7 +27,7 @@ export default function BrandPage() {
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-8 -mt-10 space-y-12 relative z-10">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 space-y-12 relative z-10">
         <Tabs defaultValue="variants" className="space-y-8">
           <div className="flex justify-center">
             <TabsList className="bg-white p-1.5 rounded-full shadow-xl border border-black/5 h-auto">
@@ -43,9 +43,7 @@ export default function BrandPage() {
                 <Card key={variant} className="rounded-[2.5rem] border-none shadow-sm overflow-hidden group">
                   <div className={cn(
                     "p-12 flex items-center justify-center min-h-[200px]",
-                    variant === 'light' ? "bg-primary" : 
-                    variant === 'footer' ? "bg-primary" : 
-                    variant === 'b2b' ? "bg-primary" : "bg-primary"
+                    "bg-primary"
                   )}>
                     <BrandLogo variant={variant} size="lg" />
                   </div>
@@ -88,7 +86,7 @@ export default function BrandPage() {
                 
                 <div className="space-y-6">
                   {[
-                    { t: "Imagotipo Circular", d: "Contenedor con backdrop-blur y transparencia MyDog White/10." },
+                    { t: "Imagotipo Circular", d: "Contenedor circular limpio para el imagotipo oficial de la distribuidora." },
                     { t: "Tipografía Black", d: "Fuente Inter Black con tracking-tighter para máxima autoridad." },
                     { t: "Subtexto Dorado", d: "Color secundario para descriptor de negocio y trayectoria." }
                   ].map((item, i) => (
@@ -102,13 +100,13 @@ export default function BrandPage() {
                   ))}
                 </div>
               </div>
-              <div className="relative aspect-square flex items-center justify-center bg-muted/30 rounded-[3rem] border-2 border-dashed border-primary/10">
+              <div className="relative aspect-square flex items-center justify-center bg-primary rounded-[3rem] border-2 border-dashed border-white/20 shadow-2xl">
                 <div className="scale-[2]">
-                  <BrandLogo size="lg" />
+                  <BrandLogo size="lg" variant="light" />
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                   <div className="w-full h-px bg-primary/5 absolute top-1/2" />
-                   <div className="h-full w-px bg-primary/5 absolute left-1/2" />
+                   <div className="w-full h-px bg-white/5 absolute top-1/2" />
+                   <div className="h-full w-px bg-white/5 absolute left-1/2" />
                 </div>
               </div>
             </div>
