@@ -3,6 +3,7 @@
 import BrandLogo from '@/components/layout/BrandLogo';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Brand Playground para visualización y descomposición del componente de marca.
