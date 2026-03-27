@@ -4,17 +4,34 @@ import { PaymentFactory } from "@/lib/services/payments/payment.factory";
 
 /**
  * @fileOverview Server Action ultraligero para el procesamiento de pedidos.
- * Actúa como puente entre el Storefront, el Gateway del ERP y las pasarelas de pago.
+ * Implementa la regla tributaria obligatoria: usa RUT Empresa para Facturas 
+ * y RUT Personal para Boletas. Nunca envía valores vacíos al ERP.
  */
 export async function processCheckout(params: any) {
   const { userId, customer, items, shipping, billing, paymentMethod, total } = params;
 
   try {
+    // REGLA TRIBUTARIA: Si piden FACTURA, usamos el RUT y Nombre de la Empresa. 
+    // Si piden BOLETA, usamos el RUT Personal y Nombre Personal obligatorios.
+    const finalDocumentType = billing.type === 'factura' ? 'FACTURA' : 'COMPROBANTE_VENTA';
+    
+    const finalRut = billing.type === 'factura' && billing.rut 
+      ? billing.rut 
+      : customer.rut; // Obligatorio desde el frontend
+
+    const finalName = billing.type === 'factura' && billing.companyName 
+      ? billing.companyName 
+      : customer.name;
+
+    if (!finalRut) {
+      throw new Error("Se requiere un RUT válido para procesar el pedido. Por favor revisa los datos de contacto.");
+    }
+
     // 1. PAYLOAD PARA EL GATEWAY DEL ERP
     const erpPayload = {
       customerId: userId || "guest",
-      customerName: billing.type === 'factura' && billing.companyName ? billing.companyName : customer.name,
-      customerRut: billing.rut || "N/A",
+      customerName: finalName,
+      customerRut: finalRut,
       customerAddress: `${shipping.streetAndNumber} ${shipping.apartmentOrLocal || ''}, ${shipping.commune}, ${shipping.region}`.trim(),
       customerPhone: customer.phone,
       sellerId: "ECOMMERCE_BOT",
@@ -29,7 +46,7 @@ export async function processCheckout(params: any) {
         price: item.price,
       })),
       // Enviamos la intención tributaria en la nota para que el ERP la procese luego
-      paymentNote: `REQ_DOC:${billing.type.toUpperCase()}`,
+      paymentNote: `REQ_DOC:${finalDocumentType}`,
     };
 
     // 2. CREACIÓN DE ORDEN VÍA API DEL ERP (DRAFT)
@@ -57,13 +74,10 @@ export async function processCheckout(params: any) {
     let paymentUrl = null;
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-    // Solo procesamos pasarelas externas (excluyendo métodos internos como línea de crédito)
+    // Solo procesamos pasarelas externas
     if (paymentMethod !== 'credit_line' && paymentMethod !== 'efectivo') {
       try {
         const paymentProvider = PaymentFactory.getProvider(paymentMethod);
-        
-        // APLICAMOS LA REGLA DE NEGOCIO PARA EL TIPO DE DOCUMENTO
-        const mappedDocType = billing.type === 'factura' ? 'FACTURA' : 'COMPROBANTE_VENTA';
         
         paymentUrl = await paymentProvider.createTransaction({
           orderId: orderId,
@@ -73,7 +87,7 @@ export async function processCheckout(params: any) {
           returnUrl: `${baseUrl}/checkout/status?order=${orderId}`,
           cancelUrl: `${baseUrl}/checkout/status?order=${orderId}&canceled=true`,
           // LE INYECTAMOS EL TIPO DE DOCUMENTO A LA URL DE NOTIFICACIÓN
-          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}?docType=${mappedDocType}` 
+          notifyUrl: `${baseUrl}/api/webhooks/payments/${paymentMethod}?docType=${finalDocumentType}` 
         });
         
       } catch (paymentError: any) {
