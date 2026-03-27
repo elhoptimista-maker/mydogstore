@@ -1,19 +1,21 @@
 "use client";
 
 import Link from 'next/link';
-import { Instagram, Dog, MessageCircle, MapPin, Phone, Mail, ArrowRight, ShieldCheck, Facebook } from 'lucide-react';
+import Image from 'next/image';
+import { Instagram, MessageCircle, MapPin, Phone, Mail, ArrowRight, ShieldCheck, Facebook } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import LogoImg from '@/img/imagotipo.png';
 
 /**
  * @fileOverview Pie de página con autoridad de 15 años y tono familiar.
- * Actualizado con nuevos enlaces de redes sociales y contacto interactivo.
+ * Actualizado con imagotipo oficial y enlaces interactivos.
  */
 export default function Footer() {
   const whatsappUrl = `https://wa.me/+56957889012?text=Hola,%20buenos%20días!`;
   const facebookUrl = "https://web.facebook.com/DistribuidoraMyDog";
   const instagramUrl = "https://www.instagram.com/distribuidoramydog2.0";
-  const mapsUrl = "https://www.google.com/maps/search/?api=1&query=Presidente+Arturo+Alessandri+palma+9243+bodega+9,+San+Bernardo,+Santiago,+Chile";
-  const emailUrl = "mailto:hola@mydog.cl";
+  const mapsUrl = "https://www.google.com/maps/search/?api=1&query=Presidente+Arturo+Alessandri+palma+9243,+San+Bernardo,+Santiago,+Chile";
+  const emailUrl = "mailto:admin@mydog.cl";
 
   return (
     <footer className="w-full bg-primary text-white overflow-hidden">
@@ -22,8 +24,14 @@ export default function Footer() {
           
           <div className="lg:col-span-4 space-y-8">
             <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-md group-hover:scale-110 transition-transform">
-                <Dog className="w-8 h-8 text-white" />
+              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-md group-hover:scale-110 transition-transform relative overflow-hidden">
+                <Image 
+                  src={LogoImg} 
+                  alt="MyDog" 
+                  fill 
+                  className="object-contain p-2"
+                  sizes="56px"
+                />
               </div>
               <div className="flex flex-col -space-y-1">
                 <span className="font-black text-2xl tracking-tighter leading-none uppercase">MyDog Distribuidora</span>
@@ -31,7 +39,7 @@ export default function Footer() {
               </div>
             </Link>
             
-            <p className="text-white/60 text-sm font-medium leading-relaxed max-w-sm">
+            <p className="text-white/60 text-sm font-medium leading-relaxed max-sm:max-w-sm">
               Nacimos como un pequeño pet shop familiar. Hoy somos una distribuidora sólida con la misma vocación: darte la mejor asesoría nutricional y despachar rápido a la puerta de tu casa.
             </p>
 

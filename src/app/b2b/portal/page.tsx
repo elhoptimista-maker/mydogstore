@@ -23,10 +23,7 @@ import {
   X, 
   Loader2, 
   ShoppingCart,
-  Dog,
   LogOut,
-  ChevronDown,
-  Filter,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -43,6 +40,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import CartDrawer from '@/components/cart/CartDrawer';
 import Link from 'next/link';
+import LogoImg from '@/img/imagotipo.png';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -183,8 +181,14 @@ export default function B2BPortalPage() {
           <div className="bg-primary p-12 text-white text-center space-y-6 relative overflow-hidden">
              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
              <div className="relative z-10">
-                <div className="w-20 h-20 bg-white/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-xl border border-white/10">
-                  <Dog className="w-10 h-10 text-secondary" />
+                <div className="w-20 h-20 bg-white/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-xl border border-white/10 relative overflow-hidden">
+                  <Image 
+                    src={LogoImg} 
+                    alt="MyDog" 
+                    fill 
+                    className="object-contain p-3"
+                    sizes="80px"
+                  />
                 </div>
                 <div className="space-y-2">
                   <h1 className="text-3xl font-black tracking-tighter uppercase leading-none">Central de Abastecimiento</h1>
@@ -238,8 +242,14 @@ export default function B2BPortalPage() {
       <header className="fixed top-0 left-0 right-0 h-20 bg-primary z-50 px-4 md:px-8 shadow-md">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-4 md:gap-8">
           <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0 group">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center">
-              <Dog className="w-6 h-6 md:w-8 md:h-8 text-white" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center relative overflow-hidden">
+              <Image 
+                src={LogoImg} 
+                alt="MyDog" 
+                fill 
+                className="object-contain p-1.5"
+                sizes="48px"
+              />
             </div>
             <div className="flex flex-col -space-y-0.5 md:-space-y-1">
               <span className="font-black text-lg md:text-2xl tracking-tighter text-white leading-none uppercase">MyDog</span>

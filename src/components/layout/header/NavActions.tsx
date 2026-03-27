@@ -1,7 +1,8 @@
 "use client";
 
 import Link from 'next/link';
-import { Heart, ShoppingCart, Menu, Dog, ChevronRight, User } from 'lucide-react';
+import Image from 'next/image';
+import { Heart, ShoppingCart, Menu, ChevronRight, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -14,9 +15,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CATEGORIES } from '@/lib/mock-db';
+import LogoImg from '@/img/imagotipo.png';
 
 /**
- * @fileOverview Acciones de navegación unificadas con storytelling MyDog 2.0.
+ * @fileOverview Acciones de navegación unificadas con imagotipo oficial.
  */
 export default function NavActions() {
   const { cartCount, cartType } = useCart();
@@ -64,8 +66,14 @@ export default function NavActions() {
           <SheetHeader className="p-8 bg-primary text-white shrink-0 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
             <div className="flex items-center gap-4 relative z-10">
-              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-xl backdrop-blur-md">
-                <Dog className="w-8 h-8 text-secondary" />
+              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-xl backdrop-blur-md relative overflow-hidden">
+                <Image 
+                  src={LogoImg} 
+                  alt="MyDog" 
+                  fill 
+                  className="object-contain p-2"
+                  sizes="56px"
+                />
               </div>
               <div className="flex flex-col -space-y-1 text-left">
                 <SheetTitle className="text-white font-black text-2xl tracking-tighter uppercase leading-none">Mi MyDog</SheetTitle>
