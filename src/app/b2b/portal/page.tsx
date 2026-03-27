@@ -181,7 +181,7 @@ export default function B2BPortalPage() {
           <div className="bg-primary p-12 text-white text-center space-y-6 relative overflow-hidden">
              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
              <div className="relative z-10">
-                <div className="w-20 h-20 bg-white/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-xl border border-white/10 relative overflow-hidden">
+                <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-xl border border-white/10 relative overflow-hidden">
                   <Image 
                     src={LogoImg} 
                     alt="MyDog" 
@@ -242,7 +242,7 @@ export default function B2BPortalPage() {
       <header className="fixed top-0 left-0 right-0 h-20 bg-primary z-50 px-4 md:px-8 shadow-md">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-4 md:gap-8">
           <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0 group">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center relative overflow-hidden">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-full flex items-center justify-center relative overflow-hidden">
               <Image 
                 src={LogoImg} 
                 alt="MyDog" 
@@ -377,14 +377,14 @@ export default function B2BPortalPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-hidden">
                 <CardContent className="p-8 md:p-10 space-y-8">
-                  <div className="flex items-center gap-4">
-                     <div className="w-14 h-14 bg-primary/5 rounded-2xl flex items-center justify-center shrink-0 text-primary">
-                       <FileText className="w-6 h-6" />
-                     </div>
-                     <div>
-                       <h3 className="text-xl font-black tracking-tighter uppercase">Facturación Corporativa</h3>
-                       <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Tus datos legales registrados</p>
-                     </div>
+                  <div className="flex items-center gap-4 border-b border-black/5 pb-6">
+                    <div className="w-14 h-14 bg-primary/5 rounded-2xl flex items-center justify-center shrink-0 text-primary">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black tracking-tighter uppercase">Facturación Corporativa</h3>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Tus datos legales registrados</p>
+                    </div>
                   </div>
                   <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-8">

@@ -18,7 +18,7 @@ import { CATEGORIES } from '@/lib/mock-db';
 import LogoImg from '@/img/imagotipo.png';
 
 /**
- * @fileOverview Acciones de navegación unificadas con imagotipo oficial.
+ * @fileOverview Acciones de navegación unificadas con contenedor circular para el logo.
  */
 export default function NavActions() {
   const { cartCount, cartType } = useCart();
@@ -66,7 +66,7 @@ export default function NavActions() {
           <SheetHeader className="p-8 bg-primary text-white shrink-0 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl" />
             <div className="flex items-center gap-4 relative z-10">
-              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-xl backdrop-blur-md relative overflow-hidden">
+              <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center shadow-xl backdrop-blur-md relative overflow-hidden">
                 <Image 
                   src={LogoImg} 
                   alt="MyDog" 

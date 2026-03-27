@@ -11,12 +11,12 @@ interface HeaderLogoProps {
 
 /**
  * @fileOverview Componente atómico de identidad de marca.
- * Reemplazado icono por imagotipo oficial optimizado.
+ * El contenedor ahora es circular (rounded-full) para armonizar con el imagotipo.
  */
 export default function HeaderLogo({ className }: HeaderLogoProps) {
   return (
     <Link href="/" className={cn("flex items-center gap-3 shrink-0 group", className)}>
-      <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-110 transition-transform relative overflow-hidden">
+      <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-110 transition-transform relative overflow-hidden">
         <Image 
           src={LogoImg} 
           alt="MyDog" 

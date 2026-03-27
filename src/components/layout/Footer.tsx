@@ -8,7 +8,7 @@ import LogoImg from '@/img/imagotipo.png';
 
 /**
  * @fileOverview Pie de página con autoridad de 15 años y tono familiar.
- * Actualizado con imagotipo oficial y enlaces interactivos.
+ * Contenedor del logo actualizado a circular (rounded-full).
  */
 export default function Footer() {
   const whatsappUrl = `https://wa.me/+56957889012?text=Hola,%20buenos%20días!`;
@@ -24,7 +24,7 @@ export default function Footer() {
           
           <div className="lg:col-span-4 space-y-8">
             <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-md group-hover:scale-110 transition-transform relative overflow-hidden">
+              <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center shadow-lg backdrop-blur-md group-hover:scale-110 transition-transform relative overflow-hidden">
                 <Image 
                   src={LogoImg} 
                   alt="MyDog" 
