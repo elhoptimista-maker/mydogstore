@@ -65,7 +65,7 @@ export default function Header() {
             <div className="flex items-center gap-8 h-full">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="bg-white text-primary h-10 px-6 items-center gap-3 cursor-pointer hover:bg-white/90 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center shadow-md flex">
+                  <div className="bg-white/10 text-white h-10 px-6 items-center gap-3 cursor-pointer hover:bg-white/20 transition-all font-bold text-[10px] uppercase tracking-[0.15em] rounded-full shrink-0 outline-none self-center flex">
                     <Menu className="w-4 h-4" />
                     Catálogo Completo
                   </div>
