@@ -13,10 +13,11 @@ import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
+import HealthySwitch from './HealthySwitch';
 
 /**
  * @fileOverview Carrito lateral blindado con validación de stock, gamificación de envío gratis
- * e INNOVACIÓN: "The Healthy Switch" (Nudge Marketing).
+ * e INNOVACIÓN: "Healthy Switch" integrado.
  */
 export default function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, cartType, userData } = useCart();
@@ -29,11 +30,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - cartTotal, 0);
   const isFreeShipping = progress >= 100;
 
-  // Lógica "The Healthy Switch": Detectar productos de baja calidad
-  const lowQualityProduct = useMemo(() => {
-    return cart.find(item => item.upgradeSuggestion !== null);
-  }, [cart]);
-
   // Resolución de Comuna del usuario
   const userComuna = userData?.addresses?.find((a: any) => a.isDefault)?.commune || userData?.addresses?.[0]?.commune; 
   
@@ -41,7 +37,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
   const baseShippingCost = getRateForComuna(userComuna);
   const actualShippingCost = isFreeShipping ? 0 : baseShippingCost;
   
-  // El total final solo se muestra si tenemos el costo calculado o si es envío gratis
   const finalTotal = cartTotal + (actualShippingCost || 0);
 
   return (
@@ -108,31 +103,6 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
           </div>
         )}
 
-        {/* INNOVACIÓN: Healthy Switch Nudge */}
-        {cart.length > 0 && lowQualityProduct && (
-          <div className="mx-6 mt-4 p-4 bg-primary text-white rounded-2xl shadow-xl shadow-primary/10 border border-white/10 animate-in slide-in-from-right-4 duration-500">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center shrink-0">
-                <HeartPulse className="w-4 h-4 text-primary" />
-              </div>
-              <div className="space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-widest">Upgrade de Bienestar</p>
-                <p className="text-[11px] font-medium leading-relaxed opacity-90">
-                  Mejora la nutrición de tu mascota cambiando a <span className="font-black text-secondary">{lowQualityProduct.upgradeSuggestion}</span> por una pequeña diferencia.
-                </p>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={() => router.push(`/catalogo?marca=${lowQualityProduct.upgradeSuggestion}`)}
-                  className="h-8 rounded-full border-secondary text-secondary hover:bg-secondary hover:text-primary font-black text-[9px] uppercase px-4"
-                >
-                  Ver Alternativa Saludable <Sparkles className="w-3 h-3 ml-1.5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Listado de Productos con ScrollArea */}
         <div className="flex-1 overflow-hidden bg-[#f9f9f9] relative">
           <ScrollArea className="h-full w-full">
@@ -158,56 +128,63 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                   </SheetTrigger>
                 </div>
               ) : (
-                cart.map((item) => {
-                  const isMaxStockReached = item.quantity >= (item.currentStock || 99);
-                  const itemTotal = item.priceAtAddition * item.quantity;
+                <>
+                  <div className="space-y-1 mb-4">
+                    {cart.map((item) => {
+                      const isMaxStockReached = item.quantity >= (item.currentStock || 99);
+                      const itemTotal = item.priceAtAddition * item.quantity;
 
-                  return (
-                    <div key={item.id} className="flex gap-3 items-center py-4 border-b border-black/[0.03] last:border-0 group">
-                      <button 
-                        onClick={() => removeFromCart(item.id)} 
-                        aria-label="Eliminar producto"
-                        className="text-muted-foreground/30 hover:text-red-500 transition-colors p-1 shrink-0"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
-                        <Image src={item.main_image} alt={item.name} fill className="object-contain p-1.5" sizes="64px" />
-                      </div>
-                      <div className="flex-1 min-w-0 space-y-2">
-                        <div className="flex flex-col gap-0.5">
-                          <h4 className="font-bold text-xs leading-tight text-foreground line-clamp-2">{item.name}</h4>
-                          <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">{item.brand}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1 bg-white rounded-lg p-0.5 border border-border/60 shadow-sm">
-                            <button 
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)} 
-                              className="w-6 h-6 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-30" 
-                              disabled={item.quantity <= 1}
-                            >
-                              <Minus className="w-2.5 h-2.5" />
-                            </button>
-                            <span className="text-[10px] font-bold w-5 text-center">{item.quantity}</span>
-                            <button 
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)} 
-                              className="w-6 h-6 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-30"
-                              disabled={isMaxStockReached}
-                            >
-                              <Plus className="w-2.5 h-2.5" />
-                            </button>
+                      return (
+                        <div key={item.id} className="flex gap-3 items-center py-4 border-b border-black/[0.03] last:border-0 group">
+                          <button 
+                            onClick={() => removeFromCart(item.id)} 
+                            aria-label="Eliminar producto"
+                            className="text-muted-foreground/30 hover:text-red-500 transition-colors p-1 shrink-0"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white shrink-0 border border-border/30 shadow-sm">
+                            <Image src={item.main_image} alt={item.name} fill className="object-contain p-1.5" sizes="64px" />
                           </div>
-                          
-                          <div className="flex flex-col items-end">
-                            <span className="font-black text-primary text-sm tracking-tighter">
-                              ${itemTotal.toLocaleString('es-CL')}
-                            </span>
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <div className="flex flex-col gap-0.5">
+                              <h4 className="font-bold text-xs leading-tight text-foreground line-clamp-2">{item.name}</h4>
+                              <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">{item.brand}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1 bg-white rounded-lg p-0.5 border border-border/60 shadow-sm">
+                                <button 
+                                  onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+                                  className="w-6 h-6 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-30" 
+                                  disabled={item.quantity <= 1}
+                                >
+                                  <Minus className="w-2.5 h-2.5" />
+                                </button>
+                                <span className="text-[10px] font-bold w-5 text-center">{item.quantity}</span>
+                                <button 
+                                  onClick={() => updateQuantity(item.id, item.quantity + 1)} 
+                                  className="w-6 h-6 flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-30"
+                                  disabled={isMaxStockReached}
+                                >
+                                  <Plus className="w-2.5 h-2.5" />
+                                </button>
+                              </div>
+                              
+                              <div className="flex flex-col items-end">
+                                <span className="font-black text-primary text-sm tracking-tighter">
+                                  ${itemTotal.toLocaleString('es-CL')}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  );
-                })
+                      );
+                    })}
+                  </div>
+                  
+                  {/* INNOVACIÓN: Healthy Switch Nudge */}
+                  <HealthySwitch />
+                </>
               )}
             </div>
           </ScrollArea>
