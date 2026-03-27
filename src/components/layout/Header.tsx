@@ -1,7 +1,10 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, ChevronDown, User } from 'lucide-react';
+import { Menu, ChevronDown, User as UserIcon } from 'lucide-react';
+import { auth } from '@/lib/firebase/client';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import { CATEGORIES } from '@/lib/mock-db';
 import TopBar from './header/TopBar';
 import HeaderLogo from './header/HeaderLogo';
@@ -19,6 +22,15 @@ import {
  * Divide responsabilidades en TopBar, MainHeader y MenuBar siguiendo SRP y CRO.
  */
 export default function Header() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const mainNav = [
     { label: 'Inicio', href: '/' },
     { label: 'La Tiendita', href: '/catalogo' },
@@ -81,7 +93,8 @@ export default function Header() {
 
             <div className="flex items-center gap-8">
               <Link href="/cuenta" className="flex items-center gap-2 text-[11px] font-bold text-white hover:text-secondary uppercase tracking-widest transition-all">
-                <User className="w-4 h-4" /> Mi Espacio MyDog
+                <UserIcon className="w-4 h-4" /> 
+                {currentUser ? (currentUser.displayName || 'Mi Perfil') : 'Mi Espacio MyDog'}
               </Link>
               {/* Portal B2B oculto temporalmente
               <Link href="/b2b/portal" className="flex items-center gap-2 text-[11px] font-bold text-secondary hover:text-secondary/80 uppercase tracking-widest transition-all">
