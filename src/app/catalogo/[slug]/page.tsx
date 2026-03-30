@@ -1,4 +1,3 @@
-
 import { fetchProductBySlug } from '@/actions/products';
 import { getRelatedProducts } from '@/lib/services/catalog.service';
 import { getUpgradeRecommendation } from '@/actions/nudge';
@@ -70,6 +69,10 @@ export default async function ProductoDetallePage(props: PageProps) {
       availability: product.currentStock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     },
   };
+
+  // Generamos una URL de "Ver Más" inteligente que combine especie, categoría y etapa de vida
+  // Esto hace que el botón sea una extensión real de la lógica de "Productos Similares"
+  const smartViewAllHref = `/catalogo?especie=${encodeURIComponent(product.species)}&categoria=${encodeURIComponent(product.category)}&etapa=${encodeURIComponent(product.life_stage)}`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 pt-4 pb-24 space-y-12 md:space-y-20">
@@ -224,7 +227,7 @@ export default async function ProductoDetallePage(props: PageProps) {
           products={similarProducts} 
           title="Productos Similares"
           subtitle="Alternativas técnicas seleccionadas por expertos para tu mascota."
-          viewAllHref={`/catalogo?especie=${encodeURIComponent(product.species)}`}
+          viewAllHref={smartViewAllHref}
         />
       </div>
     </div>

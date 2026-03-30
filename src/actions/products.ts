@@ -52,6 +52,7 @@ export async function fetchFilteredCatalog(searchParams: { [key: string]: string
   const categoria = getParam('categoria')?.split(',').filter(Boolean);
   const marca = getParam('marca')?.split(',').filter(Boolean);
   const especie = getParam('especie')?.split(',').filter(Boolean);
+  const etapa = getParam('etapa')?.split(',').filter(Boolean); // Nueva dimensión de filtrado inteligente
   const sort = getParam('sort') || 'default';
   const minPrice = parseInt(getParam('minPrice') || '0');
   const maxPrice = parseInt(getParam('maxPrice') || '999999');
@@ -77,6 +78,9 @@ export async function fetchFilteredCatalog(searchParams: { [key: string]: string
   }
   if (especie && especie.length > 0) {
     filtered = filtered.filter(p => especie.includes(p.species));
+  }
+  if (etapa && etapa.length > 0) {
+    filtered = filtered.filter(p => etapa.includes(p.life_stage));
   }
 
   // 5. Aplicar Rango de Precio
