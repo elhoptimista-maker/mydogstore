@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { SanitizedProduct } from '@/types/product';
+import { MARKET_INTELLIGENCE } from '@/lib/services/ranking.engine';
 import { 
   Dialog, 
   DialogContent, 
@@ -11,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Scale, Dog, Briefcase, Plus, Minus, X as CloseIcon, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ShoppingCart, Scale, Dog, Briefcase, Plus, Minus, X as CloseIcon, ArrowRight, ShieldCheck, Star } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from '@/hooks/use-toast';
 import { useState } from 'react';
@@ -32,9 +33,23 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
   const isOutOfStock = product.currentStock <= 0;
   const maxQuantity = product.currentStock;
   
-  // Lógica dinámica de precios siguiendo el patrón MyDog 2.0
   const priceToDisplay = cartType === 'wholesale' ? product.wholesalePrice : product.sellingPrice;
   const priceLabel = cartType === 'wholesale' ? 'Precio B2B' : 'Precio Distribución';
+
+  // =====================================================================
+  // 🧠 INTELIGENCIA COMERCIAL Y TRANSPARENCIA
+  // =====================================================================
+  const brandKey = product.brand?.toLowerCase().trim() || '';
+  const metrics = MARKET_INTELLIGENCE[brandKey];
+  
+  // 1. Estrellas Dinámicas (Sentimiento)
+  const dynamicRating = metrics ? (metrics.sentiment / 2).toFixed(1) : "4.5";
+  const isPremium = metrics && metrics.quality >= 4;
+
+  // 2. Transparencia: Precio por Kilo (PPKG)
+  const ppkg = product.weight_kg && product.weight_kg > 0 
+    ? Math.round(priceToDisplay / product.weight_kg) 
+    : null;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -42,14 +57,12 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
 
     addToCart(product, false, quantity);
     
-    // Copywriting de marca humanizado
     toast({
       title: "¡Listo! 🐾",
       description: `${quantity}x ${product.name} ya está en tu carrito.`,
     });
     setOpen(false);
     
-    // Reseteamos cantidad para la próxima vez que se abra
     setTimeout(() => setQuantity(1), 300);
   };
 
@@ -57,11 +70,9 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
     e.preventDefault();
     e.stopPropagation();
     setOpen(false);
-    // Navegación instantánea estilo SPA
     router.push(`/catalogo/${product.slug || product.id}`);
   };
 
-  // Manejo seguro del contador de cantidad
   const increment = () => setQuantity(prev => (prev < maxQuantity ? prev + 1 : prev));
   const decrement = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
 
@@ -93,7 +104,6 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
               className="object-contain p-12 transition-transform duration-500 hover:scale-110"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            {/* Badge de Agotado para máxima claridad */}
             {isOutOfStock && (
               <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
                 <Badge className="bg-zinc-800 text-white border-none text-xs font-black uppercase tracking-widest px-4 py-2">
@@ -101,22 +111,37 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
                 </Badge>
               </div>
             )}
+            {/* SELLO PREMIUM EN LA IMAGEN */}
+            {isPremium && (
+               <div className="absolute top-6 left-6 z-10 bg-green-50 text-green-700 border border-green-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span className="text-[9px] font-black uppercase tracking-widest">Premium</span>
+               </div>
+            )}
           </div>
 
           {/* Columna Derecha: Información y Acción */}
           <div className="p-8 md:p-12 flex flex-col justify-center space-y-6 bg-white relative">
             <div className="space-y-3">
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap justify-between">
                 <Badge className="bg-primary text-white border-none text-[9px] font-black uppercase tracking-widest rounded-full px-3 py-1">
                   {product.brand}
                 </Badge>
-                {/* Gatillo de Urgencia (FOMO) */}
-                {product.currentStock > 0 && product.currentStock <= 5 && (
-                  <Badge className="bg-orange-500 text-white border-none text-[9px] font-black uppercase tracking-widest rounded-full px-3 py-1 animate-pulse shadow-lg shadow-orange-500/20">
-                    ¡Últimas {product.currentStock} unidades!
-                  </Badge>
-                )}
+                
+                {/* ESTRELLAS DINÁMICAS */}
+                <div className="flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-full">
+                  <div className="flex items-center text-amber-400">
+                    <Star className="w-3 h-3 fill-current" />
+                  </div>
+                  <span className="text-[10px] font-bold text-foreground">{dynamicRating}</span>
+                </div>
               </div>
+
+              {product.currentStock > 0 && product.currentStock <= 5 && (
+                <Badge className="bg-orange-500 text-white border-none text-[9px] font-black uppercase tracking-widest rounded-full px-3 py-1 animate-pulse shadow-lg shadow-orange-500/20 w-fit">
+                  ¡Últimas {product.currentStock} unidades!
+                </Badge>
+              )}
 
               <DialogTitle className="text-2xl md:text-3xl font-black text-foreground tracking-tighter leading-[1.1]">
                 {product.name}
@@ -130,9 +155,17 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
                   {priceLabel}
                 </span>
-                <span className="text-4xl font-black text-primary tracking-tighter">
-                  ${priceToDisplay.toLocaleString('es-CL')}
-                </span>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl font-black text-primary tracking-tighter">
+                    ${priceToDisplay.toLocaleString('es-CL')}
+                  </span>
+                  {/* TRANSPARENCIA: PRECIO POR KILO */}
+                  {ppkg && (
+                    <span className="text-xs font-bold text-muted-foreground/60">
+                      (${ppkg.toLocaleString('es-CL')}/kg)
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -149,7 +182,7 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
               ))}
             </div>
 
-            <div className="space-y-4 pt-2">
+            <div className="space-y-4 pt-2 mt-auto">
               <div className={cn(
                 "flex items-center justify-between bg-muted/30 p-2 rounded-2xl border border-black/[0.03] transition-opacity",
                 isOutOfStock && "opacity-50 pointer-events-none"
@@ -191,7 +224,6 @@ export default function QuickViewModal({ product, children }: QuickViewModalProp
                 </Button>
               </div>
 
-              {/* Sello de Confianza Logística MyDog */}
               <div className="flex items-center justify-center gap-2 text-muted-foreground pt-2">
                 <ShieldCheck className="w-3.5 h-3.5 text-primary/60" />
                 <span className="text-[9px] font-black uppercase tracking-widest">
