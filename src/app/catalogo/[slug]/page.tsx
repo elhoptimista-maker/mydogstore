@@ -1,15 +1,16 @@
+
 import { fetchProductBySlug } from '@/actions/products';
 import { getRelatedProducts } from '@/lib/services/catalog.service';
 import { getUpgradeRecommendation } from '@/actions/nudge';
-import { getBundleRecommendation } from '@/actions/bundling';
 import { MARKET_INTELLIGENCE } from '@/lib/services/ranking.engine';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { Star, Scale, Dog, Briefcase, ChevronRight, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
+import { Star, Scale, Dog, Briefcase, ChevronRight, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ProductClientControls from '@/components/catalogo/ProductClientControls';
 import ProductHeaderActions from '@/components/catalogo/ProductHeaderActions';
 import RelatedProductsSlider from '@/components/catalogo/RelatedProductsSlider';
+import PredictiveCrossSell from '@/components/catalogo/PredictiveCrossSell';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -51,7 +52,8 @@ export default async function ProductoDetallePage(props: PageProps) {
     ? Math.round(product.sellingPrice / product.weight_kg) 
     : null;
 
-  // 3. Simulamos un contexto de carrito de 1 ítem para que nuestros algoritmos trabajen
+  // 3. Simulamos un contexto de carrito de 1 ítem para que el motor de Nudge (Upgrade) trabaje en el servidor.
+  // El Cross-sell (Bundle) ahora es gestionado por un componente cliente para ser reactivo al carrito real.
   const mockCartContext = [{ 
     ...product, 
     priceAtAddition: product.sellingPrice, 
@@ -62,7 +64,6 @@ export default async function ProductoDetallePage(props: PageProps) {
   // 4. Consultamos a nuestros Server Actions (Llamadas ultrarrápidas en el servidor)
   const similarProducts = await getRelatedProducts(product);
   const upgradeCandidate = await getUpgradeRecommendation(mockCartContext);
-  const bundleCandidate = await getBundleRecommendation(mockCartContext);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -204,28 +205,9 @@ export default async function ProductoDetallePage(props: PageProps) {
               {/* COMPONENTE CLIENTE: Botón de agregar al carrito y selector de cantidad */}
               <ProductClientControls product={product} />
 
-              {/* CROSS-SELL (Si es un producto premium, ofrecemos el complemento) */}
-              {bundleCandidate && !upgradeCandidate && (
-                <Link href={`/catalogo/${bundleCandidate.slug}`} className="block group">
-                  <div className="flex items-center justify-between p-4 rounded-3xl bg-slate-50 border border-slate-100 group-hover:border-primary/30 group-hover:shadow-md transition-all">
-                    <div className="flex items-center gap-4">
-                       <div className="relative w-14 h-14 bg-white rounded-2xl border border-black/5 overflow-hidden flex items-center justify-center shadow-sm">
-                          <Image src={bundleCandidate.main_image} alt={bundleCandidate.name} fill className="object-contain p-2 transition-transform group-hover:scale-110" />
-                       </div>
-                       <div>
-                         <div className="flex items-center gap-1.5 mb-0.5">
-                           <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-current" />
-                           <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Complemento Ideal</span>
-                         </div>
-                         <p className="text-xs font-bold text-slate-800 line-clamp-1">{bundleCandidate.name}</p>
-                       </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                       <p className="text-sm font-black text-primary">${bundleCandidate.sellingPrice.toLocaleString('es-CL')}</p>
-                       <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">Ver más &rarr;</span>
-                    </div>
-                  </div>
-                </Link>
+              {/* CROSS-SELL REACTIVO (Si no hay upgrade, ofrecemos el complemento ideal basado en el carrito real) */}
+              {!upgradeCandidate && (
+                <PredictiveCrossSell baseProduct={product} />
               )}
             </div>
 
