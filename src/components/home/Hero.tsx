@@ -7,6 +7,7 @@ import HeroDogImage from '@/img/golden-retriever-gato-calico-juntos.png';
 
 /**
  * @fileOverview Hero Section optimizado para CRO y Storytelling MyDog 2.0.
+ * Ajustado jerárquicamente para priorizar el mensaje en dispositivos móviles.
  */
 export default function Hero() {
   return (
@@ -18,17 +19,19 @@ export default function Hero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-12 lg:py-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="flex flex-col space-y-8 text-center lg:text-left items-center lg:items-start max-w-2xl mx-auto lg:mx-0 order-2 lg:order-1">
-            <div className="space-y-6">
+          
+          {/* COLUMNA: Información y Conversión (Prioridad 1 en Mobile) */}
+          <div className="flex flex-col space-y-6 md:space-y-8 text-center lg:text-left items-center lg:items-start max-w-2xl mx-auto lg:mx-0 order-1">
+            <div className="space-y-4 md:space-y-6">
               <Badge className="bg-primary/10 text-primary border-none rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] animate-in fade-in slide-in-from-bottom-4 duration-500">
                 🐾 15 años de experiencia cuidando a tu mascota
               </Badge>
               
-              <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-black text-foreground leading-[0.92] tracking-tighter animate-in fade-in slide-in-from-left-6 duration-700">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-black text-foreground leading-[0.95] tracking-tighter animate-in fade-in slide-in-from-left-6 duration-700">
                 Todo lo que tu regalón <br className="hidden sm:block" /> necesita, <span className="text-primary">directo a tu puerta</span>
               </h1>
               
-              <p className="text-muted-foreground text-lg md:text-xl font-medium max-w-lg leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000">
+              <p className="text-muted-foreground text-base md:text-xl font-medium max-w-lg leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000">
                 El mejor alimento, accesorios y cuidados con el respaldo de verdaderos expertos y despacho responsable en toda la Región Metropolitana.
               </p>
             </div>
@@ -56,20 +59,21 @@ export default function Hero() {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">Confianza Real</span>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Más de 1.000 familias confían en nosotros en la RM</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase mt-1">Más de 1.000 familias confían en nosotros</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="relative w-full h-[320px] sm:h-[450px] lg:h-[600px] flex items-end justify-center order-1 lg:order-2 animate-in fade-in zoom-in duration-1000">
+          {/* COLUMNA: Visual (Prioridad 2 en Mobile para no desplazar el CTA) */}
+          <div className="relative w-full h-[280px] sm:h-[450px] lg:h-[600px] flex items-end justify-center order-2 animate-in fade-in zoom-in duration-1000">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] aspect-square bg-white/40 rounded-full border border-white/60 blur-md -z-10" />
             <div className="relative w-full h-full lg:h-[115%] lg:-mb-20">
               <Image
                 src={HeroDogImage}
                 alt="La Familia MyDog"
                 fill
-                className="object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)] scale-110"
+                className="object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)] scale-110 lg:scale-125"
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
