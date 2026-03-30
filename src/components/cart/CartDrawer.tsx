@@ -13,10 +13,11 @@ import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { useRouter } from 'next/navigation';
 import HealthySwitch from './HealthySwitch';
+import PredictiveBundle from './PredictiveBundle';
 
 /**
  * @fileOverview Carrito lateral blindado con validación de stock, gamificación de envío gratis
- * e INNOVACIÓN: "Healthy Switch" integrado.
+ * e INNOVACIÓN: "Healthy Switch" y "Predictive Bundle" integrados.
  */
 export default function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, cartType, userData } = useCart();
@@ -183,6 +184,9 @@ export default function CartDrawer({ children }: { children: React.ReactNode }) 
                   
                   {/* INNOVACIÓN: Healthy Switch Nudge */}
                   <HealthySwitch />
+
+                  {/* INNOVACIÓN: Predictive Bundling Add-ons */}
+                  <PredictiveBundle />
                 </>
               )}
             </div>
