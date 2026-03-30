@@ -1,11 +1,11 @@
 'use server';
 /**
- * @fileOverview Un asesor de ventas familiar experto en bienestar animal mejorado con IA.
- * Implementa lógica de ranking estratégico (Smart Score) y upselling nutricional.
+ * @fileOverview Un asesor consultivo experto en bienestar animal mejorado con IA.
+ * Implementa lógica de diagnóstico (Discovery), conciencia de carrito y quick replies.
  *
  * - productChat - Función que maneja el proceso de asesoría.
  * - ProductChatInput - Tipo de entrada para la conversación.
- * - ProductChatOutput - Tipo de salida enriquecida con datos reales del producto.
+ * - ProductChatOutput - Tipo de salida enriquecida.
  */
 
 import {ai} from '@/ai/genkit';
@@ -23,20 +23,25 @@ const ProductChatInputSchema = z.object({
   species: z.string().describe('Especie de la mascota.'),
   history: z.array(MessageSchema).describe('Historial de la charla.'),
   message: z.string().describe('Mensaje actual del usuario.'),
+  cartContext: z.array(z.object({
+    name: z.string(),
+    category: z.string(),
+    price: z.number()
+  })).optional().describe('Contenido actual del carrito del usuario.'),
 });
 
 export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
 
 /**
- * El LLM ahora solo se encarga de la lógica de selección y la narrativa.
- * Los datos sensibles (precios, imágenes) se inyectan en el servidor post-generación.
+ * El LLM genera la respuesta, las sugerencias de respuesta y los productos.
  */
 const ProductChatOutputSchema = z.object({
-  response: z.string().describe('Respuesta empática del asistente.'),
+  response: z.string().describe('Respuesta empática y breve del asistente.'),
+  quickReplies: z.array(z.string()).max(4).describe('Genera de 2 a 4 botones de respuesta rápida (máx 3 palabras).'),
   suggestedProducts: z.array(z.object({
     id: z.string().describe('ID del producto en el catálogo.'),
-    reason: z.string().describe('Razón técnica y emocional del por qué este producto es ideal.'),
-  })).optional().describe('Selecciona estrictamente de 1 a 4 productos que resuelvan el problema.'),
+    reason: z.string().describe('Razón técnica y emocional breve.'),
+  })).optional().describe('Selecciona de 1 a 3 productos solo cuando la necesidad sea clara.'),
 });
 
 export type ProductChatOutput = z.infer<typeof ProductChatOutputSchema>;
@@ -47,18 +52,27 @@ const productChatPrompt = ai.definePrompt({
     catalog: z.array(z.any()).describe('Catálogo filtrado y ordenado por relevancia.'),
   })},
   output: {schema: ProductChatOutputSchema},
-  prompt: `Eres un Asesor Experto de Distribuidora MyDog, un negocio familiar con 15 años de trayectoria en Santiago.
+  prompt: `Eres un Asesor Consultivo de Distribuidora MyDog en Chile, un negocio familiar con 15 años de trayectoria. Tu objetivo es entender la necesidad real antes de vender.
 
-  TU MISIÓN Y REGLAS DE ORO (CRÍTICO):
-  1. ERES EXPERTO NUTRICIONAL: Tienes acceso a la "Calidad Nutricional" de las marcas en el catálogo adjunto.
-  2. SECRETO PROFESIONAL (PROHIBIDO LEAK DE DATOS): NUNCA menciones los números de calidad (ej. "calidad 3", "nivel 4", "calidad 2.5") ni el "Smart Score". Traduce esos números a lenguaje natural comercial: "Alimento Comercial", "Gama Media", "Premium" o "Súper Premium".
-  3. VARIEDAD CONVERSACIONAL: Si el usuario presiona "Más económicos" o pide rebajar el precio múltiples veces, NO repitas tu discurso anterior. Adapta tu respuesta reconociendo que seguimos ajustando el bolsillo (Ej: "Ajustemos aún más el cinturón...", "Revisemos las opciones más accesibles que nos van quedando...").
-  4. THE HEALTHY SWITCH: Si recomiendas algo muy económico (Calidad 1 o 2), advierte con empatía que cumple lo básico, pero SIEMPRE intenta poner una alternativa Premium a la par para comparar, explicando por qué a la larga sale a cuenta.
-  5. PROHIBIDO: No escribas precios, ni nombres exactos de productos, ni IDs en tu 'response'. El sistema armará las tarjetas visuales por ti.
+  REGLAS DE VENTA CONSULTIVA (CRÍTICO):
+  1. MÉTODO DISCOVERY: Si el usuario busca "alimento", NO muestres productos de inmediato. Pregunta: "¿Es cachorro, adulto o senior?" o "¿De qué tamaño es?".
+  2. QUICK REPLIES: Genera siempre opciones en 'quickReplies' coherentes con tu pregunta (Ej: "Es Cachorro", "Es Adulto", "Busco Ofertas").
+  3. CONCIENCIA DEL CARRITO: Revisa el 'CART CONTEXT'. Si ya llevan alimento, felicítalos y sugiere complementos (Snacks, Higiene, Juguetes). No ofrezcas más de lo mismo si no es necesario.
+  4. SECRETO PROFESIONAL: Usa términos comerciales como "Gama Media" o "Premium". Nunca menciones números de calidad internos.
+  5. BREVEDAD: Tus respuestas deben ser de máximo 2 o 3 párrafos cortos.
 
-  CATÁLOGO DISPONIBLE (Ordenado por Relevancia Estratégica):
+  CART CONTEXT:
+  {{#if cartContext}}
+    {{#each cartContext}}
+    - Llevando: {{name}} ({{category}}) | ${{price}}
+    {{/each}}
+  {{else}}
+    El carrito está vacío.
+  {{/if}}
+
+  CATÁLOGO RELEVANTE ({{{species}}}):
   {{#each catalog}}
-  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Calidad Nutricional (1-5): {{quality}} | Score Mercado: {{smartScore}}
+  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Cat: {{category}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}}
   {{/each}}
 
   HISTORIAL:
@@ -67,22 +81,20 @@ const productChatPrompt = ai.definePrompt({
   {{/each}}
 
   MENSAJE DEL USUARIO:
-  {{{message}}}
-
-  Responde basándote en tu experiencia de 15 años en nuestra bodega familiar.`,
+  {{{message}}}`,
 });
 
 const productChatFlow = ai.defineFlow(
   {
     name: 'productChatFlow',
     inputSchema: ProductChatInputSchema,
-    outputSchema: z.any(), // Devolvemos el objeto enriquecido para el frontend
+    outputSchema: z.any(),
   },
   async (input) => {
     // 1. Obtener productos activos y con stock
     const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
     
-    // 2. Extraer productos ya recomendados
+    // 2. Extraer productos ya recomendados para forzar variedad
     const previouslyRecommendedIds = new Set<string>();
     input.history.forEach(m => {
       if (m.recommendedIds) m.recommendedIds.forEach(id => previouslyRecommendedIds.add(id));
@@ -94,35 +106,29 @@ const productChatFlow = ai.defineFlow(
              input.species.toLowerCase().includes(p.species.toLowerCase());
     });
 
-    // 4. Algoritmo de Ranking Estratégico (CRO)
+    // 4. Algoritmo de Ranking
     const userMessageLower = input.message.toLowerCase();
     const searchTerms = userMessageLower.split(' ').filter(t => t.length > 2);
     
     const rankedCatalog = speciesCatalog.map(p => {
       let score = 0;
       const brandLower = p.brand?.toLowerCase() || '';
-      const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description}`.toLowerCase();
+      const productText = `${p.name} ${p.brand} ${p.category} ${p.life_stage}`.toLowerCase();
       
-      // Match textual
-      if (userMessageLower.includes(brandLower) && brandLower.length > 3) score += 300;
       searchTerms.forEach(term => {
         if (productText.includes(term)) score += 50;
       });
 
-      // Inteligencia Comercial (Favorecer productos estrella)
       const smartScore = calculateSmartScore(p.brand);
-      score += (smartScore * 10);
+      score += (smartScore * 5);
       
-      const metrics = MARKET_INTELLIGENCE[brandLower];
-      const quality = metrics?.quality || 2.5;
-
-      // Penalización por repetición
-      if (previouslyRecommendedIds.has(p.id)) score -= 2000; 
+      // Penalización masiva por repetición para forzar descubrimiento de catálogo
+      if (previouslyRecommendedIds.has(p.id)) score -= 5000; 
       
-      return { ...p, score, quality, smartScore };
+      return { ...p, score };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 40);
+    .slice(0, 30);
 
     // 5. Llamada al LLM
     const {output} = await productChatPrompt({
@@ -134,7 +140,7 @@ const productChatFlow = ai.defineFlow(
       throw new Error('Error al generar respuesta del asesor.');
     }
 
-    // 6. Mapeo Final Enriquecido (Evita alucinaciones del bot)
+    // 6. Mapeo Final Enriquecido
     const enrichedRecommendations = (output.suggestedProducts || []).map(rec => {
       const fullProduct = allProducts.find(p => p.id === rec.id);
       if (!fullProduct) return null;
@@ -146,6 +152,7 @@ const productChatFlow = ai.defineFlow(
 
     return {
       response: output.response,
+      quickReplies: output.quickReplies || [],
       suggestedProducts: enrichedRecommendations
     };
   }
