@@ -1,6 +1,6 @@
 import { fetchFilteredCatalog } from '@/actions/products';
 import ProductCard from '@/components/ProductCard';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Search, Star, Package, Dog } from 'lucide-react';
 import { CATEGORIES, PET_TYPES, BRANDS } from '@/lib/mock-db';
 import FilterSidebar from '@/components/catalogo/FilterSidebar';
 import CatalogControls from '@/components/catalogo/CatalogControls';
@@ -36,18 +36,56 @@ export default async function CatalogoPage(props: PageProps) {
 
   const view = (typeof searchParams.view === 'string' ? searchParams.view : 'grid') as 'grid' | 'list';
 
+  // --- LÓGICA DE HERO DINÁMICO ---
+  const getParam = (key: string) => {
+    const val = searchParams[key];
+    return Array.isArray(val) ? val[0] : val;
+  };
+
+  const q = getParam('q');
+  const categoria = getParam('categoria')?.split(',')[0];
+  const marca = getParam('marca')?.split(',')[0];
+  const especie = getParam('especie')?.split(',')[0];
+
+  let displayBadge = "Explora nuestra tienda";
+  let displayPrefix = "Nuestro";
+  let displayHighlight = "Catálogo";
+  let HeroIcon = LayoutGrid;
+
+  if (q) {
+    displayBadge = "Búsqueda Asistida";
+    displayPrefix = "Buscando:";
+    displayHighlight = q;
+    HeroIcon = Search;
+  } else if (marca) {
+    displayBadge = "Especialistas en";
+    displayPrefix = "Marca:";
+    displayHighlight = marca;
+    HeroIcon = Star;
+  } else if (categoria) {
+    displayBadge = "Todo en";
+    displayPrefix = "Categoría:";
+    displayHighlight = categoria;
+    HeroIcon = Package;
+  } else if (especie) {
+    displayBadge = "Nutrición por especie";
+    displayPrefix = "Para:";
+    displayHighlight = `${especie}s`;
+    HeroIcon = Dog;
+  }
+
   return (
     <div className="bg-[#F6F6F6] min-h-screen pb-20">
-      {/* Hero Sección */}
+      {/* Hero Sección Dinámico */}
       <section className="relative h-48 md:h-64 flex items-center bg-[#FEF9F3] overflow-hidden mb-10 border-b border-black/5">
         <div className="absolute top-0 right-0 w-1/4 h-full opacity-5 pointer-events-none">
-          <LayoutGrid className="w-full h-full text-primary" />
+          <HeroIcon className="w-full h-full text-primary" />
         </div>
         <div className="max-w-7xl mx-auto px-4 lg:px-8 w-full relative z-10">
           <div className="space-y-2">
-            <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Explora nuestra tienda</span>
+            <span className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">{displayBadge}</span>
             <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-none">
-              Nuestro <span className="text-primary">Catálogo</span>
+              {displayPrefix} <span className="text-primary">{displayHighlight}</span>
             </h1>
           </div>
         </div>
