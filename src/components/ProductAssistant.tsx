@@ -3,15 +3,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight, ShoppingBag, ExternalLink } from 'lucide-react';
+import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight, ShoppingBag, ShieldCheck, ShoppingCart, ExternalLink } from 'lucide-react';
 import { productChat } from '@/ai/flows/intelligent-product-assistant';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useChat } from '@/context/ChatContext';
+import { useCart } from '@/context/CartContext';
+import { MARKET_INTELLIGENCE } from '@/lib/services/ranking.engine';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { toast } from '@/hooks/use-toast';
 
 const EXPERTS = [
   { 
@@ -71,6 +74,7 @@ const LOADING_MESSAGES = [
 
 export default function ProductAssistant() {
   const { isOpen, setIsOpen, activeSpecies, setActiveSpecies, messages, addMessage } = useChat();
+  const { addToCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [input, setInput] = useState('');
@@ -269,32 +273,72 @@ export default function ProductAssistant() {
 
                   {msg.recommendations && msg.recommendations.length > 0 && (
                     <div className="grid grid-cols-1 gap-3 w-full max-w-[95%] mt-4">
-                      {msg.recommendations.map((rec: any, idx: number) => (
-                        <Link 
-                          key={idx} 
-                          href={`/catalogo/${rec.slug || rec.id}`} 
-                          className="group"
-                        >
-                          <div className="bg-white p-3 rounded-3xl border border-primary/10 hover:border-primary/40 transition-all shadow-md flex items-center gap-4 group-hover:-translate-y-1">
-                            <div className="relative w-16 h-16 bg-muted rounded-2xl overflow-hidden shrink-0 border border-black/5">
+                      {msg.recommendations.map((rec: any, idx: number) => {
+                        // Cálculos de Inteligencia Comercial en vivo
+                        const brandKey = rec.brand?.toLowerCase().trim() || '';
+                        const metrics = MARKET_INTELLIGENCE[brandKey];
+                        const isPremium = metrics && metrics.quality >= 4;
+                        const ppkg = rec.weight_kg && rec.weight_kg > 0 
+                          ? Math.round(rec.sellingPrice / rec.weight_kg) 
+                          : null;
+
+                        return (
+                          <div key={idx} className="bg-white p-3 rounded-3xl border border-primary/10 hover:border-primary/40 transition-all shadow-md flex gap-4 group animate-in slide-in-from-left-4">
+                            {/* Imagen clickeable hacia el detalle */}
+                            <Link href={`/catalogo/${rec.slug || rec.id}`} className="relative w-20 h-20 bg-muted/30 rounded-2xl overflow-hidden shrink-0 border border-black/5 flex items-center justify-center">
+                              {isPremium && (
+                                <div className="absolute top-1 left-1 z-10 bg-green-500 rounded-full p-0.5 shadow-sm">
+                                  <ShieldCheck className="w-3 h-3 text-white" />
+                                </div>
+                              )}
                               <Image 
-                                src={rec.image} 
+                                src={rec.main_image || rec.image} 
                                 alt={rec.name} 
                                 fill 
-                                className="object-contain p-2"
-                                sizes="64px"
+                                className="object-contain p-2 hover:scale-110 transition-transform" 
+                                sizes="80px" 
                               />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between mb-1">
-                                <h5 className="text-[11px] font-black text-primary truncate uppercase tracking-tighter pr-2">{rec.name}</h5>
-                                <Badge className="bg-secondary/20 text-primary border-none text-[8px] font-black uppercase shrink-0">Ver</Badge>
+                            </Link>
+
+                            <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                              <div>
+                                <div className="flex items-start justify-between mb-1 gap-2">
+                                  <Link href={`/catalogo/${rec.slug || rec.id}`}>
+                                    <h5 className="text-[11px] font-black text-slate-800 line-clamp-2 leading-tight hover:text-primary transition-colors">{rec.name}</h5>
+                                  </Link>
+                                  <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase shrink-0">{rec.brand}</Badge>
+                                </div>
+                                <p className="text-[10px] text-muted-foreground font-medium italic leading-tight line-clamp-2 mb-2 bg-slate-50 p-1.5 rounded-lg border border-slate-100">{rec.reason}</p>
                               </div>
-                              <p className="text-[10px] text-muted-foreground font-medium italic leading-tight line-clamp-2">{rec.reason}</p>
+                              
+                              <div className="flex items-end justify-between mt-auto pt-1">
+                                <div>
+                                  <div className="text-sm font-black text-primary leading-none">
+                                    ${rec.sellingPrice?.toLocaleString('es-CL')}
+                                  </div>
+                                  {ppkg && (
+                                    <div className="text-[9px] font-bold text-muted-foreground mt-0.5">
+                                      ${ppkg.toLocaleString('es-CL')}/kg
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                {/* Botón de Compra por Impulso (Fricción Cero) */}
+                                <Button 
+                                  size="sm"
+                                  onClick={() => {
+                                    addToCart({ ...rec, priceAtAddition: rec.sellingPrice, quantity: 1, cartType: 'retail' });
+                                    toast({ title: "¡Añadido! 🐾", description: "Agregado desde el asistente." });
+                                  }}
+                                  className="h-7 px-3 text-[10px] font-black uppercase rounded-xl bg-primary hover:bg-primary/90 shadow-md hover:scale-105 transition-transform"
+                                >
+                                  <ShoppingCart className="w-3.5 h-3.5 mr-1.5" /> Agregar
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </Link>
-                      ))}
+                        );
+                      })}
                       
                       <Link 
                         href={`/catalogo?especie=${encodeURIComponent(activeSpecies)}`}

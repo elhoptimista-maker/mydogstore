@@ -1,70 +1,66 @@
 'use server';
 /**
- * @fileOverview Un asesor de ventas familiar experto en bienestar animal.
- * Los asesores MyDog proporcionan soluciones empáticas, cercanas y responsables.
- * Enfocado 100% en resolver problemas nutricionales y de bienestar con autoridad familiar.
+ * @fileOverview Un asesor de ventas familiar experto en bienestar animal mejorado con IA.
+ * Implementa lógica de ranking estratégico (Smart Score) y upselling nutricional.
+ *
+ * - productChat - Función que maneja el proceso de asesoría.
+ * - ProductChatInput - Tipo de entrada para la conversación.
+ * - ProductChatOutput - Tipo de salida enriquecida con datos reales del producto.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { getSanitizedProducts } from '@/lib/services/catalog.service';
+import { calculateSmartScore, MARKET_INTELLIGENCE } from '@/lib/services/ranking.engine';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
   content: z.string(),
-  recommendedIds: z.array(z.string()).optional().describe('IDs de productos recomendados en este mensaje para evitar repeticiones.'),
+  recommendedIds: z.array(z.string()).optional().describe('IDs de productos recomendados para evitar repeticiones.'),
 });
 
 const ProductChatInputSchema = z.object({
-  species: z.string().describe('La especie de la mascota (ej: Perro, Gato).'),
-  history: z.array(MessageSchema).describe('El historial de la conversación actual.'),
-  message: z.string().describe('El mensaje enviado por el usuario.'),
+  species: z.string().describe('Especie de la mascota.'),
+  history: z.array(MessageSchema).describe('Historial de la charla.'),
+  message: z.string().describe('Mensaje actual del usuario.'),
 });
 
 export type ProductChatInput = z.infer<typeof ProductChatInputSchema>;
 
+/**
+ * El LLM ahora solo se encarga de la lógica de selección y la narrativa.
+ * Los datos sensibles (precios, imágenes) se inyectan en el servidor post-generación.
+ */
 const ProductChatOutputSchema = z.object({
-  response: z.string().describe('La respuesta del asistente. Sé empático, cercano y resolutivo. NO menciones nombres de productos ni IDs aquí.'),
+  response: z.string().describe('Respuesta empática del asistente.'),
   suggestedProducts: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    image: z.string().describe('URL de la imagen del producto.'),
-    reason: z.string().describe('Razón técnica y empática de la recomendación (ej: ideal para digestión sensible en perros adultos).'),
-  })).optional().describe('Selecciona estrictamente los 5 productos más relevantes del catálogo que resuelvan el problema del usuario.'),
+    id: z.string().describe('ID del producto en el catálogo.'),
+    reason: z.string().describe('Razón técnica y emocional del por qué este producto es ideal.'),
+  })).optional().describe('Máximo 4 productos seleccionados estratégicamente.'),
 });
-
-export type ProductChatOutput = z.infer<typeof ProductChatOutputSchema>;
 
 const productChatPrompt = ai.definePrompt({
   name: 'productChatPrompt',
   input: {schema: ProductChatInputSchema.extend({
-    catalog: z.array(z.any()).describe('Productos disponibles para esta especie.'),
+    catalog: z.array(z.any()).describe('Catálogo filtrado y ordenado por relevancia.'),
   })},
   output: {schema: ProductChatOutputSchema},
-  prompt: `Eres un Asesor Experto de Distribuidora MyDog, un negocio familiar con 15 años de trayectoria cuidando a mascotas en Santiago.
+  prompt: `Eres un Asesor Experto de Distribuidora MyDog, un negocio familiar con 15 años de trayectoria cuidando a mascotas en Santiago de Chile.
 
-  TU MISIÓN:
-  Realizar una asesoría empática y responsable. El usuario busca bienestar para un miembro de su familia. Ayúdale a elegir basándote en tu experiencia y amor por los animales.
+  TU MISIÓN Y REGLAS DE ORO (CRÍTICO):
+  1. EXPERTO NUTRICIONAL: Tienes acceso a la "Calidad Nutricional" de las marcas en el catálogo adjunto.
+  2. THE HEALTHY SWITCH: Si el usuario busca algo económico o de baja calidad (Calidad 1 o 2), ofréceselo pero SIEMPRE recomienda una alternativa Premium (Calidad 3+) explicando sus beneficios a largo plazo.
+  3. BUNDLING: Si el usuario ya eligió un alimento, sugiere un complemento de alto "Sentimiento" (como snacks Churu o protección Simparica).
+  4. NO REPITAS: No sugieras productos que ya estén en el historial (recommendedIds).
+  5. PROHIBIDO: No escribas nombres de productos o precios en el campo 'response'. La interfaz los mostrará automáticamente.
+  6. TONO: Cercano, familiar y experto. Habla como un vecino que sabe mucho de mascotas.
 
-  TU PERSONALIDAD:
-  1. CERCANO PERO EXPERTO: Hablas como el vecino de confianza que conoce los mejores ingredientes y trucos.
-  2. RESOLUTIVO: Identificas el problema (alergias, mañas, peso) y ofreces la solución real de nuestra bodega.
-  3. RESPONSABLE: Te tomas en serio la salud de la mascota. Si algo es fundamental para su etapa de vida, lo resaltas.
-  4. AMABLE Y DIRECTO: Evitas el lenguaje corporativo frío. Eres parte de la familia MyDog.
-
-  REGLAS DE BÚSQUEDA Y CURADURÍA (CRÍTICO):
-  - NO REPITAS productos recomendados anteriormente. Queremos variedad útil.
-  - Prioriza MARCAS que el usuario mencione, pero si hay una mejor opción por salud, recomiéndala con fundamentos.
-  - Selecciona estrictamente 5 productos con stock real del catálogo.
-  - PROHIBIDO: No escribas nombres de productos ni IDs en el campo "response". La lista se genera automáticamente.
-  - CIERRE: Termina siempre con una pregunta que demuestre interés genuino (ej: "¿Cómo es su nivel de actividad diaria en el hogar?").
-
-  CATÁLOGO DISPONIBLE PARA {{{species}}}:
+  CATÁLOGO DISPONIBLE (Ordenado por Relevancia Estratégica):
   {{#each catalog}}
-  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Etapa: {{life_stage}} | Precio: {{sellingPrice}} | Imagen: {{main_image}} | Desc: {{short_description}}
+  - ID: {{id}} | Nombre: {{name}} | Marca: {{brand}} | Categoría: {{category}} | Calidad (1-5): {{quality}} | Score Mercado: {{smartScore}}
   {{/each}}
 
-  HISTORIAL:
+  HISTORIAL DE CHARLA:
   {{#each history}}
   {{role}}: {{{content}}}
   {{/each}}
@@ -72,31 +68,23 @@ const productChatPrompt = ai.definePrompt({
   MENSAJE DEL USUARIO:
   {{{message}}}
 
-  Responde como el asesor de confianza que somos hace 15 años en Santiago de Chile.`,
+  Responde basándote en tu experiencia de 15 años en nuestra bodega familiar.`,
 });
 
 const productChatFlow = ai.defineFlow(
   {
     name: 'productChatFlow',
     inputSchema: ProductChatInputSchema,
-    outputSchema: ProductChatOutputSchema,
+    outputSchema: z.any(), // Devolvemos el objeto enriquecido para el frontend
   },
   async (input) => {
-    // 1. Obtener productos y filtrar por stock inmediatamente
+    // 1. Obtener productos activos y con stock
     const allProducts = (await getSanitizedProducts()).filter(p => p.currentStock > 0);
     
-    // 2. Identificar productos ya recomendados
+    // 2. Extraer productos ya recomendados
     const previouslyRecommendedIds = new Set<string>();
-    const previouslyRecommendedBrands = new Set<string>();
-    
     input.history.forEach(m => {
-      if (m.recommendedIds) {
-        m.recommendedIds.forEach(id => {
-          previouslyRecommendedIds.add(id);
-          const p = allProducts.find(prod => prod.id === id);
-          if (p) previouslyRecommendedBrands.add(p.brand.toLowerCase());
-        });
-      }
+      if (m.recommendedIds) m.recommendedIds.forEach(id => previouslyRecommendedIds.add(id));
     });
 
     // 3. Filtrado por especie
@@ -105,39 +93,37 @@ const productChatFlow = ai.defineFlow(
              input.species.toLowerCase().includes(p.species.toLowerCase());
     });
 
-    // 4. Algoritmo de Ranking
+    // 4. Algoritmo de Ranking Estratégico (CRO)
     const userMessageLower = input.message.toLowerCase();
-    const isAskingForVariety = userMessageLower.includes('otras marcas') || userMessageLower.includes('otros productos');
     const searchTerms = userMessageLower.split(' ').filter(t => t.length > 2);
     
     const rankedCatalog = speciesCatalog.map(p => {
       let score = 0;
-      const brandLower = p.brand.toLowerCase();
-      const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description} ${p.life_stage}`.toLowerCase();
+      const brandLower = p.brand?.toLowerCase() || '';
+      const productText = `${p.name} ${p.brand} ${p.category} ${p.short_description}`.toLowerCase();
       
-      if (userMessageLower.includes(brandLower) && brandLower.length > 3) {
-        score += 300;
-      }
-
+      // Match textual
+      if (userMessageLower.includes(brandLower) && brandLower.length > 3) score += 300;
       searchTerms.forEach(term => {
-        if (productText.includes(term)) score += 10;
-        if (brandLower.includes(term)) score += 50; 
-        if (p.life_stage.toLowerCase().includes(term)) score += 20;
+        if (productText.includes(term)) score += 50;
       });
 
-      if (previouslyRecommendedIds.has(p.id)) {
-        score -= 1000; 
-      }
-
-      if (isAskingForVariety && previouslyRecommendedBrands.has(brandLower)) {
-        score -= 200; 
-      }
+      // Inteligencia Comercial (Favorecer productos estrella)
+      const smartScore = calculateSmartScore(p.brand);
+      score += (smartScore * 10);
       
-      return { ...p, score };
+      const metrics = MARKET_INTELLIGENCE[brandLower];
+      const quality = metrics?.quality || 2.5;
+
+      // Penalización por repetición
+      if (previouslyRecommendedIds.has(p.id)) score -= 2000; 
+      
+      return { ...p, score, quality, smartScore };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 60);
+    .slice(0, 40);
 
+    // 5. Llamada al LLM
     const {output} = await productChatPrompt({
       ...input,
       catalog: rankedCatalog,
@@ -147,10 +133,23 @@ const productChatFlow = ai.defineFlow(
       throw new Error('Error al generar respuesta del asesor.');
     }
 
-    return output;
+    // 6. Mapeo Final Enriquecido (Evita alucinaciones del bot)
+    const enrichedRecommendations = (output.suggestedProducts || []).map(rec => {
+      const fullProduct = allProducts.find(p => p.id === rec.id);
+      if (!fullProduct) return null;
+      return {
+        ...fullProduct,
+        reason: rec.reason
+      };
+    }).filter(Boolean);
+
+    return {
+      response: output.response,
+      suggestedProducts: enrichedRecommendations
+    };
   }
 );
 
-export async function productChat(input: ProductChatInput): Promise<ProductChatOutput> {
+export async function productChat(input: ProductChatInput) {
   return productChatFlow(input);
 }
