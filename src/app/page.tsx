@@ -12,6 +12,7 @@ import InstagramGallery from '@/components/home/InstagramGallery';
 /**
  * @fileOverview Página principal (Home) orquestada por el Arquitecto de Frontend.
  * Implementa un flujo de conversión de alto rendimiento con secciones adaptativas.
+ * Los productos destacados ahora siguen la Lógica de Pivote Estratégico (Smart Score).
  */
 
 export const dynamic = 'force-dynamic';
@@ -19,10 +20,13 @@ export const dynamic = 'force-dynamic';
 export default async function Home() {
   const products = await getSanitizedProducts();
   
-  // Selección inteligente de productos para la vitrina principal
+  // SELECCIÓN ESTRATÉGICA PARA LA VITRINA PRINCIPAL:
+  // 1. Solo productos con stock físico real.
+  // 2. Respetamos el orden del CatalogService, que ya viene ponderado por Smart Score.
+  // Esto asegura que marcas como Purina One, Nomade o Churu aparezcan primero por su 
+  // alto sentimiento y tracción en el mercado chileno.
   const featuredProducts = products
     .filter(p => p.currentStock > 0)
-    .sort((a, b) => b.currentStock - a.currentStock)
     .slice(0, 10);
 
   return (
@@ -36,7 +40,7 @@ export default async function Home() {
       {/* 3. Oportunidades: Banners de colección y novedades */}
       <PromotionalBanners />
 
-      {/* 4. Vitrina Técnica: Productos con mayor disponibilidad */}
+      {/* 4. Vitrina Estratégica: Top 10 de productos según Smart Score */}
       <FeaturedProducts products={featuredProducts} />
 
       {/* 5. Urgencia: Oferta relámpago con cuenta regresiva */}
