@@ -64,7 +64,7 @@ const productChatPrompt = ai.definePrompt({
   CART CONTEXT:
   {{#if cartContext}}
     {{#each cartContext}}
-    - Llevando: {{name}} ({{category}}) | ${{price}}
+    - Llevando: {{name}} ({{category}}) | \${{price}}
     {{/each}}
   {{else}}
     El carrito está vacío.
@@ -84,7 +84,7 @@ const productChatPrompt = ai.definePrompt({
   {{{message}}}`,
 });
 
-const productChatFlow = ai.defineFlow(
+const diagnosePlantFlow = ai.defineFlow(
   {
     name: 'productChatFlow',
     inputSchema: ProductChatInputSchema,
@@ -159,5 +159,5 @@ const productChatFlow = ai.defineFlow(
 );
 
 export async function productChat(input: ProductChatInput) {
-  return productChatFlow(input);
+  return diagnosePlantFlow(input);
 }
