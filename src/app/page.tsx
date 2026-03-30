@@ -13,7 +13,7 @@ import InstagramGallery from '@/components/home/InstagramGallery';
  * @fileOverview Página principal (Home) orquestada por el Arquitecto de Frontend.
  * Implementa un flujo de conversión de alto rendimiento con secciones adaptativas.
  * Los productos destacados ahora siguen la Lógica de Pivote Estratégico (Smart Score)
- * + un Filtro de Diversidad para evitar saturación de una sola marca.
+ * + un Filtro de Diversidad Estricto para maximizar la percepción de variedad.
  */
 
 export const dynamic = 'force-dynamic';
@@ -24,8 +24,8 @@ export default async function Home() {
   // ------------------------------------------------------------------
   // ALGORITMO DE VITRINA BALANCEADA (Diversity Filter)
   // ------------------------------------------------------------------
-  // Evita el "Muro de Churu". Recorremos los productos que ya vienen 
-  // ordenados por mayor Smart Score, pero forzamos variedad.
+  // Evita la redundancia visual. Recorremos los productos ordenados por 
+  // Smart Score, pero aplicamos reglas de curaduría para mostrar variedad.
   
   const featuredProducts = [];
   const categoryCount: Record<string, number> = {};
@@ -40,10 +40,10 @@ export default async function Home() {
     if (!categoryCount[cat]) categoryCount[cat] = 0;
     if (!brandCount[brand]) brandCount[brand] = 0;
 
-    // REGLA DE NEGOCIO: 
-    // Máximo 2 productos de la misma marca (Ej: Max 2 Churus)
-    // Máximo 3 productos de la misma categoría (Ej: Max 3 Snacks en total)
-    if (brandCount[brand] < 2 && categoryCount[cat] < 3) {
+    // REGLA DE NEGOCIO ESTRICTA PARA MÁXIMA VARIEDAD: 
+    // - Máximo 1 producto de la misma marca (Evita el "Muro de marca")
+    // - Máximo 2 productos de la misma categoría (Equilibrio entre Alimento, Snacks, etc.)
+    if (brandCount[brand] < 1 && categoryCount[cat] < 2) {
       featuredProducts.push(p);
       categoryCount[cat]++;
       brandCount[brand]++;
@@ -64,7 +64,7 @@ export default async function Home() {
       {/* 3. Oportunidades: Banners de colección y novedades */}
       <PromotionalBanners />
 
-      {/* 4. Vitrina Estratégica: Top 10 Balanceado */}
+      {/* 4. Vitrina Estratégica: Top 10 Ultra-Balanceado */}
       <FeaturedProducts products={featuredProducts} />
 
       {/* 5. Urgencia: Oferta relámpago con cuenta regresiva */}
