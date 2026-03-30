@@ -6,6 +6,7 @@ import { Mail, Sparkles } from 'lucide-react';
 
 /**
  * @fileOverview Captación de leads con promesa de valor transaccional.
+ * Actualizado para una respuesta adaptativa impecable en todas las dimensiones.
  */
 export default function Newsletter() {
   const pathname = usePathname();
@@ -36,25 +37,32 @@ export default function Newsletter() {
             onSubmit={(e) => e.preventDefault()}
             className="relative max-w-lg mx-auto group"
           >
-            <div className="relative flex items-center bg-white rounded-full p-2 shadow-2xl shadow-primary/5 border border-black/5 focus-within:border-primary/20 transition-all">
-              <div className="pl-6 text-muted-foreground">
-                <Mail className="w-5 h-5" />
+            {/* Contenedor Adaptativo: Stack en mobile, Row en desktop */}
+            <div className="flex flex-col md:flex-row gap-4 md:items-center md:bg-white md:rounded-full md:p-2 md:shadow-2xl md:shadow-primary/5 md:border md:border-black/5 md:focus-within:border-primary/20 transition-all">
+              
+              {/* Campo de Correo con estilo consistente */}
+              <div className="relative flex items-center bg-white rounded-full border border-black/5 md:border-none md:shadow-none flex-1">
+                <div className="pl-6 text-muted-foreground">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <input 
+                  type="email" 
+                  placeholder="tu@correo.cl" 
+                  className="flex-1 h-14 bg-transparent outline-none px-4 font-bold text-sm text-foreground placeholder:text-muted-foreground/40" 
+                  required
+                />
               </div>
-              <input 
-                type="email" 
-                placeholder="tu@correo.cl" 
-                className="flex-1 h-14 bg-transparent outline-none px-4 font-bold text-sm text-foreground placeholder:text-muted-foreground/40" 
-                required
-              />
+
+              {/* Botón de Acción Principal */}
               <Button 
                 type="submit"
-                className="rounded-full bg-primary text-white font-black px-8 h-14 text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                className="rounded-full bg-primary text-white font-black px-8 h-14 text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all w-full md:w-auto shrink-0"
               >
                 Quiero mis beneficios
               </Button>
             </div>
             
-            <p className="mt-4 text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+            <p className="mt-6 text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
               🔒 Prometemos cuidar tus datos tanto como a tu mascota.
             </p>
           </form>
