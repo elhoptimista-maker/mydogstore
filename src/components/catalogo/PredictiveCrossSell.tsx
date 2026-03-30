@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { getBundleRecommendation } from '@/actions/bundling';
 import { SanitizedProduct } from '@/types/product';
-import { Plus, Sparkles, Loader2, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Plus, Sparkles, Loader2, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -17,23 +17,17 @@ interface PredictiveCrossSellProps {
 }
 
 /**
- * @fileOverview Componente de Cross-selling proactivo para la PDP.
- * Es inteligente: no sugiere productos que ya estén en el carrito.
- * Permite agregar el complemento con un solo clic.
+ * @fileOverview Componente de Cross-selling optimizado para responsividad extrema.
+ * Maneja el apilado en móviles y la expansión en desktop.
  */
 export default function PredictiveCrossSell({ baseProduct }: PredictiveCrossSellProps) {
   const { cart, addToCart } = useCart();
   const [recommendation, setRecommendation] = useState<SanitizedProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const [isPending, startTransition] = useTransition();
 
-  // EFECTO: Buscar recomendación cada vez que cambie el carrito
-  // Esto asegura que si el usuario agrega el complemento, este desaparezca o cambie por otro
   useEffect(() => {
     const fetchRecommendation = async () => {
-      // Incluimos el producto actual en el análisis para que el motor busque complementos para él,
-      // pero el motor de bundling también revisará el resto del carrito.
       const itemsToAnalyze = [...cart, { ...baseProduct, priceAtAddition: baseProduct.sellingPrice }];
       
       try {
@@ -57,12 +51,11 @@ export default function PredictiveCrossSell({ baseProduct }: PredictiveCrossSell
 
     setIsAdding(true);
     
-    // Simulación de delay para feedback visual
     setTimeout(() => {
       addToCart(recommendation, false, 1, false);
       
       toast({
-        title: "¡Añadido al carrito! ✨",
+        title: "¡Excelente! ✨",
         description: `${recommendation.name} se agregó a tu pedido.`,
       });
       setIsAdding(false);
@@ -71,60 +64,59 @@ export default function PredictiveCrossSell({ baseProduct }: PredictiveCrossSell
 
   if (loading && !recommendation) {
     return (
-      <div className="h-24 w-full bg-slate-50 animate-pulse rounded-2xl border border-dashed border-slate-200" />
+      <div className="h-24 w-full bg-muted/30 animate-pulse rounded-[2rem] border border-dashed border-black/5" />
     );
   }
 
   if (!recommendation) return null;
 
   return (
-    <div className="group relative overflow-hidden rounded-[2rem] bg-slate-50 border border-slate-100 p-4 transition-all hover:shadow-lg hover:border-primary/20 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <div className="flex items-center justify-between mb-3 px-1">
+    <div className="group relative overflow-hidden rounded-[2.5rem] bg-[#F9FAFB] border border-black/[0.03] p-5 md:p-6 transition-all duration-500 hover:shadow-xl hover:shadow-black/5 hover:border-primary/20 animate-in fade-in slide-in-from-bottom-2">
+      <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
-          <div className="bg-amber-100 p-1 rounded-lg">
+          <div className="bg-amber-100 p-1.5 rounded-xl shadow-inner">
             <Sparkles className="w-3.5 h-3.5 text-amber-600 fill-current" />
           </div>
           <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em] leading-none">Complemento Sugerido</h4>
         </div>
-        <Link href={`/catalogo/${recommendation.slug}`} className="text-[9px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1">
-          Ver detalles <ArrowRight className="w-2.5 h-2.5" />
+        <Link href={`/catalogo/${recommendation.slug}`} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1.5">
+          Ver Ficha <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
 
-      <div className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-black/[0.03] shadow-sm relative z-10">
-        <div className="relative w-14 h-14 bg-slate-50 rounded-xl overflow-hidden shrink-0 border border-black/5 p-1.5">
+      <div className="flex flex-col sm:flex-row items-center gap-5 bg-white p-4 rounded-3xl border border-black/[0.02] shadow-sm relative z-10">
+        <div className="relative w-20 h-20 sm:w-16 sm:h-16 bg-[#F9FAFB] rounded-2xl overflow-hidden shrink-0 border border-black/[0.03] p-2">
            <Image 
              src={recommendation.main_image} 
              alt={recommendation.name} 
              fill 
              className="object-contain" 
-             sizes="56px"
+             sizes="80px"
            />
         </div>
         
-        <div className="flex flex-col flex-1 min-w-0">
-          <span className="text-[11px] font-bold text-slate-800 line-clamp-1 leading-tight mb-1">{recommendation.name}</span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm font-black text-primary">
+        <div className="flex-1 min-w-0 text-center sm:text-left space-y-1">
+          <h5 className="text-[11px] md:text-xs font-bold text-slate-800 line-clamp-2 leading-tight">{recommendation.name}</h5>
+          <div className="flex items-center justify-center sm:justify-start gap-3">
+            <span className="text-base font-black text-primary tracking-tight">
               ${recommendation.sellingPrice.toLocaleString('es-CL')}
             </span>
-            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">Stock OK</span>
+            <Badge variant="outline" className="text-[8px] font-black text-muted-foreground uppercase h-4 px-1.5 opacity-60">En Stock</Badge>
           </div>
         </div>
 
         <Button 
           onClick={handleAdd} 
           disabled={isAdding}
-          size="sm"
-          className="shrink-0 h-10 px-4 bg-primary text-white font-black text-[10px] uppercase tracking-widest rounded-xl shadow-md shadow-primary/10 hover:scale-105 active:scale-95 transition-all gap-2"
+          className="w-full sm:w-auto h-12 px-8 bg-primary text-white font-black text-[10px] uppercase tracking-widest rounded-2xl shadow-lg shadow-primary/10 hover:scale-105 active:scale-95 transition-all gap-2"
         >
-          {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+          {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
           Agregar
         </Button>
       </div>
       
-      {/* Glow decorativo de fondo */}
-      <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none group-hover:bg-primary/10 transition-colors" />
+      {/* Visual background glow */}
+      <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
     </div>
   );
 }
