@@ -1,19 +1,27 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Mail, Sparkles } from 'lucide-react';
 
 /**
  * @fileOverview Captación de leads con promesa de valor transaccional.
- * Actualizado para una respuesta adaptativa impecable en todas las dimensiones.
+ * Implementa un patrón de hidratación segura para evitar errores de mismatch entre servidor y cliente.
  */
 export default function Newsletter() {
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const excludedRoutes = ['/checkout', '/b2b/portal', '/cuenta'];
   const isExcluded = excludedRoutes.some(route => pathname?.startsWith(route));
 
-  if (isExcluded) return null;
+  // Evitamos errores de hidratación no renderizando el contenido hasta que el cliente esté listo
+  if (!mounted || isExcluded) return null;
 
   return (
     <section className="w-full bg-[#FEF9F3] py-16 md:py-24 border-t border-black/5 overflow-hidden">
