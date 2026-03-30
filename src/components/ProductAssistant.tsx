@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight, ShieldCheck, ShoppingCart, ExternalLink } from 'lucide-react';
+import { Sparkles, Loader2, Send, ChevronDown, MessageCircle, ArrowRight, ShieldCheck, ShoppingCart, ExternalLink, ShoppingBag } from 'lucide-react';
 import { productChat } from '@/ai/flows/intelligent-product-assistant';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -437,6 +437,7 @@ export default function ProductAssistant() {
                 disabled={!input.trim() || loading}
                 className="h-12 w-12 rounded-2xl bg-primary text-white shadow-xl shadow-primary/20 hover:scale-[1.05] active:scale-95 transition-all shrink-0"
               >
+                <span className="sr-only">Enviar</span>
                 <Send className="w-5 h-5" />
               </Button>
             </form>
