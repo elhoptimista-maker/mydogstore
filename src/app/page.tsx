@@ -6,8 +6,9 @@ import FeaturedProducts from '@/components/home/FeaturedProducts';
 import FlashDeal from '@/components/home/FlashDeal';
 import SocialProof from '@/components/home/SocialProof';
 import TrustBar from '@/components/home/TrustBar';
-import BlogSection from '@/components/home/BlogSection';
-import InstagramGallery from '@/components/home/InstagramGallery';
+// Importaciones comentadas temporalmente por falta de contenido real
+// import BlogSection from '@/components/home/BlogSection';
+// import InstagramGallery from '@/components/home/InstagramGallery';
 
 /**
  * @fileOverview Página principal (Home) orquestada por el Arquitecto de Frontend.
@@ -73,14 +74,12 @@ export default async function Home() {
       {/* 6. Autoridad: Testimonios y prueba social */}
       <SocialProof />
 
-      {/* 7. Conocimiento: Noticias y consejos de expertos */}
-      <BlogSection />
-
-      {/* 8. Logística: Barra de beneficios y garantías */}
+      {/* 7. Logística: Barra de beneficios y garantías */}
       <TrustBar />
 
-      {/* 9. Comunidad: Galería social de Instagram */}
-      <InstagramGallery />
+      {/* Secciones ocultas temporalmente hasta tener contenido real */}
+      {/* <BlogSection /> */}
+      {/* <InstagramGallery /> */}
     </div>
   );
 }
