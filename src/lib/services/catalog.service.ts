@@ -81,7 +81,7 @@ async function getSanitizedProductsRaw(): Promise<SanitizedProduct[]> {
     // ORDENAMIENTO MAGISTRAL:
     // 1. Productos con mayor Smart Score van primero (Visibilidad estratégica).
     // 2. Si tienen el mismo score, el que tiene stock físico gana.
-    return sanitizedProducts.sort((a, b) => {
+    return sanitizedProducts.sort((a: SanitizedProduct, b: SanitizedProduct) => {
        const scoreDiff = (b.smartScore || 0) - (a.smartScore || 0);
        if (scoreDiff !== 0) return scoreDiff;
        
