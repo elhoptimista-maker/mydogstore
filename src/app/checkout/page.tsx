@@ -20,7 +20,7 @@ import { auth, db } from '@/lib/firebase/client';
 import { getUserData } from '@/lib/services/user.service';
 import { registerUser } from '@/lib/services/auth.service';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { User as FirebaseUser } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import PaymentSelector from '@/components/checkout/PaymentSelector';
 
 // Utilidad UX: Formateador de RUT Chileno en tiempo real
@@ -61,7 +61,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('khipu');
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (currentUser: FirebaseUser | null) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser: FirebaseUser | null) => {
       if (currentUser) {
         setUser(currentUser);
         setCustomer(prev => ({ ...prev, email: currentUser.email || '', name: currentUser.displayName || prev.name }));
@@ -474,7 +474,7 @@ export default function CheckoutPage() {
             <PaymentSelector selectedMethod={paymentMethod} onSelect={setPaymentMethod} cartType={cartType} />
 
             <div className="pt-6 pb-12">
-              <Button type="submit" className={cn("w-full h-16 rounded-[2rem] font-black text-lg md:text-xl uppercase tracking-widest shadow-2xl transition-all duration-300", loading ? "bg-secondary text-primary cursor-not-allowed" : "bg-primary text-white hover:scale-[1.02] active:scale-[0.98]")}>
+              <Button type="submit" className={cn("w-full h-16 rounded-[2rem] font-black text-lg md:text-xl uppercase tracking-widest shadow-2xl transition-all duration-300", loading ? "bg-secondary text-primary cursor-not-allowed" : "bg-primary text-white hover:scale-[1.02] active:scale-0.98")}>
                 {loading ? <><Loader2 className="w-6 h-6 animate-spin mr-3" /> Procesando...</> : <>Finalizar Compra ${finalTotal.toLocaleString('es-CL')} <ChevronRight className="ml-2 w-6 h-6" /></>}
               </Button>
             </div>
