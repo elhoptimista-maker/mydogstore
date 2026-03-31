@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -38,6 +37,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   // 2. Sincronizar con Firestore cuando el usuario se loguea
   useEffect(() => {
+    if (!auth) return;
     let unsubscribeFirestore: (() => void) | null = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -79,7 +79,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const toggleWishlist = (product: SanitizedProduct) => {
     const exists = wishlist.some(item => item.id === product.id);
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
 
     if (exists) {
       const updated = wishlist.filter(item => item.id !== product.id);
@@ -103,7 +103,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const isNotified = (id: string) => notifications[id] || false;
 
   const toggleNotification = async (id: string) => {
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
     if (!user) {
       toast({ variant: "destructive", title: "Inicia sesión", description: "Debes estar registrado para recibir avisos de stock." });
       return;

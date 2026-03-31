@@ -19,11 +19,10 @@ import Link from 'next/link';
 import { auth, db } from '@/lib/firebase/client';
 import { getUserData } from '@/lib/services/user.service';
 import { registerUser } from '@/lib/services/auth.service';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import PaymentSelector from '@/components/checkout/PaymentSelector';
 
-// Utilidad UX: Formateador de RUT Chileno en tiempo real
 const formatRUT = (value: string) => {
   const clean = value.replace(/[^0-9kK]/g, '').toUpperCase();
   if (clean.length === 0) return '';
@@ -61,13 +60,13 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('khipu');
 
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser: FirebaseUser | null) => {
       if (currentUser) {
         setUser(currentUser);
         setCustomer(prev => ({ ...prev, email: currentUser.email || '', name: currentUser.displayName || prev.name }));
         const dbData = await getUserData(currentUser.uid);
         if (dbData) {
-          // CARGAMOS EL PERFIL COMPLETO (Personal + Facturación)
           setCustomer(prev => ({ 
             ...prev, 
             phone: dbData.phone || prev.phone,
@@ -188,17 +187,19 @@ export default function CheckoutPage() {
           const newUserCred = await registerUser(customer.email, randomPassword, customer.name);
           finalUserId = newUserCred.user.uid;
           
-          const userRef = doc(db, "users", finalUserId);
-          await updateDoc(userRef, {
-            rut: customer.rut.replace(/[^0-9kK\-]/g, ''), 
-            addresses: arrayUnion({
-              id: 'default', name: newAddressName || 'Casa', streetAndNumber: shipping.streetAndNumber, apartmentOrLocal: shipping.apartmentOrLocal || '', commune: communeSearch, region: shipping.region, isDefault: true
-            })
-          });
+          if (db) {
+            const userRef = doc(db, "users", finalUserId);
+            await updateDoc(userRef, {
+              rut: customer.rut.replace(/[^0-9kK\-]/g, ''), 
+              addresses: arrayUnion({
+                id: 'default', name: newAddressName || 'Casa', streetAndNumber: shipping.streetAndNumber, apartmentOrLocal: shipping.apartmentOrLocal || '', commune: communeSearch, region: shipping.region, isDefault: true
+              })
+            });
+          }
         } catch (err) {
           console.warn("No se pudo crear la cuenta localmente", err);
         }
-      } else if (user && saveNewAddress && newAddressName) {
+      } else if (user && saveNewAddress && newAddressName && db) {
          const userRef = doc(db, "users", finalUserId);
          await updateDoc(userRef, {
            addresses: arrayUnion({

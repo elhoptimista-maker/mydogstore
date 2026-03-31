@@ -11,13 +11,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Durante el build de Next.js, las variables de entorno pueden no estar presentes.
-// Evitamos que Firebase lance un error de "invalid-api-key" inicializando solo si hay una API Key presente.
+// Inicialización robusta para evitar fallos en build time o si faltan env vars
 const app = (getApps().length === 0 && firebaseConfig.apiKey) 
   ? initializeApp(firebaseConfig) 
   : (getApps().length > 0 ? getApp() : null);
 
-// Exportamos proxies o nulls seguros si el app no se inicializó (entorno de build)
-export const auth = app ? getAuth(app) : ({} as any);
-export const db = app ? getFirestore(app) : ({} as any);
+export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app) : null;
 export default app;

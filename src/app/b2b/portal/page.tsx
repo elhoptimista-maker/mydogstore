@@ -89,6 +89,7 @@ export default function B2BPortalPage() {
   };
 
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         const isValid = await validateAndSetupUser(currentUser);

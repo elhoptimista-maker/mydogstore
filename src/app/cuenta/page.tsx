@@ -131,6 +131,7 @@ export default function CuentaPage() {
   }, []);
 
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setDataLoading(true);
