@@ -20,6 +20,8 @@ import { errorEmitter, FirestorePermissionError } from "@/lib/error-emitter";
  * Asegura que la región quede fijada como Metropolitana desde la creación.
  */
 export async function registerUser(email: string, password: string, displayName: string): Promise<UserCredential> {
+  if (!auth || !db) throw new Error("Firebase no está inicializado correctamente.");
+
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -63,6 +65,8 @@ export async function registerUser(email: string, password: string, displayName:
  * Inicia sesión de un usuario existente y actualiza su última conexión en Firestore.
  */
 export async function loginUser(email: string, password: string): Promise<UserCredential> {
+  if (!auth || !db) throw new Error("Firebase no está inicializado correctamente.");
+
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -92,6 +96,7 @@ export async function loginUser(email: string, password: string): Promise<UserCr
  * Cierra la sesión del usuario actual.
  */
 export async function logoutUser(): Promise<void> {
+  if (!auth) return;
   try {
     await signOut(auth);
   } catch (error: any) {

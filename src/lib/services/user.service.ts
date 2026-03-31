@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview Servicio para la gestión de datos extendidos del usuario en Firestore.
  * Maneja el perfil, favoritos y sincronización.
@@ -22,6 +21,7 @@ import { errorEmitter, FirestorePermissionError } from "@/lib/error-emitter";
  * Obtiene el documento completo del usuario desde Firestore.
  */
 export async function getUserData(uid: string) {
+  if (!db) return null;
   const userRef = doc(db, "users", uid);
   const snap = await getDoc(userRef);
   return snap.exists() ? snap.data() : null;
@@ -31,6 +31,7 @@ export async function getUserData(uid: string) {
  * Actualiza el perfil extendido del usuario en Firestore.
  */
 export async function updateUserProfile(data: any) {
+  if (!auth || !db) throw new Error("Firebase no está inicializado.");
   const user = auth.currentUser;
   if (!user) throw new Error("No hay sesión activa");
 
@@ -56,6 +57,7 @@ export async function updateUserProfile(data: any) {
  * Sincroniza un producto favorito en Firestore.
  */
 export function syncWishlistItem(productId: string, action: 'add' | 'remove') {
+  if (!auth || !db) return;
   const user = auth.currentUser;
   if (!user) return;
 
@@ -84,6 +86,7 @@ export function syncWishlistItem(productId: string, action: 'add' | 'remove') {
  * Activa o desactiva la notificación de stock para un producto favorito.
  */
 export async function toggleStockNotification(productId: string, enabled: boolean) {
+  if (!auth || !db) return;
   const user = auth.currentUser;
   if (!user) return;
 
@@ -101,6 +104,7 @@ export async function toggleStockNotification(productId: string, enabled: boolea
  * Retorna tanto los IDs como sus flags de notificación.
  */
 export function subscribeToWishlist(userId: string, callback: (items: {id: string, notify: boolean}[]) => void) {
+  if (!db) return () => {};
   const wishlistRef = collection(db, "users", userId, "wishlist");
   return onSnapshot(wishlistRef, (snapshot) => {
     const items = snapshot.docs.map(doc => ({
